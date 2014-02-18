@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<dataset>
-	<APP_USER id="[ID]" username="testuser" password="guesswhat345"
-		email="testuser@dummy.com" createdAt="[CREATED_AT]"/>
-</dataset>
