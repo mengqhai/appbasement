@@ -216,3 +216,4 @@ pip-log.txt
 
 *.class
 appBasement/target/
+appBasement/hsqldb/
