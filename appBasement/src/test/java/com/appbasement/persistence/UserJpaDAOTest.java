@@ -10,18 +10,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.appbasement.model.Group;
 import com.appbasement.model.User;
 import com.appbasement.persistence.util.DBUnitAssertionWork;
 import com.appbasement.persistence.util.EmfHelper;
+import com.appbasement.persistence.util.TemplateWorker;
 import com.appbasement.persistence.util.TestConstants;
 import com.appbasement.persistence.util.UtUtil;
 
@@ -117,8 +121,8 @@ public class UserJpaDAOTest extends GenericJpaDAOTest<User, Long> {
 		user.setUsername("testuser");
 		user.setPassword("guesswhat345");
 		user.setEmail("testuser@dummy.com");
-		DBUnitAssertionWork aWork = new DBUnitAssertionWork(
-				this.getClass(), "testPersist", TestConstants.TABLE_USER);
+		DBUnitAssertionWork aWork = new DBUnitAssertionWork(this.getClass(),
+				"testPersist", TestConstants.TABLE_USER);
 		aWork.replaceCreatedAt(user.getCreatedAt());
 		return $($(user, aWork));
 	}
@@ -182,4 +186,33 @@ public class UserJpaDAOTest extends GenericJpaDAOTest<User, Long> {
 		entity.setUsername("somenewusername");
 	}
 
+	protected Object[] getUsersFindByUsername() {
+		List<Object[]> params = new ArrayList<Object[]>();
+
+		Object[] objArr = getParamEntitiesFound();
+		for (Object obj : objArr) {
+			Object[] entry = (Object[]) obj;
+			User user = (User) entry[1];
+			params.add($(user.getUsername(), user));
+		}
+
+		return params.toArray();
+	}
+
+	@Test
+	@Parameters(method = "getUsersFindByUsername")
+	public void testFindByUsername(final String username, User expected) {
+		final UserJpaDAO userDao = (UserJpaDAO) dao;
+		User user = new TemplateWorker<User>(dao.getEm()) {
+			@Override
+			protected void doIt() {
+				setResult(userDao.findByUsername(username));
+			}
+
+		}.getResult();
+
+		assertEquals(expected, user);
+		assertEquals(expected.getGroups(), user.getGroups());
+		assertEquals(expected.getPassword(), user.getPassword());
+	}
 }
