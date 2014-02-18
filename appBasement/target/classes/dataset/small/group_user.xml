@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dataset>
+	<APP_GROUP_USER GROUP_ID="1" USER_ID="1">
+	</APP_GROUP_USER>
+	<APP_GROUP_USER GROUP_ID="11" USER_ID="2">
+	</APP_GROUP_USER>
+	<APP_GROUP_USER GROUP_ID="1" USER_ID="3">
+	</APP_GROUP_USER>
+	<APP_GROUP_USER GROUP_ID="11" USER_ID="3">
+	</APP_GROUP_USER>
+</dataset>
