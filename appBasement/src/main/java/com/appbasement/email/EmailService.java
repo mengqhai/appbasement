@@ -1,13 +1,17 @@
 package com.appbasement.email;
 
+import java.util.Map;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.appbasement.exception.EmailSendingException;
 
@@ -16,6 +20,9 @@ public class EmailService implements IEmailService {
 
 	@Autowired
 	protected JavaMailSender mailSender;
+
+	@Autowired
+	protected VelocityEngine velocityEngine;
 
 	protected void checkInvalidArgs(String from, String to, String subject,
 			String content) throws IllegalArgumentException {
@@ -67,5 +74,26 @@ public class EmailService implements IEmailService {
 		} catch (MessagingException e) {
 			throw new EmailSendingException(e);
 		}
+	}
+
+
+	/**
+	 * Sends rich email by using velocity template. Velocity resource loader
+	 * must be configured using velocity property file.
+	 * 
+	 * 
+	 * @param from
+	 * @param to
+	 * @param templateName
+	 *            the velocity template name
+	 * @param model
+	 * @param encoding
+	 */
+	@Override
+	public void sendTemplateRichEmail(String from, String to, String subject,
+			String templateName, Map<String, Object> model, String encoding) {
+		String richContent = VelocityEngineUtils.mergeTemplateIntoString(
+				velocityEngine, templateName, encoding, model);
+		this.sendRichEmail(from, to, subject, richContent);
 	}
 }
