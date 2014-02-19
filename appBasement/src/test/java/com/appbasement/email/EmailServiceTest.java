@@ -23,7 +23,7 @@ public class EmailServiceTest {
 
 	protected static ApplicationContext ctx;
 
-	protected static EmailService emailService;
+	protected static IEmailService emailService;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
