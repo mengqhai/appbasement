@@ -58,6 +58,9 @@ public class DBUnitHelper {
 							TestConstants.DATA_SET_SMALL_GROUP));
 					session.doWork(new DBUnitWork(
 							DatabaseOperation.CLEAN_INSERT,
+							TestConstants.DATA_SET_SMALL_TEMPLATE));
+					session.doWork(new DBUnitWork(
+							DatabaseOperation.CLEAN_INSERT,
 							TestConstants.DATA_SET_SMALL_GROUP_USER));
 				}
 			};

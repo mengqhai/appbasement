@@ -162,7 +162,7 @@ public class EmailServiceTest {
 		assertEquals(content, line);
 	}
 
-	public Object[] getTemplateRichMessageArguments() {
+	protected Object[] getTemplateRichMessageArguments() {
 		String from = "testfrom@mail.com";
 		String to = "testto@mail.com";
 		String subject = "test mail subject";

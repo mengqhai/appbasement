@@ -12,6 +12,6 @@
 	</bean>
 	<bean id="velocityEngine"
 		class="org.springframework.ui.velocity.VelocityEngineFactoryBean"
-		p:configLocation="classpath:velocity.test.properties">
+		p:configLocation="classpath:velocity/velocity.classpath.test.properties">
 	</bean>
 </beans>
