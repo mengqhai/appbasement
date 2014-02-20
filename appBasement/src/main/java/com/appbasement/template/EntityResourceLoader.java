@@ -1,41 +1,74 @@
 package com.appbasement.template;
 
 import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.Date;
 
 import org.apache.commons.collections.ExtendedProperties;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.appbasement.model.Template;
+import com.appbasement.persistence.ITemplateDAO;
 
 public class EntityResourceLoader extends ResourceLoader {
 
+	@Autowired
+	protected ITemplateDAO dao;
+
 	public EntityResourceLoader() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void init(ExtendedProperties configuration) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	public InputStream getResourceStream(String source)
+	public InputStream getResourceStream(String name)
 			throws ResourceNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		Template template = dao.findByName(name);
+		if (template != null) {
+			try {
+				return template.getDefinition().getAsciiStream();
+			} catch (SQLException e) {
+				throw new ResourceNotFoundException("Fail to load entity "
+						+ name, e);
+			}
+		} else {
+			throw new ResourceNotFoundException("No template entity named "
+					+ name);
+		}
+	}
+
+	protected long readLastUpdate(Resource resource) {
+		Date lastUpdate = dao.getLastUpdate(resource.getName());
+		if (lastUpdate != null) {
+			return lastUpdate.getTime();
+		} else {
+			throw new ResourceNotFoundException(
+					"Fail to load entity last update time:"
+							+ resource.getName());
+		}
 	}
 
 	@Override
 	public boolean isSourceModified(Resource resource) {
-		// TODO Auto-generated method stub
-		return false;
+		return resource.getLastModified() != this.readLastUpdate(resource);
 	}
 
 	@Override
 	public long getLastModified(Resource resource) {
-		// TODO Auto-generated method stub
-		return 0;
+		return dao.getLastUpdate(resource.getName()).getTime();
+	}
+
+	public ITemplateDAO getDao() {
+		return dao;
+	}
+
+	public void setDao(ITemplateDAO dao) {
+		this.dao = dao;
 	}
 
 }

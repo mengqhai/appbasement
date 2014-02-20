@@ -2,6 +2,7 @@ package com.appbasement.model;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.sql.Clob;
 import java.util.Date;
 
 import javax.persistence.Access;
@@ -12,6 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -21,12 +24,15 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "APP_TEMPLATE")
 @Access(AccessType.FIELD)
+@NamedQueries({ @NamedQuery(name = Template.QUERY_BY_NAME, query = "select t from Template as t where t.name=:name") })
 public class Template implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5072272475856592606L;
+
+	public static final String QUERY_BY_NAME = "Template-query_by_name";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -38,7 +44,7 @@ public class Template implements Serializable {
 
 	@Lob
 	@Column(nullable = false)
-	private String definition;
+	private Clob definition;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)
@@ -120,14 +126,12 @@ public class Template implements Serializable {
 				+ getLastUpdate() + "]";
 	}
 
-	public String getDefinition() {
+	public Clob getDefinition() {
 		return definition;
 	}
 
-	public void setDefinition(String definition) {
+	public void setDefinition(Clob definition) {
 		this.definition = definition;
 	}
-
-
 
 }

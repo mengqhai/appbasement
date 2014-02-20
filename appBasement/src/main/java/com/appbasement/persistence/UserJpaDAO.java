@@ -3,6 +3,7 @@ package com.appbasement.persistence;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
@@ -38,7 +39,14 @@ public class UserJpaDAO extends GenericJpaDAO<User, Long> implements IUserDAO {
 		}
 		Query q = getEm().createNamedQuery(User.QUERY_BY_USERNAME, User.class);
 		q.setParameter("username", username);
-		return (User) q.getSingleResult();
+		User result = null;
+		try {
+			result = (User) q.getSingleResult();
+		} catch (NoResultException e) {
+			// not found, do nothing
+		}
+
+		return result;
 	}
 
 }

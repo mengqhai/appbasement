@@ -1,7 +1,7 @@
 package com.appbasement.persistence;
 
 import static junitparams.JUnitParamsRunner.$;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.NoResultException;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -214,5 +216,23 @@ public class UserJpaDAOTest extends GenericJpaDAOTest<User, Long> {
 		assertEquals(expected, user);
 		assertEquals(expected.getGroups(), user.getGroups());
 		assertEquals(expected.getPassword(), user.getPassword());
+	}
+
+	protected Object[] getUsersFindByUsernameNotFound() {
+		return $($("NoSuchUserName"));
+	}
+
+	@Test
+	@Parameters(method = "getUsersFindByUsernameNotFound")
+	public void testFindByUsernameNotFound(final String username) {
+		final UserJpaDAO userDao = (UserJpaDAO) dao;
+		User user = new TemplateWorker<User>(dao.getEm()) {
+			@Override
+			protected void doIt() {
+				setResult(userDao.findByUsername(username));
+			}
+
+		}.getResult();
+		assertNull(user);
 	}
 }
