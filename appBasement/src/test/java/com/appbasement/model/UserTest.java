@@ -113,6 +113,7 @@ public class UserTest {
 		// sub class should pass equals (book JPWH CH9.2.3.1)
 		User user1111 = new User("user1");
 		user1111.setEmail("user1@gmail.com");
+		@SuppressWarnings("serial")
 		User user2222 = new User() {
 		};
 		user2222.setUsername("user1");

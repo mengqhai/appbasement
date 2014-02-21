@@ -6,9 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -26,9 +24,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.subethamail.wiser.Wiser;
 import org.subethamail.wiser.WiserMessage;
-
-import com.appbasement.service.email.EmailService;
-import com.appbasement.service.email.IEmailService;
 
 @RunWith(JUnitParamsRunner.class)
 public class EmailServiceTest {

@@ -4,7 +4,6 @@ import java.sql.Clob;
 import java.sql.Connection;
 import java.util.Date;
 
-import javax.mail.MethodNotSupportedException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.appbasement.exception.TemplateException;
 import com.appbasement.model.Template;
 import com.appbasement.util.AppBasementUtil;
 
