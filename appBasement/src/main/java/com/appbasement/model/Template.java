@@ -1,14 +1,15 @@
 package com.appbasement.model;
 
 import java.io.Serializable;
-import java.nio.charset.Charset;
 import java.sql.Clob;
 import java.util.Date;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -42,7 +43,12 @@ public class Template implements Serializable {
 	@Column(nullable = false, unique = true, length = 50)
 	private String name;
 
+	/**
+	 * velocity ResourceLoader requires stream of template resource, so have to
+	 * define this field as CLOB
+	 */
 	@Lob
+	@Basic(fetch = FetchType.LAZY)
 	@Column(nullable = false)
 	private Clob definition;
 

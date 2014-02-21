@@ -10,7 +10,7 @@
 
 
 
-	<context:component-scan base-package="com.appbasement.template" />
+	<context:component-scan base-package="com.appbasement.service.template" />
 
 
 	<context:property-placeholder location="classpath:hibernate.properties" />
@@ -61,7 +61,7 @@
 		</property>
 	</bean>
 
-	<bean id="velocityResourceLoader" class="com.appbasement.template.EntityResourceLoader"
+	<bean id="velocityResourceLoader" class="com.appbasement.service.template.EntityResourceLoader"
 		p:dao-ref="templateDao" depends-on="templateDao">
 	</bean>
 

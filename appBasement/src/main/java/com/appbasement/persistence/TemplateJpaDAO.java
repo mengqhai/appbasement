@@ -1,5 +1,7 @@
 package com.appbasement.persistence;
 
+import java.sql.Clob;
+import java.sql.Connection;
 import java.util.Date;
 
 import javax.persistence.EntityManager;
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.appbasement.model.Template;
+import com.appbasement.util.AppBasementUtil;
 
 @Repository("templateDao")
 @Transactional(propagation = Propagation.REQUIRED)
@@ -18,7 +21,6 @@ public class TemplateJpaDAO extends GenericJpaDAO<Template, Long> implements
 		ITemplateDAO {
 
 	public TemplateJpaDAO() {
-		System.out.println("TemplateDAO");
 	}
 
 	public TemplateJpaDAO(EntityManager em) {
@@ -50,6 +52,27 @@ public class TemplateJpaDAO extends GenericJpaDAO<Template, Long> implements
 		} catch (NoResultException e) {
 		}
 		return result;
+	}
+
+	@Override
+	public void setDefinition(Template template, String definition) {
+		Clob clob = template.getDefinition();
+		if (clob == null) {
+			Connection conn = getEm().unwrap(Connection.class);
+			AppBasementUtil.createWriteClob(definition, conn);
+		} else {
+			AppBasementUtil.updateClob(definition, clob);
+		}
+	}
+
+	@Override
+	public String getDefinition(Template template) {
+		Clob clob = template.getDefinition();
+		if (clob == null) {
+			return null;
+		} else {
+			return AppBasementUtil.readClob(clob);
+		}
 	}
 
 }

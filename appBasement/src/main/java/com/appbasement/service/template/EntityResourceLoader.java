@@ -1,4 +1,4 @@
-package com.appbasement.template;
+package com.appbasement.service.template;
 
 import java.io.InputStream;
 import java.sql.SQLException;

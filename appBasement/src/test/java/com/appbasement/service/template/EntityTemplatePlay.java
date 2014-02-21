@@ -1,10 +1,12 @@
-package com.appbasement.template;
+package com.appbasement.service.template;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.appbasement.service.template.ITemplateService;
 
 public class EntityTemplatePlay {
 	protected static String ctxPath = "context/context-template.xml";

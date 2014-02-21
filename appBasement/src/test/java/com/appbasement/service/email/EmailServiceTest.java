@@ -1,4 +1,4 @@
-package com.appbasement.email;
+package com.appbasement.service.email;
 
 import static junitparams.JUnitParamsRunner.$;
 import static org.junit.Assert.assertEquals;
@@ -26,6 +26,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.subethamail.wiser.Wiser;
 import org.subethamail.wiser.WiserMessage;
+
+import com.appbasement.service.email.EmailService;
+import com.appbasement.service.email.IEmailService;
 
 @RunWith(JUnitParamsRunner.class)
 public class EmailServiceTest {
@@ -162,50 +165,4 @@ public class EmailServiceTest {
 		assertEquals(content, line);
 	}
 
-	protected Object[] getTemplateRichMessageArguments() {
-		String from = "testfrom@mail.com";
-		String to = "testto@mail.com";
-		String subject = "test mail subject";
-		String template = "velocity/emailTemplate.vm";
-		String username = "Nick";
-		String words = "It's funny!";
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("username", username);
-		model.put("words", words);
-		return $($(from, to, subject, template, model));
-	}
-
-	@Test
-	@Parameters(method = "getTemplateRichMessageArguments")
-	public void testSendTemplateRichMessage(String from, String to,
-			String subject, String template, Map<String, Object> model)
-			throws Exception {
-
-		emailService.sendTemplateRichEmail(from, to, subject, template, model,
-				"UTF-8");
-
-		List<WiserMessage> mList = wiser.getMessages();
-		assertEquals(1, mList.size());
-		WiserMessage m = mList.get(0);
-		MimeMessage mm = m.getMimeMessage();
-		assertTrue(mm.getContentType().startsWith("multipart/mixed;"));
-		assertTrue(mm.getContentType().contains("boundary="));
-		assertTrue(mm.getContent() instanceof MimeMultipart);
-		MimeMultipart part = (MimeMultipart) mm.getContent();
-
-		assertTrue(part.getBodyPart(0) instanceof MimeBodyPart);
-		MimeBodyPart body = (MimeBodyPart) part.getBodyPart(0);
-		BufferedReader reader = new BufferedReader(new InputStreamReader(
-				body.getInputStream()));
-		String line = reader.readLine();
-		StringBuffer content = new StringBuffer();
-		while (line != null) {
-			content.append(line);
-			line = reader.readLine();
-		}
-
-		for (String key : model.keySet()) {
-			content.toString().contains((String) model.get(key));
-		}
-	}
 }
