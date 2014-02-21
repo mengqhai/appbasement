@@ -3,9 +3,13 @@ package com.appbasement.persistence;
 import static junitparams.JUnitParamsRunner.$;
 import static org.junit.Assert.*;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 
 import org.hibernate.Session;
 import org.junit.AfterClass;
@@ -47,32 +51,40 @@ public class TemplateJpaDAOTest extends GenericJpaDAOTest<Template, Long> {
 
 	@Override
 	protected Object[] getIdsForRemove() {
-		// TODO Auto-generated method stub
-		return $($());
+		return $($(1l), $(2l));
 	}
 
 	@Override
 	protected Object[] getInvalidIdsForRemove() {
-		// TODO Auto-generated method stub
-		return $($());
+		return $($(0l), $(-1l), $(1000l));
 	}
 
 	@Override
 	protected Object[] getParamEntitiesNotFound() {
-		// TODO Auto-generated method stub
-		return $($());
+		return $($(0l, null), $(-1l, null), $(1000l, null));
 	}
 
 	@Override
 	protected Object[] getParamEntitiesFound() {
-		// TODO Auto-generated method stub
-		return $($());
+		return $(
+				$(1l,
+						new Template().setName("testTemplate").setLastUpdate(
+								Timestamp.valueOf("2013-03-01 22:26:26"))),
+				$(2l,
+						new Template().setName("testTemplate2").setLastUpdate(
+								Timestamp.valueOf("2013-02-01 22:30:26"))));
 	}
 
 	@Override
 	protected Object[] findAllAssertion() {
-		// TODO Auto-generated method stub
-		return $($());
+		int resultListSize = 2;
+		Collection<Template> mustContain = new ArrayList<Template>();
+		Object[] objArr = getParamEntitiesFound();
+		for (Object obj : objArr) {
+			Object[] entry = (Object[]) obj;
+			mustContain.add((Template) entry[1]);
+		}
+		return $($(resultListSize, mustContain));
 	}
 
 	@Override
@@ -116,13 +128,12 @@ public class TemplateJpaDAOTest extends GenericJpaDAOTest<Template, Long> {
 
 	@Override
 	protected Object[] getPersistEntitiesInvalid() {
-		// TODO Auto-generated method stub
-		return $($());
+		return $($(new Template()));
 	}
 
 	@Override
 	protected Object[] getMergeEntities() {
-		return $($());
+		return $($(1l, null));
 	}
 
 	@Override
@@ -130,13 +141,13 @@ public class TemplateJpaDAOTest extends GenericJpaDAOTest<Template, Long> {
 			Map<String, Object> modifiedAtts) {
 	}
 
-	@Override
-	@Ignore
-	@Test
 	/**
 	 * Template doesn't support to be modfied in detached state.
 	 * 
 	 */
+	@Override
+	@Test
+	@Ignore
 	public void testMerge(final Long id, final DBUnitAssertionWork aWork) {
 	}
 
@@ -214,6 +225,43 @@ public class TemplateJpaDAOTest extends GenericJpaDAOTest<Template, Long> {
 				session.doWork(aWork);
 			}
 		};
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testSetGetDefinitionIllegalState() {
+		final ITemplateDAO tDao = (ITemplateDAO) dao;
+		final Template dTemplate = new TemplateWorker<Template>(dao.getEm()) {
+			@Override
+			protected void doIt() {
+				setResult(dao.findById(1l));
+			}
+		}.getResult();
+		// Force detach
+		dao.getEm().detach(dTemplate);
+		new TemplateWorker<Template>(dao.getEm()) {
+			@Override
+			protected void doIt() {
+				tDao.setDefinition(dTemplate, "fail");
+			}
+		};
+	}
+
+	protected Object[] getSetDefinitionInvalidArguments() {
+		return $($(null, "some"), $(new Template().setName("hello"), null));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	@Parameters(method = "getSetDefinitionInvalidArguments")
+	public void testSetDefinitionInvalidArguments(Template template,
+			String definition) {
+		final ITemplateDAO tDao = (ITemplateDAO) dao;
+		tDao.setDefinition(template, definition);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetDefinitionInvalidArguments() {
+		final ITemplateDAO tDao = (ITemplateDAO) dao;
+		tDao.getDefinition(null);
 	}
 
 }

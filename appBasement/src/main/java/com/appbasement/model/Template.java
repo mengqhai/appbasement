@@ -114,16 +114,18 @@ public class Template implements Serializable {
 		return name;
 	}
 
-	public void setName(String name) {
+	public Template setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public Date getLastUpdate() {
 		return lastUpdate;
 	}
 
-	public void setLastUpdate(Date lastUpdate) {
+	public Template setLastUpdate(Date lastUpdate) {
 		this.lastUpdate = lastUpdate;
+		return this;
 	}
 
 	@Override

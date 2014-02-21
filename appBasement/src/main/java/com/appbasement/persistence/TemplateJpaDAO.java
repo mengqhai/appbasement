@@ -58,6 +58,14 @@ public class TemplateJpaDAO extends GenericJpaDAO<Template, Long> implements
 
 	@Override
 	public void setDefinition(Template template, String definition) {
+		if (template == null) {
+			throw new IllegalArgumentException("Template is null");
+		}
+
+		if (definition == null) {
+			throw new IllegalArgumentException("Definition string is null");
+		}
+
 		Clob clob = template.getDefinition();
 		if (clob != null && !getEm().contains(template)) {
 			// check wether the template is in detached state
@@ -73,6 +81,9 @@ public class TemplateJpaDAO extends GenericJpaDAO<Template, Long> implements
 
 	@Override
 	public String getDefinition(Template template) {
+		if (template == null)
+			throw new IllegalArgumentException("Template is null");
+
 		Clob clob = template.getDefinition();
 		if (clob == null) {
 			return null;
@@ -81,6 +92,10 @@ public class TemplateJpaDAO extends GenericJpaDAO<Template, Long> implements
 		}
 	}
 
+	/**
+	 * Not supported operation.
+	 * 
+	 */
 	@Override
 	public Template merge(Template entity) {
 		throw new TemplateException(

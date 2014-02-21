@@ -57,6 +57,10 @@ public class UserTest {
 		User user2 = new User("user2");
 		userSet.add(user1);
 		userSet.add(user2);
+		
+		user1.setId(1l);
+		user2.setId(2l);
+		
 		assertEquals(2, userSet.size());
 		assertTrue(userSet.contains(user1));
 		assertTrue(userSet.contains(user2));
