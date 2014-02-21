@@ -19,6 +19,13 @@ public class TemplateService implements ITemplateService {
 	@Override
 	public String mergeTemplateToString(String name, String encoding,
 			Map<String, Object> model) {
+		if (name == null || name.equals("")) {
+			throw new IllegalArgumentException(
+					"Template name is null or empty: " + name);
+		}
+		if (encoding == null || encoding.equals("")) {
+			encoding = "UTF-8";
+		}
 		return VelocityEngineUtils.mergeTemplateIntoString(velocityEngine,
 				name, encoding, model);
 	}
