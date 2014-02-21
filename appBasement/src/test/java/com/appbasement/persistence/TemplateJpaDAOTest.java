@@ -155,7 +155,6 @@ public class TemplateJpaDAOTest extends GenericJpaDAOTest<Template, Long> {
 	@Test(expected = UnsupportedOperationException.class)
 	public void testMergeNotSupport() {
 		dao.merge(new Template());
-		System.out.println("");
 	}
 
 	@Test
