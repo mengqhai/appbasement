@@ -54,7 +54,7 @@ public class TemplateServiceTest {
 		return $($(null, ""), $(null, null));
 	}
 
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	@Parameters(method = "getTemplateNamesIllegal")
 	public void testMergeTemplateToStringIllegal(String name, String encoding) {
 		templateService.mergeTemplateToString(name, encoding, null);
