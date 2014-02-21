@@ -1,11 +1,15 @@
 package com.appbasement.persistence;
 
 import static junitparams.JUnitParamsRunner.$;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import junitparams.JUnitParamsRunner;
@@ -14,12 +18,10 @@ import junitparams.Parameters;
 import org.hibernate.Session;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.appbasement.model.Template;
-import com.appbasement.model.User;
 import com.appbasement.persistence.util.DBUnitAssertionWork;
 import com.appbasement.persistence.util.EmfHelper;
 import com.appbasement.persistence.util.TemplateWorker;
@@ -133,22 +135,12 @@ public class TemplateJpaDAOTest extends GenericJpaDAOTest<Template, Long> {
 
 	@Override
 	protected Object[] getMergeEntities() {
-		return $($(1l, null));
+		return $($());
 	}
 
 	@Override
 	protected void mergeUpdateInDetached(Template entity,
 			Map<String, Object> modifiedAtts) {
-	}
-
-	/**
-	 * Template doesn't support to be modfied in detached state.
-	 * 
-	 */
-	@Override
-	@Test
-	@Ignore
-	public void testMerge(final Long id, final DBUnitAssertionWork aWork) {
 	}
 
 	@Override
@@ -158,6 +150,12 @@ public class TemplateJpaDAOTest extends GenericJpaDAOTest<Template, Long> {
 
 	@Override
 	protected void mergeUpdateImmutableInDetached(Template entity) {
+	}
+
+	@Test(expected = UnsupportedOperationException.class)
+	public void testMergeNotSupport() {
+		dao.merge(new Template());
+		System.out.println("");
 	}
 
 	@Test
@@ -219,7 +217,7 @@ public class TemplateJpaDAOTest extends GenericJpaDAOTest<Template, Long> {
 		aWork.replaceLastUpdate(updated.getLastUpdate());
 
 		final Session session = dao.getEm().unwrap(Session.class);
-		new TemplateWorker<User>(dao.getEm()) {
+		new TemplateWorker<Template>(dao.getEm()) {
 			@Override
 			protected void doIt() {
 				session.doWork(aWork);
@@ -262,6 +260,62 @@ public class TemplateJpaDAOTest extends GenericJpaDAOTest<Template, Long> {
 	public void testGetDefinitionInvalidArguments() {
 		final ITemplateDAO tDao = (ITemplateDAO) dao;
 		tDao.getDefinition(null);
+	}
+
+	protected Object[] getTemplateFindByName() {
+		List<Object[]> params = new ArrayList<Object[]>();
+
+		Object[] objArr = getParamEntitiesFound();
+		for (Object obj : objArr) {
+			Object[] entry = (Object[]) obj;
+			Template template = (Template) entry[1];
+			params.add($(template.getName(), template));
+		}
+
+		return params.toArray();
+	}
+
+	@Test
+	@Parameters(method = "getTemplateFindByName")
+	public void testFindTemplateByName(final String name,
+			final Template expected) {
+		final ITemplateDAO tDao = (ITemplateDAO) dao;
+		new TemplateWorker<Template>(dao.getEm()) {
+			@Override
+			protected void doIt() {
+				Template template = tDao.findByName(name);
+				assertEquals(expected, template);
+			}
+		};
+	}
+
+	@Test
+	public void testFindTemplateByNameNotFound() {
+		final ITemplateDAO tDao = (ITemplateDAO) dao;
+		new TemplateWorker<Template>(dao.getEm()) {
+			@Override
+			protected void doIt() {
+				Template template = tDao.findByName("NoSuchTemplate");
+				assertEquals(null, template);
+			}
+		};
+	}
+
+	protected Object[] getLastUpdateParams() {
+		return $($("testTemplate", Timestamp.valueOf("2013-03-01 22:26:26")),
+				$("testTemplate2", Timestamp.valueOf("2013-02-01 22:30:26")));
+	}
+
+	@Test
+	@Parameters(method = "getLastUpdateParams")
+	public void testGetLastUpdate(final String name, final Date time) {
+		final ITemplateDAO tDao = (ITemplateDAO) dao;
+		new TemplateWorker<Template>(dao.getEm()) {
+			@Override
+			protected void doIt() {
+				assertEquals(time.getTime(), tDao.getLastUpdate(name).getTime());
+			}
+		};
 	}
 
 }

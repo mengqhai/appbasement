@@ -98,9 +98,8 @@ public class TemplateJpaDAO extends GenericJpaDAO<Template, Long> implements
 	 */
 	@Override
 	public Template merge(Template entity) {
-		throw new TemplateException(
-				new MethodNotSupportedException(
-						"Template doesn't support detached modification(becaucse of the Clob field)."));
+		throw new UnsupportedOperationException(
+				"Template doesn't support detached modification(becaucse of the Clob field).");
 	}
 
 }
