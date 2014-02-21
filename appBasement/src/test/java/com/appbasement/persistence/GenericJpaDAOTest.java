@@ -49,6 +49,11 @@ public abstract class GenericJpaDAOTest<T, ID extends Serializable> {
 		dao.getEm().close();
 	}
 
+	/**
+	 * used by testRemove(final ID id)
+	 * 
+	 * @return
+	 */
 	protected abstract Object[] getIdsForRemove();
 
 	@Test
@@ -237,7 +242,7 @@ public abstract class GenericJpaDAOTest<T, ID extends Serializable> {
 	 * @param entity
 	 * @param modifiedAtts
 	 */
-	public abstract void mergeUpdateInDetached(T entity,
+	protected abstract void mergeUpdateInDetached(T entity,
 			Map<String, Object> modifiedAtts);
 
 	/**
@@ -273,6 +278,7 @@ public abstract class GenericJpaDAOTest<T, ID extends Serializable> {
 			@Override
 			protected void doIt() {
 				Object idObj = UtUtil.getField(entity, "id");
+				@SuppressWarnings("unchecked")
 				ID id = (ID) idObj;
 				setResult(dao.findById(id));
 				Hibernate.initialize(getResult());

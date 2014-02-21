@@ -4,6 +4,7 @@ import java.sql.Clob;
 import java.sql.Connection;
 import java.util.Date;
 
+import javax.mail.MethodNotSupportedException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.appbasement.exception.TemplateException;
 import com.appbasement.model.Template;
 import com.appbasement.util.AppBasementUtil;
 
@@ -57,12 +59,16 @@ public class TemplateJpaDAO extends GenericJpaDAO<Template, Long> implements
 	@Override
 	public void setDefinition(Template template, String definition) {
 		Clob clob = template.getDefinition();
-		if (clob == null) {
-			Connection conn = getEm().unwrap(Connection.class);
-			AppBasementUtil.createWriteClob(definition, conn);
-		} else {
-			AppBasementUtil.updateClob(definition, clob);
+		if (clob != null && !getEm().contains(template)) {
+			// check wether the template is in detached state
+			throw new IllegalStateException("Template is in detached state: "
+					+ template);
 		}
+
+		// Unable to write to existing Clob, always need to create new one
+		Connection conn = AppBasementUtil.getConnection(getEm());
+		clob = AppBasementUtil.createWriteClob(definition, conn);
+		template.setDefinition(clob);
 	}
 
 	@Override
@@ -73,6 +79,13 @@ public class TemplateJpaDAO extends GenericJpaDAO<Template, Long> implements
 		} else {
 			return AppBasementUtil.readClob(clob);
 		}
+	}
+
+	@Override
+	public Template merge(Template entity) {
+		throw new TemplateException(
+				new MethodNotSupportedException(
+						"Template doesn't support detached modification(becaucse of the Clob field)."));
 	}
 
 }

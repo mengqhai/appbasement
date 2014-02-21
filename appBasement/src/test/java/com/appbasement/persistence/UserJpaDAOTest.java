@@ -1,8 +1,9 @@
 package com.appbasement.persistence;
 
 import static junitparams.JUnitParamsRunner.$;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Timestamp;
@@ -12,8 +13,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.persistence.NoResultException;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -145,7 +144,7 @@ public class UserJpaDAOTest extends GenericJpaDAOTest<User, Long> {
 	}
 
 	@Override
-	public void mergeUpdateInDetached(User entity,
+	protected void mergeUpdateInDetached(User entity,
 			Map<String, Object> modifiedAtts) {
 		switch (entity.getId().toString()) {
 		case "1":

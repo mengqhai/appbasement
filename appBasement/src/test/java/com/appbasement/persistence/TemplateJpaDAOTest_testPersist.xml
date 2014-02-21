@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dataset>
+	<!-- xml escape tool http://www.freeformatter.com/xml-escape.html -->
+	<APP_TEMPLATE id="[ID]" name="helloTemplate"
+		definition="this is a template"
+		lastUpdate="[LAST_UPDATE]" />
+</dataset>

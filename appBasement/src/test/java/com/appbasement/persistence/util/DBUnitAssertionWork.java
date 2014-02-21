@@ -117,6 +117,10 @@ public class DBUnitAssertionWork implements Work {
 		return replace("[CREATED_AT]", time);
 	}
 
+	public DBUnitAssertionWork replaceLastUpdate(Date time) {
+		return replace("[LAST_UPDATE]", time);
+	}
+
 	public String getWhereCondition() {
 		return whereCondition;
 	}

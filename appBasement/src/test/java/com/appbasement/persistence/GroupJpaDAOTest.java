@@ -132,7 +132,7 @@ public class GroupJpaDAOTest extends GenericJpaDAOTest<Group, Long> {
 	}
 
 	@Override
-	public void mergeUpdateInDetached(Group entity,
+	protected void mergeUpdateInDetached(Group entity,
 			Map<String, Object> modifiedAtts) {
 		String name = "modified";
 		entity.setName(name);
