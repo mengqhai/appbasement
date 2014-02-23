@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.appbasement.model.Group;
 import com.appbasement.model.User;
 
-@Repository
+@Repository("groupDao")
 @Transactional
 public class GroupJpaDAO extends GenericJpaDAO<Group, Long> implements
 		IGroupDAO {

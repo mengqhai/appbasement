@@ -13,17 +13,17 @@
 	<context:component-scan base-package="com.appbasement.service.template" />
 
 
-	<context:property-placeholder location="classpath:hibernate.properties" />
+	<!-- <context:property-placeholder location="classpath:hibernate.properties" />
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource"
 		p:driverClassName="${hibernate.connection.driver_class}" p:url="${hibernate.connection.url}"
 		p:username="${hibernate.connection.username}" p:password="${hibernate.connection.password}">
 	</bean>
 
-	<!-- For JPA to handle @PersistentContext (injecting Entity Manager) -->
+	For JPA to handle @PersistentContext (injecting Entity Manager)
 	<bean
 		class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
-	<!-- JPA (container managed) -->
+	JPA (container managed)
 	<bean id="emf"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="dataSource" ref="dataSource"></property>
@@ -41,11 +41,11 @@
 		<property name="generateDdl" value="true"></property>
 		<property name="databasePlatform" value="${hibernate.dialect}"></property>
 	</bean>
-	<!-- Transaction management -->
+	Transaction management
 	<tx:annotation-driven transaction-manager="transactionManager" />
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="emf"></property>
-	</bean>
+	</bean> -->
 
 
 

@@ -17,7 +17,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 @RunWith(JUnitParamsRunner.class)
 public class TemplateServiceTest {
 
-	protected static String ctxPath = "context/context-template.xml";
+	protected static String[] ctxPath = { "context/context-placeholder.xml",
+			"context/context-persistence.xml",
+			"test-context/context-service-template.xml" };
 
 	protected static ApplicationContext ctx;
 

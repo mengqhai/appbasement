@@ -30,7 +30,8 @@ public class EmailServiceTest {
 
 	protected static Wiser wiser;
 
-	protected static String ctxPath = "context/context-email.xml";
+	protected static String[] ctxPath = { "context/context-placeholder.xml",
+			"test-context/context-service-email.xml" };
 
 	protected static ApplicationContext ctx;
 

@@ -65,6 +65,7 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 		c.select(from);
 		return em.createQuery(c).getResultList();
 	}
+	
 
 	@Override
 	public T getReference(ID id) {

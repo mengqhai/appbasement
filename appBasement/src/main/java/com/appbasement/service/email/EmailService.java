@@ -18,9 +18,6 @@ public class EmailService implements IEmailService {
 	@Autowired
 	protected JavaMailSender mailSender;
 
-	@Autowired
-	protected VelocityEngine velocityEngine;
-
 	protected void checkInvalidArgs(String from, String to, String subject,
 			String content) throws IllegalArgumentException {
 		if (from == null || "".equals(from)) {

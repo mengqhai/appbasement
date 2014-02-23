@@ -9,14 +9,13 @@ import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.appbasement.model.Template;
 import com.appbasement.util.AppBasementUtil;
 
 @Repository("templateDao")
-@Transactional(propagation = Propagation.REQUIRED)
+@Transactional
 public class TemplateJpaDAO extends GenericJpaDAO<Template, Long> implements
 		ITemplateDAO {
 

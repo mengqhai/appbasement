@@ -7,9 +7,14 @@
 	<servlet>
 		<servlet-name>appBasement</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-				<init-param>
+		<init-param>
 			<param-name>contextConfigLocation</param-name>
-			<param-value>/WEB-INF/context-mvc.xml</param-value>
+			<param-value>
+				classpath:context/context-placeholder.xml
+				classpath:context/context-persistence.xml
+				classpath:context/context-service.xml
+				classpath:context/context-mvc.xml
+			</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
