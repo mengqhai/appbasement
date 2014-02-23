@@ -12,7 +12,7 @@
 	<div>
 		<ol>
 			<c:forEach var="user" items="${users}">
-				<li><c:out value="${user}"></c:out></li>
+				<li><c:out value="${user.username}"></c:out></li>
 			</c:forEach>
 		</ol>
 	</div>
