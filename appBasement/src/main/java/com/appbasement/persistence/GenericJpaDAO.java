@@ -58,14 +58,16 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 	}
 
 	@Override
+	/**
+	 * Ordered by id desc
+	 */
 	public List<T> findAll() {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<T> c = cb.createQuery(getPersistentClass());
 		Root<T> from = c.from(getPersistentClass());
-		c.select(from);
+		c.select(from).orderBy(cb.desc(from.get("id")));
 		return em.createQuery(c).getResultList();
 	}
-	
 
 	@Override
 	public T getReference(ID id) {
