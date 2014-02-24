@@ -25,20 +25,25 @@ public class AppUserService implements IAppUserService {
 	public List<User> getAllUsers() {
 		return userDao.findAll();
 	}
-	
+
 	@Override
 	public void saveUser(User user) {
-		if(user.getId()==null) {
+		if (user.getId() == null) {
 			userDao.persist(user);
 		} else {
 			userDao.merge(user);
 		}
 	}
-	
-	
+
 	@Override
 	public User getUserById(Long id) {
 		return userDao.findById(id);
+	}
+
+	@Override
+	public void deleteUserById(Long id) {
+		User userToDelete = userDao.getReference(id);
+		userDao.remove(userToDelete);
 	}
 
 }

@@ -52,4 +52,10 @@ public class AppUserController {
 		return APP_BASEMENT + "/user_edit";
 	}
 
+	@RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
+	public String deleteUser(@PathVariable Long userId) {
+		userService.deleteUserById(userId);
+		return "redirect:/" + APP_BASEMENT + "/user";
+	}
+
 }

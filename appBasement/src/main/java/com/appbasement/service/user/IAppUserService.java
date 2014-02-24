@@ -12,4 +12,6 @@ public interface IAppUserService {
 
 	public abstract User getUserById(Long id);
 
+	public abstract void deleteUserById(Long id);
+
 }
