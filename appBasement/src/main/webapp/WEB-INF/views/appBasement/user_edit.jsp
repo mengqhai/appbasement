@@ -13,7 +13,7 @@
 <body>
 	<h2>User management</h2>
 	<h2>Edit User</h2>
-	<dir id="editUser">
+	<div id="editUser">
 		<s:url value="/appBasement/user" var="user_url"></s:url>
 		<sf:form method="POST" modelAttribute="user" action="${user_url}">
 			<table cellspacing="0">
@@ -37,6 +37,6 @@
 				</tr>
 			</table>
 		</sf:form>
-	</dir>
+	</div>
 </body>
 </html>

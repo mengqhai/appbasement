@@ -43,7 +43,10 @@
 					| <fmt:formatDate value="${user.createdAt}"
 							pattern="hh:mma MMM d, yyyy" /> | 
 						<input type="submit" value="Delete"
-							onclick="return confirmDelete('${user.username}')" />
+							onclick="return confirmDelete('${user.username}')" /> | 
+							<s:url value="/appBasement/user/${user.id}/group"
+							var="user_group_url" />
+						<a href="${user_group_url}">Groups</a>
 					</sf:form></li>
 			</c:forEach>
 		</ul>

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,6 +57,15 @@ public class AppUserController {
 	public String deleteUser(@PathVariable Long userId) {
 		userService.deleteUserById(userId);
 		return "redirect:/" + APP_BASEMENT + "/user";
+	}
+
+	@RequestMapping("/{userId}/group")
+	@Transactional
+	public String showUserGroups(@PathVariable Long userId, Model model) {
+		User user = userService.getUserById(userId);
+		user.getGroups().toString();
+		model.addAttribute(user);
+		return APP_BASEMENT + "/user_group";
 	}
 
 }
