@@ -14,4 +14,6 @@ public interface IAppUserService {
 
 	public abstract void deleteUserById(Long id);
 
+	public abstract void removeUserFromGroup(Long userId, Long groupId);
+
 }

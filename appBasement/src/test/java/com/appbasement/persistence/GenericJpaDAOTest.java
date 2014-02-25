@@ -30,7 +30,6 @@ import com.appbasement.persistence.util.EmfHelper;
 import com.appbasement.persistence.util.TemplateWorker;
 import com.appbasement.persistence.util.UtUtil;
 
-@Ignore
 public abstract class GenericJpaDAOTest<T, ID extends Serializable> {
 
 	protected GenericJpaDAO<T, ID> dao = null;
@@ -206,6 +205,7 @@ public abstract class GenericJpaDAOTest<T, ID extends Serializable> {
 
 	protected abstract Object[] getPersistEntitiesInvalid();
 
+	
 	@Test(expected = PersistenceException.class)
 	@Parameters(method = "getPersistEntitiesInvalid")
 	public void testPersistInvalidEntity(final T invalidEntity) {

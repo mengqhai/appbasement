@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.appbasement.model.Group;
 import com.appbasement.model.User;
 import com.appbasement.persistence.IGroupDAO;
 import com.appbasement.persistence.IUserDAO;
@@ -46,5 +47,11 @@ public class AppUserService implements IAppUserService {
 		userDao.remove(userToDelete);
 	}
 
+	@Override
+	public void removeUserFromGroup(Long userId, Long groupId) {
+		User user = userDao.findById(userId);
+		Group group = groupDao.getReference(groupId);
+		user.removeFromGroup(group);
+	}
 
 }

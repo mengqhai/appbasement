@@ -14,9 +14,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.ConstraintViolationException;
+
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
+import org.hibernate.validator.internal.util.Contracts;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -130,9 +133,21 @@ public class UserJpaDAOTest extends GenericJpaDAOTest<User, Long> {
 
 	@Override
 	protected Object[] getPersistEntitiesInvalid() {
+		// Ignore the testPersistInvalidEntity case in super class
+		return $();
+	}
+
+	protected Object[] getPersistEntitiesValidationFail() {
 		return $($(new User(null, "pass").setEmail("someadd@some.com"),
 				new User("user1", null).setEmail("someadd@some.com"),
 				new User(), new User("user", "pass")));
+	}
+
+	@Override
+	@Test(expected = ConstraintViolationException.class)
+	@Parameters(method = "getPersistEntitiesValidationFail")
+	public void testPersistInvalidEntity(User invalidEntity) {
+		super.testPersistInvalidEntity(invalidEntity);
 	}
 
 	@Override

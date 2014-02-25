@@ -12,10 +12,14 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.validation.ConstraintViolationException;
+
 import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.appbasement.model.Group;
@@ -120,7 +124,18 @@ public class GroupJpaDAOTest extends GenericJpaDAOTest<Group, Long> {
 
 	@Override
 	protected Object[] getPersistEntitiesInvalid() {
+		return $();
+	}
+
+	protected Object[] getPersistEntitiesValidationFail() {
 		return $($(new Group()));
+	}
+
+	@Override
+	@Test(expected = ConstraintViolationException.class)
+	@Parameters(method = "getPersistEntitiesValidationFail")
+	public void testPersistInvalidEntity(Group invalidEntity) {
+		super.testPersistInvalidEntity(invalidEntity);
 	}
 
 	@Override

@@ -37,7 +37,8 @@ public class DBUnitHelper {
 		}
 	}
 
-	public static void importDataSet(EntityManagerFactory emf) {
+	public static void importDataSet(EntityManagerFactory emf,
+			final String... dataSets) {
 		try {
 			EntityManager em = emf.createEntityManager();
 			final Session session = em.unwrap(Session.class);
@@ -50,18 +51,10 @@ public class DBUnitHelper {
 							TestConstants.DATA_SET_CLEAN_TABLES));
 
 					// import new data
-					session.doWork(new DBUnitWork(
-							DatabaseOperation.CLEAN_INSERT,
-							TestConstants.DATA_SET_SMALL_USER));
-					session.doWork(new DBUnitWork(
-							DatabaseOperation.CLEAN_INSERT,
-							TestConstants.DATA_SET_SMALL_GROUP));
-					session.doWork(new DBUnitWork(
-							DatabaseOperation.CLEAN_INSERT,
-							TestConstants.DATA_SET_SMALL_TEMPLATE));
-					session.doWork(new DBUnitWork(
-							DatabaseOperation.CLEAN_INSERT,
-							TestConstants.DATA_SET_SMALL_GROUP_USER));
+					for (String dataSet : dataSets) {
+						session.doWork(new DBUnitWork(
+								DatabaseOperation.CLEAN_INSERT, dataSet));
+					}
 				}
 			};
 			em.close();
@@ -69,6 +62,13 @@ public class DBUnitHelper {
 			e.printStackTrace();
 			throw new RuntimeException("Unable to import data set to DB.", e);
 		}
+	}
+
+	public static void importDataSet(EntityManagerFactory emf) {
+		importDataSet(emf, TestConstants.DATA_SET_SMALL_USER,
+				TestConstants.DATA_SET_SMALL_GROUP,
+				TestConstants.DATA_SET_SMALL_TEMPLATE,
+				TestConstants.DATA_SET_SMALL_GROUP_USER);
 
 	}
 }

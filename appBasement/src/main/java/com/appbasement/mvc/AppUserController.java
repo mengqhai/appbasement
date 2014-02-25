@@ -66,13 +66,20 @@ public class AppUserController {
 		return "redirect:/" + APP_BASEMENT + "/user";
 	}
 
-	@RequestMapping("/{userId}/group")
+	@RequestMapping(value = "/{userId}/group", method = RequestMethod.GET)
 	@Transactional
 	public String showUserGroups(@PathVariable Long userId, Model model) {
 		User user = userService.getUserById(userId);
 		user.getGroups().toString();
 		model.addAttribute(user);
 		return APP_BASEMENT + "/user_group";
+	}
+
+	@RequestMapping(value = "/{userId}/group/{groupId}", method = RequestMethod.DELETE)
+	public String removeUserFromGroup(@PathVariable Long userId,
+			@PathVariable Long groupId) {
+		userService.removeUserFromGroup(userId, groupId);
+		return "redirect:/" + APP_BASEMENT + "/user/" + userId + "/group";
 	}
 
 }
