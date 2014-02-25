@@ -29,9 +29,10 @@ public class AppUserController {
 	IAppUserService userService;
 
 	@RequestMapping(method = RequestMethod.GET)
-	public void showUserList(Map<String, Object> model) {
+	public String showUserList(Map<String, Object> model) {
 		List<User> users = userService.getAllUsers();
 		model.put("users", users);
+		return APP_BASEMENT + "/user";
 	}
 
 	@RequestMapping(method = RequestMethod.POST)

@@ -23,4 +23,8 @@ public interface IAppUserService {
 
 	public abstract void addUserToGroup(Long userId, Long... groupIds);
 
+	public abstract void saveGroup(Group group);
+
+	public abstract Group getGroupById(Long id);
+
 }

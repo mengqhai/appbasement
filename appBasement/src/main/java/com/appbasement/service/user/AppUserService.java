@@ -76,4 +76,18 @@ public class AppUserService implements IAppUserService {
 		}
 	}
 
+	@Override
+	public void saveGroup(Group group) {
+		if (group.getId() == null) {
+			groupDao.persist(group);
+		} else {
+			groupDao.merge(group);
+		}
+	}
+
+	@Override
+	public Group getGroupById(Long id) {
+		return groupDao.findById(id);
+	}
+
 }
