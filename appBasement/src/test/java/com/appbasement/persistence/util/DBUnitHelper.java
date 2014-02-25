@@ -64,7 +64,14 @@ public class DBUnitHelper {
 		}
 	}
 
-	public static void importDataSet(EntityManagerFactory emf) {
+	public static void importBigDataSet(EntityManagerFactory emf) {
+		importDataSet(emf, TestConstants.DATA_SET_USER,
+				TestConstants.DATA_SET_GROUP,
+				TestConstants.DATA_SET_TEMPLATE,
+				TestConstants.DATA_SET_GROUP_USER);
+	}
+
+	public static void importSmallDataSet(EntityManagerFactory emf) {
 		importDataSet(emf, TestConstants.DATA_SET_SMALL_USER,
 				TestConstants.DATA_SET_SMALL_GROUP,
 				TestConstants.DATA_SET_SMALL_TEMPLATE,

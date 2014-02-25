@@ -14,7 +14,7 @@ public class ImportDBUnitData {
 		EntityTransaction tx = em.getTransaction();
 		tx.begin();
 		// Business Logic Start:
-		DBUnitHelper.importDataSet(emf);
+		DBUnitHelper.importBigDataSet(emf);
 		// Business Logic End.
 		tx.commit();
 		em.close();

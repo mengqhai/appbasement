@@ -38,7 +38,7 @@ public abstract class GenericJpaDAOTest<T, ID extends Serializable> {
 
 	@Before
 	public void setUp() throws Exception {
-		DBUnitHelper.importDataSet(EmfHelper.getEmf());
+		DBUnitHelper.importSmallDataSet(EmfHelper.getEmf());
 		dao = createDao();
 		dao.setEm(EmfHelper.getEmf().createEntityManager());
 	}

@@ -31,6 +31,9 @@ public interface TestConstants {
 	public static final String DATA_SET_SMALL_TEMPLATE = DATA_SET_SMALL_DIR
 			+ "template.xml";
 
+	public static final String DATA_SET_TEMPLATE = DATA_SET_HOME_DIR
+			+ "template.xml";
+
 	public static final String TABLE_USER = "APP_USER";
 
 	public static final String TABLE_GROUP = "APP_GROUP";
