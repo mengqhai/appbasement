@@ -10,6 +10,8 @@
 <body>
 	<h2>Welcome to AppBasement</h2>
 	<s:url value="/appBasement/user" var="user_url"></s:url>
+	<s:url value="/appBasement/group" var="group_url"></s:url>
 	<h4><a href="${user_url}">User</a></h4>
+	<h4><a href="${group_url}">Group</a></h4>
 </body>
 </html>

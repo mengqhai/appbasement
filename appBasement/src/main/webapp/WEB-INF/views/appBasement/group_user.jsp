@@ -9,7 +9,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>User management</title>
+<title>Group management</title>
 <script type="text/javascript">
 	function confirmDelete(username, groupName) {
 		var agree = confirm("Are you sure to delete user " + username
@@ -23,33 +23,33 @@
 </head>
 <body>
 	<h2>
-		User
-		<c:out value="${user.username}" />
-		's Groups
+		Users in group
+		<c:out value="${group.name}" />
 	</h2>
 	<ul>
-		<c:forEach items="${user.groups}" var="group">
-			<s:url value="/appBasement/user/${user.id}/group/${group.id}"
-				var="user_group_url" />
-			<li><sf:form method="delete" action="${user_group_url}">
-					<c:out value="${group.id}" /> |
-					<c:out value="${group.name}" /> | <fmt:formatDate
-						value="${group.createdAt}" pattern="hh:mma MMM d, yyyy" />
-					<input type="submit" value="Remove from"
+		<c:forEach items="${group.users}" var="user">
+			<s:url value="/appBasement/group/${group.id}/user/${user.id}"
+				var="group_user_url" />
+			<li><sf:form method="delete" action="${group_user_url}">
+					<c:out value="${user.id}" /> |  
+					<c:out value="${user.username}" /> | <c:out value="${user.email}" /> | 
+					<fmt:formatDate value="${user.createdAt}"
+						pattern="hh:mma MMM d, yyyy" />
+					<input type="submit" value="Remove"
 						onclick="return confirmDelete('${user.username}', '${group.name}')" />
 				</sf:form></li>
 		</c:forEach>
 	</ul>
 
-	<h4>Add user to groups:</h4>
-	<sf:form method="PUT" modelAttribute="addUserToGroup">
+	<h4>Add users to group:</h4>
+	<%-- 	<sf:form method="PUT" modelAttribute="addUserToGroup">
 		<sf:select multiple="multiple" size="${fn:length(avaGroups)}"
 			path="addTo" name="addTo">
 			<sf:options items="${avaGroups}" itemValue="id" itemLabel="name" />
 		</sf:select>
 		<input type="reset" value="Reset" />
 		<input type="submit" value="Add to" />
-	</sf:form>
+	</sf:form> --%>
 
 
 </body>

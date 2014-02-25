@@ -61,4 +61,23 @@ public class AppGroupController {
 		return APP_BASEMENT + "/group_edit";
 	}
 
+	@RequestMapping(value = "/{groupId}", method = RequestMethod.DELETE)
+	public String deleteGroup(@PathVariable Long groupId) {
+		userService.deleteGroupById(groupId);
+		return "redirect:/" + APP_BASEMENT + "/group";
+	}
+
+	@RequestMapping(value = "/{groupId}/user", method = RequestMethod.GET)
+	public String showGroupUsers(@PathVariable Long groupId, Model model) {
+		Group group = userService.getGroupWithEagerUsers(groupId);
+		model.addAttribute(group);
+		return APP_BASEMENT + "/group_user";
+	}
+
+	@RequestMapping(value = "/{groupId}/user/{userId}", method = RequestMethod.DELETE)
+	public String removeUserFromGroup(@PathVariable Long userId,
+			@PathVariable Long groupId) {
+		userService.removeUserFromGroup(userId, groupId);
+		return "redirect:/" + APP_BASEMENT + "/group/" + groupId + "/user";
+	}
 }

@@ -23,9 +23,14 @@
 	<ul>
 		<c:forEach items="${groups}" var="group">
 			<s:url value="/appBasement/group/${group.id}" var="group_url" />
-			<li><sf:form method="delete">
-					<a href="${group_url}"><c:out value="${group.name}" /></a> | <fmt:formatDate
-						value="${group.createdAt}" pattern="hh:mma MMM d, yyyy" />
+			<li><sf:form method="delete" action="${group_url}">
+					<c:out value="${group.id}" /> | 
+					<a href="${group_url}"> <c:out value="${group.name}" /></a> | <fmt:formatDate
+						value="${group.createdAt}" pattern="hh:mma MMM d, yyyy" /> | <s:url
+						value="/appBasement/group/${group.id}/user" var="group_user_url" /> | <input
+						type="submit" value="Delete"
+						onclick="return confirmDelete('${group.name}')" />
+					<a href="${group_user_url}">Users</a>
 				</sf:form></li>
 		</c:forEach>
 	</ul>

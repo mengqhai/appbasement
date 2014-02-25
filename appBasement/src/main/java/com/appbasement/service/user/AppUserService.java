@@ -61,6 +61,12 @@ public class AppUserService implements IAppUserService {
 	}
 
 	@Override
+	public Group getGroupWithEagerUsers(Long groupId) {
+		Group group = groupDao.getGroupWithEagerUser(groupId);
+		return group;
+	}
+
+	@Override
 	public List<Group> getAllGroups() {
 		return groupDao.findAll();
 	}
@@ -88,6 +94,12 @@ public class AppUserService implements IAppUserService {
 	@Override
 	public Group getGroupById(Long id) {
 		return groupDao.findById(id);
+	}
+
+	@Override
+	public void deleteGroupById(Long id) {
+		Group group = groupDao.getReference(id);
+		groupDao.remove(group);
 	}
 
 }

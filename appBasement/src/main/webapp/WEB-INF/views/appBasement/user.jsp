@@ -35,7 +35,6 @@
 					<s:param name="user_id" value="${user.id}">
 					</s:param>
 				</s:url>
-				<c:url value="user/${user.id}" var="user_url"></c:url>
 
 				<li><sf:form method="delete" action="${user_url}">
 						<c:out value="${user.id}" /> | <a href="${user_url}"><c:out

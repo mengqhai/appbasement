@@ -27,4 +27,8 @@ public interface IAppUserService {
 
 	public abstract Group getGroupById(Long id);
 
+	public abstract Group getGroupWithEagerUsers(Long groupId);
+
+	public abstract void deleteGroupById(Long id);
+
 }
