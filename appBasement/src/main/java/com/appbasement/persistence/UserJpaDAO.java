@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,26 @@ public class UserJpaDAO extends GenericJpaDAO<User, Long> implements IUserDAO {
 			// not found, do nothing
 		}
 
+		return result;
+	}
+
+	@Override
+	public User getUserWithEagerGroups(Long id) {
+		if (id == null) {
+			throw new IllegalArgumentException("Null id");
+		}
+
+		User result = null;
+		TypedQuery<User> q = getEm()
+				.createQuery(
+						"select distinct u from User as u left join fetch u.groups as g where u.id=:id",
+						User.class);
+		q.setParameter("id", id);
+		try {
+			result = (User) q.getSingleResult();
+		} catch (NoResultException e) {
+			// not found, do nothing
+		}
 		return result;
 	}
 

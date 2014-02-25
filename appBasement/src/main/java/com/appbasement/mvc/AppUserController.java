@@ -10,7 +10,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,10 +66,8 @@ public class AppUserController {
 	}
 
 	@RequestMapping(value = "/{userId}/group", method = RequestMethod.GET)
-	@Transactional
 	public String showUserGroups(@PathVariable Long userId, Model model) {
-		User user = userService.getUserById(userId);
-		user.getGroups().toString();
+		User user = userService.getUserWithEagerGroups(userId);
 		model.addAttribute(user);
 		return APP_BASEMENT + "/user_group";
 	}

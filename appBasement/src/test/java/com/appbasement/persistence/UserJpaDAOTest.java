@@ -218,7 +218,7 @@ public class UserJpaDAOTest extends GenericJpaDAOTest<User, Long> {
 	@Test
 	@Parameters(method = "getUsersFindByUsername")
 	public void testFindByUsername(final String username, User expected) {
-		final UserJpaDAO userDao = (UserJpaDAO) dao;
+		final IUserDAO userDao = (IUserDAO) dao;
 		User user = new TemplateWorker<User>(dao.getEm()) {
 			@Override
 			protected void doIt() {
@@ -239,7 +239,7 @@ public class UserJpaDAOTest extends GenericJpaDAOTest<User, Long> {
 	@Test
 	@Parameters(method = "getUsersFindByUsernameNotFound")
 	public void testFindByUsernameNotFound(final String username) {
-		final UserJpaDAO userDao = (UserJpaDAO) dao;
+		final IUserDAO userDao = (IUserDAO) dao;
 		User user = new TemplateWorker<User>(dao.getEm()) {
 			@Override
 			protected void doIt() {

@@ -54,4 +54,10 @@ public class AppUserService implements IAppUserService {
 		user.removeFromGroup(group);
 	}
 
+	@Override
+	public User getUserWithEagerGroups(Long userId) {
+		User user = userDao.getUserWithEagerGroups(userId);
+		return user;
+	}
+
 }

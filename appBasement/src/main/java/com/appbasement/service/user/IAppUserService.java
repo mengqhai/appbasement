@@ -16,4 +16,6 @@ public interface IAppUserService {
 
 	public abstract void removeUserFromGroup(Long userId, Long groupId);
 
+	public abstract User getUserWithEagerGroups(Long userId);
+
 }
