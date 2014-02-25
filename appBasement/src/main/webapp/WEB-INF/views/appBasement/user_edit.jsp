@@ -9,6 +9,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>User management</title>
+<style type="text/css">
+span.error {
+	color: red;
+	font-size: 8pt;
+}
+</style>
 </head>
 <body>
 	<h2>User management</h2>
@@ -20,15 +26,18 @@
 				<tr>
 					<th><label for="username">Username:</label></th>
 					<td><label><sf:input type="text" path="username"
-								id="username" disabled="${(empty user.id) ? false : true}" /></label></td>
+								id="username" readonly="${!(empty user.id)}" /><br />
+							<sf:errors path="username" cssClass="error" /></label></td>
 				</tr>
 				<tr>
 					<th><label for="password">Password:</label></th>
-					<td><sf:input path="password" size="15" id="password" /></td>
+					<td><sf:input path="password" size="15" id="password" /><br />
+						<sf:errors path="password" cssClass="error" /></td>
 				</tr>
 				<tr>
 					<th><label for="email">Email:</label></th>
-					<td><sf:input path="email" size="15" id="email" /></td>
+					<td><sf:input path="email" size="15" id="email" /><br /> <sf:errors
+							path="email" cssClass="error" /></td>
 				</tr>
 				<tr>
 					<th><input type="reset" /></th>

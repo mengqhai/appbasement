@@ -19,6 +19,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "APP_USER")
@@ -39,12 +41,20 @@ public class User implements Serializable {
 	private Long id;
 
 	@Column(nullable = false, unique = true, updatable = false, length = 30)
+	// Bean validation
+	@Size(min = 3, max = 30, message = "Username must be between 3 and 30 characters long.")
+	@Pattern(regexp = "^[a-zA-Z0-9\u4e00-\u9fa5]+$", message = "Username must be alphanumeric or Chinese characters with non spaces.")
 	private String username;
 
 	@Column(nullable = false, length = 50)
+	// Bean validation
+	@Size(min = 6, max = 50, message = "The password must be 6-50 characters long.")
 	private String password;
 
 	@Column(nullable = false, unique = true, updatable = true, length = 60)
+	// Bean validation
+	@Pattern(regexp = "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}", message = "Invalid email address.")
+	@Size(max = 60, message = "Email address too long.")
 	private String email;
 
 	@ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)

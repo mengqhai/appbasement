@@ -19,6 +19,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.ForeignKey;
 
@@ -38,6 +40,9 @@ public class Group implements Serializable {
 	private Long id;
 
 	@Column(nullable = false, unique = true, length = 50)
+	// Bean validation
+	@Size(min = 3, max = 50, message = "Group name must be between 3 and 50 characters long.")
+	@Pattern(regexp = "^[a-zA-Z0-9\u4e00-\u9fa5]+$", message = "Group name must be alphanumeric or Chinese characters with non spaces.")
 	private String name;
 
 	@ManyToMany(fetch = FetchType.LAZY)
