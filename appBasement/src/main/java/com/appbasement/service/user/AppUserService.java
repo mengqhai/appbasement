@@ -60,4 +60,20 @@ public class AppUserService implements IAppUserService {
 		return user;
 	}
 
+	@Override
+	public List<Group> getAllGroups() {
+		return groupDao.findAll();
+	}
+
+	@Override
+	public void addUserToGroup(Long userId, Long... groupIds) {
+		User user = userDao.getUserWithEagerGroups(userId); // to reduce the
+															// select statements
+
+		for (Long groupId : groupIds) {
+			Group group = groupDao.findById(groupId);
+			user.addToGroup(group);
+		}
+	}
+
 }

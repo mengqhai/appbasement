@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8" isELIgnored="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -38,6 +39,17 @@
 				</sf:form></li>
 		</c:forEach>
 	</ul>
+
+	<h4>Add user to groups:</h4>
+	<sf:form method="PUT" modelAttribute="addUserToGroup">
+		<sf:select multiple="multiple" size="${fn:length(avaGroups)}"
+			path="addTo" name="addTo">
+			<sf:options items="${avaGroups}" itemValue="id" itemLabel="name" />
+		</sf:select>
+		<input type="reset" value="Reset" />
+		<input type="submit" value="Add to" />
+	</sf:form>
+
 
 </body>
 </html>

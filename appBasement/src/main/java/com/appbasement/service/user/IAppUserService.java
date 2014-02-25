@@ -2,6 +2,7 @@ package com.appbasement.service.user;
 
 import java.util.List;
 
+import com.appbasement.model.Group;
 import com.appbasement.model.User;
 
 public interface IAppUserService {
@@ -17,5 +18,9 @@ public interface IAppUserService {
 	public abstract void removeUserFromGroup(Long userId, Long groupId);
 
 	public abstract User getUserWithEagerGroups(Long userId);
+
+	public abstract List<Group> getAllGroups();
+
+	public abstract void addUserToGroup(Long userId, Long... groupIds);
 
 }

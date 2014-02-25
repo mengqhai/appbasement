@@ -2,6 +2,7 @@ package com.appbasement.mvc;
 
 import static com.appbasement.AppBasementConstants.APP_BASEMENT;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.appbasement.model.Group;
 import com.appbasement.model.User;
 import com.appbasement.service.user.IAppUserService;
 
@@ -69,6 +71,16 @@ public class AppUserController {
 	public String showUserGroups(@PathVariable Long userId, Model model) {
 		User user = userService.getUserWithEagerGroups(userId);
 		model.addAttribute(user);
+
+		// for group adding:
+
+		// only put available groups for selection
+		List<Group> avaGroups = userService.getAllGroups();
+		avaGroups.removeAll(user.getGroups());
+		model.addAttribute("avaGroups", avaGroups);
+		AddUserToGroup addUserToGroup = new AddUserToGroup();
+		addUserToGroup.setAddTo(new ArrayList<Long>());
+		model.addAttribute(addUserToGroup);
 		return APP_BASEMENT + "/user_group";
 	}
 
@@ -79,4 +91,32 @@ public class AppUserController {
 		return "redirect:/" + APP_BASEMENT + "/user/" + userId + "/group";
 	}
 
+	@RequestMapping(value = "/{userId}/group", method = RequestMethod.PUT)
+	public String addUserToGroups(@PathVariable Long userId,
+			AddUserToGroup addUserToGroup) {
+		List<Long> addTo = addUserToGroup.getAddTo();
+		System.out.println(addUserToGroup.getAddTo());
+		userService.addUserToGroup(userId, addTo.toArray(new Long[] {}));
+		return "redirect:/" + APP_BASEMENT + "/user/" + userId + "/group";
+	}
+
+}
+
+/**
+ * A form model object to hold the selected group ids.
+ * 
+ * 
+ * @author qinghai
+ * 
+ */
+class AddUserToGroup {
+	private List<Long> addTo;
+
+	public List<Long> getAddTo() {
+		return addTo;
+	}
+
+	public void setAddTo(List<Long> addTo) {
+		this.addTo = addTo;
+	}
 }
