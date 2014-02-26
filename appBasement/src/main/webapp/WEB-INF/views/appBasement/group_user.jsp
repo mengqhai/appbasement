@@ -42,14 +42,14 @@
 	</ul>
 
 	<h4>Add users to group:</h4>
-	<%-- 	<sf:form method="PUT" modelAttribute="addUserToGroup">
-		<sf:select multiple="multiple" size="${fn:length(avaGroups)}"
+	<sf:form method="PUT" modelAttribute="addUserToGroup">
+		<sf:select multiple="multiple" size="20"
 			path="addTo" name="addTo">
-			<sf:options items="${avaGroups}" itemValue="id" itemLabel="name" />
+			<sf:options items="${avaUsers}" itemValue="id" itemLabel="username" />
 		</sf:select>
 		<input type="reset" value="Reset" />
 		<input type="submit" value="Add to" />
-	</sf:form> --%>
+	</sf:form>
 
 
 </body>
