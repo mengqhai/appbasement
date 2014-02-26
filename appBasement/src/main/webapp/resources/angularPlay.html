@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html ng-app>
+<head>
+<meta charset="UTF-8">
+<title>Angular js play</title>
+<script type="text/javascript"
+	src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.js"></script>
+<script type="text/javascript">
+	function HelloController($scope) {
+		$scope.greeting = {
+			text : 'Hello'
+		};
+	};
+
+	function StartUpController($scope) {
+		$scope.funding = {
+			startingEstimate : 0,
+			needed : 0
+		};
+		computeNeeded = function() {
+			$scope.funding.needed = $scope.funding.startingEstimate * 10;
+			console.debug($scope)
+		};
+		$scope.watch('funding.startingEstimate', computeNeeded);
+	};
+</script>
+</head>
+<body>
+	<div ng-controller='HelloController'>
+		<input ng-model='greeting.text'>
+		<p>{{greeting.text}}, World</p>
+	</div>
+
+	<form ng-controller="StartUpController">
+		Starting: <input ng-model="funding.startingEstimate" /> Recomendation:
+		{{funding.needed}}
+	</form>
+</body>
+</html>
