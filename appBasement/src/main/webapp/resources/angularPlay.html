@@ -19,9 +19,16 @@
 		};
 		computeNeeded = function() {
 			$scope.funding.needed = $scope.funding.startingEstimate * 10;
-			console.debug($scope)
 		};
-		$scope.watch('funding.startingEstimate', computeNeeded);
+		$scope.$watch('funding.startingEstimate', computeNeeded);
+
+		$scope.requestFunding = function() {
+			alert("Sorry, please get more customers first.");
+		};
+
+		$scope.reset = function() {
+			$scope.funding.startingEstimate = 0;
+		}
 	};
 </script>
 </head>
@@ -30,10 +37,54 @@
 		<input ng-model='greeting.text'>
 		<p>{{greeting.text}}, World</p>
 	</div>
+	<hr />
+	<div>
+		<form ng-controller="StartUpController" ng-submit="requestFunding()">
+			Starting: <input ng-model="funding.startingEstimate" />
+			Recomendation: {{funding.needed}}<br /> <input type="reset"
+				value="Reset" ng-click="reset()" /> <input type="submit"
+				value="Fund my startup!" />
+		</form>
+	</div>
+	<hr />
+	<script type="text/javascript">
+		var students = [ {
+			name : 'Mary Contrary',
+			id : '1'
+		}, {
+			name : 'Jack Sprat',
+			id : '2'
+		}, {
+			name : 'Jill Hill',
+			id : '3'
+		} ];
 
-	<form ng-controller="StartUpController">
-		Starting: <input ng-model="funding.startingEstimate" /> Recomendation:
-		{{funding.needed}}
-	</form>
+		function StudentListController($scope) {
+			$scope.students = students;
+			$scope.insert = {
+				name : "",
+				id : ""
+			};
+			$scope.insertTom = function() {
+				$scope.students.splice(0, 0, {
+					name : $scope.insert.name,
+					id : $scope.insert.id
+				});
+			}
+		};
+	</script>
+	<div ng-controller="StudentListController">
+		<div>
+			<input type="text" ng-model="insert.name" /> <input type="text"
+				ng-model="insert.id" />
+			<button ng-click="insertTom()">Insert</button>
+		</div>
+		<ul>
+			<li ng-repeat="student in students">{{$index}} | {{student.id}}
+				| <a href="#">{{student.name}}</a>
+			</li>
+		</ul>
+	</div>
+
 </body>
 </html>
