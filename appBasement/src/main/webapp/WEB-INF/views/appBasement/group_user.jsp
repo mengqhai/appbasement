@@ -20,6 +20,13 @@
 			return false;
 	}
 </script>
+<link rel="stylesheet"
+	href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script
+	src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 </head>
 <body>
 	<h2>
@@ -43,8 +50,7 @@
 
 	<h4>Add users to group:</h4>
 	<sf:form method="PUT" modelAttribute="addUserToGroup">
-		<sf:select multiple="multiple" size="20"
-			path="addTo" name="addTo">
+		<sf:select multiple="multiple" size="20" path="addTo" name="addTo">
 			<sf:options items="${avaUsers}" itemValue="id" itemLabel="username" />
 		</sf:select>
 		<input type="reset" value="Reset" />

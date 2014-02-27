@@ -15,6 +15,13 @@ span.error {
 	font-size: 8pt;
 }
 </style>
+<link rel="stylesheet"
+	href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script
+	src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 </head>
 <body>
 	<h2>User management</h2>
@@ -26,8 +33,8 @@ span.error {
 				<tr>
 					<th><label for="username">Username:</label></th>
 					<td><label><sf:input type="text" path="username"
-								id="username" readonly="${!(empty user.id)}" /><br />
-							<sf:errors path="username" cssClass="error" /></label></td>
+								id="username" readonly="${!(empty user.id)}" /><br /> <sf:errors
+								path="username" cssClass="error" /></label></td>
 				</tr>
 				<tr>
 					<th><label for="password">Password:</label></th>

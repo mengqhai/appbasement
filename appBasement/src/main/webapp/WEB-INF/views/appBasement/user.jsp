@@ -18,17 +18,25 @@
 			return false;
 	}
 </script>
+<link rel="stylesheet"
+	href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script
+	src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
 </head>
 <body>
 	<h2>User management</h2>
-	<div id="createUser">
+	<div id="createUser" class="container">
 		<s:url value="/appBasement/user" var="new_user_url">
 			<s:param name="new">
 			</s:param>
 		</s:url>
 		<a href="${new_user_url }">New user</a>
 	</div>
-	<div id="userList">
+	<div id="userList" class="container">
 		<ul>
 			<c:forEach var="user" items="${users}">
 				<s:url value="/appBasement/user/{user_id}" var="user_url">
