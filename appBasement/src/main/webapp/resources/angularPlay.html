@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app>
+<html lang="en" ng-app>
 <head>
     <meta charset="UTF-8">
     <title>Angular js play</title>
@@ -34,7 +34,18 @@
     </script>
     <style>
         .menu-disabled-true {
-              color: gray;
+            color: gray;
+        }
+
+        .error {
+            background: red;
+        }
+
+        .warning {
+            background: yellow;
+        }
+        .selected {
+            background: gold;
         }
     </style>
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
@@ -119,18 +130,93 @@
 
         $scope.deathray = function (name) {
             $log.info(name);
-            $scope.disabled=!$scope.disabled;
+            $scope.disabled = !$scope.disabled;
         };
     }
 
 </script>
 <div ng-controller="DeathrayMenuController">
-    <button ng-click="toggleMenu()">Toggle Menu</button>
+    <button type="button" class="btn btn-lg btn-default" ng-click="toggleMenu()">Toggle Menu</button>
     <ul ng-show="menuState.show">
         <li ng-click="deathray('stun')" class="menu-disabled-{{disabled}}">Stun</li>
         <li ng-click="deathray('disintegrate')" class="menu-disabled-{{disabled}}">Disintegrate</li>
         <li ng-click="deathray('erase')" class="menu-disabled-{{disabled}}">Erase from history</li>
     </ul>
 </div>
+<hr/>
+<script>
+    function HeaderController($scope) {
+        $scope.isError = false;
+        $scope.isWarning = false;
+        $scope.messageText = "";
+        $scope.showError = function () {
+            $scope.isError = true;
+            $scope.isWarning = false;
+            $scope.messageText = "This is a Error message!"
+        };
+        $scope.showWarning = function () {
+            $scope.isError = false;
+            $scope.isWarning = true;
+            $scope.messageText = "Just a warning.  Please carry on.";
+        };
+
+    }
+
+</script>
+<div ng-controller="HeaderController">
+    <div ng-class="{error:isError, warning:isWarning}">{{messageText}}</div>
+    <button ng-click="showError()" class="btn">Simulate Error</button>
+    <button ng-click="showWarning()" class="btn">Simulate Warning</button>
+</div>
+
+<hr/>
+<script>
+    function RestaurantTableController($scope) {
+        $scope.directory = [
+            {name: "The Handsome Heifer", cuisine: "BBQ"},
+            {name: "Green's Green Greens", cuisine: "Salads"},
+            {name: "House of Fine Fish", cuisine: "Seafood"}
+        ];
+        $scope.selectRestaurant = function (row) {
+            $scope.selectedRow = row;
+        };
+    }
+</script>
+<table ng-controller="RestaurantTableController">
+    <tr ng-repeat="restaurant in directory" ng-mouseover="selectRestaurant($index)"
+        ng-class="{selected:$index==selectedRow}">
+        <td>{{restaurant.name}}</td>
+        <td>{{restaurant.cuisine}}</td>
+    </tr>
+</table>
+
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
