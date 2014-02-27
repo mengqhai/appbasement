@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.appbasement.exception.UserException;
 import com.appbasement.model.Group;
 import com.appbasement.model.User;
 import com.appbasement.service.user.IAppUserService;
@@ -58,6 +59,9 @@ public class AppUserController {
 	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
 	public String editUser(@PathVariable Long userId, Model model) {
 		User user = userService.getUserById(userId);
+		if (user == null) {
+			throw new UserException("Unable to find the specified user.");
+		}
 		model.addAttribute(user);
 		return APP_BASEMENT + "/user_edit";
 	}
