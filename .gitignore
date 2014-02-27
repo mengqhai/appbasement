@@ -218,3 +218,4 @@ pip-log.txt
 appBasement/target/
 appBasement/hsqldb/
 .springBeans
+.idea
