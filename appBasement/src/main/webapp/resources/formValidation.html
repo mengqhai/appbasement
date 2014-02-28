@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html ng-app>
+<head>
+    <title></title>
+    <script
+            src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.js"></script>
+    <script>
+        function AddUserController($scope, $log) {
+            $scope.user={};
+            $scope.message = "";
+            $scope.addUser = function (form) {
+                // TODO for the reader: actually save user to database...
+                $log.info(form.$valid)
+                $scope.message = 'Thanks, ' + $scope.user.first + ', we added you!';
+            }
+        }
+    </script>
+</head>
+<body>
+<h1>Sign Up</h1>
+
+<form name="addUserFrom" ng-controller="AddUserController">
+    <div ng-show="message">{{message}}</div>
+    <div>First name:<input ng-model="user.first" required/></div>
+    <div>Last name:<input ng-model="user.last" required/></div>
+    <div>Email: <input type="email" ng-model="user.email" required/></div>
+    <div>Age: <input type="number" ng-model="user.age" ng-maxlength="3" ng-min="1"/></div>
+    <div>
+        <button ng-click="addUser(addUserFrom)" ng-disabled="!addUserFrom.$valid">Submit</button>
+    </div>
+</form>
+</body>
+</html>

@@ -4,7 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -23,6 +23,8 @@ span.error {
 <script
 	src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 </head>
+<script
+	src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.js"></script>
 <body>
 	<h2>User management</h2>
 	<h2>Edit User</h2>
@@ -43,7 +45,7 @@ span.error {
 				</tr>
 				<tr>
 					<th><label for="email">Email:</label></th>
-					<td><sf:input path="email" size="15" id="email" /><br /> <sf:errors
+					<td><sf:input path="email" size="15" id="email" type="email" required="true"/><br /> <sf:errors
 							path="email" cssClass="error" /></td>
 				</tr>
 				<tr>
