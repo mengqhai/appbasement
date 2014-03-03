@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('bookplayApp', [
-        'ngResource',
+        'bookplayApp.controllers',
         'ngRoute'
     ])
     .config(function ($routeProvider) {
@@ -13,6 +13,14 @@ angular.module('bookplayApp', [
             .when('/httpGreeting', {
                 templateUrl: 'views/httpGreeting.html',
                 controller: 'HttpGreetingCtrl'
+            })
+            .when('/restGreeting', {
+                templateUrl: 'views/httpGreeting.html',
+                controller: 'RestGreetingCtrl'
+            })
+            .when('/restPromiseGreeting', {
+                templateUrl: 'views/httpGreeting.html',
+                controller:'RestPromiseGreetingCtrl'
             })
             .otherwise({
                 redirectTo: '/'

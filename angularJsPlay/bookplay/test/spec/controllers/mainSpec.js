@@ -2,6 +2,7 @@
 
 describe('Controller: HttpGreetingCtrl', function () {
     var scope, ctrl, mockBackend;
+    beforeEach(module('bookplayApp'));
     beforeEach(inject(function (_$httpBackend_, $rootScope, $controller) {
         mockBackend = _$httpBackend_;
         mockBackend.expectGET("http://rest-service.guides.spring.io/greeting")
