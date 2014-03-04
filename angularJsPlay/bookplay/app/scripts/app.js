@@ -2,6 +2,7 @@
 
 angular.module('bookplayApp', [
         'bookplayApp.controllers',
+        'bookplayApp.directives',
         'ngRoute'
     ])
     .config(function ($routeProvider) {

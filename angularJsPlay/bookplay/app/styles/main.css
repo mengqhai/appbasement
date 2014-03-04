@@ -1,4 +1,20 @@
 /* Space out content a bit */
+.expander {
+    border: 1px solid black;
+    width: 250px;
+}
+
+.expander > .title {
+    background-color: black;
+    color: white;
+    padding: .1em .3em;
+    cursor: pointer;
+}
+.expander > .body {
+    padding: .1em .3em;
+}
+
+
 body {
   padding-top: 20px;
   padding-bottom: 20px;
