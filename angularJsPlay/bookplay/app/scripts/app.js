@@ -23,6 +23,13 @@ angular.module('bookplayApp', [
                 templateUrl: 'views/httpGreeting.html',
                 controller:'RestPromiseGreetingCtrl'
             })
+            .when('/datepicker', {
+                templateUrl: 'views/datepicker.html',
+                controller:'DatepickerCtrl'
+            })
+            .when('/teamsList', {
+                templateUrl:'views/teamsList.html'
+            })
             .otherwise({
                 redirectTo: '/'
             });

@@ -54,10 +54,69 @@ directives.directive('accordion', function () {
                     }
                 })
             };
-            this.addExpander = function(expander) {
+            this.addExpander = function (expander) {
                 expanders.push(expander);
             }
         }
     };
     return directiveDefinitionObject;
 });
+
+directives.directive('datepicker', function () {
+
+    return {
+        restrict: 'A',
+        require: '?ngModel',
+        scope: {
+            select: '&'
+        },
+        link: function (scope, element, attrs, ngModelCtrl) {
+            if (!ngModelCtrl) return;
+            var optionsObj = {};
+            optionsObj.dateFormat = 'mm/dd/yy';
+
+            var updateModel = function (dateTxt) {
+                scope.$apply(function () {
+                    // see http://docs.angularjs.org/api/ng/type/ngModel.NgModelController
+                    ngModelCtrl.$setViewValue(dateTxt);
+                });
+            }
+            optionsObj.onSelect = function (dateTxt, picker) {
+                updateModel(dateTxt);
+                if (scope.select) {
+                    scope.$apply(function () {
+                        scope.select({date: dateTxt})
+                    });
+                }
+
+            };
+
+            // Called when the view needs to be updated. It is expected that the user of the ng-model
+            // directive will implement this method.
+            ngModelCtrl.$render = function () {
+                element.datepicker('setDate', ngModelCtrl.$viewValue || '');
+            };
+            element.datepicker(optionsObj);
+        }
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

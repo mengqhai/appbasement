@@ -14,15 +14,22 @@ services.factory('RestGreeting', ['$resource', function ($resource) {
     return $resource(url);
 }])
 
-services.factory('RestPromiseGreeting', ['RestGreeting', '$q', function(RestGreeting, $q) {
-    var fun = function() {
+services.factory('RestPromiseGreeting', ['RestGreeting', '$q', function (RestGreeting, $q) {
+    var fun = function () {
         var deferred = $q.defer();
-        RestGreeting.get(function(greeting) {
+        RestGreeting.get(function (greeting) {
             deferred.resolve(greeting);
-        }, function() {
+        }, function () {
             deferred.reject('Unable to fetch greeting.');
         });
         return deferred.promise;
     }
     return fun;
 }])
+
+services.factory('filterService', function () {
+    return {
+        activeFilters: {},
+        searchText: ''
+    }
+});
