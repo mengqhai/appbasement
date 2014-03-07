@@ -1,0 +1,16 @@
+<div ng-controller="FileUploadCtrl">
+    File Upload:<input id="testUpload" fileupload type="file" name="files"
+                       data-url="http://localhost:8080/angularJsPlay/fileUpload" multiple done="uploadFinished(e,data)">
+    <!--<script>
+        $(function() {
+            $('#testUpload').fileupload({
+                dataType: 'json',
+                done: function (e, data) {
+                    $.each(data.result.files, function (index, file) {
+                        console.info(file.name+" uploaded");
+                    });
+                }
+            })
+        })
+    </script>-->
+</div>

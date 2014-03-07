@@ -13,6 +13,10 @@
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/jquery-file-upload/css/jquery.fileupload.css" />
+    <link rel="stylesheet" href="bower_components/jquery-file-upload/css/jquery.fileupload-ui.css" />
+    <link rel="stylesheet" href="bower_components/jquery-file-upload/css/jquery.fileupload-noscript.css" />
+    <link rel="stylesheet" href="bower_components/jquery-file-upload/css/jquery.fileupload-ui-noscript.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css({.tmp,app}) styles/main.css -->
@@ -27,12 +31,13 @@
     <div>
         <h1>Navigation</h1>
         <ul>
-            <li><a href="#/httpGreeting">Http Greeting</a> </li>
-            <li><a href="#/restGreeting">Rest Greeting</a> </li>
-            <li><a href="#/restPromiseGreeting">Rest Promise Greeting</a> </li>
-            <li><a href="#/datepicker">Datepicker</a> </li>
-            <li><a href="#/teamsList">Teams List</a> </li>
-            <li><a href="#/">Main</a> </li>
+        <li><a href="#/httpGreeting">Http Greeting</a> </li>
+        <li><a href="#/restGreeting">Rest Greeting</a> </li>
+        <li><a href="#/restPromiseGreeting">Rest Promise Greeting</a> </li>
+        <li><a href="#/datepicker">Datepicker</a> </li>
+        <li><a href="#/teamsList">Teams List</a> </li>
+        <li><a href="#/fileUpload">File Upload</a> </li>
+        <li><a href="#/">Main</a> </li>
         </ul>
     </div>
     <div>
@@ -66,6 +71,29 @@
     <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/blueimp-tmpl/js/tmpl.js"></script>
+    <script src="bower_components/blueimp-load-image/js/load-image.js"></script>
+    <script src="bower_components/blueimp-load-image/js/load-image-ios.js"></script>
+    <script src="bower_components/blueimp-load-image/js/load-image-orientation.js"></script>
+    <script src="bower_components/blueimp-load-image/js/load-image-meta.js"></script>
+    <script src="bower_components/blueimp-load-image/js/load-image-exif.js"></script>
+    <script src="bower_components/blueimp-load-image/js/load-image-exif-map.js"></script>
+    <script src="bower_components/blueimp-canvas-to-blob/js/canvas-to-blob.js"></script>
+    <script src="bower_components/jquery-file-upload/js/cors/jquery.postmessage-transport.js"></script>
+    <script src="bower_components/jquery-file-upload/js/cors/jquery.xdr-transport.js"></script>
+    <script src="bower_components/jquery-file-upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="bower_components/jquery-file-upload/js/jquery.fileupload.js"></script>
+    <!--
+    <script src="bower_components/jquery-file-upload/js/jquery.fileupload-process.js"></script>
+    <script src="bower_components/jquery-file-upload/js/jquery.fileupload-validate.js"></script>
+    <script src="bower_components/jquery-file-upload/js/jquery.fileupload-image.js"></script>
+    <script src="bower_components/jquery-file-upload/js/jquery.fileupload-audio.js"></script>
+    <script src="bower_components/jquery-file-upload/js/jquery.fileupload-video.js"></script>
+    <script src="bower_components/jquery-file-upload/js/jquery.fileupload-ui.js"></script>
+    <script src="bower_components/jquery-file-upload/js/jquery.fileupload-jquery-ui.js"></script>
+    <script src="bower_components/jquery-file-upload/js/jquery.fileupload-angular.js"></script>
+    -->
+    <script src="bower_components/jquery-file-upload/js/jquery.iframe-transport.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 

@@ -30,6 +30,9 @@ angular.module('bookplayApp', [
             .when('/teamsList', {
                 templateUrl:'views/teamsList.html'
             })
+            .when('/fileUpload', {
+                templateUrl: 'views/fileUpload.html'
+            })
             .otherwise({
                 redirectTo: '/'
             });

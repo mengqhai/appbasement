@@ -22,6 +22,8 @@ var RestPromiseGreetingCtrl = function ($scope, RestPromiseGreeting) {
     });
 }
 
+
+// For datepicker example
 var DatepickerCtrl = function ($scope) {
     $scope.myText = 'Not Selected';
     $scope.current = '';
@@ -51,7 +53,12 @@ bookplayApp.controller('FilterCtrl', function($scope, filterService) {
     $scope.filterService = filterService;
 });
 
-
+// For file upload example
+bookplayApp.controller('FileUploadCtrl', function($scope, $log) {
+   $scope.uploadFinished = function(e, data) {
+       $log.info('We just finished uploading this baby'+data.result);
+   }
+});
 
 
 bookplayApp.controller('MainCtrl', function ($scope) {
