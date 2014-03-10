@@ -49,15 +49,27 @@ var ListCtrl = function ($scope, filterService) {
     ]
 }
 bookplayApp.controller('ListCtrl', ListCtrl);
-bookplayApp.controller('FilterCtrl', function($scope, filterService) {
+bookplayApp.controller('FilterCtrl', function ($scope, filterService) {
     $scope.filterService = filterService;
 });
 
 // For file upload example
-bookplayApp.controller('FileUploadCtrl', function($scope, $log) {
-   $scope.uploadFinished = function(e, data) {
-       $log.info('We just finished uploading this baby'+data.result);
-   }
+bookplayApp.controller('FileUploadCtrl', function ($scope, $log) {
+    $scope.uploadFinished = function (e, data) {
+        $log.info('We just finished uploading this baby' + data.result);
+    }
+});
+
+// For paginator example
+bookplayApp.controller('PaginatorCtrl', function ($scope, $http, Paginator) {
+    var fetchFunction = function (offset, limit, callback) {
+        $http.get('http://localhost:8080/angularJsPlay/titledMessage', {params: {
+            offset: offset,
+            limit: limit
+        }}).success(callback);
+    };
+    $scope.messagePaginator = Paginator(fetchFunction, 5);
+
 });
 
 

@@ -21,17 +21,20 @@ angular.module('bookplayApp', [
             })
             .when('/restPromiseGreeting', {
                 templateUrl: 'views/httpGreeting.html',
-                controller:'RestPromiseGreetingCtrl'
+                controller: 'RestPromiseGreetingCtrl'
             })
             .when('/datepicker', {
                 templateUrl: 'views/datepicker.html',
-                controller:'DatepickerCtrl'
+                controller: 'DatepickerCtrl'
             })
             .when('/teamsList', {
-                templateUrl:'views/teamsList.html'
+                templateUrl: 'views/teamsList.html'
             })
             .when('/fileUpload', {
                 templateUrl: 'views/fileUpload.html'
+            })
+            .when('/paginator', {
+                templateUrl: 'views/paginator.html'
             })
             .otherwise({
                 redirectTo: '/'

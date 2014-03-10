@@ -1,0 +1,7 @@
+<div ng-controller="PaginatorCtrl">
+    <ul>
+        <li ng-repeat="item in messagePaginator.currentPageItems">{{item.title}}</li>
+    </ul>
+    <a href="" ng-click="messagePaginator.previous()">&lt;&lt; Prev</a>
+    <a href="" ng-click="messagePaginator.next()">Next &gt;&gt;</a>
+</div>
