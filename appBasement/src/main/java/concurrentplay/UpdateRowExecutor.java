@@ -25,7 +25,6 @@ public class UpdateRowExecutor extends Thread {
 				UpdateRow updateRow = entry.getValue();
 				try {
 					updateRow.doUpdate();
-					sleep(period);
 				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {
@@ -33,6 +32,11 @@ public class UpdateRowExecutor extends Thread {
 						iter.remove();
 					}
 				}
+			}
+			try {
+				sleep(period);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 	}
