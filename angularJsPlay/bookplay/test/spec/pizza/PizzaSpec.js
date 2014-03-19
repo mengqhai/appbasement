@@ -5,7 +5,7 @@
  * Time: 下午9:56
  * To change this template use File | Settings | File Templates.
  */
-ddescribe('Pizza ordering sample to show Q & Promise API', function () {
+describe('Pizza ordering sample to show Q & Promise API', function () {
     var Person = function (name, $log) {
         this.eat = function (food) {
             $log.info(name + " is eating delicious " + food);
@@ -13,7 +13,11 @@ ddescribe('Pizza ordering sample to show Q & Promise API', function () {
         this.beHungry = function (reason) {
             $log.warn(name + " is hungry because: " + reason);
         }
-    }
+    };
+
+    var slice = function (pizza) {
+        return "sliced " + pizza;
+    };
 
     var $q, $exceptionHandler, $log, $rootScope;
     var servePreparedOrder, promisedOrder, pawel, pete;
@@ -56,16 +60,60 @@ ddescribe('Pizza ordering sample to show Q & Promise API', function () {
                     currentOrder.deferred.reject(reason);
                     $rootScope.$digest();
                 }
-            }
+            };
+            var pizzaPit;
+            beforeEach(function () {
+                pizzaPit = new Restaurant($q, $rootScope); // become global
+            });
 
             it('should illustrate promise rejection', function () {
 
-                pizzaPit = new Restaurant($q, $rootScope);
                 var pizzaDelivered = pizzaPit.takeOrder('Capricciosa');
                 pizzaDelivered.then(pawel.eat, pawel.beHungry);
 
                 pizzaPit.problemWithOrder('no Capricciosa, only Margherita left');
                 expect($log.warn.logs).toContain(['Pawel is hungry because: no Capricciosa, only Margherita left']);
+            });
+
+            it('should allow callbacks aggregation', function () {
+                var pizzaDelivered = pizzaPit.takeOrder('Margherita');
+                pizzaDelivered.then(pawel.eat, pawel.beHungry);
+                pizzaDelivered.then(pete.eat, pete.beHungry);
+                pizzaPit.deliverOrder();
+                expect($log.info.logs).toContain(['Pawel is eating delicious Margherita']);
+                expect($log.info.logs).toContain(['Pete is eating delicious Margherita']);
+            });
+
+            it('should illustrate successful promise chaining', function () {
+                pizzaPit.takeOrder('Margherita').then(slice).then(pawel.eat);
+                pizzaPit.deliverOrder();
+                expect($log.info.logs).toContain(['Pawel is eating delicious sliced Margherita']);
+            });
+
+            it('should illustrate promise rejection in chain', function () {
+                pizzaPit.takeOrder('Capricciosa').then(slice).then(pawel.eat, pawel.beHungry);
+                pizzaPit.problemWithOrder('no Capricciosa, only Margherita left');
+                expect($log.warn.logs).toContain(['Pawel is hungry because: no Capricciosa, only Margherita left']);
+            });
+
+            it('should illustrate recovery from promise rejection', function () {
+                var retry = function (reason) {
+                    return pizzaPit.takeOrder('Margherita').then(slice);
+                };
+                pizzaPit.takeOrder('Capricciosa').then(slice, retry).then(pawel.eat, pawel.beHungry);
+                pizzaPit.problemWithOrder('no Capricciosa, only Margherita left');
+                pizzaPit.deliverOrder(); // for retry
+                expect($log.info.logs).toContain(['Pawel is eating delicious sliced Margherita']);
+            });
+
+            it('should illustrate explicit rejection in chain', function () {
+                var explain = function (reason) {
+                    return $q.reject('ordered pizza not available');
+                };
+                pizzaPit.takeOrder('Capricciosa').then(slice, explain).then(pawel.eat, pawel.beHungry);
+                pizzaPit.problemWithOrder('no Capricciosa, only Margherita left');
+
+                expect($log.warn.logs).toContain(['Pawel is hungry because: ordered pizza not available']);
             });
         })
     });
