@@ -23,6 +23,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 @Entity
 @Table(name = "APP_USER")
 @Access(AccessType.FIELD)
@@ -109,6 +111,7 @@ public class User implements Serializable {
 		return this;
 	}
 
+	@JsonIgnore
 	public String getPassword() {
 		return password;
 	}
@@ -123,6 +126,7 @@ public class User implements Serializable {
 	 * 
 	 * @return
 	 */
+	@JsonIgnore
 	public Set<Group> getGroups() {
 		return groups;
 	}

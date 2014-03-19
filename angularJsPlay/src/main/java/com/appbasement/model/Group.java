@@ -23,6 +23,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.ForeignKey;
 
 @Entity
@@ -47,6 +48,7 @@ public class Group implements Serializable {
 	@Pattern(regexp = "^[a-zA-Z0-9\u4e00-\u9fa5]+$", message = "Group name must be alphanumeric or Chinese characters with non spaces.")
 	private String name;
 
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "APP_GROUP_USER", joinColumns = { @JoinColumn(name = "GROUP_ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID") })
 	@ForeignKey(name = "FK_GROUP_USER_GROUP", inverseName = "FK_GROUP_USER_USER")
