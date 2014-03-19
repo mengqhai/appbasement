@@ -1,6 +1,9 @@
 package com.appbasement.persistence.util;
 
 public interface TestConstants {
+	
+	public static final String PERSISTENCE_UNIT="appBasementTest";
+	
 	public static final String DATA_SET_HOME_DIR = "/dataset/";
 
 	public static final String DATA_SET_USER = DATA_SET_HOME_DIR + "user.xml";

@@ -8,7 +8,7 @@ public class EmfHelper {
 	private static EntityManagerFactory emf = null;
 
 	public static void initEmf() {
-		emf = Persistence.createEntityManagerFactory("appBasementTest");
+		emf = Persistence.createEntityManagerFactory(TestConstants.PERSISTENCE_UNIT);
 	}
 
 	public static void closeEmf() {

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dataset>
+	<!-- xml escape tool http://www.freeformatter.com/xml-escape.html -->
+	<APP_TEMPLATE id="1" name="testTemplate"
+		definition="&lt;html&gt;&lt;body&gt;&lt;img src=&apos;cid:spitterLogo&apos;&gt;&lt;h4&gt;${username} says...&lt;/h4&gt;&lt;i&gt;${words}&lt;/i&gt;&lt;/body&gt;&lt;/html&gt;"
+		lastUpdate="2013-03-01 22:26:26" />
+	<APP_TEMPLATE id="2" name="testTemplate2"
+		definition="&lt;html&gt;&lt;body&gt;&lt;img src=&apos;cid:spitterLogo&apos;&gt;&lt;h4&gt;${username} says...&lt;/h4&gt;&lt;i&gt;${words}&lt;/i&gt;&lt;/body&gt;&lt;/html&gt;"
+		lastUpdate="2013-02-01 22:30:26" />
+</dataset>

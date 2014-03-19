@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" ng-app>
+<head>
+    <meta charset="UTF-8">
+    <title>Angular js play</title>
+    <script type="text/javascript"
+            src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.js"></script>
+    <script type="text/javascript">
+        function HelloController($scope) {
+            $scope.greeting = {
+                text: 'Hello'
+            };
+        }
+        ;
+
+        function StartUpController($scope) {
+            $scope.funding = {
+                startingEstimate: 0,
+                needed: 0
+            };
+            computeNeeded = function () {
+                $scope.funding.needed = $scope.funding.startingEstimate * 10;
+            };
+            $scope.$watch('funding.startingEstimate', computeNeeded);
+
+            $scope.requestFunding = function () {
+                alert("Sorry, please get more customers first.");
+            };
+
+            $scope.reset = function () {
+                $scope.funding.startingEstimate = 0;
+            };
+        }
+    </script>
+    <style>
+        .menu-disabled-true {
+            color: gray;
+        }
+
+        .error {
+            background: red;
+        }
+
+        .warning {
+            background: yellow;
+        }
+        .selected {
+            background: gold;
+        }
+    </style>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div ng-controller='HelloController'>
+    <input ng-model='greeting.text'>
+
+    <p>{{greeting.text}}, World</p>
+</div>
+<hr/>
+<div>
+    <form ng-controller="StartUpController" ng-submit="requestFunding()">
+        Starting: <input ng-model="funding.startingEstimate"/>
+        Recomendation: {{funding.needed}}<br/> <input type="reset"
+                                                      value="Reset" ng-click="reset()"/> <input type="submit"
+                                                                                                value="Fund my startup!"/>
+    </form>
+</div>
+<hr/>
+<script type="text/javascript">
+    var students = [
+        {
+            name: 'Mary Contrary',
+            id: '1'
+        },
+        {
+            name: 'Jack Sprat',
+            id: '2'
+        },
+        {
+            name: 'Jill Hill',
+            id: '3'
+        },
+        {
+            name: "wwe",
+            id: "3"
+        }
+    ];
+
+    function StudentListController($scope) {
+        $scope.students = students;
+        $scope.insert = {
+            name: "",
+            id: ""
+        };
+        $scope.insertTom = function () {
+            $scope.students.splice(0, 0, {
+                name: $scope.insert.name,
+                id: $scope.insert.id
+            });
+        }
+    }
+</script>
+<div ng-controller="StudentListController" class="container">
+    <div>
+        <input type="text" ng-model="insert.name"/> <input type="text"
+                                                           ng-model="insert.id"/>
+        <button ng-click="insertTom()">Insert</button>
+    </div>
+    <ul>
+        <li ng-repeat="student in students">{{$index}} | {{student.id}}
+            | <a href="#">{{student.name}}</a>
+        </li>
+    </ul>
+</div>
+<hr/>
+<script lang="text/javascript">
+    function DeathrayMenuController($scope, $log) {
+        $scope.$log = $log;
+        $scope.menuState = {};
+        $scope.menuState.show = false;
+        $scope.disabled = false;
+
+        $scope.toggleMenu = function () {
+            $scope.menuState.show = !$scope.menuState.show;
+        };
+
+
+        $scope.deathray = function (name) {
+            $log.info(name);
+            $scope.disabled = !$scope.disabled;
+        };
+    }
+
+</script>
+<div ng-controller="DeathrayMenuController">
+    <button type="button" class="btn btn-lg btn-default" ng-click="toggleMenu()">Toggle Menu</button>
+    <ul ng-show="menuState.show">
+        <li ng-click="deathray('stun')" class="menu-disabled-{{disabled}}">Stun</li>
+        <li ng-click="deathray('disintegrate')" class="menu-disabled-{{disabled}}">Disintegrate</li>
+        <li ng-click="deathray('erase')" class="menu-disabled-{{disabled}}">Erase from history</li>
+    </ul>
+</div>
+<hr/>
+<script>
+    function HeaderController($scope) {
+        $scope.isError = false;
+        $scope.isWarning = false;
+        $scope.messageText = "";
+        $scope.showError = function () {
+            $scope.isError = true;
+            $scope.isWarning = false;
+            $scope.messageText = "This is a Error message!"
+        };
+        $scope.showWarning = function () {
+            $scope.isError = false;
+            $scope.isWarning = true;
+            $scope.messageText = "Just a warning.  Please carry on.";
+        };
+
+    }
+
+</script>
+<div ng-controller="HeaderController">
+    <div ng-class="{error:isError, warning:isWarning}">{{messageText}}</div>
+    <button ng-click="showError()" class="btn">Simulate Error</button>
+    <button ng-click="showWarning()" class="btn">Simulate Warning</button>
+</div>
+
+<hr/>
+<script>
+    function RestaurantTableController($scope) {
+        $scope.directory = [
+            {name: "The Handsome Heifer", cuisine: "BBQ"},
+            {name: "Green's Green Greens", cuisine: "Salads"},
+            {name: "House of Fine Fish", cuisine: "Seafood"}
+        ];
+        $scope.selectRestaurant = function (row) {
+            $scope.selectedRow = row;
+        };
+    }
+</script>
+<table ng-controller="RestaurantTableController">
+    <tr ng-repeat="restaurant in directory" ng-mouseover="selectRestaurant($index)"
+        ng-class="{selected:$index==selectedRow}">
+        <td>{{restaurant.name}}</td>
+        <td>{{restaurant.cuisine}}</td>
+    </tr>
+</table>
+<p>Hello, live editing</p>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

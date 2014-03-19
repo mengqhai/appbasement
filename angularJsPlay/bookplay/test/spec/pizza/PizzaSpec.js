@@ -61,9 +61,10 @@ describe('Pizza ordering sample to show Q & Promise API', function () {
                     $rootScope.$digest();
                 }
             };
-            var pizzaPit;
+            var pizzaPit, saladBar;
             beforeEach(function () {
-                pizzaPit = new Restaurant($q, $rootScope); // become global
+                pizzaPit = new Restaurant($q, $rootScope);
+                saladBar = new Restaurant($q, $rootScope);
             });
 
             it('should illustrate promise rejection', function () {
@@ -114,6 +115,33 @@ describe('Pizza ordering sample to show Q & Promise API', function () {
                 pizzaPit.problemWithOrder('no Capricciosa, only Margherita left');
 
                 expect($log.warn.logs).toContain(['Pawel is hungry because: ordered pizza not available']);
+            });
+
+            it('should illustrate promise aggregation', function () {
+                var orderDelivered = $q.all([pizzaPit.takeOrder('Pepperoni'),
+                    saladBar.takeOrder('Fresh salad')]);
+                orderDelivered.then(pawel.eat, pawel.beHungry);
+                pizzaPit.deliverOrder();
+                saladBar.deliverOrder();
+                expect($log.info.logs).toContain(['Pawel is eating delicious Pepperoni,Fresh salad']);
+            });
+
+            it('should illustrate promise aggregation when one promise fails', function () {
+                var orderDelivered = $q.all([pizzaPit.takeOrder('Pepperoni'),
+                    saladBar.takeOrder('Fresh lettuce')]);
+                orderDelivered.then(pawel.eat, pawel.beHungry);
+                pizzaPit.deliverOrder();
+                saladBar.problemWithOrder('no fresh lettuce');
+                expect($log.warn.logs).toContain(['Pawel is hungry because: no fresh lettuce']);
+            });
+
+            it('should illustrate promise aggregation with $q.when', function () {
+                var orderDelivered = $q.all([pizzaPit.takeOrder('Pepperoni'),
+                    $q.when('home made salad')]);
+                orderDelivered.then(pawel.eat, pawel.beHungry);
+                pizzaPit.deliverOrder();
+
+                expect($log.info.logs).toContain(['Pawel is eating delicious Pepperoni,home made salad']);
             });
         })
     });

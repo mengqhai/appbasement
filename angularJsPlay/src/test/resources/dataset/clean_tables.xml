@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dataset>
+  <!-- Reference table first -->
+  <APP_GROUP_USER />
+  
+  <!-- User -->
+  <APP_USER />
+  <!-- Group -->
+  <APP_GROUP />
+  
+  <APP_TEMPLATE />
+</dataset>
