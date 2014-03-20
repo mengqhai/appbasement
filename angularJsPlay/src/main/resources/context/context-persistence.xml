@@ -31,6 +31,7 @@
 		<property name="packagesToScan">
 			<list>
 				<value>com.appbasement.model</value>
+				<value>com.angularjsplay.model</value>
 			</list>
 		</property>
 		<property name="jpaVendorAdapter" ref="jpaVendorAdapter"></property>
