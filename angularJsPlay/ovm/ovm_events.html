@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OVM Events</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular-resource.js"></script>
+    <script src="angular-base64.js"></script>
+    <script src="ovm_events.js"></script>
+</head>
+<body ng-app="ovm.events">
+<div>
+    <div ng-controller="EventsCtrl">
+        <label for="hostname">Url:</label>
+        <input id="hostname" ng-model="hostname" size="40"/>
+        <br/>
+        <label for="username">Username:</label>
+        <input id="username" ng-model="username"/>
+        <label for="password">Password:</label>
+        <input id="password" ng-model="password" type="password"/>
+        <br/>
+        <label for="objType">ObjType</label>
+        <select id="objType" ng-model="selectedObjType">
+           <option ng-repeat="objType in objTypes">{{objType}}</option>
+        </select>
+        <button ng-click="queryEvent()">Query</button>
+    </div>
+</div>
+
+</body>
+</html>
