@@ -219,3 +219,5 @@ appBasement/target/
 appBasement/hsqldb/
 .springBeans
 .idea
+**/hsqldb/
+**/target/
