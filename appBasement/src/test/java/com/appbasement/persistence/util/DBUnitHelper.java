@@ -36,9 +36,8 @@ public class DBUnitHelper {
 					"Unable to load data set:" + dataSetPath, e);
 		}
 	}
-
-	public static void importDataSet(EntityManagerFactory emf,
-			final String... dataSets) {
+	
+	public static void cleanAll(EntityManagerFactory emf) {
 		try {
 			EntityManager em = emf.createEntityManager();
 			final Session session = em.unwrap(Session.class);
@@ -49,7 +48,23 @@ public class DBUnitHelper {
 					// This is a must even with DatabaseSequenceFilter
 					session.doWork(new DBUnitWork(DatabaseOperation.DELETE_ALL,
 							TestConstants.DATA_SET_CLEAN_TABLES));
+				}
+			};
+			em.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("Unable to clean data in DB.", e);
+		}
+	}
 
+	public static void importDataSet(EntityManagerFactory emf,
+			final String... dataSets) {
+		try {
+			EntityManager em = emf.createEntityManager();
+			final Session session = em.unwrap(Session.class);
+			new TemplateWorker<Object>(em) {
+				@Override
+				protected void doIt() {
 					// import new data
 					for (String dataSet : dataSets) {
 						session.doWork(new DBUnitWork(

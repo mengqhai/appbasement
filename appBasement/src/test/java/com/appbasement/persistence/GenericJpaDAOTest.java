@@ -20,7 +20,6 @@ import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.appbasement.model.User;
@@ -38,6 +37,7 @@ public abstract class GenericJpaDAOTest<T, ID extends Serializable> {
 
 	@Before
 	public void setUp() throws Exception {
+		DBUnitHelper.cleanAll(EmfHelper.getEmf());
 		DBUnitHelper.importSmallDataSet(EmfHelper.getEmf());
 		dao = createDao();
 		dao.setEm(EmfHelper.getEmf().createEntityManager());
@@ -205,7 +205,6 @@ public abstract class GenericJpaDAOTest<T, ID extends Serializable> {
 
 	protected abstract Object[] getPersistEntitiesInvalid();
 
-	
 	@Test(expected = PersistenceException.class)
 	@Parameters(method = "getPersistEntitiesInvalid")
 	public void testPersistInvalidEntity(final T invalidEntity) {
