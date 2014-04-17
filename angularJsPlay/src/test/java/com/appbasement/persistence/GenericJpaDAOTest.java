@@ -38,6 +38,7 @@ public abstract class GenericJpaDAOTest<T, ID extends Serializable> {
 
 	@Before
 	public void setUp() throws Exception {
+		DBUnitHelper.cleanAll(EmfHelper.getEmf());
 		DBUnitHelper.importSmallDataSet(EmfHelper.getEmf());
 		dao = createDao();
 		dao.setEm(EmfHelper.getEmf().createEntityManager());
@@ -175,6 +176,10 @@ public abstract class GenericJpaDAOTest<T, ID extends Serializable> {
 		assertTrue(result.containsAll(mustContain));
 	}
 
+	/**
+	 * 
+	 * @return $($(entity, dbUnitAssertionWork))
+	 */
 	protected abstract Object[] getPersistEntities();
 
 	@Test
@@ -205,7 +210,6 @@ public abstract class GenericJpaDAOTest<T, ID extends Serializable> {
 
 	protected abstract Object[] getPersistEntitiesInvalid();
 
-	
 	@Test(expected = PersistenceException.class)
 	@Parameters(method = "getPersistEntitiesInvalid")
 	public void testPersistInvalidEntity(final T invalidEntity) {

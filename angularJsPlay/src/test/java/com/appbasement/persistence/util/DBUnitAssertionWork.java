@@ -121,6 +121,10 @@ public class DBUnitAssertionWork implements Work {
 		return replace("[LAST_UPDATE]", time);
 	}
 
+	public DBUnitAssertionWork replaceNull() {
+		return replace("[NULL]", null);
+	}
+
 	public String getWhereCondition() {
 		return whereCondition;
 	}

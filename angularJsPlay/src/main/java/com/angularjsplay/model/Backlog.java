@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -38,52 +39,59 @@ public class Backlog {
 	public Backlog() {
 	}
 
-	protected long getId() {
+	public long getId() {
 		return id;
 	}
 
-	protected void setId(long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
-	protected String getName() {
+	public String getName() {
 		return name;
 	}
 
-	protected void setName(String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
-	protected String getDesc() {
+	public String getDesc() {
 		return desc;
 	}
 
-	protected void setDesc(String desc) {
+	public void setDesc(String desc) {
 		this.desc = desc;
 	}
 
-	protected short getPriority() {
+	public short getPriority() {
 		return priority;
 	}
 
-	protected void setPriority(short priority) {
+	public void setPriority(short priority) {
 		this.priority = priority;
 	}
 
-	protected short getEstimation() {
+	public short getEstimation() {
 		return estimation;
 	}
 
-	protected void setEstimation(short estimation) {
+	public void setEstimation(short estimation) {
 		this.estimation = estimation;
 	}
 
-	protected Date getCreatedAt() {
+	public Date getCreatedAt() {
 		return createdAt;
 	}
 
-	protected void setCreatedAt(Date createdAt) {
+	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
-	
+
+	@PrePersist
+	protected void setCreatedAt() {
+		if (createdAt == null) {
+			createdAt = new Date();
+		}
+	}
+
 }

@@ -9,4 +9,8 @@
   <APP_GROUP />
   
   <APP_TEMPLATE />
+  
+  <TASK />
+  <BACKLOG />
+  <PROJECT />
 </dataset>
