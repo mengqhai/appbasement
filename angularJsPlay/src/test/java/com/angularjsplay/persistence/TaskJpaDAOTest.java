@@ -22,6 +22,7 @@ import com.appbasement.persistence.GenericJpaDAOTest;
 import com.appbasement.persistence.util.DBUnitAssertionWork;
 import com.appbasement.persistence.util.DBUnitHelper;
 import com.appbasement.persistence.util.EmfHelper;
+import com.appbasement.persistence.util.TestConstants;
 
 @RunWith(JUnitParamsRunner.class)
 public class TaskJpaDAOTest extends GenericJpaDAOTest<Task, Long> {
@@ -107,15 +108,22 @@ public class TaskJpaDAOTest extends GenericJpaDAOTest<Task, Long> {
 
 	@Override
 	protected Object[] getMergeEntities() {
-		// TODO Auto-generated method stub
-		return $($());
+		final DBUnitAssertionWork aWork = new DBUnitAssertionWork(
+				this.getClass(), "testMerge", TestConstants.TABLE_USER,
+				"id in (1)");
+		return $($(1l, aWork));
 	}
 
 	@Override
 	protected void mergeUpdateInDetached(Task entity,
 			Map<String, Object> modifiedAtts) {
-		// TODO Auto-generated method stub
-
+		switch (entity.getId().toString()) {
+		case "1":
+			String name = "Hello task 1";
+			String desc = "Description of task 1";
+			entity.setName(name);
+			
+		}
 	}
 
 	@Override

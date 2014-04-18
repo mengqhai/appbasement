@@ -30,7 +30,7 @@ public class Task {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Access(AccessType.PROPERTY)
-	private long id;
+	private Long id;
 
 	@Column(length = 255)
 	private String name;
@@ -56,17 +56,17 @@ public class Task {
 
 	@ManyToOne(targetEntity = User.class)
 	@JoinColumn(name = "OWNER_ID", nullable = true)
-	@ForeignKey(name="FK_TASK_OWNER")
+	@ForeignKey(name = "FK_TASK_OWNER")
 	private User owner;
 
 	public Task() {
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
