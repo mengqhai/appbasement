@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import org.dbunit.database.DatabaseSequenceFilter;
 import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ReplacementDataSet;
 import org.dbunit.ext.hsqldb.HsqldbConnection;
 import org.dbunit.operation.DatabaseOperation;
 import org.hibernate.jdbc.Work;
@@ -28,7 +29,11 @@ public class DBUnitWork implements Work {
 			IDataSet setupDataSet = new FilteredDataSet(
 					new DatabaseSequenceFilter(dbUnitConn),
 					DBUnitHelper.getFlatXmlDataSet(dataSetPath));
-			dbOperation.execute(dbUnitConn, setupDataSet);
+			ReplacementDataSet replacement = new ReplacementDataSet(
+					setupDataSet);
+			// always replace the [NULL]
+			replacement.addReplacementObject("[NULL]", null);
+			dbOperation.execute(dbUnitConn, replacement);
 		} catch (Exception e) {
 			throw new RuntimeException("Unable perform operation "
 					+ this.dbOperation + " on " + dataSetPath, e);

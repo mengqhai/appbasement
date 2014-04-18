@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ReplacementDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.ext.hsqldb.HsqldbConnection;
 import org.dbunit.operation.DatabaseOperation;
@@ -30,7 +31,11 @@ public class DBUnitWork implements Work {
 		try {
 			HsqldbConnection dbUnitConn = new HsqldbConnection(connection, null);
 			IDataSet setupDataSet = getDataSet(dataSetPath);
-			dbOperation.execute(dbUnitConn, setupDataSet);
+			ReplacementDataSet replacement = new ReplacementDataSet(
+					setupDataSet);
+			// always replace the [NULL]
+			replacement.addReplacementObject("[NULL]", null);
+			dbOperation.execute(dbUnitConn, replacement);
 		} catch (Exception e) {
 			throw new RuntimeException("Unable to clean insert " + dataSetPath,
 					e);

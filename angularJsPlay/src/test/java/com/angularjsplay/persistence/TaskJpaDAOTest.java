@@ -55,14 +55,12 @@ public class TaskJpaDAOTest extends GenericJpaDAOTest<Task, Long> {
 
 	@Override
 	protected Object[] getIdsForRemove() {
-		// TODO Auto-generated method stub
-		return $($());
+		return $($(1l));
 	}
 
 	@Override
 	protected Object[] getInvalidIdsForRemove() {
-		// TODO Auto-generated method stub
-		return $($());
+		return $($(10000l, 0l, -10l));
 	}
 
 	@Override
