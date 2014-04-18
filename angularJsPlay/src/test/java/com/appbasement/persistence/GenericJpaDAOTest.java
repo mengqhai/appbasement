@@ -20,7 +20,6 @@ import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.appbasement.model.User;

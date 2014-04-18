@@ -140,4 +140,55 @@ public class Task {
 			createdAt = new Date();
 		}
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((getCreatedAt() == null) ? 0 : getCreatedAt().hashCode());
+		result = prime * result
+				+ ((getDesc() == null) ? 0 : getDesc().hashCode());
+		result = prime * result + getEstimation();
+		result = prime * result
+				+ ((getName() == null) ? 0 : getName().hashCode());
+		result = prime * result + getRemaining();
+		result = prime * result
+				+ ((getState() == null) ? 0 : getState().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Task))
+			return false;
+		Task other = (Task) obj;
+		if (getCreatedAt() == null) {
+			if (other.getCreatedAt() != null)
+				return false;
+		} else if (!getCreatedAt().equals(other.getCreatedAt()))
+			return false;
+		if (getDesc() == null) {
+			if (other.getDesc() != null)
+				return false;
+		} else if (!getDesc().equals(other.getDesc()))
+			return false;
+		if (getEstimation() != other.getEstimation())
+			return false;
+		if (getName() == null) {
+			if (other.getName() != null)
+				return false;
+		} else if (!getName().equals(other.getName()))
+			return false;
+		if (getRemaining() != other.getRemaining())
+			return false;
+		if (getState() != other.getState())
+			return false;
+		return true;
+	}
+
 }

@@ -4,6 +4,7 @@ import static junitparams.JUnitParamsRunner.$;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
 
@@ -22,7 +23,6 @@ import com.appbasement.persistence.GenericJpaDAOTest;
 import com.appbasement.persistence.util.DBUnitAssertionWork;
 import com.appbasement.persistence.util.DBUnitHelper;
 import com.appbasement.persistence.util.EmfHelper;
-import com.appbasement.persistence.util.TestConstants;
 
 @RunWith(JUnitParamsRunner.class)
 public class TaskJpaDAOTest extends GenericJpaDAOTest<Task, Long> {
@@ -65,14 +65,20 @@ public class TaskJpaDAOTest extends GenericJpaDAOTest<Task, Long> {
 
 	@Override
 	protected Object[] getParamEntitiesNotFound() {
-		// TODO Auto-generated method stub
-		return $($());
+		return $($(-10000l, null), $(0l, null));
 	}
 
 	@Override
 	protected Object[] getParamEntitiesFound() {
-		// TODO Auto-generated method stub
-		return $($());
+		Task task5 = new Task();
+		task5.setId(5l);
+		task5.setName("eu sem. Pellentesque ut ipsum ac");
+		task5.setDesc("faucibus ut, nulla. Cras eu tellus eu augue porttitor interdum. Sed auctor odio a purus. Duis elementum, dui quis accumsan convallis, ante lectus convallis est, vitae sodales nisi magna sed");
+		task5.setRemaining((short) 4);
+		task5.setEstimation((short) 95);
+		task5.setState(TaskState.CANCELED);
+		task5.setCreatedAt(Timestamp.valueOf("2012-08-22 09:59:36"));
+		return $($(5l, task5));
 	}
 
 	@Override
