@@ -109,7 +109,7 @@ public class TaskJpaDAOTest extends GenericJpaDAOTest<Task, Long> {
 	@Override
 	protected Object[] getMergeEntities() {
 		final DBUnitAssertionWork aWork = new DBUnitAssertionWork(
-				this.getClass(), "testMerge", TestConstants.TABLE_USER,
+				this.getClass(), "testMerge", ScrumTestConstants.TABLE_TASK,
 				"id in (1)");
 		return $($(1l, aWork));
 	}
@@ -122,7 +122,17 @@ public class TaskJpaDAOTest extends GenericJpaDAOTest<Task, Long> {
 			String name = "Hello task 1";
 			String desc = "Description of task 1";
 			entity.setName(name);
-			
+			entity.setDesc(desc);
+			entity.setEstimation((short) 88);
+			entity.setRemaining((short) 0);
+			entity.setState(TaskState.CANCELED);
+
+			modifiedAtts.put("name", name);
+			modifiedAtts.put("desc", desc);
+			modifiedAtts.put("estimation", (short) 88);
+			modifiedAtts.put("remaining", (short) 0);
+			modifiedAtts.put("state", TaskState.CANCELED);
+
 		}
 	}
 
