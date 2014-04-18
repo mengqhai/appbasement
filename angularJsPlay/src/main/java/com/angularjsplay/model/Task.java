@@ -191,4 +191,11 @@ public class Task {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "Task [name=" + name + ", state=" + state + "]";
+	}
+	
+	
+
 }
