@@ -1,12 +1,13 @@
 package com.angularjsplay.mvc.rest;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -28,9 +29,15 @@ public class UserController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
-	public @ResponseBody User getUser(@PathVariable("id") long id) {
+	public @ResponseBody
+	User getUser(@PathVariable("id") long id) {
+		return userService.getUserById(id);
+	}
 
-		return null;
+	@RequestMapping(method = RequestMethod.PUT, value = "/{id}")
+	public void updateUser(@PathVariable("id") long id,
+			@RequestBody @Valid User user) {
+		userService.saveUser(user);
 	}
 
 }
