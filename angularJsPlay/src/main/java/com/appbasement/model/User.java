@@ -25,6 +25,9 @@ import javax.validation.constraints.Size;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
+import com.angularjsplay.mvc.validation.ValidateOnCreate;
+import com.angularjsplay.mvc.validation.ValidateOnUpdate;
+
 @Entity
 @Table(name = "APP_USER")
 @Access(AccessType.FIELD)
@@ -52,8 +55,9 @@ public class User implements Serializable {
 
 	@Column(nullable = false, length = 50)
 	// Bean validation
-	@NotNull
-	@Size(min = 6, max = 50, message = "The password must be 6-50 characters long.")
+	@NotNull(groups = ValidateOnCreate.class)
+	@Size(min = 6, max = 50, message = "The password must be 6-50 characters long.", groups = {
+			ValidateOnCreate.class, ValidateOnUpdate.class })
 	private String password;
 
 	@Column(nullable = false, unique = true, updatable = true, length = 60)
