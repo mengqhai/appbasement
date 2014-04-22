@@ -43,6 +43,9 @@ public class GroupTest {
 	}
 
 	private void forceSameCreatedAt(Group group1, Group group2) {
+		if (group1.getCreatedAt()==null) {
+			group1.setCreatedAt();
+		}
 		group2.setCreatedAt(new Date(group1.getCreatedAt().getTime()));
 	}
 
@@ -69,11 +72,13 @@ public class GroupTest {
 		// empty instance
 		Group group1 = new Group();
 		Group group2 = new Group();
+		group1.setCreatedAt(new Date());
 		forceSameCreatedAt(group1, group2);
 
 		// same group name
 		Group group11 = new Group("group");
 		Group group22 = new Group("group");
+		group11.setCreatedAt(new Date());
 		forceSameCreatedAt(group11, group22);
 
 		// sub class should pass equals (book JPWH CH9.2.3.1)
@@ -82,6 +87,8 @@ public class GroupTest {
 			private static final long serialVersionUID = 1L;
 		};
 		group222.setName("group");
+
+		group111.setCreatedAt(new Date());
 		forceSameCreatedAt(group111, group222);
 
 		return $($(group1, group2), $(group11, group22), $(group111, group222));

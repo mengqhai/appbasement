@@ -19,6 +19,7 @@ import javax.validation.ConstraintViolationException;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
+import org.hibernate.validator.internal.util.Contracts;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -124,6 +125,7 @@ public class UserJpaDAOTest extends GenericJpaDAOTest<User, Long> {
 		user.setUsername("testuser");
 		user.setPassword("guesswhat345");
 		user.setEmail("testuser@dummy.com");
+		user.setCreatedAt(new Date());
 		DBUnitAssertionWork aWork = new DBUnitAssertionWork(this.getClass(),
 				"testPersist", TestConstants.TABLE_USER);
 		aWork.replaceCreatedAt(user.getCreatedAt());

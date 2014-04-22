@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -54,7 +55,7 @@ public class Group implements Serializable {
 
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdAt = new Date();
+	private Date createdAt;
 
 	public Group() {
 		super();
@@ -148,4 +149,10 @@ public class Group implements Serializable {
 		return "Group [name=" + name + "]";
 	}
 
+	@PrePersist
+	protected void setCreatedAt() {
+		if (getCreatedAt() == null) {
+			setCreatedAt(new Date());
+		}
+	}
 }

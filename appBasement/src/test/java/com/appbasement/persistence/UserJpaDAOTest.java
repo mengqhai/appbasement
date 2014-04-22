@@ -125,6 +125,7 @@ public class UserJpaDAOTest extends GenericJpaDAOTest<User, Long> {
 		user.setUsername("testuser");
 		user.setPassword("guesswhat345");
 		user.setEmail("testuser@dummy.com");
+		user.setCreatedAt(new Date());
 		DBUnitAssertionWork aWork = new DBUnitAssertionWork(this.getClass(),
 				"testPersist", TestConstants.TABLE_USER);
 		aWork.replaceCreatedAt(user.getCreatedAt());

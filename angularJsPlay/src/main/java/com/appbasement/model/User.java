@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -72,7 +73,7 @@ public class User implements Serializable {
 
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdAt = new Date();
+	private Date createdAt;
 
 	public User() {
 	}
@@ -226,6 +227,13 @@ public class User implements Serializable {
 	@Override
 	public String toString() {
 		return "User [username=" + username + ", email=" + email + "]";
+	}
+
+	@PrePersist
+	protected void setCreatedAt() {
+		if (getCreatedAt() == null) {
+			setCreatedAt(new Date());
+		}
 	}
 
 }

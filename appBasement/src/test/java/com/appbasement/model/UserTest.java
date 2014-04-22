@@ -54,13 +54,14 @@ public class UserTest {
 	public void testHashSetAccess() {
 		Set<User> userSet = new HashSet<User>();
 		User user1 = new User("user1");
+		user1.setCreatedAt(new Date());
 		User user2 = new User("user2");
 		userSet.add(user1);
 		userSet.add(user2);
-		
+
 		user1.setId(1l);
 		user2.setId(2l);
-		
+
 		assertEquals(2, userSet.size());
 		assertTrue(userSet.contains(user1));
 		assertTrue(userSet.contains(user2));
@@ -89,6 +90,9 @@ public class UserTest {
 	}
 
 	private void forceSameCreatedAt(User user1, User user2) {
+		if (user1.getCreatedAt() == null) {
+			user1.setCreatedAt(new Date());
+		}
 		user2.setCreatedAt(new Date(user1.getCreatedAt().getTime()));
 	}
 
@@ -96,11 +100,13 @@ public class UserTest {
 		// empty instance test
 		User user1 = new User();
 		User user2 = new User();
+		user1.setCreatedAt(new Date());
 		forceSameCreatedAt(user1, user2);
 
 		// same username, same password
 		User user11 = new User("user1", "password");
 		User user22 = new User("user1", "password");
+		user11.setCreatedAt(new Date());
 		forceSameCreatedAt(user11, user22);
 
 		// same username, same email
@@ -108,6 +114,7 @@ public class UserTest {
 		user111.setEmail("user1@gmail.com");
 		User user222 = new User("user1");
 		user222.setEmail("user1@gmail.com");
+		user111.setCreatedAt(new Date());
 		forceSameCreatedAt(user111, user222);
 
 		// sub class should pass equals (book JPWH CH9.2.3.1)
@@ -118,6 +125,7 @@ public class UserTest {
 		};
 		user2222.setUsername("user1");
 		user2222.setEmail("user1@gmail.com");
+		user1111.setCreatedAt(new Date());
 		forceSameCreatedAt(user1111, user2222);
 
 		return $($(user1, user2), $(user11, user22), $(user111, user222),
@@ -136,21 +144,25 @@ public class UserTest {
 		// same username, different password
 		User user1 = new User("user1", "password1");
 		User user2 = new User("user1", "password2");
+		user1.setCreatedAt(new Date());
 		forceSameCreatedAt(user1, user2);
 
 		// same username, same email, different creation time
 		User user11 = new User("user1").setEmail("user1@gmail.com");
 		User user22 = new User("user1").setEmail("user1@gmail.com");
+		user11.setCreatedAt(new Date());
 		user22.setCreatedAt(new Date(user11.getCreatedAt().getTime() + 1000));
 
 		// same username, one null email
 		User user111 = new User("user1").setEmail("user1@gmail.com");
 		User user222 = new User("user1");
+		user111.setCreatedAt(new Date());
 		forceSameCreatedAt(user111, user222);
 
 		// different username, different email
 		User user1111 = new User("user1").setEmail("user1@gmail.com");
 		User user2222 = new User("user2").setEmail("user2@gmail.com");
+		user1111.setCreatedAt(new Date());
 		forceSameCreatedAt(user1111, user2222);
 
 		return $($(new User("user1"), null), $(user11, user22),

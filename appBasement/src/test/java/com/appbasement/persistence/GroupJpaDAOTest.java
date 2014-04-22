@@ -116,6 +116,7 @@ public class GroupJpaDAOTest extends GenericJpaDAOTest<Group, Long> {
 	protected Object[] getPersistEntities() {
 		Group group = new Group();
 		group.setName("testgroup");
+		group.setCreatedAt(new Date());
 		DBUnitAssertionWork aWork = new DBUnitAssertionWork(
 				GroupJpaDAOTest.class, "testPersist", TestConstants.TABLE_GROUP);
 		aWork.replaceCreatedAt(group.getCreatedAt());
