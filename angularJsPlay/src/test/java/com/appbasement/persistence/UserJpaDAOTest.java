@@ -139,9 +139,12 @@ public class UserJpaDAOTest extends GenericJpaDAOTest<User, Long> {
 	}
 
 	protected Object[] getPersistEntitiesValidationFail() {
-		return $($(new User(null, "pass").setEmail("someadd@some.com"),
-				new User("user1", null).setEmail("someadd@some.com"),
-				new User(), new User("user", "pass")));
+		return $($(new User(null, "pass").setEmail("someadd@some.com")
+				.setCreatedAt(new Date()),
+				new User("user1", null).setEmail("someadd@some.com")
+						.setCreatedAt(new Date()),
+				new User().setCreatedAt(new Date()),
+				new User("user", "pass").setCreatedAt(new Date())));
 	}
 
 	@Override
