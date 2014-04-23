@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.appbasement.component.IObjectPatcher;
 import com.appbasement.model.User;
@@ -50,7 +51,16 @@ public class UserController {
 		User existing = userService.getUserById(id);
 		objectPatcher.patchObject(existing, user);
 		userService.saveUser(existing);
-		//return existing;
+		// return existing;
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public @ResponseBody
+	User createUser(
+			@RequestBody @Validated(value = ValidateOnCreate.class) User user,
+			BindingResult bResult) {
+		userService.saveUser(user);
+		return user;
 	}
 
 }
