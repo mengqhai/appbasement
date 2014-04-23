@@ -2,9 +2,8 @@ package com.angularjsplay.mvc.rest;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -13,9 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
+import com.appbasement.component.IObjectPatcher;
 import com.appbasement.model.User;
 import com.appbasement.service.user.IAppUserService;
 
@@ -25,6 +25,9 @@ public class UserController {
 
 	@Autowired
 	IAppUserService userService;
+
+	@Autowired
+	IObjectPatcher objectPatcher;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public @ResponseBody
@@ -38,11 +41,16 @@ public class UserController {
 		return userService.getUserById(id);
 	}
 
-	@RequestMapping(method = RequestMethod.PATCH, value = "/{id}")
+	@RequestMapping(method = { RequestMethod.PATCH, RequestMethod.PUT }, value = "/{id}")
+	// @ResponseBody
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void updateUser(@PathVariable("id") long id,
-			@RequestBody @Validated(value = ValidateOnCreate.class) User user,
+			@RequestBody @Validated(value = ValidateOnUpdate.class) User user,
 			BindingResult bResult) {
-		userService.saveUser(user);
+		User existing = userService.getUserById(id);
+		objectPatcher.patchObject(existing, user);
+		userService.saveUser(existing);
+		//return existing;
 	}
 
 }
