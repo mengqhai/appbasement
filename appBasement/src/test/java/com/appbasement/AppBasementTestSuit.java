@@ -1,8 +1,10 @@
 package com.appbasement;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.appbasement.component.ObjectPatcherTest;
 import com.appbasement.model.GroupTest;
 import com.appbasement.model.TemplateTest;
 import com.appbasement.model.UserTest;
@@ -15,7 +17,8 @@ import com.appbasement.service.template.TemplateServiceTest;
 @RunWith(Suite.class)
 @SuiteClasses({ GroupJpaDAOTest.class, UserJpaDAOTest.class,
 		TemplateJpaDAOTest.class, GroupTest.class, TemplateTest.class,
-		UserTest.class, EmailServiceTest.class, TemplateServiceTest.class })
+		UserTest.class, EmailServiceTest.class, TemplateServiceTest.class,
+		ObjectPatcherTest.class })
 public class AppBasementTestSuit {
 
 }

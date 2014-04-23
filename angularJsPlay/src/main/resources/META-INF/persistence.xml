@@ -6,5 +6,10 @@
 		hibernate.archive.autodetection won't work -->
 	<persistence-unit name="angularJsPlay">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<properties>
+			<!-- http://docs.jboss.org/hibernate/validator/4.0.1/reference/en/html/validator-checkconstraints.html -->
+			<property name="javax.persistence.validation.group.pre-persist"
+				value="javax.validation.groups.Default, com.angularjsplay.mvc.validation.ValidateOnCreate" />
+		</properties>
 	</persistence-unit>
 </persistence>
