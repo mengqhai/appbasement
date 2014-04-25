@@ -55,12 +55,19 @@ public class UserController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
+	@ResponseStatus(HttpStatus.CREATED)
 	public @ResponseBody
 	User createUser(
 			@RequestBody @Validated(value = ValidateOnCreate.class) User user,
 			BindingResult bResult) {
 		userService.saveUser(user);
 		return user;
+	}
+
+	@RequestMapping(method = RequestMethod.DELETE, value = "/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteUser(@PathVariable("id") long id) {
+		userService.deleteUserById(id);
 	}
 
 }

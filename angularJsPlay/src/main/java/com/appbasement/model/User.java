@@ -25,6 +25,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
@@ -121,6 +122,7 @@ public class User implements Serializable {
 		return password;
 	}
 
+	@JsonProperty // getter is ignored, so setter must be explicitly annotated
 	public User setPassword(String password) {
 		this.password = password;
 		return this;
