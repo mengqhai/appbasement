@@ -18,18 +18,18 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Access(AccessType.FIELD)
-public class Sprint {
+public class Sprint implements IEntity{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Access(AccessType.PROPERTY)
-	private long id;
+	private Long id;
 
 	private String name;
 
 	private String desc;
 
-	private short capacity;
+	private Short capacity;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date startAt;
@@ -53,67 +53,67 @@ public class Sprint {
 	public Sprint() {
 	}
 
-	protected long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	protected void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	protected String getName() {
+	public String getName() {
 		return name;
 	}
 
-	protected void setName(String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
-	protected String getDesc() {
+	public String getDesc() {
 		return desc;
 	}
 
-	protected void setDesc(String desc) {
+	public void setDesc(String desc) {
 		this.desc = desc;
 	}
 
-	protected short getCapacity() {
+	public short getCapacity() {
 		return capacity;
 	}
 
-	protected void setCapacity(short capacity) {
+	public void setCapacity(short capacity) {
 		this.capacity = capacity;
 	}
 
-	protected Date getStartAt() {
+	public Date getStartAt() {
 		return startAt;
 	}
 
-	protected void setStartAt(Date startAt) {
+	public void setStartAt(Date startAt) {
 		this.startAt = startAt;
 	}
 
-	protected Date getEndAt() {
+	public Date getEndAt() {
 		return endAt;
 	}
 
-	protected void setEndAt(Date endAt) {
+	public void setEndAt(Date endAt) {
 		this.endAt = endAt;
 	}
 
-	protected Date getCreatedAt() {
+	public Date getCreatedAt() {
 		return createdAt;
 	}
 
-	protected void setCreatedAt(Date createdAt) {
+	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
 
-	protected Collection<Backlog> getBacklogs() {
+	public Collection<Backlog> getBacklogs() {
 		return backlogs;
 	}
 
-	protected void setBacklogs(Collection<Backlog> backlogs) {
+	public void setBacklogs(Collection<Backlog> backlogs) {
 		this.backlogs = backlogs;
 	}
 

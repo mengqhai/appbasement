@@ -21,7 +21,7 @@ import com.appbasement.model.User;
 
 @Entity
 @Access(AccessType.FIELD)
-public class Task {
+public class Task implements IEntity {
 
 	public enum TaskState {
 		NEW, IN_PROGRESS, FINISHED, CANCELED
@@ -43,9 +43,9 @@ public class Task {
 	@ForeignKey(name = "FK_TASK_BACKLOG")
 	private Backlog backlog;
 
-	private short estimation;
+	private Short estimation;
 
-	private short remaining;
+	private Short remaining;
 
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -195,7 +195,5 @@ public class Task {
 	public String toString() {
 		return "Task [name=" + name + ", state=" + state + "]";
 	}
-	
-	
 
 }

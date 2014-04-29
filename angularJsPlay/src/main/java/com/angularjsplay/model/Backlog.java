@@ -15,12 +15,12 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Access(AccessType.FIELD)
-public class Backlog {
+public class Backlog implements IEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Access(AccessType.PROPERTY)
-	private long id;
+	private Long id;
 
 	@Column(length = 255)
 	private String name;
@@ -28,9 +28,9 @@ public class Backlog {
 	@Column(length = 2048)
 	private String desc;
 
-	private short priority;
+	private Short priority;
 
-	private short estimation;
+	private Short estimation;
 
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -39,11 +39,11 @@ public class Backlog {
 	public Backlog() {
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

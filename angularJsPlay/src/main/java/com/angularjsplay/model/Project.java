@@ -23,10 +23,10 @@ import org.hibernate.annotations.ForeignKey;
 import com.appbasement.model.User;
 
 @Entity
-public class Project {
+public class Project implements IEntity{
 
 	@Id
-	private long id;
+	private Long id;
 
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "PRODUCT_OWNER")
@@ -67,11 +67,11 @@ public class Project {
 	public Project() {
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
