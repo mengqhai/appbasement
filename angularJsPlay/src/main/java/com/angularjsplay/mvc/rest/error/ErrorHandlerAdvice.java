@@ -27,8 +27,8 @@ public class ErrorHandlerAdvice {
 		BindingResult bResult = vException.getBindingResult();
 		List<ObjectError> allErrors = bResult.getAllErrors();
 		StringBuilder message = new StringBuilder();
-		for (ObjectError error : allErrors) {
-
+		for (int i = 0; i < allErrors.size(); i++) {
+			ObjectError error = allErrors.get(i);
 			if (error instanceof FieldError) {
 				message.append("Field ");
 				message.append(((FieldError) error).getField()).append(
@@ -38,6 +38,9 @@ public class ErrorHandlerAdvice {
 				message.append(error.getObjectName());
 			}
 			message.append(":").append(error.getDefaultMessage());
+			if (i != allErrors.size() - 1) {
+				message.append("\n");
+			}
 		}
 
 		RestError result = new RestError();

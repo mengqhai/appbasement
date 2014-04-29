@@ -67,6 +67,7 @@ public class ScrumService implements IScrumService {
 		return dao;
 	}
 
+	@Override
 	public <T extends IEntity> void save(T entity) {
 		IGenericDAO<T, Long> dao = getDao(entity.getClass());
 		if (entity.getId() == null) {
@@ -76,6 +77,7 @@ public class ScrumService implements IScrumService {
 		}
 	}
 
+	@Override
 	public <T extends IEntity> T getById(Class<T> type, Long id)
 			throws ScrumResourceNotFoundException {
 		IGenericDAO<T, Long> dao = getDao(type);
@@ -87,11 +89,13 @@ public class ScrumService implements IScrumService {
 		}
 	}
 
+	@Override
 	public <T extends IEntity> List<T> getAll(Class<T> type) {
 		IGenericDAO<T, Long> dao = getDao(type);
 		return dao.findAll();
 	}
 
+	@Override
 	public <T extends IEntity> void deleteById(Class<T> type, Long id)
 			throws ScrumResourceNotFoundException {
 		IGenericDAO<T, Long> dao = getDao(type);

@@ -1,6 +1,8 @@
 package com.angularjsplay.mvc.rest;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,7 @@ import com.angularjsplay.exception.ScrumValidationException;
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.appbasement.component.IObjectPatcher;
+import com.appbasement.component.PatchedValue;
 import com.appbasement.model.User;
 import com.appbasement.service.user.IAppUserService;
 
@@ -61,8 +64,11 @@ public class UserController {
 			if (existing == null) {
 				throw new ScrumResourceNotFoundException();
 			}
-			objectPatcher.patchObject(existing, user);
-			userService.saveUser(existing);
+			Map<Field, PatchedValue> patchedResult = objectPatcher.patchObject(
+					existing, user);
+			if (patchedResult.isEmpty()) {
+				userService.saveUser(existing);
+			}
 			// return existing;
 		}
 	}
@@ -73,6 +79,9 @@ public class UserController {
 	User createUser(
 			@RequestBody @Validated(value = ValidateOnCreate.class) User user,
 			BindingResult bResult) {
+		if (bResult.hasErrors()) {
+			throw new ScrumValidationException(bResult);
+		}
 		userService.saveUser(user);
 		return user;
 	}

@@ -5,9 +5,13 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -18,14 +22,18 @@ import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.ForeignKey;
 
 import com.appbasement.model.User;
 
 @Entity
-public class Project implements IEntity{
+@Access(AccessType.FIELD)
+public class Project implements IEntity {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Access(AccessType.PROPERTY)
 	private Long id;
 
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)
@@ -36,7 +44,7 @@ public class Project implements IEntity{
 	@JoinColumn(name = "SCRUM_MASTER")
 	private User scrumMaster;
 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "PROJECT_MEMBERS", joinColumns = @JoinColumn(name = "PROJECT_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
 	private Set<User> teamMembers;
 
@@ -91,6 +99,7 @@ public class Project implements IEntity{
 		this.scrumMaster = scrumMaster;
 	}
 
+	@JsonIgnore
 	public Set<User> getTeamMembers() {
 		return teamMembers;
 	}
@@ -115,6 +124,7 @@ public class Project implements IEntity{
 		this.desc = desc;
 	}
 
+	@JsonIgnore
 	public Collection<Backlog> getProductBacklogs() {
 		return productBacklogs;
 	}
@@ -123,6 +133,7 @@ public class Project implements IEntity{
 		this.productBacklogs = productBacklogs;
 	}
 
+	@JsonIgnore
 	public Collection<Sprint> getSprints() {
 		return sprints;
 	}
