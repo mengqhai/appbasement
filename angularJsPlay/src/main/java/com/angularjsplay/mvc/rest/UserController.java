@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.angularjsplay.exception.ScrumResourceNotFoundException;
+import com.angularjsplay.exception.ScrumValidationException;
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.appbasement.component.IObjectPatcher;
@@ -21,7 +23,7 @@ import com.appbasement.model.User;
 import com.appbasement.service.user.IAppUserService;
 
 @Controller
-@RequestMapping(value = "/user", headers = "Accept=application/json")
+@RequestMapping(value = "/users", headers = "Accept=application/json")
 public class UserController {
 
 	@Autowired
@@ -39,7 +41,11 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
 	public @ResponseBody
 	User getUser(@PathVariable("id") long id) {
-		return userService.getUserById(id);
+		User user = userService.getUserById(id);
+		if (user == null) {
+			throw new ScrumResourceNotFoundException();
+		}
+		return user;
 	}
 
 	@RequestMapping(method = { RequestMethod.PATCH, RequestMethod.PUT }, value = "/{id}")
@@ -48,10 +54,17 @@ public class UserController {
 	public void updateUser(@PathVariable("id") long id,
 			@RequestBody @Validated(value = ValidateOnUpdate.class) User user,
 			BindingResult bResult) {
-		User existing = userService.getUserById(id);
-		objectPatcher.patchObject(existing, user);
-		userService.saveUser(existing);
-		// return existing;
+		if (bResult.hasErrors()) {
+			throw new ScrumValidationException(bResult);
+		} else {
+			User existing = userService.getUserById(id);
+			if (existing == null) {
+				throw new ScrumResourceNotFoundException();
+			}
+			objectPatcher.patchObject(existing, user);
+			userService.saveUser(existing);
+			// return existing;
+		}
 	}
 
 	@RequestMapping(method = RequestMethod.POST)

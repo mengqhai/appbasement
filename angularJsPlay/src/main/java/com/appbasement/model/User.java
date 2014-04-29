@@ -64,8 +64,9 @@ public class User implements Serializable {
 
 	@Column(nullable = false, unique = true, updatable = true, length = 60)
 	// Bean validation
-	@NotNull
-	@Pattern(regexp = "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}", message = "Invalid email address.")
+	@NotNull(groups = ValidateOnCreate.class)
+	@Pattern(regexp = "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}", message = "Invalid email address.", groups = {
+			ValidateOnCreate.class, ValidateOnUpdate.class })
 	@Size(max = 60, message = "Email address too long.")
 	private String email;
 
@@ -122,7 +123,8 @@ public class User implements Serializable {
 		return password;
 	}
 
-	@JsonProperty // getter is ignored, so setter must be explicitly annotated
+	@JsonProperty
+	// getter is ignored, so setter must be explicitly annotated
 	public User setPassword(String password) {
 		this.password = password;
 		return this;
