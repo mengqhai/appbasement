@@ -6,12 +6,18 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.annotations.ForeignKey;
 
 @Entity
 @Access(AccessType.FIELD)
@@ -31,6 +37,12 @@ public class Backlog implements IEntity {
 	private Short priority;
 
 	private Short estimation;
+
+	@JsonIgnore
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "PROJECT_ID", nullable = false)
+	@ForeignKey(name = "FK_PROJECT_PRODUCT_BACKLOGS")
+	private Project project;
 
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -71,11 +83,11 @@ public class Backlog implements IEntity {
 		this.priority = priority;
 	}
 
-	public short getEstimation() {
+	public Short getEstimation() {
 		return estimation;
 	}
 
-	public void setEstimation(short estimation) {
+	public void setEstimation(Short estimation) {
 		this.estimation = estimation;
 	}
 
@@ -143,6 +155,14 @@ public class Backlog implements IEntity {
 	@Override
 	public String toString() {
 		return "Backlog [name=" + name + "]";
+	}
+
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
 	}
 
 }

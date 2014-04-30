@@ -18,4 +18,6 @@ public class ProjectJpaDAO extends GenericJpaDAO<Project, Long> implements
 		super(em);
 	}
 
+	
+
 }

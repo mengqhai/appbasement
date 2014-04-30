@@ -21,10 +21,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.ForeignKey;
 
+import com.angularjsplay.mvc.validation.ValidateOnCreate;
+import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.appbasement.model.User;
 
 @Entity
@@ -48,9 +52,13 @@ public class Project implements IEntity {
 	@JoinTable(name = "PROJECT_MEMBERS", joinColumns = @JoinColumn(name = "PROJECT_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
 	private Set<User> teamMembers;
 
+	@NotNull(groups = ValidateOnCreate.class)
+	@Size(max = 512, min = 1, groups = { ValidateOnCreate.class,
+			ValidateOnUpdate.class })
 	@Column(length = 512)
 	private String name;
 
+	@Size(max = 2048, groups = { ValidateOnCreate.class, ValidateOnUpdate.class })
 	@Column(length = 2048)
 	private String desc;
 
@@ -58,9 +66,7 @@ public class Project implements IEntity {
 	 * A product backlog is a list of all desired product features (weather you
 	 * plan to implement them or not).
 	 */
-	@OneToMany
-	@JoinColumn(name = "PROJECT_ID", nullable = false)
-	@ForeignKey(name = "FK_PROJECT_PRODUCT_BACKLOGS")
+	@OneToMany(mappedBy = "project")
 	private Collection<Backlog> productBacklogs = new ArrayList<Backlog>();
 
 	@OneToMany

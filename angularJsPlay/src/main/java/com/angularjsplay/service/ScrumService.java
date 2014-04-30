@@ -1,11 +1,14 @@
 package com.angularjsplay.service;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -22,8 +25,6 @@ import com.angularjsplay.persistence.IProjectDAO;
 import com.angularjsplay.persistence.ISprintDAO;
 import com.angularjsplay.persistence.ITaskDAO;
 import com.appbasement.persistence.IGenericDAO;
-
-import javax.annotation.PostConstruct;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED)
@@ -105,6 +106,29 @@ public class ScrumService implements IScrumService {
 		} catch (EntityNotFoundException e) {
 			throw new ScrumResourceNotFoundException(e);
 		}
+	}
+
+	@Override
+	public Collection<Sprint> getAllSprintsForProject(Long projectId) {
+		Project project = getById(Project.class, projectId);
+		Hibernate.initialize(project.getSprints());
+		return project.getSprints();
+	}
+
+	@Override
+	public Collection<Backlog> getAllBacklogsForProject(Long projectId) {
+		return bDao.getBacklogsForProject(projectId);
+	}
+
+	@Override
+	public Collection<Backlog> getBacklogsForProject(Long projectId, int first,
+			int max) {
+		return bDao.getBacklogsForProject(projectId, first, max);
+	}
+
+	@Override
+	public Long getBacklogCountForProject(Long projectId) {
+		return bDao.getBacklogCountForProject(projectId);
 	}
 
 }

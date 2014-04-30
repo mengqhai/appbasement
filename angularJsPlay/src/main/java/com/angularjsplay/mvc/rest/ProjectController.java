@@ -1,6 +1,7 @@
 package com.angularjsplay.mvc.rest;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -13,11 +14,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.angularjsplay.exception.ScrumValidationException;
+import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.Project;
+import com.angularjsplay.model.Sprint;
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.angularjsplay.service.IScrumService;
@@ -85,4 +89,33 @@ public class ProjectController {
 	public void deleteProject(@PathVariable("id") long id) {
 		scrumService.deleteById(Project.class, id);
 	}
+
+	@RequestMapping(value = "/{id}/backlogs", method = RequestMethod.GET)
+	@ResponseBody
+	public Collection<Backlog> listBacklogsForProject(
+			@PathVariable("id") long id) {
+		return scrumService.getAllBacklogsForProject(id);
+	}
+
+	@RequestMapping(value = "/{id}/backlogs", method = RequestMethod.GET, params = {
+			"first", "max" })
+	@ResponseBody
+	public Collection<Backlog> listBacklogsForProject(
+			@PathVariable("id") long id, @RequestParam("first") int first,
+			@RequestParam("max") int max) {
+		return scrumService.getBacklogsForProject(id, first, max);
+	}
+
+	@RequestMapping(value = "/{id}/backlogs", method = RequestMethod.GET, params = { "count" })
+	@ResponseBody
+	public Long getBacklogCountForProject(@PathVariable("id") long id) {
+		return scrumService.getBacklogCountForProject(id);
+	}
+
+	@RequestMapping(value = "/{id}/sprints", method = RequestMethod.GET)
+	@ResponseBody
+	public Collection<Sprint> listSprintsForProject(@PathVariable("id") long id) {
+		return scrumService.getAllSprintsForProject(id);
+	}
+
 }
