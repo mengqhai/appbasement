@@ -139,4 +139,15 @@ public class ScrumService implements IScrumService {
 		return sDao.getSprintCountForProject(projectId);
 	}
 
+	@Override
+	public void saveBacklogWithPartialProject(Backlog backlog) {
+		if (backlog.getProject() == null) {
+			throw new IllegalArgumentException("Null project in backlog");
+		}
+		Long projectId = backlog.getProject().getId();
+		Project project = projectDao.getReference(projectId);
+		project.addBacklogToProject(backlog);
+		save(backlog);
+	}
+
 }

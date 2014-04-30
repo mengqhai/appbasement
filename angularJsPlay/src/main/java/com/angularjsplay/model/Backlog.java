@@ -15,9 +15,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.hibernate.annotations.ForeignKey;
+
+import com.angularjsplay.mvc.validation.ValidateOnCreate;
+import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 
 @Entity
 @Access(AccessType.FIELD)
@@ -28,22 +36,31 @@ public class Backlog implements IEntity {
 	@Access(AccessType.PROPERTY)
 	private Long id;
 
+	@NotNull(groups = ValidateOnCreate.class)
+	@Size(min = 1, max = 255, groups = { ValidateOnCreate.class,
+			ValidateOnUpdate.class })
 	@Column(length = 255)
 	private String name;
 
+	@Size(min = 1, max = 2048, groups = { ValidateOnCreate.class,
+			ValidateOnUpdate.class })
 	@Column(length = 2048)
 	private String desc;
 
+	@Min(value = 1, groups = { ValidateOnCreate.class, ValidateOnUpdate.class })
+	@Max(value = 10, groups = { ValidateOnCreate.class, ValidateOnUpdate.class })
 	private Short priority;
 
+	@Min(value = 1, groups = { ValidateOnCreate.class, ValidateOnUpdate.class })
 	private Short estimation;
 
-	@JsonIgnore
+	@NotNull(groups = ValidateOnCreate.class)
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "PROJECT_ID", nullable = false)
 	@ForeignKey(name = "FK_PROJECT_PRODUCT_BACKLOGS")
 	private Project project;
 
+	@JsonIgnore
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
@@ -81,11 +98,11 @@ public class Backlog implements IEntity {
 		this.desc = desc;
 	}
 
-	public short getPriority() {
+	public Short getPriority() {
 		return priority;
 	}
 
-	public void setPriority(short priority) {
+	public void setPriority(Short priority) {
 		this.priority = priority;
 	}
 
@@ -97,10 +114,12 @@ public class Backlog implements IEntity {
 		this.estimation = estimation;
 	}
 
+	@JsonProperty
 	public Date getCreatedAt() {
 		return createdAt;
 	}
 
+	@JsonIgnore
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
@@ -120,10 +139,11 @@ public class Backlog implements IEntity {
 				+ ((getCreatedAt() == null) ? 0 : getCreatedAt().hashCode());
 		result = prime * result
 				+ ((getDesc() == null) ? 0 : getDesc().hashCode());
-		result = prime * result + getEstimation();
+		result = prime * result
+				+ ((getEstimation() == null) ? 0 : getEstimation().hashCode());
 		result = prime * result
 				+ ((getName() == null) ? 0 : getName().hashCode());
-		result = prime * result + getPriority();
+		result = prime * result + ((getPriority() == null) ? 0 : getPriority());
 		return result;
 	}
 
@@ -163,10 +183,12 @@ public class Backlog implements IEntity {
 		return "Backlog [name=" + name + "]";
 	}
 
+	@JsonIgnore
 	public Project getProject() {
 		return project;
 	}
 
+	@JsonProperty
 	public void setProject(Project project) {
 		this.project = project;
 	}

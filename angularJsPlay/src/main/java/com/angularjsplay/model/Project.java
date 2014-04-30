@@ -25,7 +25,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.hibernate.annotations.ForeignKey;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
@@ -40,6 +40,7 @@ public class Project implements IEntity {
 	@Access(AccessType.PROPERTY)
 	private Long id;
 
+	@JsonIgnore
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "PRODUCT_OWNER")
 	private User productOwner;
@@ -146,10 +147,12 @@ public class Project implements IEntity {
 		this.sprints = sprints;
 	}
 
+	@JsonProperty
 	public Date getCreatedAt() {
 		return createdAt;
 	}
 
+	@JsonIgnore
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
@@ -199,6 +202,11 @@ public class Project implements IEntity {
 		} else if (!getName().equals(other.getName()))
 			return false;
 		return true;
+	}
+
+	public void addBacklogToProject(Backlog backlog) {
+		backlog.setProject(this);
+		getProductBacklogs().add(backlog);
 	}
 
 }
