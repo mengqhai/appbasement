@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
 
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -109,13 +108,6 @@ public class ScrumService implements IScrumService {
 	}
 
 	@Override
-	public Collection<Sprint> getAllSprintsForProject(Long projectId) {
-		Project project = getById(Project.class, projectId);
-		Hibernate.initialize(project.getSprints());
-		return project.getSprints();
-	}
-
-	@Override
 	public Collection<Backlog> getAllBacklogsForProject(Long projectId) {
 		return bDao.getBacklogsForProject(projectId);
 	}
@@ -129,6 +121,22 @@ public class ScrumService implements IScrumService {
 	@Override
 	public Long getBacklogCountForProject(Long projectId) {
 		return bDao.getBacklogCountForProject(projectId);
+	}
+
+	@Override
+	public Collection<Sprint> getAllSprintsForProject(Long projectId) {
+		return sDao.getSprintsForProject(projectId);
+	}
+
+	@Override
+	public Collection<Sprint> getSprintsForProject(Long projectId, int first,
+			int max) {
+		return sDao.getSprintsForProject(projectId, first, max);
+	}
+
+	@Override
+	public Long getSprintCountForProject(Long projectId) {
+		return sDao.getSprintCountForProject(projectId);
 	}
 
 }

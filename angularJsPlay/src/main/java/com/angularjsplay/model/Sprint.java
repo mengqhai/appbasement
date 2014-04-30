@@ -8,25 +8,32 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.annotations.ForeignKey;
+
 @Entity
 @Access(AccessType.FIELD)
-public class Sprint implements IEntity{
+public class Sprint implements IEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Access(AccessType.PROPERTY)
 	private Long id;
 
+	@Column(length = 512)
 	private String name;
 
+	@Column(length = 2048)
 	private String desc;
 
 	private Short capacity;
@@ -41,13 +48,19 @@ public class Sprint implements IEntity{
 	@Column(nullable = false, updatable = false)
 	private Date createdAt;
 
+	@JsonIgnore
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "PROJECT_ID", nullable = false)
+	@ForeignKey(name = "FK_PROJECT_PRODUCT_SPRINT")
+	private Project project;
+
 	/**
 	 * bag The Sprint backlog is a deliverable created as a subset of the
 	 * Product Backlog. The Sprint backlog is a to-do list of backlog items to
 	 * be completed in the current iteration.
 	 */
-	@OneToMany
-	@JoinColumn(name = "SPRINT_ID", nullable = true)
+	@JsonIgnore
+	@OneToMany(mappedBy = "sprint", fetch = FetchType.LAZY)
 	private Collection<Backlog> backlogs = new ArrayList<Backlog>();
 
 	public Sprint() {

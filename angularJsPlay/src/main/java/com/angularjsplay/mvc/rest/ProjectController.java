@@ -118,4 +118,19 @@ public class ProjectController {
 		return scrumService.getAllSprintsForProject(id);
 	}
 
+	@RequestMapping(value = "/{id}/sprints", method = RequestMethod.GET, params = {
+			"first", "max" })
+	@ResponseBody
+	public Collection<Sprint> listSprintsForProject(
+			@PathVariable("id") long id, @RequestParam("first") int first,
+			@RequestParam("max") int max) {
+		return scrumService.getSprintsForProject(id, first, max);
+	}
+
+	@RequestMapping(value = "/{id}/sprints", method = RequestMethod.GET, params = { "count" })
+	@ResponseBody
+	public Long getSprintCountForProject(@PathVariable("id") long id) {
+		return scrumService.getSprintCountForProject(id);
+	}
+
 }

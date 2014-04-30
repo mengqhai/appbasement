@@ -29,4 +29,9 @@ public interface IScrumService {
 
 	public abstract Long getBacklogCountForProject(Long projectId);
 
+	public abstract Long getSprintCountForProject(Long projectId);
+
+	public abstract Collection<Sprint> getSprintsForProject(Long projectId, int first,
+			int max);
+
 }

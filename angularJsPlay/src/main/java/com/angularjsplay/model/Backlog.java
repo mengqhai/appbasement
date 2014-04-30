@@ -48,6 +48,12 @@ public class Backlog implements IEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
 
+	@JsonIgnore
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "SPRINT_ID", nullable = true)
+	@ForeignKey(name = "FK_SPRINT_BACKLOGS")
+	private Sprint sprint;
+
 	public Backlog() {
 	}
 

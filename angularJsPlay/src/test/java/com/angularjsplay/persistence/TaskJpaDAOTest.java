@@ -45,7 +45,8 @@ public class TaskJpaDAOTest extends GenericJpaDAOTest<Task, Long> {
 		DBUnitHelper.importDataSet(EmfHelper.getEmf(),
 				ScrumTestConstants.DATA_SET_SMALL_PROJECT,
 				ScrumTestConstants.DATA_SET_SMALL_BACKLOG,
-				ScrumTestConstants.DATA_SET_SMALL_TASK);
+				ScrumTestConstants.DATA_SET_SMALL_TASK,
+				ScrumTestConstants.DATA_SET_SMALL_SPRINT);
 	}
 
 	@Override

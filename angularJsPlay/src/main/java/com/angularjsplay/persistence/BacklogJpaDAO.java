@@ -54,5 +54,4 @@ public class BacklogJpaDAO extends GenericJpaDAO<Backlog, Long> implements
 		q.setParameter("projectId", projectId);
 		return q.getSingleResult();
 	}
-
 }

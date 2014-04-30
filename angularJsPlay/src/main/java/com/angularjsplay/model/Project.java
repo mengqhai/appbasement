@@ -69,9 +69,7 @@ public class Project implements IEntity {
 	@OneToMany(mappedBy = "project")
 	private Collection<Backlog> productBacklogs = new ArrayList<Backlog>();
 
-	@OneToMany
-	@JoinColumn(name = "PROJECT_ID", nullable = false)
-	@ForeignKey(name = "FK_PROJECT_SPRINTS")
+	@OneToMany(mappedBy = "project")
 	private Collection<Sprint> sprints = new ArrayList<Sprint>();
 
 	@Temporal(TemporalType.TIMESTAMP)
