@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.angularjsplay.exception.ScrumValidationException;
 import com.angularjsplay.model.Sprint;
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
-import com.angularjsplay.mvc.validation.ValidateOnPartial;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.angularjsplay.service.IScrumService;
 import com.appbasement.component.IObjectPatcher;
@@ -53,8 +52,8 @@ public class SprintController {
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@ResponseBody
-	public Sprint createSprint(@RequestBody @Validated(value = {
-			ValidateOnCreate.class, ValidateOnPartial.class }) Sprint sprint,
+	public Sprint createSprint(
+			@RequestBody @Validated(value = { ValidateOnCreate.class }) Sprint sprint,
 			BindingResult bResult) {
 		if (bResult.hasErrors()) {
 			throw new ScrumValidationException(bResult);
@@ -68,8 +67,7 @@ public class SprintController {
 			RequestMethod.PATCH })
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void updateSprint(@PathVariable("id") long id,
-			@RequestBody @Validated(value = { ValidateOnUpdate.class,
-					ValidateOnPartial.class }) Sprint patch,
+			@RequestBody @Validated(value = { ValidateOnUpdate.class}) Sprint patch,
 			BindingResult bResult) {
 		if (bResult.hasErrors()) {
 			throw new ScrumValidationException(bResult);

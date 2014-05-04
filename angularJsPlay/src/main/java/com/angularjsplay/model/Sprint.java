@@ -18,7 +18,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -64,8 +63,6 @@ public class Sprint implements IEntity {
 	private Date createdAt;
 
 	@JsonIgnore
-	@Valid
-	// nested object validation
 	@NotNull(groups = ValidateOnCreate.class)
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "PROJECT_ID", nullable = false)
@@ -232,12 +229,28 @@ public class Sprint implements IEntity {
 		return "Sprint [name=" + name + "]";
 	}
 
-	@JsonProperty // a read only
+	@NotNull(groups = ValidateOnCreate.class)
+	@JsonProperty
+	// a convenient project id getter
 	public Long getProjectId() {
 		if (this.project != null) {
 			return this.project.getId();
 		} else {
 			return null;
+		}
+	}
+
+	/**
+	 * 
+	 * @param projectId
+	 */
+	@JsonProperty
+	public void setProjectId(Long projectId) {
+		if (projectId != null) {
+			if (this.project == null) {
+				this.project = new Project();
+			}
+			project.setId(projectId);
 		}
 	}
 

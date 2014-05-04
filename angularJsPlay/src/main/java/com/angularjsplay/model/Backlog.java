@@ -15,7 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -55,7 +54,6 @@ public class Backlog implements IEntity {
 	@Min(value = 1, groups = { ValidateOnCreate.class, ValidateOnUpdate.class })
 	private Short estimation;
 
-	@Valid
 	@NotNull(groups = ValidateOnCreate.class)
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "PROJECT_ID", nullable = false)
@@ -205,13 +203,25 @@ public class Backlog implements IEntity {
 	public void setProject(Project project) {
 		this.project = project;
 	}
-	
-	@JsonProperty // a read only
+
+	@NotNull(groups = ValidateOnCreate.class)
+	@JsonProperty
+	// a read only
 	public Long getProjectId() {
 		if (this.project != null) {
 			return this.project.getId();
 		} else {
 			return null;
+		}
+	}
+
+	@JsonProperty
+	public void setProjectId(Long projectId) {
+		if (projectId != null) {
+			if (this.project == null) {
+				this.project = new Project();
+			}
+			project.setId(projectId);
 		}
 	}
 
