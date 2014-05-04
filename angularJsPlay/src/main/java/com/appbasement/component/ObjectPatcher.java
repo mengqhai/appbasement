@@ -2,7 +2,7 @@ package com.appbasement.component;
 
 import static org.springframework.util.ReflectionUtils.getField;
 import static org.springframework.util.ReflectionUtils.makeAccessible;
-import static org.springframework.util.ReflectionUtils.*;
+import static org.springframework.util.ReflectionUtils.setField;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

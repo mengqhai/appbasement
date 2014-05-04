@@ -24,16 +24,19 @@ public interface IScrumService {
 
 	public abstract Collection<Sprint> getAllSprintsForProject(Long projectId);
 
-	public abstract Collection<Backlog> getBacklogsForProject(Long projectId, int first,
-			int max);
+	public abstract Collection<Backlog> getBacklogsForProject(Long projectId,
+			int first, int max);
 
 	public abstract Long getBacklogCountForProject(Long projectId);
 
 	public abstract Long getSprintCountForProject(Long projectId);
 
-	public abstract Collection<Sprint> getSprintsForProject(Long projectId, int first,
-			int max);
+	public abstract Collection<Sprint> getSprintsForProject(Long projectId,
+			int first, int max);
 
 	public abstract void saveBacklogWithPartialProject(Backlog backlog);
+
+	public abstract <T extends IEntity> T getById(Class<T> type, Long id,
+			String... eagerFields);
 
 }

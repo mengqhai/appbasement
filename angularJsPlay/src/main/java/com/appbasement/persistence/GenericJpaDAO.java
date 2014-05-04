@@ -11,6 +11,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import org.hibernate.Hibernate;
+
 public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 		IGenericDAO<T, ID> {
 
@@ -35,7 +37,7 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 		return em;
 	}
 
-	public GenericJpaDAO<T, ID> setEm(EntityManager em) {
+	public IGenericDAO<T, ID> setEm(EntityManager em) {
 		this.em = em;
 		return this;
 	}
@@ -90,6 +92,11 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 			throw new IllegalArgumentException("Entity is null");
 		}
 		em.remove(entity);
+	}
+
+	@Override
+	public void initialize(Object proxy) {
+		Hibernate.initialize(proxy);
 	}
 
 }

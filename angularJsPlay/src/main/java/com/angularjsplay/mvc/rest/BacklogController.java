@@ -1,6 +1,8 @@
 package com.angularjsplay.mvc.rest;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,7 +19,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.angularjsplay.exception.ScrumValidationException;
 import com.angularjsplay.model.Backlog;
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
+import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.angularjsplay.service.IScrumService;
+import com.appbasement.component.IObjectPatcher;
+import com.appbasement.component.PatchedValue;
 
 @Controller
 @RequestMapping(value = "/backlogs", headers = "Accept=application/json")
@@ -25,6 +30,9 @@ public class BacklogController {
 
 	@Autowired
 	IScrumService scrumService;
+
+	@Autowired
+	IObjectPatcher objectPatcher;
 
 	public BacklogController() {
 	}
@@ -53,6 +61,23 @@ public class BacklogController {
 		backlog.setId(null);
 		scrumService.saveBacklogWithPartialProject(backlog);
 		return backlog;
+	}
+
+	@RequestMapping(value = "/{id}", method = { RequestMethod.PUT,
+			RequestMethod.PATCH })
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void updateBacklog(@PathVariable("id") long id,
+			@RequestBody @Validated(ValidateOnUpdate.class) Backlog patch,
+			BindingResult bResult) {
+		if (bResult.hasErrors()) {
+			throw new ScrumValidationException(bResult);
+		}
+		Backlog backlog = scrumService.getById(Backlog.class, id, "project");
+		Map<Field, PatchedValue> patchResult = objectPatcher.patchObject(
+				backlog, patch);
+		if (!patchResult.isEmpty()) {
+			scrumService.saveBacklogWithPartialProject(backlog);
+		}
 	}
 
 }
