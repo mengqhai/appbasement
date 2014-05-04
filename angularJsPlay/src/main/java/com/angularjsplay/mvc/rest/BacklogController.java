@@ -80,4 +80,10 @@ public class BacklogController {
 		}
 	}
 
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteBacklog(@PathVariable("id") long id) {
+		scrumService.deleteById(Backlog.class, id);
+	}
+
 }
