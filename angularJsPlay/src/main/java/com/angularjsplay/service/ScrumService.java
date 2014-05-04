@@ -167,9 +167,17 @@ public class ScrumService implements IScrumService {
 			throw new IllegalArgumentException("Null project in backlog");
 		}
 		Long projectId = backlog.getProject().getId();
-		Project project = projectDao.getReference(projectId);
-		project.addBacklogToProject(backlog);
-		save(backlog);
+		if (projectId == null) {
+			throw new IllegalArgumentException("Null id in sprint.project");
+		}
+		try {
+			Project project = projectDao.getReference(projectId);
+			project.addBacklogToProject(backlog);
+			save(backlog);
+		} catch (EntityNotFoundException e) {
+			throw new ScrumResourceNotFoundException();
+		}
+
 	}
 
 	@Override
@@ -178,12 +186,16 @@ public class ScrumService implements IScrumService {
 			throw new IllegalArgumentException("Null project in sprint");
 		}
 		Long projectId = sprint.getProject().getId();
-		if (projectId==null) {
+		if (projectId == null) {
 			throw new IllegalArgumentException("Null id in sprint.project");
 		}
-		Project project = projectDao.getReference(projectId);
-		project.addSprintToProject(sprint);
-		save(sprint);
+		try {
+			Project project = projectDao.getReference(projectId);
+			project.addSprintToProject(sprint);
+			save(sprint);
+		} catch (EntityNotFoundException e) {
+			throw new ScrumResourceNotFoundException();
+		}
 	}
 
 }

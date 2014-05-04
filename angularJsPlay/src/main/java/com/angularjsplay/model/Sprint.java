@@ -64,7 +64,8 @@ public class Sprint implements IEntity {
 	private Date createdAt;
 
 	@JsonIgnore
-	@Valid // nested object validation
+	@Valid
+	// nested object validation
 	@NotNull(groups = ValidateOnCreate.class)
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "PROJECT_ID", nullable = false)
@@ -229,6 +230,15 @@ public class Sprint implements IEntity {
 	@Override
 	public String toString() {
 		return "Sprint [name=" + name + "]";
+	}
+
+	@JsonProperty // a read only
+	public Long getProjectId() {
+		if (this.project != null) {
+			return this.project.getId();
+		} else {
+			return null;
+		}
 	}
 
 }

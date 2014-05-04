@@ -205,5 +205,14 @@ public class Backlog implements IEntity {
 	public void setProject(Project project) {
 		this.project = project;
 	}
+	
+	@JsonProperty // a read only
+	public Long getProjectId() {
+		if (this.project != null) {
+			return this.project.getId();
+		} else {
+			return null;
+		}
+	}
 
 }
