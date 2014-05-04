@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -70,6 +71,10 @@ public class Backlog implements IEntity {
 	@JoinColumn(name = "SPRINT_ID", nullable = true)
 	@ForeignKey(name = "FK_SPRINT_BACKLOGS")
 	private Sprint sprint;
+
+	@JsonIgnore
+	@Transient
+	private boolean removeSprint;
 
 	public Backlog() {
 	}
@@ -203,6 +208,16 @@ public class Backlog implements IEntity {
 	public void setProject(Project project) {
 		this.project = project;
 	}
+	
+	
+
+	public Sprint getSprint() {
+		return sprint;
+	}
+
+	public void setSprint(Sprint sprint) {
+		this.sprint = sprint;
+	}
 
 	@NotNull(groups = ValidateOnCreate.class)
 	@JsonProperty
@@ -223,6 +238,31 @@ public class Backlog implements IEntity {
 			}
 			project.setId(projectId);
 		}
+	}
+
+	@JsonProperty
+	public Long getSprintId() {
+		if (this.sprint != null) {
+			return this.sprint.getId();
+		} else {
+			return null;
+		}
+	}
+
+	@JsonProperty
+	public void setSprintId(Long sprintId) {
+		if (sprintId != null) {
+			if (this.sprint == null) {
+				this.sprint = new Sprint();
+			}
+			sprint.setId(sprintId);
+		} else {
+			removeSprint = true;
+		}
+	}
+
+	public boolean isRemoveSprint() {
+		return this.removeSprint;
 	}
 
 }

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 
 import com.angularjsplay.exception.ScrumResourceNotFoundException;
+import com.angularjsplay.exception.ScrumValidationException;
 import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.IEntity;
 import com.angularjsplay.model.Project;
@@ -173,6 +174,19 @@ public class ScrumService implements IScrumService {
 		try {
 			Project project = projectDao.getReference(projectId);
 			project.addBacklogToProject(backlog);
+
+			// Optionally set the sprint
+			Long sprintId = backlog.getSprintId();
+			if (sprintId != null) {
+				Sprint sprint = sDao.getReference(sprintId);
+				if (!sprint.getProjectId().equals(project.getId())) {
+					throw new ScrumValidationException("Sprint "
+							+ sprint.getId() + " doesn't belong to project "
+							+ project.getId());
+				}
+				sprint.addBacklogToSprint(backlog);
+			}
+
 			save(backlog);
 		} catch (EntityNotFoundException e) {
 			throw new ScrumResourceNotFoundException();

@@ -254,4 +254,9 @@ public class Sprint implements IEntity {
 		}
 	}
 
+	public void addBacklogToSprint(Backlog backlog) {
+		backlog.setSprint(this);
+		this.backlogs.add(backlog);
+	}
+
 }
