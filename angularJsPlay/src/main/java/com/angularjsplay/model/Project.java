@@ -28,6 +28,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
+import com.angularjsplay.mvc.validation.ValidateOnPartial;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.appbasement.model.User;
 
@@ -35,6 +36,7 @@ import com.appbasement.model.User;
 @Access(AccessType.FIELD)
 public class Project implements IEntity {
 
+	@NotNull(groups = ValidateOnPartial.class)
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Access(AccessType.PROPERTY)
@@ -206,7 +208,12 @@ public class Project implements IEntity {
 
 	public void addBacklogToProject(Backlog backlog) {
 		backlog.setProject(this);
-		getProductBacklogs().add(backlog);
+		productBacklogs.add(backlog);
+	}
+
+	public void addSprintToProject(Sprint sprint) {
+		sprint.setProject(this);
+		sprints.add(sprint);
 	}
 
 }

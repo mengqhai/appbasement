@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -37,9 +38,9 @@ public class Backlog implements IEntity {
 	private Long id;
 
 	@NotNull(groups = ValidateOnCreate.class)
-	@Size(min = 1, max = 255, groups = { ValidateOnCreate.class,
+	@Size(min = 1, max = 256, groups = { ValidateOnCreate.class,
 			ValidateOnUpdate.class })
-	@Column(length = 255)
+	@Column(length = 256)
 	private String name;
 
 	@Size(min = 1, max = 2048, groups = { ValidateOnCreate.class,
@@ -54,6 +55,7 @@ public class Backlog implements IEntity {
 	@Min(value = 1, groups = { ValidateOnCreate.class, ValidateOnUpdate.class })
 	private Short estimation;
 
+	@Valid
 	@NotNull(groups = ValidateOnCreate.class)
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "PROJECT_ID", nullable = false)
@@ -166,15 +168,26 @@ public class Backlog implements IEntity {
 				return false;
 		} else if (!getDesc().equals(other.getDesc()))
 			return false;
-		if (getEstimation() != other.getEstimation())
+		if (getEstimation() == null) {
+			if (other.getEstimation() != null)
+				return false;
+		} else if (!getEstimation().equals(other.getEstimation())) {
 			return false;
+		}
+
 		if (getName() == null) {
 			if (other.getName() != null)
 				return false;
 		} else if (!getName().equals(other.getName()))
 			return false;
-		if (getPriority() != other.getPriority())
+
+		if (getPriority() == null) {
+			if (other.getPriority() != null)
+				return false;
+		} else if (!getPriority().equals(other.getPriority())) {
 			return false;
+		}
+
 		return true;
 	}
 

@@ -172,4 +172,18 @@ public class ScrumService implements IScrumService {
 		save(backlog);
 	}
 
+	@Override
+	public void saveSprintWithPartialProject(Sprint sprint) {
+		if (sprint.getProject() == null) {
+			throw new IllegalArgumentException("Null project in sprint");
+		}
+		Long projectId = sprint.getProject().getId();
+		if (projectId==null) {
+			throw new IllegalArgumentException("Null id in sprint.project");
+		}
+		Project project = projectDao.getReference(projectId);
+		project.addSprintToProject(sprint);
+		save(sprint);
+	}
+
 }

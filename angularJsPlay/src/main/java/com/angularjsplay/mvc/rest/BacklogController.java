@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.angularjsplay.exception.ScrumValidationException;
 import com.angularjsplay.model.Backlog;
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
+import com.angularjsplay.mvc.validation.ValidateOnPartial;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.angularjsplay.service.IScrumService;
 import com.appbasement.component.IObjectPatcher;
@@ -52,8 +53,8 @@ public class BacklogController {
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@ResponseBody
-	public Backlog createBacklog(
-			@RequestBody @Validated(ValidateOnCreate.class) Backlog backlog,
+	public Backlog createBacklog(@RequestBody @Validated(value = {
+			ValidateOnCreate.class, ValidateOnPartial.class }) Backlog backlog,
 			BindingResult bResult) {
 		if (bResult.hasErrors()) {
 			throw new ScrumValidationException(bResult);
@@ -67,7 +68,8 @@ public class BacklogController {
 			RequestMethod.PATCH })
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void updateBacklog(@PathVariable("id") long id,
-			@RequestBody @Validated(ValidateOnUpdate.class) Backlog patch,
+			@RequestBody @Validated(value = { ValidateOnUpdate.class,
+					ValidateOnPartial.class }) Backlog patch,
 			BindingResult bResult) {
 		if (bResult.hasErrors()) {
 			throw new ScrumValidationException(bResult);

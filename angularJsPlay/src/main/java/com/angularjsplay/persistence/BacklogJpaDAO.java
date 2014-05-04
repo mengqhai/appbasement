@@ -37,7 +37,7 @@ public class BacklogJpaDAO extends GenericJpaDAO<Backlog, Long> implements
 	public Collection<Backlog> getBacklogsForProject(Long projectId, int first,
 			int max) {
 		TypedQuery<Backlog> q = getEm().createQuery(
-				"select b from Backlog as b where b.project.id=:projectId",
+				"select b from Backlog as b where b.project.id=:projectId order by b.id desc",
 				Backlog.class);
 		q.setParameter("projectId", projectId);
 		q.setFirstResult(first);
@@ -49,7 +49,7 @@ public class BacklogJpaDAO extends GenericJpaDAO<Backlog, Long> implements
 	public Long getBacklogCountForProject(Long projectId) {
 		TypedQuery<Long> q = getEm()
 				.createQuery(
-						"select count(b) from Backlog as b where b.project.id=:projectId",
+						"select count(b) from Backlog as b where b.project.id=:projectId order by b.id desc",
 						Long.class);
 		q.setParameter("projectId", projectId);
 		return q.getSingleResult();

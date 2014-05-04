@@ -15,11 +15,20 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.hibernate.annotations.ForeignKey;
+
+import com.angularjsplay.mvc.validation.ValidateOnCreate;
+import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 
 @Entity
 @Access(AccessType.FIELD)
@@ -30,12 +39,18 @@ public class Sprint implements IEntity {
 	@Access(AccessType.PROPERTY)
 	private Long id;
 
-	@Column(length = 512)
+	@NotNull(groups = ValidateOnCreate.class)
+	@Size(min = 1, max = 256, groups = { ValidateOnCreate.class,
+			ValidateOnUpdate.class })
+	@Column(length = 256)
 	private String name;
 
+	@Size(min = 1, max = 2048, groups = { ValidateOnCreate.class,
+			ValidateOnUpdate.class })
 	@Column(length = 2048)
 	private String desc;
 
+	@Min(value = 1, groups = { ValidateOnCreate.class, ValidateOnUpdate.class })
 	private Short capacity;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -49,6 +64,8 @@ public class Sprint implements IEntity {
 	private Date createdAt;
 
 	@JsonIgnore
+	@Valid // nested object validation
+	@NotNull(groups = ValidateOnCreate.class)
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "PROJECT_ID", nullable = false)
 	@ForeignKey(name = "FK_PROJECT_PRODUCT_SPRINT")
@@ -90,11 +107,11 @@ public class Sprint implements IEntity {
 		this.desc = desc;
 	}
 
-	public short getCapacity() {
+	public Short getCapacity() {
 		return capacity;
 	}
 
-	public void setCapacity(short capacity) {
+	public void setCapacity(Short capacity) {
 		this.capacity = capacity;
 	}
 
@@ -104,6 +121,13 @@ public class Sprint implements IEntity {
 
 	public void setStartAt(Date startAt) {
 		this.startAt = startAt;
+	}
+
+	@PrePersist
+	protected void setCreatedAt() {
+		if (createdAt == null) {
+			createdAt = new Date();
+		}
 	}
 
 	public Date getEndAt() {
@@ -130,11 +154,22 @@ public class Sprint implements IEntity {
 		this.backlogs = backlogs;
 	}
 
+	@JsonIgnore
+	public Project getProject() {
+		return project;
+	}
+
+	@JsonProperty
+	public void setProject(Project project) {
+		this.project = project;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + getCapacity();
+		result = prime * result
+				+ ((getCapacity() == null) ? 0 : getCapacity().hashCode());
 		result = prime * result
 				+ ((getCreatedAt() == null) ? 0 : getCreatedAt().hashCode());
 		result = prime * result
@@ -157,8 +192,12 @@ public class Sprint implements IEntity {
 		if (!(obj instanceof Sprint))
 			return false;
 		Sprint other = (Sprint) obj;
-		if (getCapacity() != other.getCapacity())
+		if (getCapacity() == null) {
+			if (other.getCapacity() != null)
+				return false;
+		} else if (!getCapacity().equals(other.getCapacity())) {
 			return false;
+		}
 		if (getCreatedAt() == null) {
 			if (other.getCreatedAt() != null)
 				return false;

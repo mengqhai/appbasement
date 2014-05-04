@@ -35,6 +35,8 @@ public interface IScrumService {
 			int first, int max);
 
 	public abstract void saveBacklogWithPartialProject(Backlog backlog);
+	
+	public abstract void saveSprintWithPartialProject(Sprint sprint);
 
 	public abstract <T extends IEntity> T getById(Class<T> type, Long id,
 			String... eagerFields);
