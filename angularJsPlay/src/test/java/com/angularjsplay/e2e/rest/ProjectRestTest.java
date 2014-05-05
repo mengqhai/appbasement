@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpResponse;
@@ -144,20 +145,8 @@ public class ProjectRestTest {
 	@Parameters(method = "getProjectInvalid")
 	@Test
 	public void testCreateProjectFail(Project toCreate) {
-		rest.setErrorHandler(new DefaultResponseErrorHandler() {
-			@Override
-			public void handleError(ClientHttpResponse response)
-					throws IOException {
-				// do nothing
-			}
-		});
-
-		ResponseEntity<RestError> response = rest.postForEntity(URL_BASE,
-				toCreate, RestError.class);
-		Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-		RestError error = response.getBody();
-		Assert.assertEquals(response.getStatusCode().value(), error.getCode());
-		Assert.assertNotNull(error.getMessage());
+		RestTestUtils.assertRestError(rest, HttpMethod.POST, URL_BASE,
+				toCreate, HttpStatus.BAD_REQUEST);
 	}
 
 	@Test
@@ -186,6 +175,18 @@ public class ProjectRestTest {
 		Project updated = rest.getForObject(URL_BASE + "1", Project.class);
 		IObjectPatcher patcher = new ObjectPatcher();
 		Assert.assertTrue(patcher.patchObject(updated, patch).isEmpty());
+	}
+
+	@Test
+	public void testUpdateProject() {
+		Project patch = new Project();
+		// createdAt should be ignored for update
+		patch.setCreatedAt(new Date());
+		rest.put(URL_BASE + "1", patch);
+
+		Project updated = rest.getForObject(URL_BASE + "1", Project.class);
+		Assert.assertNotEquals(patch.getCreatedAt().getTime(), updated
+				.getCreatedAt().getTime());
 	}
 
 	public Object[] getBacklogsForProjectParams() {

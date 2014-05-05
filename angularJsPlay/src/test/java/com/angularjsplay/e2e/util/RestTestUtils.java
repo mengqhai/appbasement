@@ -1,11 +1,19 @@
 package com.angularjsplay.e2e.util;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 
 import org.junit.Assert;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
+import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.IEntity;
+import com.angularjsplay.mvc.rest.error.RestError;
 
 public class RestTestUtils {
 
@@ -37,5 +45,46 @@ public class RestTestUtils {
 		} else {
 			Assert.assertEquals(0, pagedBacklogs.length);
 		}
+	}
+
+	public static void assertBacklogsEqual(Backlog expected, Backlog backlog) {
+		Assert.assertEquals(expected, backlog);
+		Assert.assertEquals(expected.getId(), backlog.getId());
+		Assert.assertEquals(expected.getName(), backlog.getName());
+		Assert.assertEquals(expected.getDesc(), backlog.getDesc());
+		Assert.assertEquals(expected.getEstimation(), backlog.getEstimation());
+		Assert.assertEquals(expected.getPriority(), backlog.getPriority());
+		Assert.assertEquals(expected.getProjectId(), backlog.getProjectId());
+		Assert.assertEquals(expected.getCreatedAt().getTime(), expected
+				.getCreatedAt().getTime());
+		Assert.assertEquals(expected.getSprintId(), backlog.getSprintId());
+	}
+
+	public static void assertRestError(RestTemplate rest,
+			HttpMethod method, String url, Object request, HttpStatus status) {
+		rest.setErrorHandler(new DefaultResponseErrorHandler() {
+			@Override
+			public void handleError(ClientHttpResponse response)
+					throws IOException {
+				// do nothing
+			}
+		});
+
+		ResponseEntity<RestError> response = null;
+		switch (method) {
+		case POST:
+			response = rest.postForEntity(url, request, RestError.class);
+			break;
+		case GET:
+			response = rest.getForEntity(url, RestError.class);
+			break;
+		default:
+			Assert.fail("Unsupported method:" + method);
+		}
+
+		Assert.assertEquals(status, response.getStatusCode());
+		RestError error = response.getBody();
+		Assert.assertEquals(response.getStatusCode().value(), error.getCode());
+		Assert.assertNotNull(error.getMessage());
 	}
 }

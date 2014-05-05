@@ -65,7 +65,6 @@ public class Backlog implements IEntity {
 	@ForeignKey(name = "FK_PROJECT_PRODUCT_BACKLOGS")
 	private Project project;
 
-	@JsonIgnore
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
@@ -127,12 +126,10 @@ public class Backlog implements IEntity {
 		this.estimation = estimation;
 	}
 
-	@JsonProperty
 	public Date getCreatedAt() {
 		return createdAt;
 	}
 
-	@JsonIgnore
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}

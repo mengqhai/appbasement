@@ -54,6 +54,7 @@ public class ErrorHandlerAdvice {
 	}
 
 	@ExceptionHandler(ScrumResourceNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ResponseBody
 	public RestError handleResourceNotFoundError() {
 		RestError result = new RestError();
