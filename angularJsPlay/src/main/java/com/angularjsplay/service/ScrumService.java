@@ -163,6 +163,22 @@ public class ScrumService implements IScrumService {
 	}
 
 	@Override
+	public Collection<Backlog> getAllBacklogsForSprint(Long sprintId) {
+		return bDao.getBacklogsForSprint(sprintId);
+	}
+
+	@Override
+	public Collection<Backlog> getBacklogsForSprint(Long sprintId, int first,
+			int max) {
+		return bDao.getBacklogsForSprint(sprintId, first, max);
+	}
+
+	@Override
+	public Long getBacklogCountForSprint(Long sprintId) {
+		return bDao.getBacklogCountForSprint(sprintId);
+	}
+
+	@Override
 	public void saveBacklogWithPartialRelationships(Backlog backlog) {
 		if (backlog.getProject() == null) {
 			throw new IllegalArgumentException("Null project in backlog");

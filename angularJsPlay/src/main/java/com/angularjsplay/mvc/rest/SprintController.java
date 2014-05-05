@@ -1,6 +1,7 @@
 package com.angularjsplay.mvc.rest;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -13,10 +14,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.angularjsplay.exception.ScrumValidationException;
+import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.Sprint;
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
@@ -66,8 +69,9 @@ public class SprintController {
 	@RequestMapping(value = "/{id}", method = { RequestMethod.PUT,
 			RequestMethod.PATCH })
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void updateSprint(@PathVariable("id") long id,
-			@RequestBody @Validated(value = { ValidateOnUpdate.class}) Sprint patch,
+	public void updateSprint(
+			@PathVariable("id") long id,
+			@RequestBody @Validated(value = { ValidateOnUpdate.class }) Sprint patch,
 			BindingResult bResult) {
 		if (bResult.hasErrors()) {
 			throw new ScrumValidationException(bResult);
@@ -84,5 +88,27 @@ public class SprintController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteSprint(@PathVariable("id") long id) {
 		scrumService.deleteById(Sprint.class, id);
+	}
+
+	@RequestMapping(value = "/{id}/backlogs", method = RequestMethod.GET)
+	@ResponseBody
+	public Collection<Backlog> listBacklogsForSprint(
+			@PathVariable("id") long sprintId) {
+		return scrumService.getAllBacklogsForSprint(sprintId);
+	}
+
+	@RequestMapping(value = "/{id}/backlogs", method = RequestMethod.GET, params = {
+			"first", "max" })
+	@ResponseBody
+	public Collection<Backlog> listBacklogsForSprint(
+			@PathVariable("id") long sprintId,
+			@RequestParam("first") int first, @RequestParam("max") int max) {
+		return scrumService.getBacklogsForSprint(sprintId, first, max);
+	}
+
+	@RequestMapping(value = "/{id}/backlogs", method = RequestMethod.GET, params = "count")
+	@ResponseBody
+	public Long getBacklogCountForSprint(@PathVariable("id") long sprintId) {
+		return scrumService.getBacklogCountForSprint(sprintId);
 	}
 }

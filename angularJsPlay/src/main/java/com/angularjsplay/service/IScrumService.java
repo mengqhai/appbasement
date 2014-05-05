@@ -41,4 +41,11 @@ public interface IScrumService {
 	public abstract <T extends IEntity> T getById(Class<T> type, Long id,
 			String... eagerFields);
 
+	public abstract Long getBacklogCountForSprint(Long sprintId);
+
+	public abstract Collection<Backlog> getBacklogsForSprint(Long sprintId, int first,
+			int max);
+
+	public abstract Collection<Backlog> getAllBacklogsForSprint(Long sprintId);
+
 }

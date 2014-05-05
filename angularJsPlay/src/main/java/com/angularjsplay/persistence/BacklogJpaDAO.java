@@ -36,9 +36,10 @@ public class BacklogJpaDAO extends GenericJpaDAO<Backlog, Long> implements
 	@Override
 	public Collection<Backlog> getBacklogsForProject(Long projectId, int first,
 			int max) {
-		TypedQuery<Backlog> q = getEm().createQuery(
-				"select b from Backlog as b where b.project.id=:projectId order by b.id desc",
-				Backlog.class);
+		TypedQuery<Backlog> q = getEm()
+				.createQuery(
+						"select b from Backlog as b where b.project.id=:projectId order by b.id desc",
+						Backlog.class);
 		q.setParameter("projectId", projectId);
 		q.setFirstResult(first);
 		q.setMaxResults(max);
@@ -52,6 +53,31 @@ public class BacklogJpaDAO extends GenericJpaDAO<Backlog, Long> implements
 						"select count(b) from Backlog as b where b.project.id=:projectId order by b.id desc",
 						Long.class);
 		q.setParameter("projectId", projectId);
+		return q.getSingleResult();
+	}
+
+	@Override
+	public Collection<Backlog> getBacklogsForSprint(Long sprintId) {
+		return getBacklogsForSprint(sprintId, 0, Integer.MAX_VALUE);
+	}
+
+	@Override
+	public Collection<Backlog> getBacklogsForSprint(Long sprintId, int first,
+			int max) {
+		TypedQuery<Backlog> q = getEm()
+				.createQuery(
+						"select b from Backlog as b where b.sprint.id=:sprintId order by b.id desc",
+						Backlog.class).setParameter("sprintId", sprintId)
+				.setFirstResult(first).setMaxResults(max);
+		return q.getResultList();
+	}
+
+	@Override
+	public Long getBacklogCountForSprint(Long sprintId) {
+		TypedQuery<Long> q = getEm()
+				.createQuery(
+						"select count(b) from Backlog as b where b.sprint.id=:sprintId",
+						Long.class).setParameter("sprintId", sprintId);
 		return q.getSingleResult();
 	}
 }

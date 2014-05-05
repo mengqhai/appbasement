@@ -14,4 +14,11 @@ public interface IBacklogDAO extends IGenericDAO<Backlog, Long> {
 
 	public abstract Long getBacklogCountForProject(Long projectId);
 
+	public abstract Long getBacklogCountForSprint(Long sprintId);
+
+	public abstract Collection<Backlog> getBacklogsForSprint(Long sprintId, int first,
+			int max);
+
+	public abstract Collection<Backlog> getBacklogsForSprint(Long sprintId);
+
 }
