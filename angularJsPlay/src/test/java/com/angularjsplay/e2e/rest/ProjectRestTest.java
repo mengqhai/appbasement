@@ -21,7 +21,10 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
+import com.angularjsplay.e2e.util.RestTestUtils;
+import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.Project;
+import com.angularjsplay.model.Sprint;
 import com.angularjsplay.mvc.rest.error.RestError;
 import com.angularjsplay.persistence.util.ScrumTestConstants;
 import com.appbasement.component.IObjectPatcher;
@@ -183,6 +186,33 @@ public class ProjectRestTest {
 		Project updated = rest.getForObject(URL_BASE + "1", Project.class);
 		IObjectPatcher patcher = new ObjectPatcher();
 		Assert.assertTrue(patcher.patchObject(updated, patch).isEmpty());
+	}
+
+	public Object[] getBacklogsForProjectParams() {
+		return $($(Long.valueOf(1), Long.valueOf(10l), Long.valueOf(10l)),
+				$(Long.valueOf(2), Long.valueOf(10l), Long.valueOf(20l)));
+	}
+
+	@Parameters(method = "getBacklogsForProjectParams")
+	@Test
+	public void testBacklogsForProject(Long projectId, Long count,
+			Long idOfFirst) {
+		String commonUrl = URL_BASE + projectId + "/backlogs";
+		RestTestUtils.assertPagibleChildren(rest, commonUrl, Backlog.class,
+				count, idOfFirst);
+	}
+
+	public Object[] getSprintsForProjectParams() {
+		return $($(Long.valueOf(1), Long.valueOf(5), Long.valueOf(8)),
+				$(Long.valueOf(2), Long.valueOf(5), Long.valueOf(10)));
+	}
+
+	@Parameters(method = "getSprintsForProjectParams")
+	@Test
+	public void testSprintsForProject(Long projectId, Long count, Long idOfFirst) {
+		String commonUrl = URL_BASE + projectId + "/sprints";
+		RestTestUtils.assertPagibleChildren(rest, commonUrl, Sprint.class,
+				count, idOfFirst);
 	}
 
 }

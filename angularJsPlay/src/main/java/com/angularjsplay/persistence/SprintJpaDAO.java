@@ -42,7 +42,7 @@ public class SprintJpaDAO extends GenericJpaDAO<Sprint, Long> implements
 	public Long getSprintCountForProject(Long projectId) {
 		TypedQuery<Long> q = getEm()
 				.createQuery(
-						"select count(s) from Sprint as s where s.project.id=:projectId order by s.id desc",
+						"select count(s) from Sprint as s where s.project.id=:projectId",
 						Long.class);
 		q.setParameter("projectId", projectId);
 		return q.getSingleResult();
