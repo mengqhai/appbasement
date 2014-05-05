@@ -2,11 +2,15 @@ package com.angularjsplay.e2e.util;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Assert;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
@@ -60,31 +64,43 @@ public class RestTestUtils {
 		Assert.assertEquals(expected.getSprintId(), backlog.getSprintId());
 	}
 
-	public static void assertRestError(RestTemplate rest,
-			HttpMethod method, String url, Object request, HttpStatus status) {
+	public static void assertRestError(final RestTemplate rest,
+			final HttpMethod method, String url, Object request,
+			final HttpStatus status) {
 		rest.setErrorHandler(new DefaultResponseErrorHandler() {
 			@Override
 			public void handleError(ClientHttpResponse response)
 					throws IOException {
-				// do nothing
+				Assert.assertEquals(status, response.getStatusCode());
 			}
 		});
 
-		ResponseEntity<RestError> response = null;
+		RestError error = null;
 		switch (method) {
 		case POST:
-			response = rest.postForEntity(url, request, RestError.class);
+			error = rest.postForObject(url, request, RestError.class);
 			break;
 		case GET:
-			response = rest.getForEntity(url, RestError.class);
+			error = rest.getForObject(url, RestError.class);
+			break;
+		case DELETE:
+		case PUT:
+			HttpHeaders headers = new HttpHeaders();
+			final List<MediaType> jsonType = new ArrayList<MediaType>();
+			jsonType.add(MediaType.APPLICATION_JSON);
+			headers.setAccept(jsonType);
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpEntity<Object> requestEntity = new HttpEntity<Object>(request,
+					headers);
+
+			error = rest.exchange(url, method, requestEntity, RestError.class)
+					.getBody();
 			break;
 		default:
 			Assert.fail("Unsupported method:" + method);
 		}
 
-		Assert.assertEquals(status, response.getStatusCode());
-		RestError error = response.getBody();
-		Assert.assertEquals(response.getStatusCode().value(), error.getCode());
+		Assert.assertEquals(status.value(), error.getCode());
 		Assert.assertNotNull(error.getMessage());
 	}
 }

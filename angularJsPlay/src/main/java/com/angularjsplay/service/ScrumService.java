@@ -232,8 +232,7 @@ public class ScrumService implements IScrumService {
 		if (patch.getId() == null) {
 			throw new IllegalArgumentException("Null id in patch");
 		}
-		Backlog backlog = getById(Backlog.class, patch.getId(), "project",
-				"sprint");
+		Backlog backlog = getById(Backlog.class, patch.getId());
 		Map<Field, PatchedValue> patchResult = objectPatcher.patchObject(
 				backlog, patch);
 		if (!patchResult.isEmpty()) {
@@ -270,7 +269,7 @@ public class ScrumService implements IScrumService {
 		if (patch.getId() == null) {
 			throw new IllegalArgumentException("Null id in patch");
 		}
-		Sprint sprint = getById(Sprint.class, patch.getId(), "project");
+		Sprint sprint = getById(Sprint.class, patch.getId());
 		Map<Field, PatchedValue> patchResult = objectPatcher.patchObject(
 				sprint, patch);
 		if (!patchResult.isEmpty()) {

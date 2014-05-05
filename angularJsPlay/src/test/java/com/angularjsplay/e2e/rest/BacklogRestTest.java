@@ -192,4 +192,17 @@ public class BacklogRestTest {
 		Assert.assertTrue(patcher.patchObject(updated, patch).isEmpty());
 	}
 
+	public Object[] getBacklogForUpdateInvalid() {
+		Backlog b1 = new Backlog();
+		b1.setName("");
+		return $($(b1));
+	}
+
+	@Parameters(method = "getBacklogForUpdateInvalid")
+	@Test
+	public void testUpdateBacklogInvalid(Backlog patch) {
+		RestTestUtils.assertRestError(rest, HttpMethod.PUT, URL_BASE + "1",
+				patch, HttpStatus.BAD_REQUEST);
+	}
+
 }
