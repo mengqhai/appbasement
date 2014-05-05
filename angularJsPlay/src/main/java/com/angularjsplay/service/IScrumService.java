@@ -34,9 +34,9 @@ public interface IScrumService {
 	public abstract Collection<Sprint> getSprintsForProject(Long projectId,
 			int first, int max);
 
-	public abstract void saveBacklogWithPartialRelationships(Backlog backlog);
+	public abstract void createBacklogWithPartialRelationships(Backlog backlog);
 	
-	public abstract void saveSprintWithPartialProject(Sprint sprint);
+	public abstract void createSprintWithPartialRelationships(Sprint sprint);
 
 	public abstract <T extends IEntity> T getById(Class<T> type, Long id,
 			String... eagerFields);
@@ -47,5 +47,9 @@ public interface IScrumService {
 			int max);
 
 	public abstract Collection<Backlog> getAllBacklogsForSprint(Long sprintId);
+
+	public abstract void updateBacklogWithPatch(Backlog patch);
+
+	public abstract void updateSprintWithPatch(Sprint patch);
 
 }

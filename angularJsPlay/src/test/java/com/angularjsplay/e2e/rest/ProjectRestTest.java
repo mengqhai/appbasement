@@ -2,7 +2,6 @@ package com.angularjsplay.e2e.rest;
 
 import static junitparams.JUnitParamsRunner.$;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -17,16 +16,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 import com.angularjsplay.e2e.util.RestTestUtils;
 import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.Project;
 import com.angularjsplay.model.Sprint;
-import com.angularjsplay.mvc.rest.error.RestError;
 import com.angularjsplay.persistence.util.ScrumTestConstants;
 import com.appbasement.component.IObjectPatcher;
 import com.appbasement.component.ObjectPatcher;

@@ -1,8 +1,6 @@
 package com.angularjsplay.mvc.rest;
 
-import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,8 +20,6 @@ import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnPartial;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.angularjsplay.service.IScrumService;
-import com.appbasement.component.IObjectPatcher;
-import com.appbasement.component.PatchedValue;
 
 @Controller
 @RequestMapping(value = "/backlogs", headers = "Accept=application/json")
@@ -31,9 +27,6 @@ public class BacklogController {
 
 	@Autowired
 	IScrumService scrumService;
-
-	@Autowired
-	IObjectPatcher objectPatcher;
 
 	public BacklogController() {
 	}
@@ -60,7 +53,7 @@ public class BacklogController {
 			throw new ScrumValidationException(bResult);
 		}
 		backlog.setId(null);
-		scrumService.saveBacklogWithPartialRelationships(backlog);
+		scrumService.createBacklogWithPartialRelationships(backlog);
 		return backlog;
 	}
 
@@ -74,12 +67,8 @@ public class BacklogController {
 		if (bResult.hasErrors()) {
 			throw new ScrumValidationException(bResult);
 		}
-		Backlog backlog = scrumService.getById(Backlog.class, id, "project", "sprint");
-		Map<Field, PatchedValue> patchResult = objectPatcher.patchObject(
-				backlog, patch);
-		if (!patchResult.isEmpty()) {
-			scrumService.saveBacklogWithPartialRelationships(backlog);
-		}
+		patch.setId(id);
+		scrumService.updateBacklogWithPatch(patch);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

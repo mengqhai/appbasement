@@ -169,7 +169,17 @@ public class BacklogRestTest {
 		Backlog b1 = new Backlog();
 		b1.setName("Name changed");
 
-		return $($(b1));
+		Backlog b2 = new Backlog();
+		b2.setProjectId(1l);
+
+		Backlog b3 = new Backlog();
+		b3.setSprintId(5l);
+
+		Backlog b4 = new Backlog();
+		b4.setProjectId(1l);
+		b4.setSprintId(4l);
+
+		return $($(b1), $(b2), $(b3), $(b4));
 	}
 
 	@Parameters(method = "getBacklogForUpdate")

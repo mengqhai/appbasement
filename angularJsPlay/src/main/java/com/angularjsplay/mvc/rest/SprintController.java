@@ -1,9 +1,7 @@
 package com.angularjsplay.mvc.rest;
 
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,8 +22,6 @@ import com.angularjsplay.model.Sprint;
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.angularjsplay.service.IScrumService;
-import com.appbasement.component.IObjectPatcher;
-import com.appbasement.component.PatchedValue;
 
 @Controller
 @RequestMapping(value = "/sprints", headers = "Accept=application/json")
@@ -33,9 +29,6 @@ public class SprintController {
 
 	@Autowired
 	IScrumService scrumService;
-
-	@Autowired
-	IObjectPatcher objectPatcher;
 
 	public SprintController() {
 	}
@@ -62,7 +55,7 @@ public class SprintController {
 			throw new ScrumValidationException(bResult);
 		}
 		sprint.setId(null);
-		scrumService.saveSprintWithPartialProject(sprint);
+		scrumService.createSprintWithPartialRelationships(sprint);
 		return sprint;
 	}
 
@@ -76,12 +69,7 @@ public class SprintController {
 		if (bResult.hasErrors()) {
 			throw new ScrumValidationException(bResult);
 		}
-		Sprint sprint = scrumService.getById(Sprint.class, id, "project");
-		Map<Field, PatchedValue> patchResult = objectPatcher.patchObject(
-				sprint, patch);
-		if (!patchResult.isEmpty()) {
-			scrumService.saveSprintWithPartialProject(sprint);
-		}
+		scrumService.updateSprintWithPatch(patch);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

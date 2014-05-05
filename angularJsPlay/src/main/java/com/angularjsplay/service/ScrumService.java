@@ -26,6 +26,8 @@ import com.angularjsplay.persistence.IBacklogDAO;
 import com.angularjsplay.persistence.IProjectDAO;
 import com.angularjsplay.persistence.ISprintDAO;
 import com.angularjsplay.persistence.ITaskDAO;
+import com.appbasement.component.IObjectPatcher;
+import com.appbasement.component.PatchedValue;
 import com.appbasement.persistence.IGenericDAO;
 
 @Service
@@ -43,6 +45,9 @@ public class ScrumService implements IScrumService {
 
 	@Autowired
 	protected ITaskDAO tDao;
+
+	@Autowired
+	IObjectPatcher objectPatcher;
 
 	private Map<String, IGenericDAO<? extends IEntity, Long>> daoMap = new HashMap<String, IGenericDAO<? extends IEntity, Long>>();
 
@@ -178,8 +183,34 @@ public class ScrumService implements IScrumService {
 		return bDao.getBacklogCountForSprint(sprintId);
 	}
 
+	private void changeRelationshipsForBacklog(Backlog backlog,
+			Long newProjectId, Long newSprintId) {
+		if (newProjectId != null) {
+			// backlog.project is changed
+			Project project = projectDao.getReference(newProjectId);
+			project.addBacklogToProject(backlog);
+		}
+		if (newSprintId != null) {
+			// backlog.sprint is changed
+			Sprint sprint = sDao.getReference(newSprintId);
+			if (!sprint.getProjectId().equals(backlog.getProjectId())) {
+				throw new ScrumValidationException("Sprint " + sprint.getId()
+						+ " doesn't belong to project " + newProjectId);
+			}
+			sprint.addBacklogToSprint(backlog);
+		}
+	}
+
+	private void changeRelationshipsForSprint(Sprint sprint, Long newProjectId) {
+		if (newProjectId != null) {
+			// sprint.project is changed
+			Project project = projectDao.getReference(newProjectId);
+			project.addSprintToProject(sprint);
+		}
+	}
+
 	@Override
-	public void saveBacklogWithPartialRelationships(Backlog backlog) {
+	public void createBacklogWithPartialRelationships(Backlog backlog) {
 		if (backlog.getProject() == null) {
 			throw new IllegalArgumentException("Null project in backlog");
 		}
@@ -187,31 +218,38 @@ public class ScrumService implements IScrumService {
 		if (projectId == null) {
 			throw new IllegalArgumentException("Null id in sprint.project");
 		}
+		Long sprintId = backlog.getSprintId();
 		try {
-			Project project = projectDao.getReference(projectId);
-			project.addBacklogToProject(backlog);
-
-			// Optionally set the sprint
-			Long sprintId = backlog.getSprintId();
-			if (sprintId != null) {
-				Sprint sprint = sDao.getReference(sprintId);
-				if (!sprint.getProjectId().equals(project.getId())) {
-					throw new ScrumValidationException("Sprint "
-							+ sprint.getId() + " doesn't belong to project "
-							+ project.getId());
-				}
-				sprint.addBacklogToSprint(backlog);
-			}
-
+			changeRelationshipsForBacklog(backlog, projectId, sprintId);
 			save(backlog);
 		} catch (EntityNotFoundException e) {
 			throw new ScrumResourceNotFoundException();
 		}
-
 	}
 
 	@Override
-	public void saveSprintWithPartialProject(Sprint sprint) {
+	public void updateBacklogWithPatch(Backlog patch) {
+		if (patch.getId() == null) {
+			throw new IllegalArgumentException("Null id in patch");
+		}
+		Backlog backlog = getById(Backlog.class, patch.getId(), "project",
+				"sprint");
+		Map<Field, PatchedValue> patchResult = objectPatcher.patchObject(
+				backlog, patch);
+		if (!patchResult.isEmpty()) {
+			try {
+				Long projectId = patch.getProjectId();
+				Long sprintId = patch.getSprintId();
+				changeRelationshipsForBacklog(backlog, projectId, sprintId);
+				save(backlog);
+			} catch (EntityNotFoundException e) {
+				throw new ScrumResourceNotFoundException();
+			}
+		}
+	}
+
+	@Override
+	public void createSprintWithPartialRelationships(Sprint sprint) {
 		if (sprint.getProject() == null) {
 			throw new IllegalArgumentException("Null project in sprint");
 		}
@@ -220,11 +258,29 @@ public class ScrumService implements IScrumService {
 			throw new IllegalArgumentException("Null id in sprint.project");
 		}
 		try {
-			Project project = projectDao.getReference(projectId);
-			project.addSprintToProject(sprint);
+			changeRelationshipsForSprint(sprint, projectId);
 			save(sprint);
 		} catch (EntityNotFoundException e) {
 			throw new ScrumResourceNotFoundException();
+		}
+	}
+
+	@Override
+	public void updateSprintWithPatch(Sprint patch) {
+		if (patch.getId() == null) {
+			throw new IllegalArgumentException("Null id in patch");
+		}
+		Sprint sprint = getById(Sprint.class, patch.getId(), "project");
+		Map<Field, PatchedValue> patchResult = objectPatcher.patchObject(
+				sprint, patch);
+		if (!patchResult.isEmpty()) {
+			Long projectId = patch.getProjectId();
+			try {
+				changeRelationshipsForSprint(sprint, projectId);
+				save(sprint);
+			} catch (EntityNotFoundException e) {
+				throw new ScrumResourceNotFoundException();
+			}
 		}
 	}
 
