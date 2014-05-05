@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -67,10 +68,12 @@ public class Project implements IEntity {
 	 * A product backlog is a list of all desired product features (weather you
 	 * plan to implement them or not).
 	 */
-	@OneToMany(mappedBy = "project")
+	@OneToMany(mappedBy = "project", cascade = { CascadeType.REMOVE,
+			CascadeType.MERGE, CascadeType.PERSIST })
 	private Collection<Backlog> productBacklogs = new ArrayList<Backlog>();
 
-	@OneToMany(mappedBy = "project")
+	@OneToMany(mappedBy = "project", cascade = { CascadeType.REMOVE,
+			CascadeType.MERGE, CascadeType.PERSIST })
 	private Collection<Sprint> sprints = new ArrayList<Sprint>();
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -212,6 +215,12 @@ public class Project implements IEntity {
 	public void addSprintToProject(Sprint sprint) {
 		sprint.setProject(this);
 		sprints.add(sprint);
+	}
+
+	@Override
+	public String toString() {
+		return "Project [id=" + id + ", name=" + name + ", createdAt="
+				+ createdAt + "]";
 	}
 
 }
