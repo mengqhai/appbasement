@@ -1,8 +1,11 @@
 package com.appbasement;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.angularjsplay.e2e.rest.ProjectRestTest;
+import com.angularjsplay.persistence.TaskJpaDAOTest;
 import com.appbasement.model.GroupTest;
 import com.appbasement.model.TemplateTest;
 import com.appbasement.model.UserTest;
@@ -11,7 +14,8 @@ import com.appbasement.persistence.UserJpaDAOTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({ GroupJpaDAOTest.class, UserJpaDAOTest.class, GroupTest.class,
-		TemplateTest.class, UserTest.class })
+		TemplateTest.class, UserTest.class, TaskJpaDAOTest.class,
+		ProjectRestTest.class })
 public class AppBasementTestSuit {
 
 }

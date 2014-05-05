@@ -189,7 +189,7 @@ public class Project implements IEntity {
 		if (getCreatedAt() == null) {
 			if (other.getCreatedAt() != null)
 				return false;
-		} else if (!getCreatedAt().equals(other.getCreatedAt()))
+		} else if (getCreatedAt().getTime() != other.getCreatedAt().getTime())
 			return false;
 		if (getDesc() == null) {
 			if (other.getDesc() != null)
