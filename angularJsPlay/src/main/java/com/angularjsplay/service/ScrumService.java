@@ -163,7 +163,7 @@ public class ScrumService implements IScrumService {
 	}
 
 	@Override
-	public void saveBacklogWithPartialProject(Backlog backlog) {
+	public void saveBacklogWithPartialRelationships(Backlog backlog) {
 		if (backlog.getProject() == null) {
 			throw new IllegalArgumentException("Null project in backlog");
 		}

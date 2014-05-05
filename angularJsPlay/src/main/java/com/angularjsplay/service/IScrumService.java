@@ -34,7 +34,7 @@ public interface IScrumService {
 	public abstract Collection<Sprint> getSprintsForProject(Long projectId,
 			int first, int max);
 
-	public abstract void saveBacklogWithPartialProject(Backlog backlog);
+	public abstract void saveBacklogWithPartialRelationships(Backlog backlog);
 	
 	public abstract void saveSprintWithPartialProject(Sprint sprint);
 

@@ -60,7 +60,7 @@ public class BacklogController {
 			throw new ScrumValidationException(bResult);
 		}
 		backlog.setId(null);
-		scrumService.saveBacklogWithPartialProject(backlog);
+		scrumService.saveBacklogWithPartialRelationships(backlog);
 		return backlog;
 	}
 
@@ -74,11 +74,11 @@ public class BacklogController {
 		if (bResult.hasErrors()) {
 			throw new ScrumValidationException(bResult);
 		}
-		Backlog backlog = scrumService.getById(Backlog.class, id, "project");
+		Backlog backlog = scrumService.getById(Backlog.class, id, "project", "sprint");
 		Map<Field, PatchedValue> patchResult = objectPatcher.patchObject(
 				backlog, patch);
 		if (!patchResult.isEmpty()) {
-			scrumService.saveBacklogWithPartialProject(backlog);
+			scrumService.saveBacklogWithPartialRelationships(backlog);
 		}
 	}
 
