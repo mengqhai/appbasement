@@ -124,6 +124,7 @@ public class ProjectRestTest {
 
 	public Object[] getProjectInvalid() {
 		Project p1 = new Project();
+
 		Project p2 = new Project();
 		StringBuilder bigName = new StringBuilder();
 		for (int i = 0; i < 580; i++) {
@@ -134,24 +135,42 @@ public class ProjectRestTest {
 		Project p3 = new Project();
 		p3.setName("");
 
-		return $($(p1), $(p2), $(p3));
+		return $($(p1, HttpStatus.BAD_REQUEST), $(p2, HttpStatus.BAD_REQUEST),
+				$(p3, HttpStatus.BAD_REQUEST));
 	}
 
 	@Parameters(method = "getProjectInvalid")
 	@Test
-	public void testCreateProjectFail(Project toCreate) {
+	public void testCreateProjectInvalid(Project toCreate, HttpStatus status) {
 		RestTestUtils.assertRestError(rest, HttpMethod.POST, URL_BASE,
-				toCreate, HttpStatus.BAD_REQUEST);
+				toCreate, status);
 	}
 
 	@Test
 	public void testDeleteProject() {
-		rest.delete(URL_BASE + "1");
+		String url = URL_BASE + "1";
+		rest.delete(url);
 		Project[] projects = rest.getForObject(URL_BASE, Project[].class);
 		Assert.assertEquals(1, projects.length);
 		for (Project project : projects) {
 			Assert.assertNotEquals(Long.valueOf(1l), project.getId());
 		}
+
+		RestTestUtils.assertRestError(rest, HttpMethod.GET, url, null,
+				HttpStatus.NOT_FOUND);
+		// backlog & sprint also deleted
+		Backlog[] backlogs = rest.getForObject(url + "/backlogs",
+				Backlog[].class);
+		Sprint[] sprints = rest.getForObject(url + "/sprints", Sprint[].class);
+		Assert.assertEquals(0, backlogs.length);
+		Assert.assertEquals(0, sprints.length);
+	}
+
+	@Test
+	public void testDeleteProjectInvalid() {
+		String url = URL_BASE + "1111";
+		RestTestUtils.assertRestError(rest, HttpMethod.DELETE, url, null,
+				HttpStatus.NOT_FOUND);
 	}
 
 	public Object[] getProjectForUpdate() {

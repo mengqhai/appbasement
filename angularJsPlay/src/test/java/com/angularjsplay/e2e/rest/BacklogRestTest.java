@@ -146,15 +146,59 @@ public class BacklogRestTest {
 			bigName.append("0");
 		}
 		b4.setName(bigName.toString());
+		b4.setProjectId(1l);
 
-		return $($(b1), $(b2), $(b3), $(b4));
+		Backlog b5 = new Backlog();
+		b5.setName("No such project");
+		b5.setProjectId(9999l);
+
+		Backlog b6 = new Backlog();
+		b6.setName("No such sprint");
+		b6.setProjectId(1l);
+		b6.setSprintId(0l);
+
+		Backlog b7 = new Backlog();
+		b7.setName("New sprint not in new project");
+		b7.setProjectId(2l);
+		b7.setSprintId(3l);
+
+		Backlog b8 = new Backlog();
+		b8.setName("Priority too big");
+		b8.setProjectId(1l);
+		b8.setPriority((short) 15);
+
+		Backlog b9 = new Backlog();
+		b9.setProjectId(1l);
+		b9.setName("Priority too small");
+		b9.setPriority((short) 0);
+
+		Backlog b10 = new Backlog();
+		b10.setProjectId(1l);
+		b10.setName("Invalid estimation");
+		b10.setEstimation((short) 0);
+
+		Backlog b11 = new Backlog();
+		b11.setProjectId(1l);
+		b11.setName("Negative estimation");
+		b11.setEstimation((short) -1);
+
+		Backlog b12 = new Backlog();
+		b12.setName("Sprint not in the project #1");
+		b12.setProjectId(1l);
+		b12.setSprintId(1l);
+		return $($(b1, HttpStatus.BAD_REQUEST), $(b2, HttpStatus.BAD_REQUEST),
+				$(b3, HttpStatus.BAD_REQUEST), $(b4, HttpStatus.BAD_REQUEST),
+				$(b5, HttpStatus.NOT_FOUND), $(b6, HttpStatus.NOT_FOUND),
+				$(b7, HttpStatus.BAD_REQUEST), $(b8, HttpStatus.BAD_REQUEST),
+				$(b9, HttpStatus.BAD_REQUEST), $(b10, HttpStatus.BAD_REQUEST),
+				$(b11, HttpStatus.BAD_REQUEST), $(b12, HttpStatus.BAD_REQUEST));
 	}
 
 	@Parameters(method = "getBacklogInvalid")
 	@Test
-	public void testCreateBaclogInvalid(Backlog toCreate) {
+	public void testCreateBaclogInvalid(Backlog toCreate, HttpStatus status) {
 		RestTestUtils.assertRestError(rest, HttpMethod.POST, URL_BASE,
-				toCreate, HttpStatus.BAD_REQUEST);
+				toCreate, status);
 	}
 
 	@Test
@@ -162,6 +206,13 @@ public class BacklogRestTest {
 		String url = URL_BASE + "1";
 		rest.delete(url);
 		RestTestUtils.assertRestError(rest, HttpMethod.GET, url, null,
+				HttpStatus.NOT_FOUND);
+	}
+
+	@Test
+	public void testDeleteBacklogInvalid() {
+		String url = URL_BASE + "99999";
+		RestTestUtils.assertRestError(rest, HttpMethod.DELETE, url, null,
 				HttpStatus.NOT_FOUND);
 	}
 
