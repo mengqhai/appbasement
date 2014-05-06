@@ -100,6 +100,7 @@ public class RestTestUtils {
 			Assert.fail("Unsupported method:" + method);
 		}
 
+		Assert.assertNotNull(error);
 		Assert.assertEquals(status.value(), error.getCode());
 		Assert.assertNotNull(error.getMessage());
 	}

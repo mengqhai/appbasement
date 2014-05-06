@@ -260,12 +260,17 @@ public class Backlog implements IEntity {
 			}
 			sprint.setId(sprintId);
 		} else {
+			sprint = null;
 			removeSprint = true;
 		}
 	}
 
 	public boolean isRemoveSprint() {
 		return this.removeSprint;
+	}
+
+	public void setRemoveSprint(boolean removeSprint) {
+		this.removeSprint = removeSprint;
 	}
 
 }

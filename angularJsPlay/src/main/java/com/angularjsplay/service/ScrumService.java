@@ -228,6 +228,7 @@ public class ScrumService implements IScrumService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
 	public void updateBacklogWithPatch(Backlog patch) {
 		if (patch.getId() == null) {
 			throw new IllegalArgumentException("Null id in patch");
@@ -240,10 +241,16 @@ public class ScrumService implements IScrumService {
 				Long projectId = patch.getProjectId();
 				Long sprintId = patch.getSprintId();
 				changeRelationshipsForBacklog(backlog, projectId, sprintId);
+				// unset sprintId
+				if (patch.isRemoveSprint()) {
+					backlog.setSprintId(null);
+				}
 				save(backlog);
 			} catch (EntityNotFoundException e) {
 				throw new ScrumResourceNotFoundException();
 			}
+		} else if (patch.isRemoveSprint()) {
+			backlog.setSprintId(null);
 		}
 	}
 

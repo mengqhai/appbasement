@@ -178,7 +178,6 @@ public class BacklogRestTest {
 		Backlog b4 = new Backlog();
 		b4.setProjectId(1l);
 		b4.setSprintId(4l);
-
 		return $($(b1), $(b2), $(b3), $(b4));
 	}
 
@@ -192,17 +191,68 @@ public class BacklogRestTest {
 		Assert.assertTrue(patcher.patchObject(updated, patch).isEmpty());
 	}
 
+	@Test
+	public void testUpdateBacklogUnsetSprint() {
+		String url = URL_BASE + "1";
+		Backlog patch = new Backlog();
+		patch.setSprintId(null); // explicitly unset sprint
+		rest.put(url, patch);
+		Backlog updated = rest.getForObject(url, Backlog.class);
+		Assert.assertNull(updated.getSprintId());
+		Assert.assertNull(updated.getSprint());
+	}
+
 	public Object[] getBacklogForUpdateInvalid() {
 		Backlog b1 = new Backlog();
 		b1.setName("");
-		return $($(b1));
+
+		Backlog b2 = new Backlog();
+		b2.setName("Invalid estimation");
+		b2.setEstimation((short) 0);
+
+		Backlog b3 = new Backlog();
+		b3.setName("Negative estimation");
+		b3.setEstimation((short) -1);
+
+		Backlog b4 = new Backlog();
+		b4.setName("Sprint not in the project #1");
+		// b4.setProjectId(1l); backlog #1 already in project #1
+		b4.setSprintId(1l);
+
+		Backlog b5 = new Backlog();
+		b5.setName("No such project");
+		b5.setProjectId(9999l);
+
+		Backlog b6 = new Backlog();
+		b6.setName("No such sprint");
+		b6.setProjectId(1l);
+		b6.setSprintId(0l);
+
+		Backlog b7 = new Backlog();
+		b7.setName("New sprint not in new project");
+		b7.setProjectId(2l);
+		b7.setSprintId(3l);
+
+		Backlog b8 = new Backlog();
+		b8.setName("Priority too big");
+		b8.setPriority((short) 15);
+
+		Backlog b9 = new Backlog();
+		b9.setName("Priority too small");
+		b9.setPriority((short) 0);
+
+		return $($(b1, HttpStatus.BAD_REQUEST), $(b2, HttpStatus.BAD_REQUEST),
+				$(b3, HttpStatus.BAD_REQUEST), $(b4, HttpStatus.BAD_REQUEST),
+				$(b5, HttpStatus.NOT_FOUND), $(b6, HttpStatus.NOT_FOUND),
+				$(b7, HttpStatus.BAD_REQUEST), $(b8, HttpStatus.BAD_REQUEST),
+				$(b9, HttpStatus.BAD_REQUEST));
 	}
 
 	@Parameters(method = "getBacklogForUpdateInvalid")
 	@Test
-	public void testUpdateBacklogInvalid(Backlog patch) {
+	public void testUpdateBacklogInvalid(Backlog patch, HttpStatus status) {
 		RestTestUtils.assertRestError(rest, HttpMethod.PUT, URL_BASE + "1",
-				patch, HttpStatus.BAD_REQUEST);
+				patch, status);
 	}
 
 }
