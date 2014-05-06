@@ -236,6 +236,17 @@ public class SprintRestTest {
 		Backlog[] backlogs = rest.getForObject(url + "/backlogs",
 				Backlog[].class);
 		Assert.assertTrue(backlogs.length == 0);
+		// backlog #1 should not be deleted
+		Backlog b1 = rest.getForObject(BacklogRestTest.URL_BASE + "1",
+				Backlog.class);
+		Assert.assertNotNull(b1);
+	}
+
+	@Test
+	public void testDeleteSprintInvalid() {
+		String url = URL_BASE + "99999";
+		RestTestUtils.assertRestError(rest, HttpMethod.DELETE, url, null,
+				HttpStatus.NOT_FOUND);
 	}
 
 }

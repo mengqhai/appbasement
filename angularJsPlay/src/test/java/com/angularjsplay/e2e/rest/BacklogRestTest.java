@@ -30,7 +30,7 @@ import com.appbasement.persistence.util.EmfHelper;
 public class BacklogRestTest {
 	RestTemplate rest;
 
-	final static String URL_BASE = "http://localhost:8081/angularJsPlay/backlogs/";
+	public final static String URL_BASE = "http://localhost:8081/angularJsPlay/backlogs/";
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
