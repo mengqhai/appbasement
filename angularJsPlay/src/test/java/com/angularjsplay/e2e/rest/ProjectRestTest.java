@@ -191,6 +191,24 @@ public class ProjectRestTest {
 		Assert.assertTrue(patcher.patchObject(updated, patch).isEmpty());
 	}
 
+	public Object[] getProjectForUpdateInvalid() {
+		Project p1 = new Project();
+		p1.setName("");
+
+		Project p2 = new Project();
+		p2.setName("Invalid Url");
+
+		return $($(URL_BASE + 1, p1, HttpStatus.BAD_REQUEST),
+				$(URL_BASE + 999, p2, HttpStatus.NOT_FOUND));
+	}
+
+	@Parameters(method = "getProjectForUpdateInvalid")
+	@Test
+	public void testUpdateProjectInvalid(String url, Project patch,
+			HttpStatus status) {
+		RestTestUtils.assertRestError(rest, HttpMethod.PUT, url, patch, status);
+	}
+
 	@Test
 	public void testUpdateProject() {
 		Project patch = new Project();
