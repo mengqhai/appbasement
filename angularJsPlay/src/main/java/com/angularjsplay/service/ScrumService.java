@@ -128,6 +128,12 @@ public class ScrumService implements IScrumService {
 			throws ScrumResourceNotFoundException {
 		IGenericDAO<T, Long> dao = getDao(type);
 		T toDelete = dao.getReference(id);
+
+		if (toDelete instanceof Sprint) {
+			// unset sprintId
+			bDao.unsetSprintOfBacklogsForSprint(toDelete.getId());
+		}
+
 		try {
 			dao.remove(toDelete);
 		} catch (EntityNotFoundException e) {
@@ -262,6 +268,11 @@ public class ScrumService implements IScrumService {
 		Long projectId = sprint.getProject().getId();
 		if (projectId == null) {
 			throw new IllegalArgumentException("Null id in sprint.project");
+		}
+		if (sprint.getStartAt() != null && sprint.getEndAt() != null
+				&& sprint.getStartAt().getTime() > sprint.getEndAt().getTime()) {
+			throw new ScrumValidationException(
+					"Sprint startAt is later than endAt.");
 		}
 		try {
 			changeRelationshipsForSprint(sprint, projectId);

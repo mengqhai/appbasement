@@ -1,6 +1,9 @@
 package com.angularjsplay.e2e.rest;
 
+import static junitparams.JUnitParamsRunner.$;
+
 import java.sql.Timestamp;
+import java.util.Date;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -14,8 +17,6 @@ import org.junit.runner.RunWith;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestTemplate;
-
-import static junitparams.JUnitParamsRunner.$;
 
 import com.angularjsplay.e2e.util.RestTestUtils;
 import com.angularjsplay.model.Backlog;
@@ -99,6 +100,12 @@ public class BacklogRestTest {
 		RestTestUtils.assertBacklogsEqual(expected, backlog);
 	}
 
+	@Test
+	public void testGetBacklogInvalid() {
+		RestTestUtils.assertRestError(rest, HttpMethod.GET, URL_BASE + "3255",
+				null, HttpStatus.NOT_FOUND);
+	}
+
 	public Object[] getBacklogToCreate() {
 		Backlog b1 = new Backlog();
 		b1.setName("A backlog to create");
@@ -119,14 +126,17 @@ public class BacklogRestTest {
 	@Parameters(method = "getBacklogToCreate")
 	@Test
 	public void testCreateBacklog(Backlog toCreate) {
+		Date now = new Date();
 		Backlog created = rest.postForObject(URL_BASE, toCreate, Backlog.class);
 		Assert.assertNotNull(created.getId());
+		Assert.assertNotNull(created.getCreatedAt());
+		Assert.assertTrue(Math.abs(created.getCreatedAt().getTime() - now.getTime()) < 3000);
 		toCreate.setId(created.getId());
 		toCreate.setCreatedAt(created.getCreatedAt());
 		RestTestUtils.assertBacklogsEqual(toCreate, created);
 	}
 
-	public Object[] getBacklogInvalid() {
+	public Object[] getBacklogToCreateInvalid() {
 		// null name
 		Backlog b1 = new Backlog();
 		b1.setProjectId(1l);
@@ -194,7 +204,7 @@ public class BacklogRestTest {
 				$(b11, HttpStatus.BAD_REQUEST), $(b12, HttpStatus.BAD_REQUEST));
 	}
 
-	@Parameters(method = "getBacklogInvalid")
+	@Parameters(method = "getBacklogToCreateInvalid")
 	@Test
 	public void testCreateBaclogInvalid(Backlog toCreate, HttpStatus status) {
 		RestTestUtils.assertRestError(rest, HttpMethod.POST, URL_BASE,

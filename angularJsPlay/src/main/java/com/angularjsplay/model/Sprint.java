@@ -210,7 +210,7 @@ public class Sprint implements IEntity {
 		if (getEndAt() == null) {
 			if (other.getEndAt() != null)
 				return false;
-		} else if (!getEndAt().equals(other.getEndAt()))
+		} else if (getEndAt().getTime() != other.getEndAt().getTime())
 			return false;
 		if (getName() == null) {
 			if (other.getName() != null)
@@ -220,7 +220,7 @@ public class Sprint implements IEntity {
 		if (getStartAt() == null) {
 			if (other.getStartAt() != null)
 				return false;
-		} else if (!getStartAt().equals(other.getStartAt()))
+		} else if (getStartAt().getTime() != other.getStartAt().getTime())
 			return false;
 		return true;
 	}

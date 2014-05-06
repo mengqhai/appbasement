@@ -21,4 +21,6 @@ public interface IBacklogDAO extends IGenericDAO<Backlog, Long> {
 
 	public abstract Collection<Backlog> getBacklogsForSprint(Long sprintId);
 
+	public abstract int unsetSprintOfBacklogsForSprint(Long sprintId);
+
 }

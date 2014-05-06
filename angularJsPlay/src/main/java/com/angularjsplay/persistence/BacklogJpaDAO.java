@@ -3,6 +3,7 @@ package com.angularjsplay.persistence;
 import java.util.Collection;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
@@ -79,5 +80,14 @@ public class BacklogJpaDAO extends GenericJpaDAO<Backlog, Long> implements
 						"select count(b) from Backlog as b where b.sprint.id=:sprintId",
 						Long.class).setParameter("sprintId", sprintId);
 		return q.getSingleResult();
+	}
+
+	@Override
+	public int unsetSprintOfBacklogsForSprint(Long sprintId) {
+		Query q = getEm()
+				.createQuery(
+						"update Backlog b set b.sprint=null where b.sprint.id=:sprintId");
+		q.setParameter("sprintId", sprintId);
+		return q.executeUpdate();
 	}
 }

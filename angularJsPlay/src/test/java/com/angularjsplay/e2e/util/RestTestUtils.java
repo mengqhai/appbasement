@@ -12,6 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
@@ -76,28 +77,32 @@ public class RestTestUtils {
 		});
 
 		RestError error = null;
-		switch (method) {
-		case POST:
-			error = rest.postForObject(url, request, RestError.class);
-			break;
-		case GET:
-			error = rest.getForObject(url, RestError.class);
-			break;
-		case DELETE:
-		case PUT:
-			HttpHeaders headers = new HttpHeaders();
-			final List<MediaType> jsonType = new ArrayList<MediaType>();
-			jsonType.add(MediaType.APPLICATION_JSON);
-			headers.setAccept(jsonType);
-			headers.setContentType(MediaType.APPLICATION_JSON);
-			HttpEntity<Object> requestEntity = new HttpEntity<Object>(request,
-					headers);
+		try {
+			switch (method) {
+			case POST:
+				error = rest.postForObject(url, request, RestError.class);
+				break;
+			case GET:
+				error = rest.getForObject(url, RestError.class);
+				break;
+			case DELETE:
+			case PUT:
+				HttpHeaders headers = new HttpHeaders();
+				final List<MediaType> jsonType = new ArrayList<MediaType>();
+				jsonType.add(MediaType.APPLICATION_JSON);
+				headers.setAccept(jsonType);
+				headers.setContentType(MediaType.APPLICATION_JSON);
+				HttpEntity<Object> requestEntity = new HttpEntity<Object>(
+						request, headers);
 
-			error = rest.exchange(url, method, requestEntity, RestError.class)
-					.getBody();
-			break;
-		default:
-			Assert.fail("Unsupported method:" + method);
+				error = rest.exchange(url, method, requestEntity,
+						RestError.class).getBody();
+				break;
+			default:
+				Assert.fail("Unsupported method:" + method);
+			}
+		} catch (HttpMessageNotReadableException e) {
+			Assert.fail("Response is not RestError");
 		}
 
 		Assert.assertNotNull(error);
