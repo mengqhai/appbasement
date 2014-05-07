@@ -1,8 +1,9 @@
 package com.angularjsplay.persistence.util;
 
+import com.angularjsplay.mvc.rest.ScrumRestConstants;
 import com.appbasement.persistence.util.TestConstants;
 
-public class ScrumTestConstants implements TestConstants {
+public interface ScrumTestConstants extends TestConstants {
 
 	public static final String DATA_SET_TASK = DATA_SET_HOME_DIR + "task.xml";
 
@@ -34,4 +35,12 @@ public class ScrumTestConstants implements TestConstants {
 	public static final String TABLE_PROJECT = "Project";
 
 	public static final String TABLE_SPRINT = "Sprint";
+	
+	
+	public static final String URL_ROOT = "http://localhost:8081/angularJsPlay";
+
+	public static final String URL_BASE_COMMON = URL_ROOT
+			+ ScrumRestConstants.REST_ROOT + "/";
+	
+	
 }

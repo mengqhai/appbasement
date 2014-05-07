@@ -28,8 +28,10 @@ import com.angularjsplay.service.IScrumService;
 import com.appbasement.component.IObjectPatcher;
 import com.appbasement.component.PatchedValue;
 
+import static com.angularjsplay.mvc.rest.ScrumRestConstants.*;
+
 @Controller
-@RequestMapping(value = "/projects", headers = "Accept=application/json")
+@RequestMapping(value = REST_ROOT + "/projects", headers = "Accept=application/json")
 public class ProjectController {
 
 	@Autowired

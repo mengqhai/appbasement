@@ -161,6 +161,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>com.mangofactory</groupId>
+			<artifactId>swagger-springmvc</artifactId>
+			<version>0.8.3</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>angularJsPlay</finalName>

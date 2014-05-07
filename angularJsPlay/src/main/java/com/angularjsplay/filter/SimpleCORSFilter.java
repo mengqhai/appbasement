@@ -1,4 +1,4 @@
-package com.angularjsplay.mvc;
+package com.angularjsplay.filter;
 
 import java.io.IOException;
 
@@ -16,12 +16,9 @@ import org.springframework.stereotype.Component;
 public class SimpleCORSFilter implements Filter {
 
 	public SimpleCORSFilter() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public void destroy() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void doFilter(ServletRequest req, ServletResponse res,
@@ -31,7 +28,7 @@ public class SimpleCORSFilter implements Filter {
 		response.setHeader("Access-Control-Allow-Origin", "*");
 
 		response.setHeader("Access-Control-Allow-Methods",
-				"POST, GET, OPTIONS, DELETE");
+				"POST, GET, OPTIONS, DELETE, PUT, PATCH");
 
 		response.setHeader("Access-Control-Max-Age", "3600");
 
@@ -42,8 +39,6 @@ public class SimpleCORSFilter implements Filter {
 	}
 
 	public void init(FilterConfig arg0) throws ServletException {
-		// TODO Auto-generated method stub
-
 	}
 
 }

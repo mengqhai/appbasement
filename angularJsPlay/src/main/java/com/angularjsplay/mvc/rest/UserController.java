@@ -25,8 +25,10 @@ import com.appbasement.component.PatchedValue;
 import com.appbasement.model.User;
 import com.appbasement.service.user.IAppUserService;
 
+import static com.angularjsplay.mvc.rest.ScrumRestConstants.*;
+
 @Controller
-@RequestMapping(value = "/users", headers = "Accept=application/json")
+@RequestMapping(value = REST_ROOT + "/users", headers = "Accept=application/json")
 public class UserController {
 
 	@Autowired

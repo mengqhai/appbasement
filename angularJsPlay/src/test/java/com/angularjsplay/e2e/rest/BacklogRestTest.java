@@ -26,11 +26,13 @@ import com.appbasement.component.ObjectPatcher;
 import com.appbasement.persistence.util.DBUnitHelper;
 import com.appbasement.persistence.util.EmfHelper;
 
+import static com.angularjsplay.persistence.util.ScrumTestConstants.*;
+
 @RunWith(JUnitParamsRunner.class)
 public class BacklogRestTest {
 	RestTemplate rest;
 
-	public final static String URL_BASE = "http://localhost:8081/angularJsPlay/backlogs/";
+	public final static String URL_BASE = URL_BASE_COMMON + "/backlogs/";
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
@@ -130,7 +132,8 @@ public class BacklogRestTest {
 		Backlog created = rest.postForObject(URL_BASE, toCreate, Backlog.class);
 		Assert.assertNotNull(created.getId());
 		Assert.assertNotNull(created.getCreatedAt());
-		Assert.assertTrue(Math.abs(created.getCreatedAt().getTime() - now.getTime()) < 3000);
+		Assert.assertTrue(Math.abs(created.getCreatedAt().getTime()
+				- now.getTime()) < 3000);
 		toCreate.setId(created.getId());
 		toCreate.setCreatedAt(created.getCreatedAt());
 		RestTestUtils.assertBacklogsEqual(toCreate, created);

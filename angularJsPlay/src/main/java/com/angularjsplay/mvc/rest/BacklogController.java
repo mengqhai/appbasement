@@ -21,8 +21,10 @@ import com.angularjsplay.mvc.validation.ValidateOnPartial;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.angularjsplay.service.IScrumService;
 
+import static com.angularjsplay.mvc.rest.ScrumRestConstants.*;
+
 @Controller
-@RequestMapping(value = "/backlogs", headers = "Accept=application/json")
+@RequestMapping(value = REST_ROOT + "/backlogs", headers = "Accept=application/json")
 public class BacklogController {
 
 	@Autowired

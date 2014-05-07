@@ -23,8 +23,10 @@ import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.angularjsplay.service.IScrumService;
 
+import static com.angularjsplay.mvc.rest.ScrumRestConstants.*;
+
 @Controller
-@RequestMapping(value = "/sprints", headers = "Accept=application/json")
+@RequestMapping(value = REST_ROOT + "/sprints", headers = "Accept=application/json")
 public class SprintController {
 
 	@Autowired

@@ -28,12 +28,14 @@ import com.appbasement.component.ObjectPatcher;
 import com.appbasement.persistence.util.DBUnitHelper;
 import com.appbasement.persistence.util.EmfHelper;
 
+import static com.angularjsplay.persistence.util.ScrumTestConstants.*;
+
 @RunWith(JUnitParamsRunner.class)
 public class ProjectRestTest {
 
 	RestTemplate rest;
 
-	final static String URL_BASE = "http://localhost:8081/angularJsPlay/projects/";
+	final static String URL_BASE = URL_BASE_COMMON + "/projects/";
 
 	public ProjectRestTest() {
 	}
