@@ -27,11 +27,10 @@ import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.angularjsplay.service.IScrumService;
 import com.appbasement.component.IObjectPatcher;
 import com.appbasement.component.PatchedValue;
-
-import static com.angularjsplay.mvc.rest.ScrumRestConstants.*;
+import com.wordnik.swagger.annotations.ApiOperation;
 
 @Controller
-@RequestMapping(value = "/projects", headers = "Accept=application/json")
+@RequestMapping(value = "/projects", headers = "Accept=application/json", consumes = "application/json", produces = "application/json")
 public class ProjectController {
 
 	@Autowired
@@ -43,6 +42,7 @@ public class ProjectController {
 	public ProjectController() {
 	}
 
+	@ApiOperation(value = "list projects", notes = "list all the projects")
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
 	public List<Project> listProjects() {

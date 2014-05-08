@@ -1,9 +1,12 @@
 package com.angularjsplay.e2e.rest;
 
+import static com.angularjsplay.persistence.util.ScrumTestConstants.URL_BASE_COMMON;
 import static junitparams.JUnitParamsRunner.$;
 
+import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Map;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -22,9 +25,11 @@ import com.angularjsplay.e2e.util.RestTestUtils;
 import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.Sprint;
 import com.angularjsplay.persistence.util.ScrumTestConstants;
+import com.appbasement.component.IObjectPatcher;
+import com.appbasement.component.ObjectPatcher;
+import com.appbasement.component.PatchedValue;
 import com.appbasement.persistence.util.DBUnitHelper;
 import com.appbasement.persistence.util.EmfHelper;
-import static com.angularjsplay.persistence.util.ScrumTestConstants.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class SprintRestTest {
@@ -249,9 +254,69 @@ public class SprintRestTest {
 		RestTestUtils.assertRestError(rest, HttpMethod.DELETE, url, null,
 				HttpStatus.NOT_FOUND);
 	}
-	
-	public void getSprintForUpdate() {
-		
+
+	public Object[] getSprintForUpdate() {
+		Sprint s1 = new Sprint();
+		s1.setName("changed name");
+
+		Sprint s3 = new Sprint();
+		s3.setCapacity((short) 99);
+
+		Sprint s4 = new Sprint();
+		s4.setDesc("Hello");
+
+		Sprint s5 = new Sprint();
+		s5.setStartAt(Timestamp.valueOf("2014-08-04 16:59:03"));
+
+		Sprint s6 = new Sprint();
+		s6.setEndAt(Timestamp.valueOf("2016-09-04 16:59:03"));
+
+		Sprint s7 = new Sprint();
+		// update startAt and endAt at the same time
+		s7.setStartAt(Timestamp.valueOf("2018-02-26 19:46:11"));
+		s7.setEndAt(Timestamp.valueOf("2019-02-26 19:46:11"));
+
+		return $($(s1), $(s3), $(s4), $(s5), $(s6), $(s7));
+	}
+
+	@Parameters(method = "getSprintForUpdate")
+	@Test
+	public void testUpdateSprint(Sprint patch) {
+		String url = URL_BASE + "1";
+		rest.put(url, patch);
+
+		Sprint updated = rest.getForObject(url, Sprint.class);
+		IObjectPatcher patcher = new ObjectPatcher();
+		Map<Field, PatchedValue> result = patcher.patchObject(updated, patch);
+		if (!result.isEmpty()) {
+			for (Field field : result.keySet()) {
+				PatchedValue pValue = result.get(field);
+				Assert.assertTrue(Date.class.isAssignableFrom(field.getType()));
+				Date newDate = (Date) pValue.getNewValue();
+				Date oldDate = (Date) pValue.getOldValue();
+				Assert.assertEquals(newDate.getTime(), oldDate.getTime());
+			}
+		}
+	}
+
+	@Test
+	public void testUpdateSprintWithProject() {
+		// special case, the backlogs should also be moved to the corresponding
+		// project
+		Sprint patch = new Sprint();
+		patch.setProjectId(1l);
+
+		String url = URL_BASE + "1";
+		rest.put(url, patch);
+		Sprint updated = rest.getForObject(url, Sprint.class);
+		Assert.assertEquals(patch.getProjectId(), updated.getProjectId());
+
+		Backlog[] backlogs = rest.getForObject(url + "/backlogs",
+				Backlog[].class);
+		for (Backlog b : backlogs) {
+			Assert.assertEquals(patch.getProjectId(), b.getProjectId());
+		}
+
 	}
 
 }

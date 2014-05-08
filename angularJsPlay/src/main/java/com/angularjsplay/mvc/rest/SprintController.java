@@ -71,6 +71,7 @@ public class SprintController {
 		if (bResult.hasErrors()) {
 			throw new ScrumValidationException(bResult);
 		}
+		patch.setId(id);
 		scrumService.updateSprintWithPatch(patch);
 	}
 
