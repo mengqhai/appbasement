@@ -1,9 +1,8 @@
-package com.angularjsplay.mvc;
+package com.angularjsplay.mvc.rest.swagger;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,14 +15,23 @@ import com.mangofactory.swagger.models.alternates.AlternateTypeProvider;
 import com.mangofactory.swagger.scanners.ApiListingReferenceScanner;
 import com.wordnik.swagger.model.ApiInfo;
 
+/**
+ * Try it out with http://petstore.swagger.wordnik.com/
+ * 
+ * @author qinghai
+ * 
+ */
 @Configuration
 public class ScrumSwaggerConfig {
 
 	public static final String SWAGGER_GROUP = "";
 
 	public static final List<String> DEFAULT_INCLUDE_PATTERNS = Arrays
-			.asList(new String[] { "/users.*", "/projects.*",
-					"/sprints.*", "/backlogs.*", "/tasks.*" });
+			.asList(new String[] { "/users.*", "/projects.*", "/sprints.*",
+					"/backlogs.*", "/tasks.*" });
+
+	@Autowired
+	private ScrumSwaggerPathProvider scrumSwaggerPathProvider;
 
 	@Autowired
 	private SpringSwaggerConfig springSwaggerConfig;
@@ -42,15 +50,15 @@ public class ScrumSwaggerConfig {
 		return jacksonScalaSupport;
 	}
 
-	@Bean
-	// Completely optional! if you've already got an object mapper it will
-	// automatically
-	// use the bean that is customized
-	public ObjectMapper customObjectMapper() {
-		ObjectMapper objectMapper = new ObjectMapper();
-		// Additional customizations go here
-		return objectMapper;
-	}
+	// @Bean
+	// // Completely optional! if you've already got an object mapper it will
+	// // automatically
+	// // use the bean that is customized
+	// public ObjectMapper customObjectMapper() {
+	// ObjectMapper objectMapper = new ObjectMapper();
+	// // Additional customizations go here
+	// return objectMapper;
+	// }
 
 	@Bean
 	public SwaggerGlobalSettings swaggerGlobalSettings() {
@@ -100,8 +108,8 @@ public class ScrumSwaggerConfig {
 
 		// Use a custom path provider or
 		// springSwaggerConfig.defaultSwaggerPathProvider()
-		swaggerApiResourceListing.setSwaggerPathProvider(springSwaggerConfig
-				.defaultSwaggerPathProvider());
+		swaggerApiResourceListing
+				.setSwaggerPathProvider(scrumSwaggerPathProvider);
 
 		// Supply the API Info as it should appear on swagger-ui web page
 		swaggerApiResourceListing.setApiInfo(apiInfo());

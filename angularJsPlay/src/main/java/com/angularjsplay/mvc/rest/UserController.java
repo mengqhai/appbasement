@@ -28,7 +28,7 @@ import com.appbasement.service.user.IAppUserService;
 import static com.angularjsplay.mvc.rest.ScrumRestConstants.*;
 
 @Controller
-@RequestMapping(value = REST_ROOT + "/users", headers = "Accept=application/json")
+@RequestMapping(value = "/users", headers = "Accept=application/json")
 public class UserController {
 
 	@Autowired

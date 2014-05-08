@@ -35,12 +35,10 @@ public interface ScrumTestConstants extends TestConstants {
 	public static final String TABLE_PROJECT = "Project";
 
 	public static final String TABLE_SPRINT = "Sprint";
-	
-	
+
 	public static final String URL_ROOT = "http://localhost:8081/angularJsPlay";
 
-	public static final String URL_BASE_COMMON = URL_ROOT
+	public static final String URL_BASE_COMMON = URL_ROOT + "/"
 			+ ScrumRestConstants.REST_ROOT + "/";
-	
-	
+
 }

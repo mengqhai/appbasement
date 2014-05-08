@@ -249,5 +249,9 @@ public class SprintRestTest {
 		RestTestUtils.assertRestError(rest, HttpMethod.DELETE, url, null,
 				HttpStatus.NOT_FOUND);
 	}
+	
+	public void getSprintForUpdate() {
+		
+	}
 
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<mvc:annotation-driven />
+	<context:component-scan base-package="com.angularjsplay.mvc.rest" />
+
+	<!-- Enable scanning of spring @Configuration classes -->
+	<context:annotation-config />
+
+	<!-- Enable the default documentation controller -->
+	<context:component-scan base-package="com.mangofactory.swagger.controllers" />
+
+	<!-- Pick up the bundled spring config. Not really required if you're already 
+		importing the configuration bean as part of an application specific configuration 
+		bean via the previous component scan -->
+	<context:component-scan base-package="com.mangofactory.swagger.configuration" />
+
+</beans>

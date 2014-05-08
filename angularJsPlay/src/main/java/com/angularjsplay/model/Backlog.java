@@ -25,12 +25,14 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
+//import org.codehaus.jackson.annotate.JsonIgnore;
+//import org.codehaus.jackson.annotate.JsonProperty;
 import org.hibernate.annotations.ForeignKey;
 
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Access(AccessType.FIELD)
@@ -59,6 +61,7 @@ public class Backlog implements IEntity {
 	@Min(value = 1, groups = { ValidateOnCreate.class, ValidateOnUpdate.class })
 	private Short estimation;
 
+	@JsonIgnore
 	@NotNull(groups = ValidateOnCreate.class)
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "PROJECT_ID", nullable = false)
@@ -204,12 +207,10 @@ public class Backlog implements IEntity {
 		return "Backlog [name=" + name + "]";
 	}
 
-	@JsonIgnore
 	public Project getProject() {
 		return project;
 	}
 
-	@JsonProperty
 	public void setProject(Project project) {
 		this.project = project;
 	}

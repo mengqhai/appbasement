@@ -25,12 +25,13 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
-
+import com.appbasement.model.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+//import org.codehaus.jackson.annotate.JsonIgnore;
+//import org.codehaus.jackson.annotate.JsonProperty;
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
-import com.appbasement.model.User;
 
 @Entity
 @Access(AccessType.FIELD)
@@ -46,10 +47,12 @@ public class Project implements IEntity {
 	@JoinColumn(name = "PRODUCT_OWNER")
 	private User productOwner;
 
+	@JsonIgnore
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "SCRUM_MASTER")
 	private User scrumMaster;
 
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "PROJECT_MEMBERS", joinColumns = @JoinColumn(name = "PROJECT_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
 	private Set<User> teamMembers;

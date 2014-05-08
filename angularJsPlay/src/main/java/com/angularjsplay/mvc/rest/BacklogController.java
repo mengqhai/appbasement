@@ -24,7 +24,7 @@ import com.angularjsplay.service.IScrumService;
 import static com.angularjsplay.mvc.rest.ScrumRestConstants.*;
 
 @Controller
-@RequestMapping(value = REST_ROOT + "/backlogs", headers = "Accept=application/json")
+@RequestMapping(value = "/backlogs", headers = "Accept=application/json")
 public class BacklogController {
 
 	@Autowired
