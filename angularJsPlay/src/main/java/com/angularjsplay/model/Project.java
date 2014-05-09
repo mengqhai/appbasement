@@ -211,13 +211,31 @@ public class Project implements IEntity {
 	}
 
 	public void addBacklogToProject(Backlog backlog) {
+		if (backlog.getProject() != null) {
+			backlog.getProject().removeBacklogFromProject(backlog);
+		}
 		backlog.setProject(this);
 		productBacklogs.add(backlog);
 	}
 
+	public void removeBacklogFromProject(Backlog backlog) {
+		if (productBacklogs.remove(backlog)) {
+			backlog.setProject(null);
+		}
+	}
+
 	public void addSprintToProject(Sprint sprint) {
+		if (sprint.getProject() != null) {
+			sprint.getProject().removeSprintFromProject(sprint);
+		}
 		sprint.setProject(this);
 		sprints.add(sprint);
+	}
+
+	public void removeSprintFromProject(Sprint sprint) {
+		if (sprints.remove(sprint)) {
+			sprint.setProject(null);
+		}
 	}
 
 	@Override

@@ -2,10 +2,11 @@ package com.appbasement.component;
 
 import static org.springframework.util.ReflectionUtils.getField;
 import static org.springframework.util.ReflectionUtils.makeAccessible;
-import static org.springframework.util.ReflectionUtils.*;
+import static org.springframework.util.ReflectionUtils.setField;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.sql.Date;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +31,19 @@ public class ObjectPatcher implements IObjectPatcher {
 				makeAccessible(field);
 				Object newValue = getField(field, patch);
 				Object oldValue = getField(field, target);
-				if (!newValue.equals(oldValue)) {
+				boolean isDate = Date.class.isAssignableFrom(field.getType());
+				boolean updated = false;
+				if (!isDate && !newValue.equals(oldValue)) {
+					updated = true;
+				} else if (isDate) {
+					Date newDate = (Date) newValue;
+					Date oldDate = (Date) oldValue;
+					if (oldDate != null) {
+						updated = (newDate.getTime() != oldDate.getTime());
+					}
+				}
+
+				if (updated) {
 					patchedInfo
 							.put(field, new PatchedValue(oldValue, newValue));
 					setField(field, target, newValue);

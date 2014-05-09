@@ -230,7 +230,7 @@ public class ProjectRestTest {
 
 	@Parameters(method = "getBacklogsForProjectParams")
 	@Test
-	public void testBacklogsForProject(Long projectId, Long count,
+	public void testGetBacklogsForProject(Long projectId, Long count,
 			Long idOfFirst) {
 		String commonUrl = URL_BASE + projectId + "/backlogs";
 		RestTestUtils.assertPagibleChildren(rest, commonUrl, Backlog.class,
@@ -244,7 +244,7 @@ public class ProjectRestTest {
 
 	@Parameters(method = "getSprintsForProjectParams")
 	@Test
-	public void testSprintsForProject(Long projectId, Long count, Long idOfFirst) {
+	public void testGetSprintsForProject(Long projectId, Long count, Long idOfFirst) {
 		String commonUrl = URL_BASE + projectId + "/sprints";
 		RestTestUtils.assertPagibleChildren(rest, commonUrl, Sprint.class,
 				count, idOfFirst);

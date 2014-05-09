@@ -297,6 +297,10 @@ public class BacklogRestTest {
 		b7.setProjectId(2l);
 		b7.setSprintId(3l);
 
+		Backlog b71 = new Backlog();
+		b71.setName("Old sprint not in new project");
+		b71.setProjectId(2l);
+
 		Backlog b8 = new Backlog();
 		b8.setName("Priority too big");
 		b8.setPriority((short) 15);
@@ -308,15 +312,22 @@ public class BacklogRestTest {
 		return $($(b1, HttpStatus.BAD_REQUEST), $(b2, HttpStatus.BAD_REQUEST),
 				$(b3, HttpStatus.BAD_REQUEST), $(b4, HttpStatus.BAD_REQUEST),
 				$(b5, HttpStatus.NOT_FOUND), $(b6, HttpStatus.NOT_FOUND),
-				$(b7, HttpStatus.BAD_REQUEST), $(b8, HttpStatus.BAD_REQUEST),
-				$(b9, HttpStatus.BAD_REQUEST));
+				$(b7, HttpStatus.BAD_REQUEST), $(b71, HttpStatus.BAD_REQUEST),
+				$(b8, HttpStatus.BAD_REQUEST), $(b9, HttpStatus.BAD_REQUEST));
 	}
 
 	@Parameters(method = "getBacklogForUpdateInvalid")
 	@Test
 	public void testUpdateBacklogInvalid(Backlog patch, HttpStatus status) {
-		RestTestUtils.assertRestError(rest, HttpMethod.PUT, URL_BASE + "1",
-				patch, status);
+		String url = URL_BASE + "1";
+		Backlog beforeUpdate = rest.getForObject(url, Backlog.class);
+
+		RestTestUtils.assertRestError(rest, HttpMethod.PUT, url, patch, status);
+
+		// Make sure invalid update is rolled back
+		Backlog b = rest.getForObject(url, Backlog.class);
+		IObjectPatcher patcher = new ObjectPatcher();
+		Assert.assertTrue(patcher.patchObject(b, beforeUpdate).isEmpty());
 	}
 
 }

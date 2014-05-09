@@ -30,7 +30,7 @@ import com.appbasement.component.PatchedValue;
 import com.wordnik.swagger.annotations.ApiOperation;
 
 @Controller
-@RequestMapping(value = "/projects", headers = "Accept=application/json", consumes = "application/json", produces = "application/json")
+@RequestMapping(value = "/projects", headers = "Accept=application/json", produces = "application/json")
 public class ProjectController {
 
 	@Autowired
@@ -56,7 +56,7 @@ public class ProjectController {
 	}
 
 	@RequestMapping(value = "/{id}", method = { RequestMethod.PUT,
-			RequestMethod.PATCH })
+			RequestMethod.PATCH }, consumes = "application/json")
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void updateProject(@PathVariable("id") long id,
 			@RequestBody @Validated(ValidateOnUpdate.class) Project patch,
@@ -73,7 +73,7 @@ public class ProjectController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST, consumes = "application/json")
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@ResponseBody
 	public Project createProject(

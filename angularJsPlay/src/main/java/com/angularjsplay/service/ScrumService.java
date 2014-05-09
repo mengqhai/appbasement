@@ -199,12 +199,18 @@ public class ScrumService implements IScrumService {
 		if (newSprintId != null) {
 			// backlog.sprint is changed
 			Sprint sprint = sDao.getReference(newSprintId);
+			sprint.addBacklogToSprint(backlog);
+		}
+
+		// validation before commit
+		if (backlog.getSprint() != null) {
+			Sprint sprint = backlog.getSprint();
 			if (!sprint.getProjectId().equals(backlog.getProjectId())) {
 				throw new ScrumValidationException("Sprint " + sprint.getId()
 						+ " doesn't belong to project " + newProjectId);
 			}
-			sprint.addBacklogToSprint(backlog);
 		}
+
 	}
 
 	private void changeRelationshipsForSprint(Sprint sprint, Long newProjectId) {
@@ -212,6 +218,11 @@ public class ScrumService implements IScrumService {
 			// sprint.project is changed
 			Project project = projectDao.getReference(newProjectId);
 			project.addSprintToProject(sprint);
+			// also change the projectIds of all sub-backlogs
+			Collection<Backlog> backlogs = sprint.getBacklogs();
+			for (Backlog b : backlogs) {
+				project.addBacklogToProject(b);
+			}
 		}
 	}
 

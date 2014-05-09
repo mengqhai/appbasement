@@ -313,10 +313,14 @@ public class SprintRestTest {
 
 		Backlog[] backlogs = rest.getForObject(url + "/backlogs",
 				Backlog[].class);
+		Assert.assertNotEquals(0, backlogs.length);
 		for (Backlog b : backlogs) {
 			Assert.assertEquals(patch.getProjectId(), b.getProjectId());
 		}
+	}
 
+	public Object[] getSprintForUpdateInvalid() {
+		return $($());
 	}
 
 }
