@@ -302,6 +302,12 @@ public class ScrumService implements IScrumService {
 		Map<Field, PatchedValue> patchResult = objectPatcher.patchObject(
 				sprint, patch);
 		if (!patchResult.isEmpty()) {
+			if (sprint.getStartAt() != null && sprint.getEndAt() != null
+					&& sprint.getStartAt().getTime() > sprint.getEndAt().getTime()) {
+				throw new ScrumValidationException(
+						"Sprint startAt is later than endAt.");
+			}
+			
 			Long projectId = patch.getProjectId();
 			try {
 				changeRelationshipsForSprint(sprint, projectId);

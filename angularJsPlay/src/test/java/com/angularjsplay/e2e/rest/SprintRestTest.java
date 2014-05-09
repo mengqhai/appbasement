@@ -320,7 +320,64 @@ public class SprintRestTest {
 	}
 
 	public Object[] getSprintForUpdateInvalid() {
-		return $($());
+		Sprint s1 = new Sprint();
+		s1.setName("");
+
+		Sprint s2 = new Sprint();
+		s2.setName("End earlier than start");
+		s2.setEndAt(Timestamp.valueOf("2013-04-29 07:42:50"));
+		s2.setStartAt(Timestamp.valueOf("2014-04-29 07:42:50"));
+
+		Sprint s3 = new Sprint();
+		s3.setName("New start later than old start");
+		s3.setStartAt(Timestamp.valueOf("2015-03-26 19:46:11"));
+
+		Sprint s4 = new Sprint();
+		s4.setName("New end earlier than old start");
+		s4.setEndAt(Timestamp.valueOf("2014-06-04 16:59:03"));
+
+		Sprint s5 = new Sprint();
+		s5.setName("New end earlier than new start");
+		s5.setStartAt(Timestamp.valueOf("2019-02-26 19:46:11"));
+		s5.setEndAt(Timestamp.valueOf("2018-02-26 19:46:11"));
+
+		Sprint s6 = new Sprint();
+		s6.setProjectId(-1l);
+
+		Sprint s7 = new Sprint();
+		s7.setProjectId(10000l);
+
+		return $($(s1, HttpStatus.BAD_REQUEST), $(s2, HttpStatus.BAD_REQUEST),
+				$(s3, HttpStatus.BAD_REQUEST), $(s4, HttpStatus.BAD_REQUEST),
+				$(s5, HttpStatus.BAD_REQUEST), $(s6, HttpStatus.NOT_FOUND),
+				$(s7, HttpStatus.NOT_FOUND));
+	}
+
+	@Parameters(method = "getSprintForUpdateInvalid")
+	@Test
+	public void testUpdateSprintInvalid(Sprint patch, HttpStatus status) {
+		String url = URL_BASE + "1";
+		Sprint beforeUpdate = rest.getForObject(url, Sprint.class);
+		RestTestUtils.assertRestError(rest, HttpMethod.PUT, url, patch, status);
+
+		Sprint afterUpdate = rest.getForObject(url, Sprint.class);
+		// Make sure invalid update is rolled back
+		IObjectPatcher patcher = new ObjectPatcher();
+		Assert.assertTrue(patcher.patchObject(afterUpdate, beforeUpdate)
+				.isEmpty());
+	}
+
+	public Object[] getBacklogsForSprintParams() {
+		return $($(3l, 5l, 5l), $(1l, 6l, 16l), $(2l, 0l, null));
+	}
+
+	@Parameters(method = "getBacklogsForSprintParams")
+	@Test
+	public void testGetBacklogsForSprint(Long sprintId, Long count,
+			Long idOfFirst) {
+		String commonUrl = URL_BASE + sprintId + "/backlogs";
+		RestTestUtils.assertPagibleChildren(rest, commonUrl, Backlog.class,
+				count, idOfFirst);
 	}
 
 }
