@@ -28,7 +28,9 @@ import com.angularjsplay.persistence.ISprintDAO;
 import com.angularjsplay.persistence.ITaskDAO;
 import com.appbasement.component.IObjectPatcher;
 import com.appbasement.component.PatchedValue;
+import com.appbasement.model.User;
 import com.appbasement.persistence.IGenericDAO;
+import com.appbasement.persistence.IUserDAO;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED)
@@ -45,6 +47,9 @@ public class ScrumService implements IScrumService {
 
 	@Autowired
 	protected ITaskDAO tDao;
+
+	@Autowired
+	protected IUserDAO uDao;
 
 	@Autowired
 	IObjectPatcher objectPatcher;
@@ -333,4 +338,47 @@ public class ScrumService implements IScrumService {
 		}
 	}
 
+	private void changeRelationshipsForTask(Task task, Long newOwnerId,
+			Long newBacklogId) {
+		if (newOwnerId != null) {
+			User user = uDao.getReference(newOwnerId);
+			task.setOwner(user);
+		}
+		if (newBacklogId != null) {
+			Backlog backlog = bDao.getReference(newBacklogId);
+			task.setBacklog(backlog);
+		}
+	}
+
+	@Override
+	public void createTaskWithPartialRelationships(Task task) {
+		Long ownerId = task.getOwnerId();
+		Long backlogId = task.getBacklogId();
+		try {
+			changeRelationshipsForTask(task, ownerId, backlogId);
+			save(task);
+		} catch (EntityNotFoundException e) {
+			throw new ScrumResourceNotFoundException();
+		}
+	}
+
+	@Override
+	public void updateTaskWithPatch(Task patch) {
+		if (patch.getId() == null) {
+			throw new IllegalArgumentException("Null id in patch");
+		}
+		Task existing = getById(Task.class, patch.getId());
+		Map<Field, PatchedValue> patchedResult = objectPatcher.patchObject(
+				existing, patch);
+		if (!patchedResult.isEmpty()) {
+			Long newOwnerId = patch.getOwnerId();
+			Long newBacklogId = patch.getBacklogId();
+			try {
+				changeRelationshipsForTask(existing, newOwnerId, newBacklogId);
+				save(existing);
+			} catch (EntityNotFoundException e) {
+				throw new ScrumResourceNotFoundException();
+			}
+		}
+	}
 }

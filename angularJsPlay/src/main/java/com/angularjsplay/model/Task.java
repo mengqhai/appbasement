@@ -14,10 +14,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.ForeignKey;
 
+import com.angularjsplay.mvc.validation.ValidateOnCreate;
+import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.appbasement.model.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Access(AccessType.FIELD)
@@ -32,19 +39,27 @@ public class Task implements IEntity {
 	@Access(AccessType.PROPERTY)
 	private Long id;
 
+	@NotNull(groups = ValidateOnCreate.class)
+	@Size(min = 1, max = 256, groups = { ValidateOnCreate.class,
+			ValidateOnUpdate.class })
 	@Column(length = 255)
 	private String name;
 
+	@Size(min = 1, max = 2048, groups = { ValidateOnCreate.class,
+			ValidateOnUpdate.class })
 	@Column(length = 2048)
 	private String desc;
 
+	@JsonIgnore
 	@ManyToOne(targetEntity = Backlog.class)
 	@JoinColumn(name = "BACKLOG_ID", nullable = true)
 	@ForeignKey(name = "FK_TASK_BACKLOG")
 	private Backlog backlog;
 
+	@Min(value = 1, groups = { ValidateOnCreate.class, ValidateOnUpdate.class })
 	private Short estimation;
 
+	@Min(value = 0, groups = { ValidateOnCreate.class, ValidateOnUpdate.class })
 	private Short remaining;
 
 	@Column(nullable = false, updatable = false)
@@ -54,6 +69,7 @@ public class Task implements IEntity {
 	@Column(nullable = false)
 	private TaskState state = TaskState.NEW;
 
+	@JsonIgnore
 	@ManyToOne(targetEntity = User.class)
 	@JoinColumn(name = "OWNER_ID", nullable = true)
 	@ForeignKey(name = "FK_TASK_OWNER")
@@ -94,19 +110,19 @@ public class Task implements IEntity {
 		this.backlog = backlog;
 	}
 
-	public short getEstimation() {
+	public Short getEstimation() {
 		return estimation;
 	}
 
-	public void setEstimation(short estimation) {
+	public void setEstimation(Short estimation) {
 		this.estimation = estimation;
 	}
 
-	public short getRemaining() {
+	public Short getRemaining() {
 		return remaining;
 	}
 
-	public void setRemaining(short remaining) {
+	public void setRemaining(Short remaining) {
 		this.remaining = remaining;
 	}
 
@@ -149,10 +165,12 @@ public class Task implements IEntity {
 				+ ((getCreatedAt() == null) ? 0 : getCreatedAt().hashCode());
 		result = prime * result
 				+ ((getDesc() == null) ? 0 : getDesc().hashCode());
-		result = prime * result + getEstimation();
+		result = prime * result
+				+ ((getEstimation() == null) ? 0 : getEstimation().hashCode());
 		result = prime * result
 				+ ((getName() == null) ? 0 : getName().hashCode());
-		result = prime * result + getRemaining();
+		result = prime * result
+				+ ((getRemaining() == null) ? 0 : getRemaining().hashCode());
 		result = prime * result
 				+ ((getState() == null) ? 0 : getState().hashCode());
 		return result;
@@ -177,14 +195,20 @@ public class Task implements IEntity {
 				return false;
 		} else if (!getDesc().equals(other.getDesc()))
 			return false;
-		if (getEstimation() != other.getEstimation())
+		if (getEstimation() == null) {
+			if (other.getEstimation() != null)
+				return false;
+		} else if (!getEstimation().equals(other.getEstimation()))
 			return false;
 		if (getName() == null) {
 			if (other.getName() != null)
 				return false;
 		} else if (!getName().equals(other.getName()))
 			return false;
-		if (getRemaining() != other.getRemaining())
+		if (getRemaining() == null) {
+			if (other.getRemaining() != null)
+				return false;
+		} else if (!getRemaining().equals(other.getRemaining()))
 			return false;
 		if (getState() != other.getState())
 			return false;
@@ -194,6 +218,40 @@ public class Task implements IEntity {
 	@Override
 	public String toString() {
 		return "Task [name=" + name + ", state=" + state + "]";
+	}
+
+	@JsonProperty
+	public Long getOwnerId() {
+		if (owner != null) {
+			return owner.getId();
+		} else {
+			return null;
+		}
+	}
+
+	@JsonProperty
+	public void setOwnerId(Long id) {
+		if (owner == null) {
+			owner = new User();
+		}
+		owner.setId(id);
+	}
+
+	@JsonProperty
+	public Long getBacklogId() {
+		if (backlog != null) {
+			return backlog.getId();
+		} else {
+			return null;
+		}
+	}
+
+	@JsonProperty
+	public void setBacklogId(Long backlogId) {
+		if (backlog == null) {
+			backlog = new Backlog();
+		}
+		backlog.setId(backlogId);
 	}
 
 }

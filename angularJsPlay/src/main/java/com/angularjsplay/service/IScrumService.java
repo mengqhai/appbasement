@@ -8,6 +8,7 @@ import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.IEntity;
 import com.angularjsplay.model.Project;
 import com.angularjsplay.model.Sprint;
+import com.angularjsplay.model.Task;
 
 public interface IScrumService {
 
@@ -54,5 +55,9 @@ public interface IScrumService {
 	public abstract void updateSprintWithPatch(Sprint patch);
 
 	public abstract void updateProjectWithPatch(Project patch);
+
+	public abstract void createTaskWithPartialRelationships(Task task);
+
+	public abstract void updateTaskWithPatch(Task patch);
 
 }

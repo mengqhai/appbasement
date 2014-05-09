@@ -1,7 +1,6 @@
 package com.angularjsplay.mvc.rest;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,8 +22,6 @@ import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.angularjsplay.service.IScrumService;
 
-import static com.angularjsplay.mvc.rest.ScrumRestConstants.*;
-
 @Controller
 @RequestMapping(value = "/sprints", headers = "Accept=application/json")
 public class SprintController {
@@ -37,7 +34,7 @@ public class SprintController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
-	public List<Sprint> listSprints() {
+	public Collection<Sprint> listSprints() {
 		return scrumService.getAll(Sprint.class);
 	}
 

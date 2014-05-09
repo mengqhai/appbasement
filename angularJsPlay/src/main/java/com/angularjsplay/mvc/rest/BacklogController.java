@@ -1,6 +1,6 @@
 package com.angularjsplay.mvc.rest;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.angularjsplay.exception.ScrumValidationException;
 import com.angularjsplay.model.Backlog;
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
-import com.angularjsplay.mvc.validation.ValidateOnPartial;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.angularjsplay.service.IScrumService;
 
@@ -33,7 +32,7 @@ public class BacklogController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
-	public List<Backlog> listBacklogs() {
+	public Collection<Backlog> listBacklogs() {
 		return scrumService.getAll(Backlog.class);
 	}
 
@@ -46,8 +45,8 @@ public class BacklogController {
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@ResponseBody
-	public Backlog createBacklog(@RequestBody @Validated(value = {
-			ValidateOnCreate.class, ValidateOnPartial.class }) Backlog backlog,
+	public Backlog createBacklog(
+			@RequestBody @Validated(value = { ValidateOnCreate.class }) Backlog backlog,
 			BindingResult bResult) {
 		if (bResult.hasErrors()) {
 			throw new ScrumValidationException(bResult);
@@ -60,9 +59,9 @@ public class BacklogController {
 	@RequestMapping(value = "/{id}", method = { RequestMethod.PUT,
 			RequestMethod.PATCH })
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void updateBacklog(@PathVariable("id") long id,
-			@RequestBody @Validated(value = { ValidateOnUpdate.class,
-					ValidateOnPartial.class }) Backlog patch,
+	public void updateBacklog(
+			@PathVariable("id") long id,
+			@RequestBody @Validated(value = { ValidateOnUpdate.class }) Backlog patch,
 			BindingResult bResult) {
 		if (bResult.hasErrors()) {
 			throw new ScrumValidationException(bResult);

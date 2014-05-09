@@ -1,7 +1,6 @@
 package com.angularjsplay.mvc.rest;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,7 +37,7 @@ public class ProjectController {
 	@ApiOperation(value = "list projects", notes = "list all the projects")
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
-	public List<Project> listProjects() {
+	public Collection<Project> listProjects() {
 		return scrumService.getAll(Project.class);
 	}
 
