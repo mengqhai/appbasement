@@ -115,9 +115,9 @@ public class ProjectRestTest {
 		Date now = new Date();
 		Project created = rest.postForObject(URL_BASE, toCreate, Project.class);
 		Assert.assertNotNull(created.getId());
-		// should be created within 3 seconds
+		// should be created within 6 seconds
 		Assert.assertTrue(Math.abs(now.getTime()
-				- created.getCreatedAt().getTime()) < 3000l);
+				- created.getCreatedAt().getTime()) < 6000l);
 		toCreate.setCreatedAt(created.getCreatedAt());
 		Assert.assertEquals(toCreate, created);
 		Assert.assertEquals(toCreate.getName(), created.getName());

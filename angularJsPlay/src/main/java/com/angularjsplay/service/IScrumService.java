@@ -6,6 +6,7 @@ import java.util.List;
 import com.angularjsplay.exception.ScrumResourceNotFoundException;
 import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.IEntity;
+import com.angularjsplay.model.Project;
 import com.angularjsplay.model.Sprint;
 
 public interface IScrumService {
@@ -51,5 +52,7 @@ public interface IScrumService {
 	public abstract void updateBacklogWithPatch(Backlog patch);
 
 	public abstract void updateSprintWithPatch(Sprint patch);
+
+	public abstract void updateProjectWithPatch(Project patch);
 
 }

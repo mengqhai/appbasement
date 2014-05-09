@@ -1,9 +1,7 @@
 package com.angularjsplay.mvc.rest;
 
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,16 +23,11 @@ import com.angularjsplay.model.Sprint;
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.angularjsplay.service.IScrumService;
-import com.appbasement.component.IObjectPatcher;
-import com.appbasement.component.PatchedValue;
 import com.wordnik.swagger.annotations.ApiOperation;
 
 @Controller
 @RequestMapping(value = "/projects", headers = "Accept=application/json", produces = "application/json")
 public class ProjectController {
-
-	@Autowired
-	IObjectPatcher objectPatcher;
 
 	@Autowired
 	IScrumService scrumService;
@@ -64,13 +57,8 @@ public class ProjectController {
 		if (bResult.hasErrors()) {
 			throw new ScrumValidationException(bResult);
 		}
-
-		Project existing = scrumService.getById(Project.class, id);
-		Map<Field, PatchedValue> patchedResult = objectPatcher.patchObject(
-				existing, patch);
-		if (!patchedResult.isEmpty()) {
-			scrumService.save(existing);
-		}
+		patch.setId(id);
+		scrumService.updateProjectWithPatch(patch);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, consumes = "application/json")

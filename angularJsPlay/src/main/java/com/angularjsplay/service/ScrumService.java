@@ -302,12 +302,14 @@ public class ScrumService implements IScrumService {
 		Map<Field, PatchedValue> patchResult = objectPatcher.patchObject(
 				sprint, patch);
 		if (!patchResult.isEmpty()) {
-			if (sprint.getStartAt() != null && sprint.getEndAt() != null
-					&& sprint.getStartAt().getTime() > sprint.getEndAt().getTime()) {
+			if (sprint.getStartAt() != null
+					&& sprint.getEndAt() != null
+					&& sprint.getStartAt().getTime() > sprint.getEndAt()
+							.getTime()) {
 				throw new ScrumValidationException(
 						"Sprint startAt is later than endAt.");
 			}
-			
+
 			Long projectId = patch.getProjectId();
 			try {
 				changeRelationshipsForSprint(sprint, projectId);
@@ -315,6 +317,19 @@ public class ScrumService implements IScrumService {
 			} catch (EntityNotFoundException e) {
 				throw new ScrumResourceNotFoundException();
 			}
+		}
+	}
+
+	@Override
+	public void updateProjectWithPatch(Project patch) {
+		if (patch.getId() == null) {
+			throw new IllegalArgumentException("Null id in patch");
+		}
+		Project existing = getById(Project.class, patch.getId());
+		Map<Field, PatchedValue> patchedResult = objectPatcher.patchObject(
+				existing, patch);
+		if (!patchedResult.isEmpty()) {
+			save(existing);
 		}
 	}
 
