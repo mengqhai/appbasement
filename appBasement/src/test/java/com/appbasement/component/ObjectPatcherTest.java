@@ -64,7 +64,8 @@ public class ObjectPatcherTest {
 
 	@Before
 	public void setUp() throws Exception {
-		patcher = new ObjectPatcher();
+		//patcher = new ObjectPatcher();
+		patcher = new StrategyEnabledObjectPatcher();
 	}
 
 	@After
