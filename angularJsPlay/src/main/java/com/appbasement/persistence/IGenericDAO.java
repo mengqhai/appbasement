@@ -25,5 +25,7 @@ public interface IGenericDAO<T, ID extends Serializable> {
 	public void remove(T entity);
 
 	public abstract void initialize(Object proxy);
+	
+	public Class<T> getPersistentClass();
 
 }

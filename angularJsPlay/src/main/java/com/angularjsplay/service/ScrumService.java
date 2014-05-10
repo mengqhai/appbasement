@@ -2,11 +2,9 @@ package com.angularjsplay.service;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +27,7 @@ import com.angularjsplay.persistence.ITaskDAO;
 import com.appbasement.component.IObjectPatcher;
 import com.appbasement.component.PatchedValue;
 import com.appbasement.model.User;
+import com.appbasement.persistence.IDaoRegistry;
 import com.appbasement.persistence.IGenericDAO;
 import com.appbasement.persistence.IUserDAO;
 
@@ -50,28 +49,21 @@ public class ScrumService implements IScrumService {
 
 	@Autowired
 	protected IUserDAO uDao;
+	
+	@Autowired
+	protected IDaoRegistry daoReg;
 
 	@Autowired
 	IObjectPatcher objectPatcher;
 
-	private Map<String, IGenericDAO<? extends IEntity, Long>> daoMap = new HashMap<String, IGenericDAO<? extends IEntity, Long>>();
-
 	public ScrumService() {
-	}
-
-	@PostConstruct
-	public void init() {
-		daoMap.put(Project.class.getName(), projectDao);
-		daoMap.put(Backlog.class.getName(), bDao);
-		daoMap.put(Sprint.class.getName(), sDao);
-		daoMap.put(Task.class.getName(), tDao);
 	}
 
 	@SuppressWarnings("unchecked")
 	protected <T extends IEntity> IGenericDAO<T, Long> getDao(
-			Class<? extends IEntity> type) {
-		IGenericDAO<T, Long> dao = (IGenericDAO<T, Long>) daoMap.get(type
-				.getName());
+			Class<? extends IEntity> type) {	
+		IGenericDAO<T, Long> dao = (IGenericDAO<T, Long>) daoReg.getDao(type);
+		
 		if (dao == null) {
 			throw new IllegalArgumentException(
 					"Scrum service is not capable to handle type "
