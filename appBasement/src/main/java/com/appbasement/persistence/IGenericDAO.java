@@ -23,5 +23,7 @@ public interface IGenericDAO<T, ID extends Serializable> {
 	public T merge(T entity);
 	
 	public void remove(T entity);
+	
+	public Class<T> getPersistentClass();
 
 }

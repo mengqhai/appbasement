@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.appbasement.model.User;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
 		"classpath:context/context-placeholder.xml",
@@ -25,6 +27,15 @@ public class DaoRegistoryTest {
 
 		Assert.assertNotNull(daoList);
 		Assert.assertFalse(daoList.isEmpty());
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Test
+	public void testGetDao() {
+		IGenericDAO userDao = reg.getDao(User.class);
+		Assert.assertTrue(userDao instanceof IUserDAO);
+		Object uRef = userDao.getReference(Long.valueOf(1l));
+		Assert.assertTrue(uRef instanceof User);
 	}
 
 }

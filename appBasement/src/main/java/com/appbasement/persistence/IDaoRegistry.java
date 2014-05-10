@@ -6,4 +6,6 @@ public interface IDaoRegistry {
 
 	public abstract List<IGenericDAO<?, ?>> getDaoList();
 
+	public abstract IGenericDAO<?, ?> getDao(Class<?> entityType);
+
 }

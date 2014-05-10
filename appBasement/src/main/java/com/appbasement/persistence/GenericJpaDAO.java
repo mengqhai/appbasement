@@ -40,7 +40,8 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 		return this;
 	}
 
-	protected Class<T> getPersistentClass() {
+	@Override
+	public Class<T> getPersistentClass() {
 		return persistentClass;
 	}
 
