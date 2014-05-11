@@ -8,4 +8,6 @@ public interface IDaoRegistry {
 
 	public abstract IGenericDAO<?, ?> getDao(Class<?> entityType);
 
+	public abstract boolean hasDaoFor(Class<?> entityType);
+
 }

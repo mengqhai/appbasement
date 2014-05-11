@@ -37,5 +37,10 @@ public class DaoRegistory implements IDaoRegistry {
 	public IGenericDAO<?, ?> getDao(Class<?> entityType) {
 		return regMap.get(entityType);
 	}
+	
+	@Override
+	public boolean hasDaoFor(Class<?> entityType) {
+		return regMap.containsKey(entityType);
+	}
 
 }
