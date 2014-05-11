@@ -31,6 +31,7 @@ import org.hibernate.annotations.ForeignKey;
 
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
+import com.appbasement.component.PatchableIdRef;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -61,6 +62,7 @@ public class Backlog implements IEntity {
 	@Min(value = 1, groups = { ValidateOnCreate.class, ValidateOnUpdate.class })
 	private Short estimation;
 
+	@PatchableIdRef(setterHost = Project.class, setter = "addBacklogToProject")
 	@JsonIgnore
 	@NotNull(groups = ValidateOnCreate.class)
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)

@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +55,7 @@ public class ScrumService implements IScrumService {
 	protected IDaoRegistry daoReg;
 
 	@Autowired
+	@Qualifier("strategyEnabledObjectPatcher")
 	IObjectPatcher objectPatcher;
 
 	public ScrumService() {
