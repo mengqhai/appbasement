@@ -28,6 +28,7 @@ import org.hibernate.annotations.ForeignKey;
 
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
+import com.appbasement.component.PatchableIdRef;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -64,6 +65,7 @@ public class Sprint implements IEntity {
 	@Column(nullable = false, updatable = false)
 	private Date createdAt;
 
+	@PatchableIdRef(setter = "addSprintToProject", setterHost = Project.class)
 	@JsonIgnore
 	@NotNull(groups = ValidateOnCreate.class)
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)

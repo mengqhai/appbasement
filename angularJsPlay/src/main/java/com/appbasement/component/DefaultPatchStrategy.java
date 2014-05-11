@@ -17,6 +17,10 @@ public class DefaultPatchStrategy implements IPatchStrategy {
 
 	@Override
 	public <T> PatchedValue doPatch(Field field, T target, T patch) {
+		if (target == patch) {
+			return null;
+		}
+
 		makeAccessible(field);
 		Object newValue = getField(field, patch);
 		Object oldValue = getField(field, target);
@@ -42,6 +46,13 @@ public class DefaultPatchStrategy implements IPatchStrategy {
 
 	@Override
 	public <T> boolean canPatchField(Field field, T target, T patch) {
+		if (target == patch) {
+			return false;
+		}
+		return defaultPatchingRule(field, target, patch);
+	}
+
+	public static <T> boolean defaultPatchingRule(Field field, T target, T patch) {
 		Class<?> type = field.getType();
 		boolean isPrimitive = type.isPrimitive();
 		boolean isCollection = Collection.class.isAssignableFrom(type);

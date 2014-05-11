@@ -50,7 +50,7 @@ public class ScrumService implements IScrumService {
 
 	@Autowired
 	protected IUserDAO uDao;
-	
+
 	@Autowired
 	protected IDaoRegistry daoReg;
 
@@ -63,9 +63,9 @@ public class ScrumService implements IScrumService {
 
 	@SuppressWarnings("unchecked")
 	protected <T extends IEntity> IGenericDAO<T, Long> getDao(
-			Class<? extends IEntity> type) {	
+			Class<? extends IEntity> type) {
 		IGenericDAO<T, Long> dao = (IGenericDAO<T, Long>) daoReg.getDao(type);
-		
+
 		if (dao == null) {
 			throw new IllegalArgumentException(
 					"Scrum service is not capable to handle type "
@@ -188,19 +188,8 @@ public class ScrumService implements IScrumService {
 		return bDao.getBacklogCountForSprint(sprintId);
 	}
 
-	private void changeRelationshipsForBacklog(Backlog backlog,
+	private void validateBacklog(Backlog backlog,
 			Long newProjectId, Long newSprintId) {
-		if (newProjectId != null) {
-			// backlog.project is changed
-			Project project = projectDao.getReference(newProjectId);
-			project.addBacklogToProject(backlog);
-		}
-		if (newSprintId != null) {
-			// backlog.sprint is changed
-			Sprint sprint = sDao.getReference(newSprintId);
-			sprint.addBacklogToSprint(backlog);
-		}
-
 		// validation before commit
 		if (backlog.getSprint() != null) {
 			Sprint sprint = backlog.getSprint();
@@ -212,11 +201,11 @@ public class ScrumService implements IScrumService {
 
 	}
 
-	private void changeRelationshipsForSprint(Sprint sprint, Long newProjectId) {
+	private void changeBacklogProjectForSprint(Sprint sprint, Long newProjectId) {
 		if (newProjectId != null) {
 			// sprint.project is changed
 			Project project = projectDao.getReference(newProjectId);
-			project.addSprintToProject(sprint);
+			// project.addSprintToProject(sprint);
 			// also change the projectIds of all sub-backlogs
 			Collection<Backlog> backlogs = sprint.getBacklogs();
 			for (Backlog b : backlogs) {
@@ -236,7 +225,8 @@ public class ScrumService implements IScrumService {
 		}
 		Long sprintId = backlog.getSprintId();
 		try {
-			changeRelationshipsForBacklog(backlog, projectId, sprintId);
+			objectPatcher.patchObject(backlog, backlog);
+			validateBacklog(backlog, projectId, sprintId);
 			save(backlog);
 		} catch (EntityNotFoundException e) {
 			throw new ScrumResourceNotFoundException();
@@ -249,24 +239,25 @@ public class ScrumService implements IScrumService {
 		if (patch.getId() == null) {
 			throw new IllegalArgumentException("Null id in patch");
 		}
-		Backlog backlog = getById(Backlog.class, patch.getId());
-		Map<Field, PatchedValue> patchResult = objectPatcher.patchObject(
-				backlog, patch);
-		if (!patchResult.isEmpty()) {
-			try {
+		try {
+			Backlog backlog = getById(Backlog.class, patch.getId());
+			Map<Field, PatchedValue> patchResult = objectPatcher.patchObject(
+					backlog, patch);
+			if (!patchResult.isEmpty()) {
+
 				Long projectId = patch.getProjectId();
 				Long sprintId = patch.getSprintId();
-				changeRelationshipsForBacklog(backlog, projectId, sprintId);
+				validateBacklog(backlog, projectId, sprintId);
 				// unset sprintId
 				if (patch.isRemoveSprint()) {
 					backlog.setSprintId(null);
 				}
 				save(backlog);
-			} catch (EntityNotFoundException e) {
-				throw new ScrumResourceNotFoundException();
+			} else if (patch.isRemoveSprint()) {
+				backlog.setSprintId(null);
 			}
-		} else if (patch.isRemoveSprint()) {
-			backlog.setSprintId(null);
+		} catch (EntityNotFoundException e) {
+			throw new ScrumResourceNotFoundException();
 		}
 	}
 
@@ -285,7 +276,8 @@ public class ScrumService implements IScrumService {
 					"Sprint startAt is later than endAt.");
 		}
 		try {
-			changeRelationshipsForSprint(sprint, projectId);
+			objectPatcher.patchObject(sprint, sprint);
+			changeBacklogProjectForSprint(sprint, projectId);
 			save(sprint);
 		} catch (EntityNotFoundException e) {
 			throw new ScrumResourceNotFoundException();
@@ -297,25 +289,27 @@ public class ScrumService implements IScrumService {
 		if (patch.getId() == null) {
 			throw new IllegalArgumentException("Null id in patch");
 		}
-		Sprint sprint = getById(Sprint.class, patch.getId());
-		Map<Field, PatchedValue> patchResult = objectPatcher.patchObject(
-				sprint, patch);
-		if (!patchResult.isEmpty()) {
-			if (sprint.getStartAt() != null
-					&& sprint.getEndAt() != null
-					&& sprint.getStartAt().getTime() > sprint.getEndAt()
-							.getTime()) {
-				throw new ScrumValidationException(
-						"Sprint startAt is later than endAt.");
-			}
+		try {
+			Sprint sprint = getById(Sprint.class, patch.getId());
+			Map<Field, PatchedValue> patchResult = objectPatcher.patchObject(
+					sprint, patch);
+			if (!patchResult.isEmpty()) {
+				if (sprint.getStartAt() != null
+						&& sprint.getEndAt() != null
+						&& sprint.getStartAt().getTime() > sprint.getEndAt()
+								.getTime()) {
+					throw new ScrumValidationException(
+							"Sprint startAt is later than endAt.");
+				}
 
-			Long projectId = patch.getProjectId();
-			try {
-				changeRelationshipsForSprint(sprint, projectId);
+				Long projectId = patch.getProjectId();
+
+				changeBacklogProjectForSprint(sprint, projectId);
 				save(sprint);
-			} catch (EntityNotFoundException e) {
-				throw new ScrumResourceNotFoundException();
+
 			}
+		} catch (EntityNotFoundException e) {
+			throw new ScrumResourceNotFoundException();
 		}
 	}
 
@@ -324,32 +318,23 @@ public class ScrumService implements IScrumService {
 		if (patch.getId() == null) {
 			throw new IllegalArgumentException("Null id in patch");
 		}
-		Project existing = getById(Project.class, patch.getId());
-		Map<Field, PatchedValue> patchedResult = objectPatcher.patchObject(
-				existing, patch);
-		if (!patchedResult.isEmpty()) {
-			save(existing);
+		try {
+			Project existing = getById(Project.class, patch.getId());
+			Map<Field, PatchedValue> patchedResult = objectPatcher.patchObject(
+					existing, patch);
+			if (!patchedResult.isEmpty()) {
+				save(existing);
+			}
+		} catch (EntityNotFoundException e) {
+			throw new ScrumResourceNotFoundException();
 		}
-	}
 
-	private void changeRelationshipsForTask(Task task, Long newOwnerId,
-			Long newBacklogId) {
-		if (newOwnerId != null) {
-			User user = uDao.getReference(newOwnerId);
-			task.setOwner(user);
-		}
-		if (newBacklogId != null) {
-			Backlog backlog = bDao.getReference(newBacklogId);
-			task.setBacklog(backlog);
-		}
 	}
 
 	@Override
 	public void createTaskWithPartialRelationships(Task task) {
-		Long ownerId = task.getOwnerId();
-		Long backlogId = task.getBacklogId();
 		try {
-			changeRelationshipsForTask(task, ownerId, backlogId);
+			objectPatcher.patchObject(task, task);
 			save(task);
 		} catch (EntityNotFoundException e) {
 			throw new ScrumResourceNotFoundException();
@@ -361,18 +346,15 @@ public class ScrumService implements IScrumService {
 		if (patch.getId() == null) {
 			throw new IllegalArgumentException("Null id in patch");
 		}
-		Task existing = getById(Task.class, patch.getId());
-		Map<Field, PatchedValue> patchedResult = objectPatcher.patchObject(
-				existing, patch);
-		if (!patchedResult.isEmpty()) {
-			Long newOwnerId = patch.getOwnerId();
-			Long newBacklogId = patch.getBacklogId();
-			try {
-				changeRelationshipsForTask(existing, newOwnerId, newBacklogId);
+		try {
+			Task existing = getById(Task.class, patch.getId());
+			Map<Field, PatchedValue> patchedResult = objectPatcher.patchObject(
+					existing, patch);
+			if (!patchedResult.isEmpty()) {
 				save(existing);
-			} catch (EntityNotFoundException e) {
-				throw new ScrumResourceNotFoundException();
 			}
+		} catch (EntityNotFoundException e) {
+			throw new ScrumResourceNotFoundException();
 		}
 	}
 }

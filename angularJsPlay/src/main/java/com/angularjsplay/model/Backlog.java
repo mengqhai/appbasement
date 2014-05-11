@@ -74,6 +74,7 @@ public class Backlog implements IEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
 
+	@PatchableIdRef(setterHost = Sprint.class, setter = "addBacklogToSprint")
 	@JsonIgnore
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "SPRINT_ID", nullable = true)

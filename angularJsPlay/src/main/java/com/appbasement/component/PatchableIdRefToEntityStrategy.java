@@ -25,11 +25,18 @@ public class PatchableIdRefToEntityStrategy extends DefaultPatchStrategy {
 
 	@Override
 	public <T> boolean canPatchField(Field field, T target, T patch) {
-		boolean defaultPatchable = super.canPatchField(field, target, patch);
 		boolean isPatchableIdRef = field
 				.isAnnotationPresent(PatchableIdRef.class);
+		if (!isPatchableIdRef) {
+			return false;
+		}
+
 		boolean isEntityValue = daoRegistry.hasDaoFor(field.getType());
-		return defaultPatchable && isPatchableIdRef && isEntityValue;
+		if (!isEntityValue) {
+			return false;
+		}
+
+		return DefaultPatchStrategy.defaultPatchingRule(field, target, patch);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -38,6 +45,8 @@ public class PatchableIdRefToEntityStrategy extends DefaultPatchStrategy {
 			T patch) {
 		ReflectionUtils.makeAccessible(outterField);
 		final Object idRef = ReflectionUtils.getField(outterField, patch);
+		
+		final PatchedValue pValue = new PatchedValue();
 
 		ReflectionUtils.doWithFields(idRef.getClass(), new FieldCallback() {
 			@SuppressWarnings("unchecked")
@@ -53,6 +62,8 @@ public class PatchableIdRefToEntityStrategy extends DefaultPatchStrategy {
 				IGenericDAO<?, Serializable> dao = (IGenericDAO<?, Serializable>) daoRegistry
 						.getDao(idRef.getClass());
 				Object entity = dao.getReference(id);
+				pValue.setNewValue(entity);
+				pValue.setOldValue(ReflectionUtils.getField(outterField, target));
 
 				PatchableIdRef ann = outterField
 						.getAnnotation(PatchableIdRef.class);
@@ -76,6 +87,7 @@ public class PatchableIdRefToEntityStrategy extends DefaultPatchStrategy {
 				Method setter = ReflectionUtils.findMethod(setterHostClass,
 						ann.setter(), toBeSet.getClass());
 				ReflectionUtils.invokeMethod(setter, setterHost, toBeSet);
+				
 			}
 		}, new FieldFilter() {
 			@Override
@@ -83,8 +95,7 @@ public class PatchableIdRefToEntityStrategy extends DefaultPatchStrategy {
 				return field.isAnnotationPresent(Id.class);
 			}
 		});
-
-		return null;
+		return pValue;
 	}
 
 	@Override

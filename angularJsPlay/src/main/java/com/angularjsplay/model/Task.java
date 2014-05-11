@@ -22,6 +22,7 @@ import org.hibernate.annotations.ForeignKey;
 
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
+import com.appbasement.component.PatchableIdRef;
 import com.appbasement.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -50,6 +51,7 @@ public class Task implements IEntity {
 	@Column(length = 2048)
 	private String desc;
 
+	@PatchableIdRef(setter = "setBacklog", setterHost = Task.class)
 	@JsonIgnore
 	@ManyToOne(targetEntity = Backlog.class)
 	@JoinColumn(name = "BACKLOG_ID", nullable = true)
@@ -69,6 +71,7 @@ public class Task implements IEntity {
 	@Column(nullable = false)
 	private TaskState state = TaskState.NEW;
 
+	@PatchableIdRef(setter = "setOwner", setterHost = Task.class)
 	@JsonIgnore
 	@ManyToOne(targetEntity = User.class)
 	@JoinColumn(name = "OWNER_ID", nullable = true)

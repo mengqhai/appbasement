@@ -133,7 +133,7 @@ public class BacklogRestTest {
 		Assert.assertNotNull(created.getId());
 		Assert.assertNotNull(created.getCreatedAt());
 		Assert.assertTrue(Math.abs(created.getCreatedAt().getTime()
-				- now.getTime()) < 3000);
+				- now.getTime()) < 30000);
 		toCreate.setId(created.getId());
 		toCreate.setCreatedAt(created.getCreatedAt());
 		RestTestUtils.assertBacklogsEqual(toCreate, created);
