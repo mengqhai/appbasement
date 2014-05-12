@@ -234,10 +234,14 @@ public class Task implements IEntity {
 
 	@JsonProperty
 	public void setOwnerId(Long id) {
-		if (owner == null) {
-			owner = new User();
+		if (id != null) {
+			if (owner == null) {
+				owner = new User();
+			}
+			owner.setId(id);
+		} else {
+			owner = null;
 		}
-		owner.setId(id);
 	}
 
 	@JsonProperty
@@ -251,10 +255,14 @@ public class Task implements IEntity {
 
 	@JsonProperty
 	public void setBacklogId(Long backlogId) {
-		if (backlog == null) {
-			backlog = new Backlog();
+		if (id != null) {
+			if (backlog == null) {
+				backlog = new Backlog();
+			}
+			backlog.setId(backlogId);
+		} else {
+			backlog = null;
 		}
-		backlog.setId(backlogId);
 	}
 
 }

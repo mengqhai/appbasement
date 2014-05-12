@@ -6,6 +6,6 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ ProjectRestTest.class, BacklogRestTest.class,
-		SprintRestTest.class })
+		SprintRestTest.class, TaskRestTest.class })
 public class ScrumRestTestSuit {
 }

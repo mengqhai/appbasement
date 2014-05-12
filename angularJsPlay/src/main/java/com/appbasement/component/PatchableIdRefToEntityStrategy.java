@@ -16,6 +16,7 @@ import org.springframework.util.ReflectionUtils.FieldFilter;
 
 import com.appbasement.persistence.IDaoRegistry;
 import com.appbasement.persistence.IGenericDAO;
+import com.appbasement.util.AppReflectionUtils;
 
 @Component
 public class PatchableIdRefToEntityStrategy extends DefaultPatchStrategy {
@@ -84,8 +85,9 @@ public class PatchableIdRefToEntityStrategy extends DefaultPatchStrategy {
 							+ patchField.getType() + " is the setterHost");
 				}
 
+				Class<?> toBeSetType = AppReflectionUtils.getActualClass(toBeSet);
 				Method setter = ReflectionUtils.findMethod(setterHostClass,
-						ann.setter(), toBeSet.getClass());
+						ann.setter(), toBeSetType);
 				ReflectionUtils.invokeMethod(setter, setterHost, toBeSet);
 				
 			}

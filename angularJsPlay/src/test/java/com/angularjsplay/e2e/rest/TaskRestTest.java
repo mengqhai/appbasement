@@ -1,0 +1,144 @@
+package com.angularjsplay.e2e.rest;
+
+import static com.angularjsplay.persistence.util.ScrumTestConstants.URL_BASE_COMMON;
+
+import java.sql.Timestamp;
+import java.util.Date;
+
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
+
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.RestTemplate;
+
+import com.angularjsplay.e2e.util.RestTestUtils;
+import com.angularjsplay.model.Task;
+import com.angularjsplay.model.Task.TaskState;
+import com.angularjsplay.persistence.util.ScrumTestConstants;
+import com.appbasement.persistence.util.DBUnitHelper;
+import com.appbasement.persistence.util.EmfHelper;
+
+import static junitparams.JUnitParamsRunner.$;
+
+@RunWith(JUnitParamsRunner.class)
+public class TaskRestTest {
+
+	RestTemplate rest;
+
+	public final static String URL_BASE = URL_BASE_COMMON + "/tasks/";
+
+	@BeforeClass
+	public static void setUpBeforeClass() {
+		EmfHelper.initEmf();
+	}
+
+	@Before
+	public void setUp() {
+		DBUnitHelper.cleanAll(EmfHelper.getEmf());
+		DBUnitHelper.importSmallDataSet(EmfHelper.getEmf());
+		DBUnitHelper.importDataSet(EmfHelper.getEmf(),
+				ScrumTestConstants.DATA_SET_SMALL_PROJECT,
+				ScrumTestConstants.DATA_SET_SMALL_SPRINT,
+				ScrumTestConstants.DATA_SET_SMALL_BACKLOG,
+				ScrumTestConstants.DATA_SET_SMALL_TASK);
+		rest = new RestTemplate();
+	}
+
+	@AfterClass
+	public static void tearDownAfterClass() {
+		EmfHelper.closeEmf();
+	}
+
+	public TaskRestTest() {
+	}
+
+	@Test
+	public void testGetTasks() {
+		Task[] tasks = rest.getForObject(URL_BASE, Task[].class);
+		Assert.assertEquals(5, tasks.length);
+		for (Task task : tasks) {
+			Assert.assertNotNull(task.getName());
+			Assert.assertNotNull(task.getId());
+			Assert.assertNotNull(task.getState());
+		}
+	}
+
+	public Object[] getTaskParams() {
+		Task t1 = new Task();
+		t1.setId(5l);
+		t1.setName("eu sem. Pellentesque ut ipsum ac");
+		t1.setDesc("faucibus ut, nulla. Cras eu tellus eu augue porttitor interdum. Sed auctor odio a purus. Duis elementum, dui quis accumsan convallis, ante lectus convallis est, vitae sodales nisi magna sed");
+		t1.setEstimation((short) 95);
+		t1.setRemaining((short) 4);
+		t1.setState(TaskState.CANCELED);
+		t1.setCreatedAt(Timestamp.valueOf("2012-08-22 09:59:36"));
+
+		Task t2 = new Task();
+		t2.setId(1l);
+		t2.setName("mauris id sapien. Cras dolor dolor,");
+		t2.setDesc("consectetuer adipiscing elit. Etiam laoreet, libero et tristique pellentesque, tellus sem mollis dui, in sodales elit erat vitae risus. Duis a mi fringilla mi lacinia mattis. Integer eu lacus. Quisque imperdiet, erat nonummy ultricies ornare,");
+		t2.setEstimation((short) 57);
+		t2.setRemaining((short) 49);
+		t2.setState(TaskState.FINISHED);
+		t2.setCreatedAt(Timestamp.valueOf("2012-10-05 15:15:14"));
+		t2.setOwnerId(1l);
+		t2.setBacklogId(1l);
+
+		return $($(t1), $(t2));
+	}
+
+	@Parameters(method = "getTaskParams")
+	@Test
+	public void testGetTask(Task expected) {
+		String url = URL_BASE + expected.getId();
+		Task actual = rest.getForObject(url, Task.class);
+		RestTestUtils.assertTaskEqual(expected, actual);
+	}
+
+	@Test
+	public void testGetTaskInvalid() {
+		RestTestUtils.assertRestError(rest, HttpMethod.GET, URL_BASE + "3255",
+				null, HttpStatus.NOT_FOUND);
+	}
+
+	public Object[] getTaskToCreate() {
+		Task t1 = new Task();
+		t1.setName("A new task");
+
+		Task t2 = new Task();
+		t2.setName("A task with desc");
+		t2.setDesc("Hello desc");
+
+		Task t3 = new Task();
+		t3.setName("A task with backlog");
+		t3.setBacklogId(1l);
+
+		Task t4 = new Task();
+		t4.setName("A task with owner");
+		t4.setOwnerId(1l);
+
+		//return $($(t1), $(t2), $(t3), $(t4));
+		return $($(t4));
+	}
+
+	@Parameters(method = "getTaskToCreate")
+	@Test
+	public void testCreateTask(Task toCreate) {
+		Date now = new Date();
+		Task created = rest.postForObject(URL_BASE, toCreate, Task.class);
+		Assert.assertNotNull(created.getId());
+		Assert.assertTrue(Math.abs(created.getCreatedAt().getTime()
+				- now.getTime()) < 30000);
+		toCreate.setCreatedAt(created.getCreatedAt());
+		toCreate.setId(created.getId());
+		RestTestUtils.assertTaskEqual(toCreate, created);
+	}
+
+}

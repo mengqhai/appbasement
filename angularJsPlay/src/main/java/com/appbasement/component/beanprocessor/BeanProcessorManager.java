@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.appbasement.exception.BeanProcessorException;
 import com.appbasement.exception.BeanProcessorNotFoundException;
+import com.appbasement.util.AppReflectionUtils;
 
 @Component
 public class BeanProcessorManager implements IBeanProcessorManager {
@@ -34,18 +35,7 @@ public class BeanProcessorManager implements IBeanProcessorManager {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> IBeanProcessor<T> getBeanProcessor(T bean) {
-		Class<T> beanType = (Class<T>) bean.getClass();
-		Class<T> actualBeanType = beanType;
-		if (beanType.getName().contains("_$$_javassist")) {
-			// javassist proxy
-			String className = beanType.getName().split("_\\$\\$_javassist")[0];
-			try {
-				actualBeanType = (Class<T>) Class.forName(className);
-			} catch (ClassNotFoundException e) {
-				throw new BeanProcessorException(e);
-			}
-		}
-
+		Class<T> actualBeanType = AppReflectionUtils.getActualClass(bean);
 		return (IBeanProcessor<T>) reg.get(actualBeanType);
 	}
 

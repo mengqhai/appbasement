@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.IEntity;
+import com.angularjsplay.model.Task;
 import com.angularjsplay.mvc.rest.error.RestError;
 
 public class RestTestUtils {
@@ -63,6 +64,20 @@ public class RestTestUtils {
 		Assert.assertEquals(expected.getCreatedAt().getTime(), expected
 				.getCreatedAt().getTime());
 		Assert.assertEquals(expected.getSprintId(), backlog.getSprintId());
+	}
+
+	public static void assertTaskEqual(Task expected, Task actual) {
+		Assert.assertEquals(expected, actual);
+		Assert.assertEquals(expected.getId(), actual.getId());
+		Assert.assertEquals(expected.getName(), actual.getName());
+		Assert.assertEquals(expected.getDesc(), actual.getDesc());
+		Assert.assertEquals(expected.getEstimation(), actual.getEstimation());
+		Assert.assertEquals(expected.getRemaining(), actual.getRemaining());
+		Assert.assertEquals(expected.getState(), actual.getState());
+		Assert.assertEquals(expected.getCreatedAt().getTime(), actual
+				.getCreatedAt().getTime());
+		Assert.assertEquals(expected.getOwnerId(), actual.getOwnerId());
+		Assert.assertEquals(expected.getBacklogId(), actual.getBacklogId());
 	}
 
 	public static void assertRestError(final RestTemplate rest,

@@ -61,10 +61,6 @@ public class StrategyEnabledObjectPatcher implements IObjectPatcher {
 					}
 				}
 
-				if (pValue == null) {
-					pValue = defaultStrategy.doPatch(field, target, patch);
-				}
-
 				if (pValue != null) {
 					patchedInfo.put(field, pValue);
 				}
@@ -77,6 +73,9 @@ public class StrategyEnabledObjectPatcher implements IObjectPatcher {
 				} else {
 					// delegates to strategies to perform matching
 					for (IPatchStrategy strategy : strategies) {
+						if (strategy == defaultStrategy) {
+							continue;
+						}
 						if (strategy.canPatchField(field, target, patch)) {
 							return true;
 						}
