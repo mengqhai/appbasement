@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -41,6 +42,11 @@ public class DaoRegistory implements IDaoRegistry {
 	@Override
 	public boolean hasDaoFor(Class<?> entityType) {
 		return regMap.containsKey(entityType);
+	}
+	
+	@Override
+	public void initialize(Object proxy) {
+		Hibernate.initialize(proxy);
 	}
 
 }

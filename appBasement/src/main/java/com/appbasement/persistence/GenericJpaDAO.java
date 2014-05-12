@@ -35,12 +35,11 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 		return em;
 	}
 
-	public GenericJpaDAO<T, ID> setEm(EntityManager em) {
+	public IGenericDAO<T, ID> setEm(EntityManager em) {
 		this.em = em;
 		return this;
 	}
 
-	@Override
 	public Class<T> getPersistentClass() {
 		return persistentClass;
 	}
