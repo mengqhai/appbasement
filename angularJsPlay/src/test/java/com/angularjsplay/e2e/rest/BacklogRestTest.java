@@ -230,10 +230,17 @@ public class BacklogRestTest {
 	}
 
 	public Object[] getBacklogForUpdate() {
+		// limitation of spring RestTemplate
+		// if not explicitly set sprintId,
+		// "sprintId":null
+		// will always in the json request body
+		// witch results in backlog.removeSprint==true
 		Backlog b1 = new Backlog();
+		b1.setSprintId(3l);
 		b1.setName("Name changed");
 
 		Backlog b2 = new Backlog();
+		b2.setSprintId(3l);
 		b2.setProjectId(1l);
 
 		Backlog b3 = new Backlog();
@@ -242,17 +249,32 @@ public class BacklogRestTest {
 		Backlog b4 = new Backlog();
 		b4.setProjectId(1l);
 		b4.setSprintId(4l);
-		return $($(b1), $(b2), $(b3), $(b4));
+		
+		Backlog b5 = new Backlog();
+		b5.setSprintId(null); // remove sprint
+		return $($(b1), $(b2), $(b3), $(b4), $(b5));
 	}
 
 	@Parameters(method = "getBacklogForUpdate")
 	@Test
 	public void testUpdateBacklog(Backlog patch) {
+		// limitation of spring RestTemplate
+		// if not explicitly set sprintId,
+		// "sprintId":null
+		// will always in the json request body
+		// witch results in backlog.removeSprint==true
 		String url = URL_BASE + "1";
 		rest.put(url, patch);
 		Backlog updated = rest.getForObject(url, Backlog.class);
 		IObjectPatcher patcher = new ObjectPatcher();
 		Assert.assertTrue(patcher.patchObject(updated, patch).isEmpty());
+
+		if (patch.isRemoveSprint()) {
+			Assert.assertNull(updated.getSprintId());
+		} else {
+			Assert.assertNotNull(updated.getSprintId());
+		}
+
 	}
 
 	@Test
@@ -267,16 +289,24 @@ public class BacklogRestTest {
 	}
 
 	public Object[] getBacklogForUpdateInvalid() {
+		// limitation of spring RestTemplate
+		// if not explicitly set sprintId,
+		// "sprintId":null
+		// will always in the json request body
+		// witch results in backlog.removeSprint==true
 		Backlog b1 = new Backlog();
 		b1.setName("");
+		b1.setSprintId(3l);
 
 		Backlog b2 = new Backlog();
 		b2.setName("Invalid estimation");
 		b2.setEstimation((short) 0);
+		b2.setSprintId(3l);
 
 		Backlog b3 = new Backlog();
 		b3.setName("Negative estimation");
 		b3.setEstimation((short) -1);
+		b3.setSprintId(3l);
 
 		Backlog b4 = new Backlog();
 		b4.setName("Sprint not in the project #1");
@@ -286,6 +316,7 @@ public class BacklogRestTest {
 		Backlog b5 = new Backlog();
 		b5.setName("No such project");
 		b5.setProjectId(9999l);
+		b5.setSprintId(3l);
 
 		Backlog b6 = new Backlog();
 		b6.setName("No such sprint");
@@ -300,14 +331,17 @@ public class BacklogRestTest {
 		Backlog b71 = new Backlog();
 		b71.setName("Old sprint not in new project");
 		b71.setProjectId(2l);
+		b71.setSprintId(3l);
 
 		Backlog b8 = new Backlog();
 		b8.setName("Priority too big");
 		b8.setPriority((short) 15);
+		b8.setSprintId(3l);
 
 		Backlog b9 = new Backlog();
 		b9.setName("Priority too small");
 		b9.setPriority((short) 0);
+		b9.setSprintId(3l);
 
 		return $($(b1, HttpStatus.BAD_REQUEST), $(b2, HttpStatus.BAD_REQUEST),
 				$(b3, HttpStatus.BAD_REQUEST), $(b4, HttpStatus.BAD_REQUEST),
