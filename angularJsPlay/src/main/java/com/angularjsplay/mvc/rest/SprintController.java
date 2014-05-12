@@ -54,7 +54,7 @@ public class SprintController {
 			throw new ScrumValidationException(bResult);
 		}
 		sprint.setId(null);
-		scrumService.createSprintWithPartialRelationships(sprint);
+		scrumService.createWithIdRef(sprint);
 		return sprint;
 	}
 
@@ -69,7 +69,7 @@ public class SprintController {
 			throw new ScrumValidationException(bResult);
 		}
 		patch.setId(id);
-		scrumService.updateSprintWithPatch(patch);
+		scrumService.updateWithPatch(patch);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

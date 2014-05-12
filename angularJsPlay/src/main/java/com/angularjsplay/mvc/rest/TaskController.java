@@ -57,7 +57,7 @@ public class TaskController {
 			throw new ScrumValidationException(bResult);
 		}
 		task.setId(null);
-		scrumService.createTaskWithPartialRelationships(task);
+		scrumService.createWithIdRef(task);
 		return task;
 	}
 
@@ -71,7 +71,7 @@ public class TaskController {
 			throw new ScrumValidationException(bResult);
 		}
 		patch.setId(taskId);
-		scrumService.updateTaskWithPatch(patch);
+		scrumService.updateWithPatch(patch);
 	}
 
 }

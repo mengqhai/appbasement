@@ -94,9 +94,4 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 		em.remove(entity);
 	}
 
-	@Override
-	public void initialize(Object proxy) {
-		Hibernate.initialize(proxy);
-	}
-
 }

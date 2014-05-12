@@ -10,4 +10,6 @@ public interface IDaoRegistry {
 
 	public abstract boolean hasDaoFor(Class<?> entityType);
 
+	public abstract void initialize(Object proxy);
+
 }

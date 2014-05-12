@@ -57,7 +57,7 @@ public class ProjectController {
 			throw new ScrumValidationException(bResult);
 		}
 		patch.setId(id);
-		scrumService.updateProjectWithPatch(patch);
+		scrumService.updateWithPatch(patch);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, consumes = "application/json")
@@ -69,7 +69,7 @@ public class ProjectController {
 		if (bResult.hasErrors()) {
 			throw new ScrumValidationException(bResult);
 		}
-		scrumService.save(project);
+		scrumService.createWithIdRef(project);
 		return project;
 	}
 

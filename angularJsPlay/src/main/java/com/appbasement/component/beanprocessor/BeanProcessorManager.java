@@ -31,9 +31,22 @@ public class BeanProcessorManager implements IBeanProcessorManager {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public IBeanProcessor<?> getBeanProcessor(Class<?> beanType) {
-		return reg.get(beanType);
+	public <T> IBeanProcessor<T> getBeanProcessor(T bean) {
+		Class<T> beanType = (Class<T>) bean.getClass();
+		Class<T> actualBeanType = beanType;
+		if (beanType.getName().contains("_$$_javassist")) {
+			// javassist proxy
+			String className = beanType.getName().split("_\\$\\$_javassist")[0];
+			try {
+				actualBeanType = (Class<T>) Class.forName(className);
+			} catch (ClassNotFoundException e) {
+				throw new BeanProcessorException(e);
+			}
+		}
+
+		return (IBeanProcessor<T>) reg.get(actualBeanType);
 	}
 
 	@Override
@@ -42,10 +55,8 @@ public class BeanProcessorManager implements IBeanProcessorManager {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public <T> void doBeforeCreate(T bean) throws BeanProcessorException {
-		IBeanProcessor<T> processor = (IBeanProcessor<T>) getBeanProcessor(bean
-				.getClass());
+		IBeanProcessor<T> processor = getBeanProcessor(bean);
 		if (processor == null) {
 			throw new BeanProcessorNotFoundException(bean.getClass().getName());
 		}
@@ -53,11 +64,9 @@ public class BeanProcessorManager implements IBeanProcessorManager {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public <T> void doBeforeUpdateWithPatch(T bean, T patch)
 			throws BeanProcessorException {
-		IBeanProcessor<T> processor = (IBeanProcessor<T>) getBeanProcessor(bean
-				.getClass());
+		IBeanProcessor<T> processor = getBeanProcessor(bean);
 		if (processor == null) {
 			throw new BeanProcessorNotFoundException(bean.getClass().getName());
 		}
@@ -65,10 +74,8 @@ public class BeanProcessorManager implements IBeanProcessorManager {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public <T> void doBeforeDelete(T bean) throws BeanProcessorException {
-		IBeanProcessor<T> processor = (IBeanProcessor<T>) getBeanProcessor(bean
-				.getClass());
+		IBeanProcessor<T> processor = getBeanProcessor(bean);
 		if (processor == null) {
 			throw new BeanProcessorNotFoundException(bean.getClass().getName());
 		}

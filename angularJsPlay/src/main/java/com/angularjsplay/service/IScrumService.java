@@ -6,9 +6,7 @@ import java.util.List;
 import com.angularjsplay.exception.ScrumResourceNotFoundException;
 import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.IEntity;
-import com.angularjsplay.model.Project;
 import com.angularjsplay.model.Sprint;
-import com.angularjsplay.model.Task;
 
 public interface IScrumService {
 
@@ -19,8 +17,6 @@ public interface IScrumService {
 
 	public abstract <T extends IEntity> T getById(Class<T> type, Long id)
 			throws ScrumResourceNotFoundException;
-
-	public abstract <T extends IEntity> void save(T entity);
 
 	public abstract Collection<Backlog> getAllBacklogsForProject(Long projectId);
 
@@ -36,10 +32,6 @@ public interface IScrumService {
 	public abstract Collection<Sprint> getSprintsForProject(Long projectId,
 			int first, int max);
 
-	public abstract void createBacklogWithPartialRelationships(Backlog backlog);
-	
-	public abstract void createSprintWithPartialRelationships(Sprint sprint);
-
 	public abstract <T extends IEntity> T getById(Class<T> type, Long id,
 			String... eagerFields);
 
@@ -50,14 +42,8 @@ public interface IScrumService {
 
 	public abstract Collection<Backlog> getAllBacklogsForSprint(Long sprintId);
 
-	public abstract void updateBacklogWithPatch(Backlog patch);
+	public abstract void updateWithPatch(IEntity patch);
 
-	public abstract void updateSprintWithPatch(Sprint patch);
-
-	public abstract void updateProjectWithPatch(Project patch);
-
-	public abstract void createTaskWithPartialRelationships(Task task);
-
-	public abstract void updateTaskWithPatch(Task patch);
+	public abstract void createWithIdRef(IEntity entity);
 
 }

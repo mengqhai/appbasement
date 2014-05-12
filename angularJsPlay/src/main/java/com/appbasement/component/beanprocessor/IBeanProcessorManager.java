@@ -17,6 +17,6 @@ public interface IBeanProcessorManager {
 
 	public abstract List<IBeanProcessor<?>> getBeanProcessors();
 
-	public abstract IBeanProcessor<?> getBeanProcessor(Class<?> beanType);
+	public <T> IBeanProcessor<T> getBeanProcessor(T bean);
 
 }

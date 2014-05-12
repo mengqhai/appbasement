@@ -9,6 +9,7 @@ import com.angularjsplay.exception.ScrumValidationException;
 import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.Project;
 import com.angularjsplay.model.Sprint;
+import com.angularjsplay.persistence.IBacklogDAO;
 import com.angularjsplay.persistence.IProjectDAO;
 import com.appbasement.component.beanprocessor.GenericBeanProcessor;
 
@@ -17,6 +18,9 @@ public class SprintProcessor extends GenericBeanProcessor<Sprint> {
 
 	@Autowired
 	IProjectDAO projectDao;
+
+	@Autowired
+	IBacklogDAO bDao;
 
 	public void validateSprint(Sprint bean) {
 		if (bean.getStartAt() != null && bean.getEndAt() != null
@@ -49,6 +53,11 @@ public class SprintProcessor extends GenericBeanProcessor<Sprint> {
 		validateSprint(bean);
 		Long projectId = patch.getProjectId();
 		changeBacklogProjectForSprint(bean, projectId);
+	}
+
+	@Override
+	public void doBeforeDelete(Sprint bean) {
+		bDao.unsetSprintOfBacklogsForSprint(bean.getId());
 	}
 
 }

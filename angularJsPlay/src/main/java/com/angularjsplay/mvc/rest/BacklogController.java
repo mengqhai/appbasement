@@ -52,7 +52,7 @@ public class BacklogController {
 			throw new ScrumValidationException(bResult);
 		}
 		backlog.setId(null);
-		scrumService.createBacklogWithPartialRelationships(backlog);
+		scrumService.createWithIdRef(backlog);
 		return backlog;
 	}
 
@@ -67,7 +67,7 @@ public class BacklogController {
 			throw new ScrumValidationException(bResult);
 		}
 		patch.setId(id);
-		scrumService.updateBacklogWithPatch(patch);
+		scrumService.updateWithPatch(patch);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
