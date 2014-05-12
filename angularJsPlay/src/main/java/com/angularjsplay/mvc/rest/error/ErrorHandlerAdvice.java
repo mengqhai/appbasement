@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.angularjsplay.exception.ScrumResourceNotFoundException;
 import com.angularjsplay.exception.ScrumValidationException;
+import com.appbasement.exception.ResourceNotFoundException;
 
 @ControllerAdvice
 public class ErrorHandlerAdvice {
@@ -53,7 +53,7 @@ public class ErrorHandlerAdvice {
 		return result;
 	}
 
-	@ExceptionHandler(ScrumResourceNotFoundException.class)
+	@ExceptionHandler(ResourceNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ResponseBody
 	public RestError handleResourceNotFoundError() {

@@ -11,8 +11,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import org.hibernate.Hibernate;
-
 public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 		IGenericDAO<T, ID> {
 

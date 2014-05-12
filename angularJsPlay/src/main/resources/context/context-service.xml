@@ -7,4 +7,5 @@
 	<context:component-scan base-package="com.appbasement.component" />
 	<import resource="classpath:context/service/context-service-user.xml" />
 	<import resource="classpath:context/service/context-service-scrum.xml" />
+	<import resource="classpath:context/service/context-service-crud.xml" />
 </beans>

@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.angularjsplay.exception.ScrumResourceNotFoundException;
 import com.angularjsplay.exception.ScrumValidationException;
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.appbasement.component.IObjectPatcher;
 import com.appbasement.component.PatchedValue;
+import com.appbasement.exception.ResourceNotFoundException;
 import com.appbasement.model.User;
 import com.appbasement.service.user.IAppUserService;
 
@@ -46,7 +46,7 @@ public class UserController {
 	User getUser(@PathVariable("id") long id) {
 		User user = userService.getUserById(id);
 		if (user == null) {
-			throw new ScrumResourceNotFoundException();
+			throw new ResourceNotFoundException();
 		}
 		return user;
 	}
@@ -62,7 +62,7 @@ public class UserController {
 		} else {
 			User existing = userService.getUserById(id);
 			if (existing == null) {
-				throw new ScrumResourceNotFoundException();
+				throw new ResourceNotFoundException();
 			}
 			Map<Field, PatchedValue> patchedResult = objectPatcher.patchObject(
 					existing, user);

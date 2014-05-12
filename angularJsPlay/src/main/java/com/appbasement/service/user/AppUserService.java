@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.angularjsplay.exception.ScrumResourceNotFoundException;
+import com.appbasement.exception.ResourceNotFoundException;
 import com.appbasement.model.Group;
 import com.appbasement.model.User;
 import com.appbasement.persistence.IGroupDAO;
@@ -50,7 +50,7 @@ public class AppUserService implements IAppUserService {
 		try {
 			userDao.remove(userToDelete);
 		} catch (EntityNotFoundException e) {
-			throw new ScrumResourceNotFoundException(e);
+			throw new ResourceNotFoundException(e);
 		}
 
 	}
