@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.Sprint;
+import com.angularjsplay.model.Task;
 import com.angularjsplay.persistence.IBacklogDAO;
 import com.angularjsplay.persistence.ISprintDAO;
 import com.angularjsplay.persistence.ITaskDAO;
@@ -114,5 +115,21 @@ public class ScrumService implements IScrumService {
 	@Override
 	public Long getBacklogCountForSprint(Long sprintId) {
 		return bDao.getBacklogCountForSprint(sprintId);
+	}
+
+	@Override
+	public Collection<Task> getAllTasksForBacklog(Long backlogId) {
+		return tDao.getTasksForBacklog(backlogId);
+	}
+
+	@Override
+	public Collection<Task> getTasksForBacklog(Long backlogId, int first,
+			int max) {
+		return tDao.getTasksForBacklog(backlogId, first, max);
+	}
+
+	@Override
+	public Long getTaskCountForBacklog(Long backlogId) {
+		return tDao.getTaskCountForBacklog(backlogId);
 	}
 }

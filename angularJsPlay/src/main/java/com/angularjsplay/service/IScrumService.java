@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.Sprint;
+import com.angularjsplay.model.Task;
 import com.appbasement.service.crud.ICrudService;
 
 public interface IScrumService extends ICrudService{
@@ -28,5 +29,12 @@ public interface IScrumService extends ICrudService{
 			int max);
 
 	public abstract Collection<Backlog> getAllBacklogsForSprint(Long sprintId);
+
+	public abstract Long getTaskCountForBacklog(Long backlogId);
+
+	public abstract Collection<Task> getTasksForBacklog(Long backlogId, int first,
+			int max);
+
+	public abstract Collection<Task> getAllTasksForBacklog(Long backlogId);
 
 }

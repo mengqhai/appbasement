@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.angularjsplay.exception.ScrumValidationException;
 import com.angularjsplay.model.Backlog;
+import com.angularjsplay.model.Task;
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.angularjsplay.service.IScrumService;
@@ -74,6 +76,28 @@ public class BacklogController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteBacklog(@PathVariable("id") long id) {
 		scrumService.deleteById(Backlog.class, id);
+	}
+
+	@RequestMapping(value = "/{id}/tasks", method = RequestMethod.GET)
+	@ResponseBody
+	public Collection<Task> listTasksForBacklog(
+			@PathVariable("id") long backlogId) {
+		return scrumService.getAllTasksForBacklog(backlogId);
+	}
+
+	@RequestMapping(value = "/{id}/tasks", method = RequestMethod.GET, params = {
+			"first", "max" })
+	@ResponseBody
+	public Collection<Task> listTasksForBacklog(
+			@PathVariable("id") long backlogId,
+			@RequestParam("first") int first, @RequestParam("max") int max) {
+		return scrumService.getTasksForBacklog(backlogId, first, max);
+	}
+
+	@RequestMapping(value = "/{id}/tasks", method = RequestMethod.GET, params = { "count" })
+	@ResponseBody
+	public Long getTaskCountForBacklog(@PathVariable("id") long backlogId) {
+		return scrumService.getTaskCountForBacklog(backlogId);
 	}
 
 }

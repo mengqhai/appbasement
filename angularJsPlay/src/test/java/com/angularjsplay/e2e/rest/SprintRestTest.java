@@ -368,7 +368,7 @@ public class SprintRestTest {
 	}
 
 	public Object[] getBacklogsForSprintParams() {
-		return $($(3l, 5l, 5l), $(1l, 6l, 16l), $(2l, 0l, null));
+		return $($(3l, 5l, 5l), $(2l, 0l, null));
 	}
 
 	@Parameters(method = "getBacklogsForSprintParams")

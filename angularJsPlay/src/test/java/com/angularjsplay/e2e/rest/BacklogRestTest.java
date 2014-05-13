@@ -1,5 +1,6 @@
 package com.angularjsplay.e2e.rest;
 
+import static com.angularjsplay.persistence.util.ScrumTestConstants.URL_BASE_COMMON;
 import static junitparams.JUnitParamsRunner.$;
 
 import java.sql.Timestamp;
@@ -20,13 +21,12 @@ import org.springframework.web.client.RestTemplate;
 
 import com.angularjsplay.e2e.util.RestTestUtils;
 import com.angularjsplay.model.Backlog;
+import com.angularjsplay.model.Task;
 import com.angularjsplay.persistence.util.ScrumTestConstants;
 import com.appbasement.component.IObjectPatcher;
 import com.appbasement.component.ObjectPatcher;
 import com.appbasement.persistence.util.DBUnitHelper;
 import com.appbasement.persistence.util.EmfHelper;
-
-import static com.angularjsplay.persistence.util.ScrumTestConstants.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class BacklogRestTest {
@@ -247,7 +247,7 @@ public class BacklogRestTest {
 		Backlog b4 = new Backlog();
 		b4.setProjectId(1l);
 		b4.setSprintId(4l);
-		
+
 		Backlog b5 = new Backlog();
 		b5.setSprintId(null); // remove sprint
 		return $($(b1), $(b2), $(b3), $(b4), $(b5));
@@ -267,7 +267,7 @@ public class BacklogRestTest {
 			Long sprintId = beforeUpdate.getSprintId();
 			patch.setSprintId(sprintId);
 		}
-		
+
 		rest.put(url, patch);
 		Backlog updated = rest.getForObject(url, Backlog.class);
 		IObjectPatcher patcher = new ObjectPatcher();
@@ -366,6 +366,19 @@ public class BacklogRestTest {
 		Backlog b = rest.getForObject(url, Backlog.class);
 		IObjectPatcher patcher = new ObjectPatcher();
 		Assert.assertTrue(patcher.patchObject(b, beforeUpdate).isEmpty());
+	}
+
+	public Object[] getTasksForBacklogParams() {
+		return $($(1l, 8l, 10l), $(2l, 2l, 12l), $(3l, 0l, null));
+	}
+
+	@Parameters(method = "getTasksForBacklogParams")
+	@Test
+	public void testGetTasksForBacklog(Long backlogId, Long count,
+			Long idOfFirst) {
+		String commonUrl = URL_BASE + backlogId + "/tasks";
+		RestTestUtils.assertPagibleChildren(rest, commonUrl, Task.class, count,
+				idOfFirst);
 	}
 
 }

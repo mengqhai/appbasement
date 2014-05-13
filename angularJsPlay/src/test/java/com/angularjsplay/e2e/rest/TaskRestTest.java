@@ -63,7 +63,7 @@ public class TaskRestTest {
 	@Test
 	public void testGetTasks() {
 		Task[] tasks = rest.getForObject(URL_BASE, Task[].class);
-		Assert.assertEquals(5, tasks.length);
+		Assert.assertEquals(12, tasks.length);
 		for (Task task : tasks) {
 			Assert.assertNotNull(task.getName());
 			Assert.assertNotNull(task.getId());
