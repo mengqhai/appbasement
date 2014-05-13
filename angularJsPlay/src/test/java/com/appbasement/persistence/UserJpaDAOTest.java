@@ -19,7 +19,6 @@ import javax.validation.ConstraintViolationException;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
-import org.hibernate.validator.internal.util.Contracts;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

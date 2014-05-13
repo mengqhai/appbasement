@@ -1,6 +1,7 @@
 package com.angularjsplay.e2e.rest;
 
 import static com.angularjsplay.persistence.util.ScrumTestConstants.URL_BASE_COMMON;
+import static junitparams.JUnitParamsRunner.$;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -26,8 +27,6 @@ import com.appbasement.component.IObjectPatcher;
 import com.appbasement.component.ObjectPatcher;
 import com.appbasement.persistence.util.DBUnitHelper;
 import com.appbasement.persistence.util.EmfHelper;
-
-import static junitparams.JUnitParamsRunner.$;
 
 @RunWith(JUnitParamsRunner.class)
 public class TaskRestTest {
@@ -239,6 +238,61 @@ public class TaskRestTest {
 		Task updated = rest.getForObject(url, Task.class);
 		IObjectPatcher patcher = new ObjectPatcher();
 		Assert.assertTrue(patcher.patchObject(updated, patch).isEmpty());
+	}
+
+	public Object[] getTaskForUpdateInvalid() {
+		Task t2 = new Task();
+		t2.setName("");
+
+		Task t3 = new Task();
+		StringBuilder bigName = new StringBuilder();
+		for (int i = 0; i < 280; i++) {
+			bigName.append("0");
+		}
+		t3.setName(bigName.toString());
+
+		Task t4 = new Task();
+		t4.setEstimation((short) -1);
+
+		Task t5 = new Task();
+		t5.setRemaining((short) -1);
+
+		Task t6 = new Task();
+		t6.setOwnerId(9999l);
+
+		Task t7 = new Task();
+		t7.setBacklogId(9999l);
+
+		Task t8 = new Task();
+		t8.setName("Remaining bigger than estimation");
+		t8.setRemaining((short) 99);
+		t8.setEstimation((short) 5);
+
+		Task t9 = new Task();
+		t9.setEstimation((short) 5);
+
+		Task t10 = new Task();
+		t10.setRemaining((short) 999);
+
+		return $($(t2, HttpStatus.BAD_REQUEST), $(t3, HttpStatus.BAD_REQUEST),
+				$(t4, HttpStatus.BAD_REQUEST), $(t5, HttpStatus.BAD_REQUEST),
+				$(t6, HttpStatus.NOT_FOUND), $(t7, HttpStatus.NOT_FOUND),
+				$(t8, HttpStatus.BAD_REQUEST), $(t9, HttpStatus.BAD_REQUEST),
+				$(t10, HttpStatus.BAD_REQUEST));
+	}
+
+	@Parameters(method = "getTaskForUpdateInvalid")
+	@Test
+	public void testUpdateTaskInvalid(Task patch, HttpStatus status) {
+		String url = URL_BASE + "1";
+		Task beforeUpdate = rest.getForObject(url, Task.class);
+
+		RestTestUtils.assertRestError(rest, HttpMethod.PUT, url, patch, status);
+
+		// Make sure invalid update is rolled back
+		Task t = rest.getForObject(url, Task.class);
+		IObjectPatcher patcher = new ObjectPatcher();
+		Assert.assertTrue(patcher.patchObject(t, beforeUpdate).isEmpty());
 	}
 
 }
