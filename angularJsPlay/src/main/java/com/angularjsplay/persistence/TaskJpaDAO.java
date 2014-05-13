@@ -3,7 +3,6 @@ package com.angularjsplay.persistence;
 import java.util.Collection;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
@@ -28,21 +27,12 @@ public class TaskJpaDAO extends GenericJpaDAO<Task, Long> implements ITaskDAO {
 	@Override
 	public Collection<Task> getTasksForBacklog(Long backlogId, int first,
 			int max) {
-		TypedQuery<Task> q = getEm()
-				.createQuery(
-						"select t from Task as t where t.backlog.id=:backlogId order by t.id desc",
-						Task.class).setParameter("backlogId", backlogId)
-				.setFirstResult(first).setMaxResults(max);
-		return q.getResultList();
+		return filterFor("backlog.id", backlogId, first, max);
 	}
 
 	@Override
 	public Long getTaskCountForBacklog(Long backlogId) {
-		TypedQuery<Long> q = getEm().createQuery(
-				"select count(t) from Task as t where t.backlog.id=:backlogId",
-				Long.class);
-		q.setParameter("backlogId", backlogId);
-		return q.getSingleResult();
+		return countFilteredFor("backlog.id", backlogId);
 	}
 
 }

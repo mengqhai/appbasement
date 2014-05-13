@@ -2,6 +2,7 @@ package com.appbasement.persistence;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -9,6 +10,8 @@ import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
 public abstract class GenericJpaDAO<T, ID extends Serializable> implements
@@ -90,6 +93,64 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 			throw new IllegalArgumentException("Entity is null");
 		}
 		em.remove(entity);
+	}
+
+	private <Y> Path<Y> parsePath(Root<?> all, String attributeName) {
+		Path<Y> path = null;
+		String[] fregs = attributeName.split("\\.");
+		for (String freg : fregs) {
+			if (path == null) {
+				path = all.get(freg);
+			} else {
+				path = path.get(freg);
+			}
+		}
+		return path;
+	}
+
+	/**
+	 * Query the entities by something like:
+	 * "select b from Backlog as b where b.project.id=:projectId order by b.id desc"
+	 * 
+	 * @param attributeName
+	 * @param attributeValue
+	 * @param first
+	 * @param max
+	 * @return
+	 */
+	protected Collection<T> filterFor(String attributeName,
+			Serializable attributeValue, int first, int max) {
+		return filterFor(attributeName, attributeValue, first, max, "id");
+	}
+
+	protected Collection<T> filterFor(String attributeName,
+			Serializable attributeValue, int first, int max, String descBy) {
+		Class<T> getClass = persistentClass;
+		CriteriaBuilder cb = getEm().getCriteriaBuilder();
+		CriteriaQuery<T> c = cb.createQuery(getClass);
+		Root<T> all = c.from(getClass);
+		Expression<Boolean> ex = cb.equal(parsePath(all, attributeName),
+				attributeValue);
+		c.select(all).where(ex);
+		if (descBy != null) {
+			// order by xxx desc
+			c.orderBy(cb.desc(parsePath(all, descBy)));
+		}
+		return em.createQuery(c).setFirstResult(first).setMaxResults(max)
+				.getResultList();
+	}
+
+	protected Long countFilteredFor(String attributeName,
+			Serializable attributeValue) {
+		Class<T> getClass = persistentClass;
+		CriteriaBuilder cb = getEm().getCriteriaBuilder();
+		CriteriaQuery<Long> c = cb.createQuery(Long.class);
+		Root<T> all = c.from(getClass);
+		Expression<Long> count = cb.count(all);
+		Expression<Boolean> ex = cb.equal(parsePath(all, attributeName),
+				attributeValue);
+		c.select(count).where(ex);
+		return em.createQuery(c).getSingleResult();
 	}
 
 }
