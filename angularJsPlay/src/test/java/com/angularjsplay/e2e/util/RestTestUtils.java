@@ -117,7 +117,7 @@ public class RestTestUtils {
 				Assert.fail("Unsupported method:" + method);
 			}
 		} catch (HttpMessageNotReadableException e) {
-			Assert.fail("Response is not RestError");
+			Assert.fail("Response is not RestError, likely no error occured");
 		}
 
 		Assert.assertNotNull(error);

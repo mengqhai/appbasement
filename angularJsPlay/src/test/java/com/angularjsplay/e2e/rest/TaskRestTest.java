@@ -22,6 +22,8 @@ import com.angularjsplay.e2e.util.RestTestUtils;
 import com.angularjsplay.model.Task;
 import com.angularjsplay.model.Task.TaskState;
 import com.angularjsplay.persistence.util.ScrumTestConstants;
+import com.appbasement.component.IObjectPatcher;
+import com.appbasement.component.ObjectPatcher;
 import com.appbasement.persistence.util.DBUnitHelper;
 import com.appbasement.persistence.util.EmfHelper;
 
@@ -124,8 +126,7 @@ public class TaskRestTest {
 		t4.setName("A task with owner");
 		t4.setOwnerId(1l);
 
-		// return $($(t1), $(t2), $(t3), $(t4));
-		return $($(t4));
+		return $($(t1), $(t2), $(t3), $(t4));
 	}
 
 	@Parameters(method = "getTaskToCreate")
@@ -171,10 +172,15 @@ public class TaskRestTest {
 		t7.setName("No such backlog");
 		t7.setBacklogId(9999l);
 
+		Task t8 = new Task();
+		t8.setName("Remaining bigger than estimation");
+		t8.setRemaining((short) 99);
+		t8.setEstimation((short) 5);
+
 		return $($(t1, HttpStatus.BAD_REQUEST), $(t2, HttpStatus.BAD_REQUEST),
 				$(t3, HttpStatus.BAD_REQUEST), $(t4, HttpStatus.BAD_REQUEST),
 				$(t5, HttpStatus.BAD_REQUEST), $(t6, HttpStatus.NOT_FOUND),
-				$(t7, HttpStatus.NOT_FOUND));
+				$(t7, HttpStatus.NOT_FOUND), $(t8, HttpStatus.BAD_REQUEST));
 
 	}
 
@@ -198,6 +204,41 @@ public class TaskRestTest {
 		String url = URL_BASE + "99999";
 		RestTestUtils.assertRestError(rest, HttpMethod.DELETE, url, null,
 				HttpStatus.NOT_FOUND);
+	}
+
+	public Object[] getTaskForUpdate() {
+		Task t1 = new Task();
+		t1.setName("New name");
+
+		Task t2 = new Task();
+		t2.setDesc("New desc");
+
+		Task t3 = new Task();
+		t3.setEstimation((short) 99);
+
+		Task t4 = new Task();
+		t4.setRemaining((short) 35);
+
+		Task t5 = new Task();
+		t5.setState(TaskState.IN_PROGRESS);
+
+		Task t6 = new Task();
+		t6.setBacklogId(3l);
+
+		Task t7 = new Task();
+		t7.setOwnerId(2l);
+
+		return $($(t1), $(t2), $(t3), $(t4), $(t5), $(t6), $(t7));
+	}
+
+	@Parameters(method = "getTaskForUpdate")
+	@Test
+	public void testUpdateTask(Task patch) {
+		String url = URL_BASE + "1";
+		rest.put(url, patch);
+		Task updated = rest.getForObject(url, Task.class);
+		IObjectPatcher patcher = new ObjectPatcher();
+		Assert.assertTrue(patcher.patchObject(updated, patch).isEmpty());
 	}
 
 }

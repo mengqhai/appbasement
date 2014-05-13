@@ -205,8 +205,6 @@ public class BacklogRestTest {
 				$(b7, HttpStatus.BAD_REQUEST), $(b8, HttpStatus.BAD_REQUEST),
 				$(b9, HttpStatus.BAD_REQUEST), $(b10, HttpStatus.BAD_REQUEST),
 				$(b11, HttpStatus.BAD_REQUEST), $(b12, HttpStatus.BAD_REQUEST));
-		
-//		return $($(b6, HttpStatus.NOT_FOUND));
 	}
 
 	@Parameters(method = "getBacklogToCreateInvalid")
@@ -238,11 +236,9 @@ public class BacklogRestTest {
 		// will always in the json request body
 		// witch results in backlog.removeSprint==true
 		Backlog b1 = new Backlog();
-		b1.setSprintId(3l);
 		b1.setName("Name changed");
 
 		Backlog b2 = new Backlog();
-		b2.setSprintId(3l);
 		b2.setProjectId(1l);
 
 		Backlog b3 = new Backlog();
@@ -266,6 +262,12 @@ public class BacklogRestTest {
 		// will always in the json request body
 		// witch results in backlog.removeSprint==true
 		String url = URL_BASE + "1";
+		if (!patch.isRemoveSprint()) {
+			Backlog beforeUpdate = rest.getForObject(url, Backlog.class);
+			Long sprintId = beforeUpdate.getSprintId();
+			patch.setSprintId(sprintId);
+		}
+		
 		rest.put(url, patch);
 		Backlog updated = rest.getForObject(url, Backlog.class);
 		IObjectPatcher patcher = new ObjectPatcher();
