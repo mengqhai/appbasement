@@ -124,7 +124,7 @@ public class TaskRestTest {
 		t4.setName("A task with owner");
 		t4.setOwnerId(1l);
 
-		//return $($(t1), $(t2), $(t3), $(t4));
+		// return $($(t1), $(t2), $(t3), $(t4));
 		return $($(t4));
 	}
 
@@ -139,6 +139,65 @@ public class TaskRestTest {
 		toCreate.setCreatedAt(created.getCreatedAt());
 		toCreate.setId(created.getId());
 		RestTestUtils.assertTaskEqual(toCreate, created);
+	}
+
+	public Object[] getTaskToCreateInvalid() {
+		// null name
+		Task t1 = new Task();
+
+		Task t2 = new Task();
+		t2.setName("");
+
+		Task t3 = new Task();
+		StringBuilder bigName = new StringBuilder();
+		for (int i = 0; i < 280; i++) {
+			bigName.append("0");
+		}
+		t3.setName(bigName.toString());
+
+		Task t4 = new Task();
+		t4.setName("Negative estimation");
+		t4.setEstimation((short) -1);
+
+		Task t5 = new Task();
+		t5.setName("Negative remaining");
+		t5.setRemaining((short) -1);
+
+		Task t6 = new Task();
+		t6.setName("No such owner");
+		t6.setOwnerId(9999l);
+
+		Task t7 = new Task();
+		t7.setName("No such backlog");
+		t7.setBacklogId(9999l);
+
+		return $($(t1, HttpStatus.BAD_REQUEST), $(t2, HttpStatus.BAD_REQUEST),
+				$(t3, HttpStatus.BAD_REQUEST), $(t4, HttpStatus.BAD_REQUEST),
+				$(t5, HttpStatus.BAD_REQUEST), $(t6, HttpStatus.NOT_FOUND),
+				$(t7, HttpStatus.NOT_FOUND));
+
+	}
+
+	@Parameters(method = "getTaskToCreateInvalid")
+	@Test
+	public void testCreateTaskInvalid(Task toCreate, HttpStatus status) {
+		RestTestUtils.assertRestError(rest, HttpMethod.POST, URL_BASE,
+				toCreate, status);
+	}
+
+	@Test
+	public void testDeleteTask() {
+		String url = URL_BASE + "1";
+		rest.delete(url);
+		RestTestUtils.assertRestError(rest, HttpMethod.GET, url, null,
+				HttpStatus.NOT_FOUND);
+	}
+
+	@Test
+	public void testDeleteTaskInvalid() {
+		String url = URL_BASE + "99999";
+		RestTestUtils.assertRestError(rest, HttpMethod.DELETE, url, null,
+				HttpStatus.NOT_FOUND);
 	}
 
 }

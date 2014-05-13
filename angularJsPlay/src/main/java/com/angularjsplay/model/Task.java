@@ -6,6 +6,7 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -53,7 +54,7 @@ public class Task implements IEntity {
 
 	@PatchableIdRef(setter = "setBacklog", setterHost = Task.class)
 	@JsonIgnore
-	@ManyToOne(targetEntity = Backlog.class)
+	@ManyToOne(targetEntity = Backlog.class, optional = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "BACKLOG_ID", nullable = true)
 	@ForeignKey(name = "FK_TASK_BACKLOG")
 	private Backlog backlog;
@@ -73,7 +74,7 @@ public class Task implements IEntity {
 
 	@PatchableIdRef(setter = "setOwner", setterHost = Task.class)
 	@JsonIgnore
-	@ManyToOne(targetEntity = User.class)
+	@ManyToOne(targetEntity = User.class, optional = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "OWNER_ID", nullable = true)
 	@ForeignKey(name = "FK_TASK_OWNER")
 	private User owner;
@@ -255,7 +256,7 @@ public class Task implements IEntity {
 
 	@JsonProperty
 	public void setBacklogId(Long backlogId) {
-		if (id != null) {
+		if (backlogId != null) {
 			if (backlog == null) {
 				backlog = new Backlog();
 			}

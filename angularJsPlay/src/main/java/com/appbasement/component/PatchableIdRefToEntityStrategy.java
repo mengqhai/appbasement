@@ -46,7 +46,7 @@ public class PatchableIdRefToEntityStrategy extends DefaultPatchStrategy {
 			T patch) {
 		ReflectionUtils.makeAccessible(outterField);
 		final Object idRef = ReflectionUtils.getField(outterField, patch);
-		
+
 		final PatchedValue pValue = new PatchedValue();
 
 		ReflectionUtils.doWithFields(idRef.getClass(), new FieldCallback() {
@@ -62,9 +62,14 @@ public class PatchableIdRefToEntityStrategy extends DefaultPatchStrategy {
 				}
 				IGenericDAO<?, Serializable> dao = (IGenericDAO<?, Serializable>) daoRegistry
 						.getDao(idRef.getClass());
-				Object entity = dao.getReference(id);
+				Object entity = dao.getReference(id); // Makes sure the
+														// reference exists
+				daoRegistry.initialize(entity); // throws
+												// EntityNotFoundException if
+												// unable to find it
 				pValue.setNewValue(entity);
-				pValue.setOldValue(ReflectionUtils.getField(outterField, target));
+				pValue.setOldValue(ReflectionUtils
+						.getField(outterField, target));
 
 				PatchableIdRef ann = outterField
 						.getAnnotation(PatchableIdRef.class);
@@ -85,11 +90,12 @@ public class PatchableIdRefToEntityStrategy extends DefaultPatchStrategy {
 							+ patchField.getType() + " is the setterHost");
 				}
 
-				Class<?> toBeSetType = AppReflectionUtils.getActualClass(toBeSet);
+				Class<?> toBeSetType = AppReflectionUtils
+						.getActualClass(toBeSet);
 				Method setter = ReflectionUtils.findMethod(setterHostClass,
 						ann.setter(), toBeSetType);
 				ReflectionUtils.invokeMethod(setter, setterHost, toBeSet);
-				
+
 			}
 		}, new FieldFilter() {
 			@Override
