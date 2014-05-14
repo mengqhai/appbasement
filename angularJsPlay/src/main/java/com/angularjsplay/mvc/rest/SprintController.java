@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.angularjsplay.exception.ScrumValidationException;
 import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.Sprint;
+import com.angularjsplay.model.Task;
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.angularjsplay.service.IScrumService;
@@ -98,5 +99,28 @@ public class SprintController {
 	@ResponseBody
 	public Long getBacklogCountForSprint(@PathVariable("id") long sprintId) {
 		return scrumService.getBacklogCountForSprint(sprintId);
+	}
+	
+	
+	@RequestMapping(value = "/{id}/tasks", method = RequestMethod.GET)
+	@ResponseBody
+	public Collection<Task> listTasksForSprint(
+			@PathVariable("id") long sprintId) {
+		return scrumService.getAllTasksForSprint(sprintId);
+	}
+
+	@RequestMapping(value = "/{id}/tasks", method = RequestMethod.GET, params = {
+			"first", "max" })
+	@ResponseBody
+	public Collection<Task> listTasksForSprint(
+			@PathVariable("id") long sprintId,
+			@RequestParam("first") int first, @RequestParam("max") int max) {
+		return scrumService.getTasksForSprint(sprintId, first, max);
+	}
+
+	@RequestMapping(value = "/{id}/tasks", method = RequestMethod.GET, params = { "count" })
+	@ResponseBody
+	public Long getTaskCountForSprint(@PathVariable("id") long sprintId) {
+		return scrumService.getTaskCountForSprint(sprintId);
 	}
 }

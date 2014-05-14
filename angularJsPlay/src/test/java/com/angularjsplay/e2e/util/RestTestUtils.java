@@ -77,7 +77,7 @@ public class RestTestUtils {
 		Assert.assertEquals(expected.getCreatedAt().getTime(), actual
 				.getCreatedAt().getTime());
 		Assert.assertEquals(expected.getOwnerId(), actual.getOwnerId());
-		Assert.assertEquals(expected.getBacklogId(), actual.getBacklogId());
+		Assert.assertEquals(expected.getSprintId(), actual.getSprintId());
 	}
 
 	public static void assertRestError(final RestTemplate rest,

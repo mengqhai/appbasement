@@ -20,19 +20,19 @@ public class TaskJpaDAO extends GenericJpaDAO<Task, Long> implements ITaskDAO {
 	}
 
 	@Override
-	public Collection<Task> getTasksForBacklog(Long backlogId) {
-		return getTasksForBacklog(backlogId, 0, Integer.MAX_VALUE);
+	public Collection<Task> getTasksForBacklog(Long sprintId) {
+		return getTasksForSprint(sprintId, 0, Integer.MAX_VALUE);
 	}
 
 	@Override
-	public Collection<Task> getTasksForBacklog(Long backlogId, int first,
+	public Collection<Task> getTasksForSprint(Long sprintId, int first,
 			int max) {
-		return filterFor("backlog.id", backlogId, first, max);
+		return filterFor("sprint.id", sprintId, first, max);
 	}
 
 	@Override
-	public Long getTaskCountForBacklog(Long backlogId) {
-		return countFilteredFor("backlog.id", backlogId);
+	public Long getTaskCountForSprint(Long sprintId) {
+		return countFilteredFor("sprint.id", sprintId);
 	}
 
 }

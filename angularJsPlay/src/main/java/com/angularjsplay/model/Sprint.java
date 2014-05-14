@@ -6,6 +6,7 @@ import java.util.Date;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,6 +22,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
 
 //import org.codehaus.jackson.annotate.JsonIgnore;
 //import org.codehaus.jackson.annotate.JsonProperty;
@@ -81,6 +83,10 @@ public class Sprint implements IEntity {
 	@JsonIgnore
 	@OneToMany(mappedBy = "sprint", fetch = FetchType.LAZY)
 	private Collection<Backlog> backlogs = new ArrayList<Backlog>();
+	
+	@OneToMany(mappedBy = "sprint", cascade = { CascadeType.REMOVE,
+			CascadeType.MERGE, CascadeType.PERSIST })
+	private Collection<Task> tasks = new ArrayList<Task>();
 
 	public Sprint() {
 	}

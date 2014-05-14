@@ -30,11 +30,11 @@ public interface IScrumService extends ICrudService{
 
 	public abstract Collection<Backlog> getAllBacklogsForSprint(Long sprintId);
 
-	public abstract Long getTaskCountForBacklog(Long backlogId);
+	public abstract Long getTaskCountForSprint(Long backlogId);
 
-	public abstract Collection<Task> getTasksForBacklog(Long backlogId, int first,
+	public abstract Collection<Task> getTasksForSprint(Long backlogId, int first,
 			int max);
 
-	public abstract Collection<Task> getAllTasksForBacklog(Long backlogId);
+	public abstract Collection<Task> getAllTasksForSprint(Long backlogId);
 
 }

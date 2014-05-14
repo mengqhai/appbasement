@@ -52,12 +52,12 @@ public class Task implements IEntity {
 	@Column(length = 2048)
 	private String desc;
 
-	@PatchableIdRef(setter = "setBacklog", setterHost = Task.class)
+	@PatchableIdRef(setter = "setSprint", setterHost = Task.class)
 	@JsonIgnore
-	@ManyToOne(targetEntity = Backlog.class, optional = true, fetch = FetchType.LAZY)
-	@JoinColumn(name = "BACKLOG_ID", nullable = true)
-	@ForeignKey(name = "FK_TASK_BACKLOG")
-	private Backlog backlog;
+	@ManyToOne(targetEntity = Sprint.class, optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "SPRINT_ID", nullable = true)
+	@ForeignKey(name = "FK_TASK_SPRINT")
+	private Sprint sprint;
 
 	@Min(value = 1, groups = { ValidateOnCreate.class, ValidateOnUpdate.class })
 	private Short estimation;
@@ -106,12 +106,12 @@ public class Task implements IEntity {
 		this.desc = desc;
 	}
 
-	public Backlog getBacklog() {
-		return backlog;
+	public Sprint getSprint() {
+		return sprint;
 	}
 
-	public void setBacklog(Backlog backlog) {
-		this.backlog = backlog;
+	public void setSprint(Sprint sprint) {
+		this.sprint = sprint;
 	}
 
 	public Short getEstimation() {
@@ -246,23 +246,23 @@ public class Task implements IEntity {
 	}
 
 	@JsonProperty
-	public Long getBacklogId() {
-		if (backlog != null) {
-			return backlog.getId();
+	public Long getSprintId() {
+		if (sprint != null) {
+			return sprint.getId();
 		} else {
 			return null;
 		}
 	}
 
 	@JsonProperty
-	public void setBacklogId(Long backlogId) {
-		if (backlogId != null) {
-			if (backlog == null) {
-				backlog = new Backlog();
+	public void setSprintId(Long sprintId) {
+		if (sprintId != null) {
+			if (sprint == null) {
+				sprint = new Sprint();
 			}
-			backlog.setId(backlogId);
+			sprint.setId(sprintId);
 		} else {
-			backlog = null;
+			sprint = null;
 		}
 	}
 

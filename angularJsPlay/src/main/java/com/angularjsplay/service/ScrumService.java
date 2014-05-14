@@ -118,18 +118,18 @@ public class ScrumService implements IScrumService {
 	}
 
 	@Override
-	public Collection<Task> getAllTasksForBacklog(Long backlogId) {
+	public Collection<Task> getAllTasksForSprint(Long backlogId) {
 		return tDao.getTasksForBacklog(backlogId);
 	}
 
 	@Override
-	public Collection<Task> getTasksForBacklog(Long backlogId, int first,
+	public Collection<Task> getTasksForSprint(Long backlogId, int first,
 			int max) {
-		return tDao.getTasksForBacklog(backlogId, first, max);
+		return tDao.getTasksForSprint(backlogId, first, max);
 	}
 
 	@Override
-	public Long getTaskCountForBacklog(Long backlogId) {
-		return tDao.getTaskCountForBacklog(backlogId);
+	public Long getTaskCountForSprint(Long backlogId) {
+		return tDao.getTaskCountForSprint(backlogId);
 	}
 }

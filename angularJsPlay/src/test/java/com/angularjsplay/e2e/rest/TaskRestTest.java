@@ -90,7 +90,7 @@ public class TaskRestTest {
 		t2.setState(TaskState.FINISHED);
 		t2.setCreatedAt(Timestamp.valueOf("2012-10-05 15:15:14"));
 		t2.setOwnerId(1l);
-		t2.setBacklogId(1l);
+		t2.setSprintId(1l);
 
 		return $($(t1), $(t2));
 	}
@@ -118,8 +118,8 @@ public class TaskRestTest {
 		t2.setDesc("Hello desc");
 
 		Task t3 = new Task();
-		t3.setName("A task with backlog");
-		t3.setBacklogId(1l);
+		t3.setName("A task with sprint");
+		t3.setSprintId(1l);
 
 		Task t4 = new Task();
 		t4.setName("A task with owner");
@@ -168,18 +168,19 @@ public class TaskRestTest {
 		t6.setOwnerId(9999l);
 
 		Task t7 = new Task();
-		t7.setName("No such backlog");
-		t7.setBacklogId(9999l);
+		t7.setName("No such sprint");
+		t7.setSprintId(9999l);
 
 		Task t8 = new Task();
 		t8.setName("Remaining bigger than estimation");
 		t8.setRemaining((short) 99);
 		t8.setEstimation((short) 5);
 
-		return $($(t1, HttpStatus.BAD_REQUEST), $(t2, HttpStatus.BAD_REQUEST),
-				$(t3, HttpStatus.BAD_REQUEST), $(t4, HttpStatus.BAD_REQUEST),
-				$(t5, HttpStatus.BAD_REQUEST), $(t6, HttpStatus.NOT_FOUND),
-				$(t7, HttpStatus.NOT_FOUND), $(t8, HttpStatus.BAD_REQUEST));
+//		return $($(t1, HttpStatus.BAD_REQUEST), $(t2, HttpStatus.BAD_REQUEST),
+//				$(t3, HttpStatus.BAD_REQUEST), $(t4, HttpStatus.BAD_REQUEST),
+//				$(t5, HttpStatus.BAD_REQUEST), $(t6, HttpStatus.NOT_FOUND),
+//				$(t7, HttpStatus.NOT_FOUND), $(t8, HttpStatus.BAD_REQUEST));
+		return $($(t7, HttpStatus.NOT_FOUND));
 
 	}
 
@@ -222,7 +223,7 @@ public class TaskRestTest {
 		t5.setState(TaskState.IN_PROGRESS);
 
 		Task t6 = new Task();
-		t6.setBacklogId(3l);
+		t6.setSprintId(3l);
 
 		Task t7 = new Task();
 		t7.setOwnerId(2l);
@@ -261,7 +262,7 @@ public class TaskRestTest {
 		t6.setOwnerId(9999l);
 
 		Task t7 = new Task();
-		t7.setBacklogId(9999l);
+		t7.setSprintId(9999l);
 
 		Task t8 = new Task();
 		t8.setName("Remaining bigger than estimation");
