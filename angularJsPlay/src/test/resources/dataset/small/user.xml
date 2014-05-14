@@ -15,4 +15,7 @@
 	<APP_USER id="5" username="Risa" email="ultrices.sit@et.co.uk"
 		password="CCN49GWW0UK" createdAt="2014-07-26 13:22:13">
 	</APP_USER>
+	<APP_USER id="6" username="mqhnow1" email="mqhnow1@sina.com"
+		password="passw0rd" createdAt="2014-07-26 13:22:13">
+	</APP_USER>
 </dataset>

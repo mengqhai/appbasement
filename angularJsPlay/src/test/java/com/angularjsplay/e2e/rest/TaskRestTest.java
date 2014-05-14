@@ -141,6 +141,7 @@ public class TaskRestTest {
 		RestTestUtils.assertTaskEqual(toCreate, created);
 	}
 
+	@SuppressWarnings("unused")
 	public Object[] getTaskToCreateInvalid() {
 		// null name
 		Task t1 = new Task();

@@ -108,7 +108,7 @@ public class UserJpaDAOTest extends GenericJpaDAOTest<User, Long> {
 
 	@Override
 	protected Object[] findAllAssertion() {
-		int resultListSize = 5;
+		int resultListSize = 6;
 		Collection<User> mustContain = new ArrayList<User>();
 		Object[] objArr = getParamEntitiesFound();
 		for (Object obj : objArr) {

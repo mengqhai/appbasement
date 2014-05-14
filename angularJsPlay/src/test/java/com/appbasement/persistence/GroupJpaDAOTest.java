@@ -86,6 +86,11 @@ public class GroupJpaDAOTest extends GenericJpaDAOTest<Group, Long> {
 				UtUtil.parseTimestamp("2013-03-01 18:17:46"));
 		user3.addToGroup(group1);
 		user3.addToGroup(group11);
+		
+		User user4 = new User("mqhnow1", "passw0rd").setEmail(
+				"mqhnow1@sina.com").setCreatedAt(
+				UtUtil.parseTimestamp("2014-07-26 13:22:13"));;
+		user4.addToGroup(group11);
 		return $($(1l, group1), $(11l, group11));
 	}
 
