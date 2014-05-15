@@ -1,4 +1,4 @@
-angular.module('security.service')
+angular.module('security.service', ['security.login'])
     .factory('security', function ($http, $q, $location) {
         var service = {
 

@@ -6,7 +6,7 @@ angular
     'ngResource',
     'ngSanitize',
     'ngRoute',
-    'ui.bootstrap.modal', "ui.bootstrap.tpls"
+    'ui.bootstrap.modal', "ui.bootstrap.tpls", 'security.service'
   ])
   .config(function ($routeProvider) {
     $routeProvider

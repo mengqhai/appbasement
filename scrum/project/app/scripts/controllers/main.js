@@ -26,6 +26,14 @@ angular.module('scrumApp')
             }, function () {
                 $log.info('Modal dismissed at: ' + new Date());
             });
+        };
+
+        $scope.openLogin = function (size) {
+            var modalInstance = $modal.open({
+                templateUrl: 'views/common/security/login/form.tpl.html',
+                size: size,
+                controller:'LoginFormController'
+            });
         }
     })
     .controller("ModalInstanceCtrl", function($scope, $modalInstance, items) {
