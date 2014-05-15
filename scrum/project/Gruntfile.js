@@ -168,6 +168,7 @@ module.exports = function (grunt) {
     // Reads HTML for usemin blocks to enable smart builds that automatically
     // concat, minify and revision files. Creates configurations in memory so
     // additional tasks can operate on them
+    // js: ['concat', 'uglifyjs']
     useminPrepare: {
       html: '<%= yeoman.app %>/index.html',
       options: {
@@ -175,7 +176,7 @@ module.exports = function (grunt) {
         flow: {
           html: {
             steps: {
-              js: ['concat', 'uglifyjs'],
+              js: ['concat'],
               css: ['cssmin']
             },
             post: {}
@@ -370,6 +371,7 @@ module.exports = function (grunt) {
     'karma'
   ]);
 
+  // 'uglify',  'rev'
   grunt.registerTask('build', [
     'clean:dist',
     'bowerInstall',
@@ -381,8 +383,6 @@ module.exports = function (grunt) {
     'copy:dist',
     'cdnify',
     'cssmin',
-    'uglify',
-    'rev',
     'usemin',
     'htmlmin'
   ]);

@@ -1,11 +1,12 @@
 'use strict';
 
 angular
-  .module('projectApp', [
+  .module('scrumApp', [
     'ngCookies',
     'ngResource',
     'ngSanitize',
-    'ngRoute'
+    'ngRoute',
+    'ui.bootstrap.modal', "ui.bootstrap.tpls"
   ])
   .config(function ($routeProvider) {
     $routeProvider
