@@ -8,13 +8,12 @@
 		<form-login login-processing-url="/static/j_spring_security_check"
 			login-page="/spring_security_login" authentication-failure-url="/spring_security_login?login_error"/>
 		<http-basic />
-		<logout logout-url="/static/j_spring_security_logout"
-			logout-success-url="/spring_security_login" />
+		<logout logout-url="/logout"/>
 		<intercept-url pattern="/favicon.ico" access="permitAll" />
 		<intercept-url pattern="/" access="permitAll" />
-		<intercept-url pattern="/login" access="permitAll"
+		<intercept-url pattern="/rest/login" access="permitAll"
 			requires-channel="http" />
-		<intercept-url pattern="/loginfailed" access="permitAll"
+		<intercept-url pattern="/rest/logout" access="permitAll"
 			requires-channel="http" />
 		<intercept-url pattern="/resources/**" access="permitAll" />
 		<intercept-url pattern="/rest/**"
