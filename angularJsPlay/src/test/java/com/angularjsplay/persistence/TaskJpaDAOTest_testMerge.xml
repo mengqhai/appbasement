@@ -3,6 +3,6 @@
 	<TASK id="1" name="Hello task 1"
 		desc="Description of task 1"
 		estimation="88" remaining="0" state="3" createdAt="2012-10-05 15:15:14"
-		backlog_id="1" owner_id="1">
+		sprint_id="1" owner_id="1">
 	</TASK>
 </dataset>
