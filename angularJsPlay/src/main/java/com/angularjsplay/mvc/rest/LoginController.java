@@ -9,11 +9,13 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.angularjsplay.model.LoginRequest;
 import com.angularjsplay.model.LoginResult;
 import com.appbasement.persistence.IUserDAO;
 
@@ -38,10 +40,11 @@ public class LoginController {
 	 * @param password
 	 * @return
 	 */
-	@RequestMapping(value = "login", method = RequestMethod.POST)
+	@RequestMapping(value = "login", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	@ResponseBody
-	public LoginResult restLogin(@RequestParam("j_username") String username,
-			@RequestParam("j_password") String password) {
+	public LoginResult restLogin(@Validated @RequestBody LoginRequest loginRequest) {
+		String username = loginRequest.getUsername();
+		String password = loginRequest.getPassword();
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
 				username, password);
 		LoginResult result = new LoginResult();

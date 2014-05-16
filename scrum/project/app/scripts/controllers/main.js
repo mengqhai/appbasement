@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('scrumApp')
-    .controller('MainCtrl', function ($scope, $modal, $log) {
+    .controller('MainCtrl', function ($scope, $modal, $log, loginDialog) {
         $scope.awesomeThings = [
             'HTML5 Boilerplate',
             'AngularJS',
@@ -29,11 +29,7 @@ angular.module('scrumApp')
         };
 
         $scope.openLogin = function (size) {
-            var modalInstance = $modal.open({
-                templateUrl: 'views/common/security/login/form.tpl.html',
-                size: size,
-                controller:'LoginFormController'
-            });
+            loginDialog.showLogin();
         }
     })
     .controller("ModalInstanceCtrl", function($scope, $modalInstance, items) {
