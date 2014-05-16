@@ -5,7 +5,7 @@ angular.module('security.login.services', ['env'])
             // Get the first reason for needing a login
             getLoginReason: function () {
                 // TODO: a try reason
-                return "Retry Queue not implemented";
+                return null;
             },
 
             currentUser: null,

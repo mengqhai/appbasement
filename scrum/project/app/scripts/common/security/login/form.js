@@ -9,7 +9,8 @@ angular.module('security.login.form', ['security.login.services', 'ui.bootstrap.
             }
             loginDialog = $modal.open({
                 templateUrl: 'views/common/security/login/form.tpl.html',
-                controller: 'LoginFormController'
+                controller: 'LoginFormController',
+                size: 'sm'
             });
             loginDialog.result.then(onLoginDialogClose, onLoginDialogClose);
         }
@@ -38,6 +39,8 @@ angular.module('security.login.form', ['security.login.services', 'ui.bootstrap.
 
         // Any error message from failing to login
         $scope.authError = null;
+        var instruction='Please enter your login details';
+        $scope.authInfo = instruction;
 
         // The reason that we are being asked to login - for instance because we tried to access something to which we are not authorized
         // We could do something diffent for each reason here but to keep it simple...
@@ -50,18 +53,21 @@ angular.module('security.login.form', ['security.login.services', 'ui.bootstrap.
         $scope.login = function () {
             // Clear any previous security errors
             $scope.authError = null;
+            $scope.authInfo='Logging in...'
 
             // Try to login
             var result = loginService.login($scope.user.username, $scope.user.password).then(function (response) {
                 if (!response.success) {
                     // If we get here then the login failed due to bad credentials
                     $scope.authError = response.failReason;
+                    $scope.authInfo=instruction;
                 } else {
                     $modalInstance.close(result);
                 }
             }, function (x) {
                 // If we get here then there was a problem with the login request to the server
                 $scope.authError = x;
+                $scope.authInfo=instruction;
             });
         }
 
