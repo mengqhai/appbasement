@@ -33,7 +33,7 @@ angular.module('security.login.form', ['security.login.services', 'ui.bootstrap.
 
 // The LoginFormController provides the behaviour behind a reusable form to allow users to authenticate.
 // This controller and its template (login/form.tpl.html) are used in a modal dialog box by the security service.
-    .controller('LoginFormController', ['$scope', '$modalInstance', 'loginService', function ($scope, $modalInstance, loginService) {
+    .controller('LoginFormController', ['$scope', '$modalInstance', 'loginService', '$http', function ($scope, $modalInstance, loginService, $http) {
         // The model for this form
         $scope.user = {};
 
@@ -70,6 +70,8 @@ angular.module('security.login.form', ['security.login.services', 'ui.bootstrap.
                 $scope.authInfo=instruction;
             });
         }
+
+
 
         // Attempt to authenticate the user specified in the form's model
         $scope.clearForm = function () {
