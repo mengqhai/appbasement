@@ -2,6 +2,6 @@
 <dataset>
 	<TASK id="[ID]" name="Team task #1" desc="This is a test task."
 		estimation="80" remaining="40" state="1" createdAt="[CREATED_AT]"
-		backlog_id="[NULL]" owner_id="[NULL]">
+		sprint_id="[NULL]" owner_id="[NULL]">
 	</TASK>
 </dataset>

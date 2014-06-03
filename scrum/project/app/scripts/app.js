@@ -8,7 +8,7 @@ angular
         'ngRoute',
         'security.service'
     ])
-    .config(function ($routeProvider) {
+    .config(function ($routeProvider, $httpProvider) {
         $routeProvider
             .when('/', {
                 templateUrl: 'views/main.html',
@@ -17,4 +17,5 @@ angular
             .otherwise({
                 redirectTo: '/'
             });
+        $httpProvider.defaults.withCredentials=true;
     });
