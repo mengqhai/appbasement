@@ -33,6 +33,8 @@ angular.module('security.login.services', ['env'])
             logout: function () {
                 var result = $http.get(envConstants.LOGOUT_URL).then(function (response) {
                     service.currentUser = null;
+                }, function(response) {
+                    alert('Failed to logout.')
                 });
                 return result;
             }

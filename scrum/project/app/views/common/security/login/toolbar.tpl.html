@@ -1,0 +1,17 @@
+<ul class="nav nav-pills pull-right">
+    <li ng-show="isAuthenticated()">
+        <a ng-href="#">{{currentUser.username}}</a>
+    </li>
+    <li ng-show="isAuthenticated()">
+        <a ng-click="logout()" ng-href="#">Log out</a>
+        <!--<form class="navbar-form">-->
+            <!--<button class="btn" ng-click="logout()">Log out</button>-->
+        <!--</form>-->
+    </li>
+    <li ng-hide="isAuthenticated()">
+        <a ng-click="login()" ng-href="#">Log in</a>
+         <!--<form class="navbar-form">-->
+             <!--<button class="btn" ng-click="login()">Log in</button>-->
+         <!--</form>-->
+    </li>
+</ul>

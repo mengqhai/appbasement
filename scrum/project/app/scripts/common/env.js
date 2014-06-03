@@ -4,8 +4,8 @@ angular.module('env', [])
     .factory('envConstants', ['URL_BASE', function (URL_BASE) {
         return {
             URL_BASE: URL_BASE,
-            REST_URL: URL_BASE + '/rest',
-            LOGIN_URL: URL_BASE + '/rest/login',
-            LOGOUT_URL: URL_BASE + '/logout'
+            REST_URL: URL_BASE + 'rest',
+            LOGIN_URL: URL_BASE + 'rest/login',
+            LOGOUT_URL: URL_BASE + 'logout?noRedirect'
         };
     }]);

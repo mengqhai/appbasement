@@ -1,5 +1,5 @@
-angular.module('security.login.form', ['security.login.services', 'ui.bootstrap.modal', "ui.bootstrap.tpls"])
-    .factory('loginDialog', ['$modal', function ($modal) {
+angular.module('security.login.form', ['security.login.services', 'security.retryQueue', 'ui.bootstrap.modal', "ui.bootstrap.tpls"])
+    .factory('loginDialog', ['$modal', 'securityRetryQueue', function ($modal, queue) {
         // Login form dialog stuff
         var loginDialog = null;
 
@@ -17,9 +17,18 @@ angular.module('security.login.form', ['security.login.services', 'ui.bootstrap.
         function onLoginDialogClose(success) {
             loginDialog = null;
             if (success) {
-                console.log(success);
+                queue.retryAll();
+            } else {
+                queue.cancelAll();
             }
-        }
+        };
+
+        // Register a handler for when an item is added to the retry queue
+        queue.onItemAddedCallbacks.push(function (retryItem) {
+            if (queue.hasMore()) {
+                service.showLogin();
+            }
+        });
 
         // The public API of the service
         var service = {
