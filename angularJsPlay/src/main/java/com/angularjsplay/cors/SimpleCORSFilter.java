@@ -1,4 +1,4 @@
-package com.angularjsplay.filter;
+package com.angularjsplay.cors;
 
 import java.io.IOException;
 

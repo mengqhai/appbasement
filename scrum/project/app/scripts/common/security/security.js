@@ -1,1 +1,1 @@
-angular.module('security.service', ['security.login']);
+angular.module('security.service', ['security.login', 'security.interceptor']);

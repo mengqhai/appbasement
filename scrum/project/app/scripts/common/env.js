@@ -6,6 +6,6 @@ angular.module('env', [])
             URL_BASE: URL_BASE,
             REST_URL: URL_BASE + 'rest',
             LOGIN_URL: URL_BASE + 'rest/login',
-            LOGOUT_URL: URL_BASE + 'logout?noRedirect'
+            LOGOUT_URL: URL_BASE + 'rest/logout?noRedirect'
         };
     }]);

@@ -12,17 +12,13 @@ angular.module('security.login.form', ['security.login.services', 'security.retr
                 controller: 'LoginFormController',
                 size: 'sm'
             });
-            loginDialog.result.then(onLoginDialogClose, onLoginDialogClose);
-        }
-
-        function onLoginDialogClose(success) {
-            loginDialog = null;
-            if (success) {
+            loginDialog.result.then(function() {
+                loginDialog = null;
                 queue.retryAll();
-            } else {
+            }, function() {
                 queue.cancelAll();
-            }
-        };
+            });
+        }
 
         // Register a handler for when an item is added to the retry queue
         queue.onItemAddedCallbacks.push(function (retryItem) {

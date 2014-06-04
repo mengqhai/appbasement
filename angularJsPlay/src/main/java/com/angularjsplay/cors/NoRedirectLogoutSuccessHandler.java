@@ -1,4 +1,4 @@
-package com.angularjsplay.mvc.rest;
+package com.angularjsplay.cors;
 
 import java.io.IOException;
 
@@ -20,7 +20,10 @@ public class NoRedirectLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandle
 			throws IOException, ServletException {
 		String noRedirect = request.getParameter("noRedirect");
 		if (noRedirect != null) {
-			response.setHeader("Access-Control-Allow-Origin", "*");
+			String origin = request.getHeader("Origin");
+			response.setHeader("Access-Control-Allow-Origin", origin == null ? "*"
+					: origin);
+			response.setHeader("Access-Control-Allow-Credentials", "true");
 			// must do so, otherwise angularJs $http.get got error status code = 0
 			return;
 		} else {
