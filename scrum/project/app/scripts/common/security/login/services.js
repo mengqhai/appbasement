@@ -1,8 +1,8 @@
 angular.module('security.login.services', ['env'])
     // a service dedicated to communicate with server with login/logout request
-    .factory('loginService', ['$http', 'envConstants', function ($http, envConstants) {
+    .factory('loginService', ['$http', 'envConstants', '$cookieStore', function ($http, envConstants, $cookieStore) {
         var service = {
-            currentUser: null,
+            currentUser: $cookieStore.get('currentUser'),
             // Attempt to authenticate a user by the given email and password
             login: function (username, password) {
                 var result = $http.post(envConstants.LOGIN_URL, {
@@ -10,6 +10,7 @@ angular.module('security.login.services', ['env'])
                     'password': password
                 }).then(function (response) {
                         service.currentUser = response.data.user;
+                        $cookieStore.put('currentUser', response.data.user);
                         return response.data;
                     });
                 return result;
@@ -27,6 +28,7 @@ angular.module('security.login.services', ['env'])
             logout: function () {
                 var result = $http.get(envConstants.LOGOUT_URL).then(function (response) {
                     service.currentUser = null;
+                    $cookieStore.remove('currentUser');
                 }, function(response) {
                     alert('Failed to logout.')
                 });
