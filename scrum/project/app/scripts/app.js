@@ -6,7 +6,8 @@ angular
         'ngResource',
         'ngSanitize',
         'ngRoute',
-        'security.service'
+        'security.service',
+        'resources.projects'
     ])
     .config(function ($routeProvider, $httpProvider) {
         $routeProvider

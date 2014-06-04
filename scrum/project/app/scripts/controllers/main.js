@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('scrumApp')
-    .controller('MainCtrl', function ($scope, $modal, $log, $http, loginDialog) {
+    .controller('MainCtrl', function ($scope, $modal, $log, $http, loginDialog, Projects) {
         $scope.awesomeThings = [
             'HTML5 Boilerplate',
             'AngularJS',
@@ -38,7 +38,13 @@ angular.module('scrumApp')
             $http.get('http://localhost:8081/angularJsPlay/rest/currentUser').then(function(response) {
                 $scope.currentUsername=response.data.username;
             })
-        }
+        };
+        $scope.listProjects = function() {
+            $scope.projects=Projects.query();
+
+        };
+
+
     })
     .controller("ModalInstanceCtrl", function($scope, $modalInstance, items) {
         $scope.items = items;
