@@ -16,6 +16,7 @@ angular.module('security.login.form', ['security.login.services', 'security.retr
                 loginDialog = null;
                 queue.retryAll();
             }, function() {
+                loginDialog = null;
                 queue.cancelAll();
             });
         }
@@ -32,13 +33,17 @@ angular.module('security.login.form', ['security.login.services', 'security.retr
             // Show the modal login dialog
             showLogin: function () {
                 openLoginDialog();
-            }};
+            },
+            loginReason: function() {
+                return queue.retryReason();
+            }
+        };
         return service;
     }])
 
 // The LoginFormController provides the behaviour behind a reusable form to allow users to authenticate.
 // This controller and its template (login/form.tpl.html) are used in a modal dialog box by the security service.
-    .controller('LoginFormController', ['$scope', '$modalInstance', 'loginService', '$http', function ($scope, $modalInstance, loginService, $http) {
+    .controller('LoginFormController', ['$scope', '$modalInstance', 'loginService', '$http', 'loginDialog', function ($scope, $modalInstance, loginService, $http, dailog) {
         // The model for this form
         $scope.user = {};
 
@@ -49,10 +54,7 @@ angular.module('security.login.form', ['security.login.services', 'security.retr
 
         // The reason that we are being asked to login - for instance because we tried to access something to which we are not authorized
         // We could do something diffent for each reason here but to keep it simple...
-        $scope.authReason = null;
-        if (loginService.getLoginReason()) {
-            $scope.authReason = loginService.getLoginReason();
-        }
+        $scope.authReason = dailog.loginReason();
 
         // Attempt to authenticate the user specified in the form's model
         $scope.login = function () {

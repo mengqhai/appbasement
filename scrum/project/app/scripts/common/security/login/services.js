@@ -2,12 +2,6 @@ angular.module('security.login.services', ['env'])
     // a service dedicated to communicate with server with login/logout request
     .factory('loginService', ['$http', 'envConstants', function ($http, envConstants) {
         var service = {
-            // Get the first reason for needing a login
-            getLoginReason: function () {
-                // TODO: a try reason
-                return null;
-            },
-
             currentUser: null,
             // Attempt to authenticate a user by the given email and password
             login: function (username, password) {
