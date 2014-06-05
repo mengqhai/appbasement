@@ -9,7 +9,8 @@ angular
         'security.service',
         'resources.projects',
         'resources.backlogs',
-        'ui.bootstrap.pagination'
+        'ui.bootstrap.pagination',
+        'validateEquals'
     ])
     .config(function ($routeProvider, $httpProvider) {
         $routeProvider
