@@ -21,6 +21,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestTemplate;
 
+import com.angularjsplay.e2e.util.BasicAuthRestTemplate;
 import com.angularjsplay.e2e.util.RestTestUtils;
 import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.Sprint;
@@ -53,7 +54,10 @@ public class SprintRestTest {
 				ScrumTestConstants.DATA_SET_SMALL_SPRINT,
 				ScrumTestConstants.DATA_SET_SMALL_BACKLOG,
 				ScrumTestConstants.DATA_SET_SMALL_TASK);
-		rest = new RestTemplate();
+		//rest = new RestTemplate();
+		rest = new BasicAuthRestTemplate();
+		((BasicAuthRestTemplate) rest).setUsername("mqhnow1");
+		((BasicAuthRestTemplate) rest).setPassword("passw0rd");
 	}
 
 	@AfterClass

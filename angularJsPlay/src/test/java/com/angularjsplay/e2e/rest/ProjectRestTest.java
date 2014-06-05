@@ -18,6 +18,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestTemplate;
 
+import com.angularjsplay.e2e.util.BasicAuthRestTemplate;
 import com.angularjsplay.e2e.util.RestTestUtils;
 import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.Project;
@@ -54,7 +55,9 @@ public class ProjectRestTest {
 				ScrumTestConstants.DATA_SET_SMALL_SPRINT,
 				ScrumTestConstants.DATA_SET_SMALL_BACKLOG,
 				ScrumTestConstants.DATA_SET_SMALL_TASK);
-		rest = new RestTemplate();
+		rest = new BasicAuthRestTemplate();
+		((BasicAuthRestTemplate) rest).setUsername("mqhnow1");
+		((BasicAuthRestTemplate) rest).setPassword("passw0rd");
 	}
 
 	@AfterClass
@@ -244,7 +247,8 @@ public class ProjectRestTest {
 
 	@Parameters(method = "getSprintsForProjectParams")
 	@Test
-	public void testGetSprintsForProject(Long projectId, Long count, Long idOfFirst) {
+	public void testGetSprintsForProject(Long projectId, Long count,
+			Long idOfFirst) {
 		String commonUrl = URL_BASE + projectId + "/sprints";
 		RestTestUtils.assertPagibleChildren(rest, commonUrl, Sprint.class,
 				count, idOfFirst);
