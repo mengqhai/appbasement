@@ -3,7 +3,7 @@ package com.appbasement.service.crud;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Collection;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -112,9 +112,21 @@ public class CrudService implements ICrudService {
 	}
 
 	@Override
-	public <T> List<T> getAll(Class<T> type) {
+	public <T> Collection<T> getAll(Class<T> type) {
 		IGenericDAO<T, Serializable> dao = getDao(type);
 		return dao.findAll();
+	}
+	
+	@Override
+	public <T> Collection<T> getAll(Class<T> type, int first, int max) {
+		IGenericDAO<T, Serializable> dao = getDao(type);
+		return dao.findAll(first, max);
+	}
+	
+	@Override
+	public <T> Long getAllCount(Class<T> type) {
+		IGenericDAO<T, Serializable> dao = getDao(type);
+		return dao.getAllCount();
 	}
 
 	@SuppressWarnings("unchecked")

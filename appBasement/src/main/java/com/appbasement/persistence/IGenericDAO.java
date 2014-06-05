@@ -1,6 +1,7 @@
 package com.appbasement.persistence;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 public interface IGenericDAO<T, ID extends Serializable> {
@@ -25,5 +26,9 @@ public interface IGenericDAO<T, ID extends Serializable> {
 	public void remove(T entity);
 	
 	public Class<T> getPersistentClass();
+
+	public abstract Long getAllCount();
+
+	public abstract Collection<T> findAll(int first, int max);
 
 }

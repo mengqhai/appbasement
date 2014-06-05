@@ -41,6 +41,19 @@ public class ProjectController {
 		return scrumService.getAll(Project.class);
 	}
 
+	@RequestMapping(method = RequestMethod.GET, params = { "first", "max" })
+	@ResponseBody
+	public Collection<Project> listProjects(@RequestParam("first") int first,
+			@RequestParam("max") int max) {
+		return scrumService.getAll(Project.class, first, max);
+	}
+
+	@RequestMapping(method = RequestMethod.GET, params = { "count" })
+	@ResponseBody
+	public Long getProjectCount() {
+		return scrumService.getAllCount(Project.class);
+	}
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public Project getProject(@PathVariable("id") long id) {

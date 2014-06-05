@@ -2,7 +2,6 @@ package com.angularjsplay.service;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,7 +43,7 @@ public class ScrumService implements IScrumService {
 	}
 
 	@Override
-	public <T> List<T> getAll(Class<T> type) {
+	public <T> Collection<T> getAll(Class<T> type) {
 		return crud.getAll(type);
 	}
 
@@ -123,13 +122,22 @@ public class ScrumService implements IScrumService {
 	}
 
 	@Override
-	public Collection<Task> getTasksForSprint(Long backlogId, int first,
-			int max) {
+	public Collection<Task> getTasksForSprint(Long backlogId, int first, int max) {
 		return tDao.getTasksForSprint(backlogId, first, max);
 	}
 
 	@Override
 	public Long getTaskCountForSprint(Long backlogId) {
 		return tDao.getTaskCountForSprint(backlogId);
+	}
+
+	@Override
+	public <T> Long getAllCount(Class<T> type) {
+		return crud.getAllCount(type);
+	}
+
+	@Override
+	public <T> Collection<T> getAll(Class<T> type, int first, int max) {
+		return crud.getAll(type, first, max);
 	}
 }

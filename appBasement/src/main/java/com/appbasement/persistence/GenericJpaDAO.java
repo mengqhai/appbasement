@@ -72,6 +72,19 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 		return em.createQuery(c).getResultList();
 	}
 
+	/**
+	 * Find all with pagination support.
+	 */
+	@Override
+	public Collection<T> findAll(int first, int max) {
+		return filterFor(null, null, first, max);
+	}
+
+	@Override
+	public Long getAllCount() {
+		return countFilteredFor(null, null);
+	}
+
 	@Override
 	public T getReference(ID id) {
 		return em.getReference(getPersistentClass(), id);
@@ -129,9 +142,12 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 		CriteriaBuilder cb = getEm().getCriteriaBuilder();
 		CriteriaQuery<T> c = cb.createQuery(getClass);
 		Root<T> all = c.from(getClass);
-		Expression<Boolean> ex = cb.equal(parsePath(all, attributeName),
-				attributeValue);
-		c.select(all).where(ex);
+		if (attributeName != null && !attributeName.equals("")) {
+			Expression<Boolean> ex = cb.equal(parsePath(all, attributeName),
+					attributeValue);
+			c.where(ex);
+		}
+		c.select(all);
 		if (descBy != null) {
 			// order by xxx desc
 			c.orderBy(cb.desc(parsePath(all, descBy)));
@@ -147,9 +163,12 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 		CriteriaQuery<Long> c = cb.createQuery(Long.class);
 		Root<T> all = c.from(getClass);
 		Expression<Long> count = cb.count(all);
-		Expression<Boolean> ex = cb.equal(parsePath(all, attributeName),
-				attributeValue);
-		c.select(count).where(ex);
+		if (attributeName != null && !attributeName.equals("")) {
+			Expression<Boolean> ex = cb.equal(parsePath(all, attributeName),
+					attributeValue);
+			c.where(ex);
+		}
+		c.select(count);
 		return em.createQuery(c).getSingleResult();
 	}
 

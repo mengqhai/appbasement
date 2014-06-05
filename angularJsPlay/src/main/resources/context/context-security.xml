@@ -14,7 +14,7 @@
 			requires-channel="http" />
 		<intercept-url pattern="/rest/logout" access="permitAll"
 			requires-channel="http" />
-		<intercept-url pattern="/rest/api-docs" access="permitAll"
+		<intercept-url pattern="/rest/api-docs/**" access="permitAll"
 			requires-channel="http" />
 		<intercept-url pattern="/rest/**" access="isAuthenticated()" />
 	</http>
