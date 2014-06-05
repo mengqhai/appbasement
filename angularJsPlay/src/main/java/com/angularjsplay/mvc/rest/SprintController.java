@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.angularjsplay.exception.ScrumValidationException;
 import com.angularjsplay.model.Backlog;
+import com.angularjsplay.model.SingleValue;
 import com.angularjsplay.model.Sprint;
 import com.angularjsplay.model.Task;
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
@@ -38,7 +39,7 @@ public class SprintController {
 	public Collection<Sprint> listSprints() {
 		return scrumService.getAll(Sprint.class);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET, params = { "first", "max" })
 	@ResponseBody
 	public Collection<Sprint> listSprints(@RequestParam("first") int first,
@@ -48,8 +49,8 @@ public class SprintController {
 
 	@RequestMapping(method = RequestMethod.GET, params = { "count" })
 	@ResponseBody
-	public Long getSprintCount() {
-		return scrumService.getAllCount(Sprint.class);
+	public SingleValue<Long> getSprintCount() {
+		return new SingleValue<Long>(scrumService.getAllCount(Sprint.class));
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -110,15 +111,15 @@ public class SprintController {
 
 	@RequestMapping(value = "/{id}/backlogs", method = RequestMethod.GET, params = "count")
 	@ResponseBody
-	public Long getBacklogCountForSprint(@PathVariable("id") long sprintId) {
-		return scrumService.getBacklogCountForSprint(sprintId);
+	public SingleValue<Long> getBacklogCountForSprint(
+			@PathVariable("id") long sprintId) {
+		return new SingleValue<Long>(
+				scrumService.getBacklogCountForSprint(sprintId));
 	}
-	
-	
+
 	@RequestMapping(value = "/{id}/tasks", method = RequestMethod.GET)
 	@ResponseBody
-	public Collection<Task> listTasksForSprint(
-			@PathVariable("id") long sprintId) {
+	public Collection<Task> listTasksForSprint(@PathVariable("id") long sprintId) {
 		return scrumService.getAllTasksForSprint(sprintId);
 	}
 
@@ -133,7 +134,9 @@ public class SprintController {
 
 	@RequestMapping(value = "/{id}/tasks", method = RequestMethod.GET, params = { "count" })
 	@ResponseBody
-	public Long getTaskCountForSprint(@PathVariable("id") long sprintId) {
-		return scrumService.getTaskCountForSprint(sprintId);
+	public SingleValue<Long> getTaskCountForSprint(
+			@PathVariable("id") long sprintId) {
+		return new SingleValue<Long>(
+				scrumService.getTaskCountForSprint(sprintId));
 	}
 }

@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.IEntity;
+import com.angularjsplay.model.SingleValue;
 import com.angularjsplay.model.Task;
 import com.angularjsplay.mvc.rest.error.RestError;
 
@@ -30,7 +31,8 @@ public class RestTestUtils {
 		Class<T[]> arrayClass = (Class<T[]>) Array.newInstance(childType, 0)
 				.getClass();
 		T[] entities = rest.getForObject(commonUrl, arrayClass);
-		Long actualCount = rest.getForObject(commonUrl + "?count", Long.class);
+		Long actualCount = Long.valueOf((Integer) rest.getForObject(
+				commonUrl + "?count", SingleValue.class).getValue());
 		Assert.assertEquals(count, actualCount);
 		Assert.assertEquals(count, Long.valueOf(entities.length));
 		if (count > 0) {

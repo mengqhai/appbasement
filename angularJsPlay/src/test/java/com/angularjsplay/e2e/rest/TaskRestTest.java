@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.angularjsplay.e2e.util.BasicAuthRestTemplate;
 import com.angularjsplay.e2e.util.RestTestUtils;
+import com.angularjsplay.model.SingleValue;
 import com.angularjsplay.model.Task;
 import com.angularjsplay.model.Task.TaskState;
 import com.angularjsplay.persistence.util.ScrumTestConstants;
@@ -50,7 +51,7 @@ public class TaskRestTest {
 				ScrumTestConstants.DATA_SET_SMALL_SPRINT,
 				ScrumTestConstants.DATA_SET_SMALL_BACKLOG,
 				ScrumTestConstants.DATA_SET_SMALL_TASK);
-		//rest = new RestTemplate();
+		// rest = new RestTemplate();
 		rest = new BasicAuthRestTemplate();
 		((BasicAuthRestTemplate) rest).setUsername("mqhnow1");
 		((BasicAuthRestTemplate) rest).setPassword("passw0rd");
@@ -73,8 +74,9 @@ public class TaskRestTest {
 			Assert.assertNotNull(task.getId());
 			Assert.assertNotNull(task.getState());
 		}
-		
-		Long taskCount = rest.getForObject(URL_BASE + "?count", Long.class);
+
+		Long taskCount = Long.valueOf((Integer) rest.getForObject(
+				URL_BASE + "?count", SingleValue.class).getValue());
 		Assert.assertEquals(Long.valueOf(tasks.length), taskCount);
 
 		int first = 1, max = 3;
@@ -191,10 +193,11 @@ public class TaskRestTest {
 		t8.setRemaining((short) 99);
 		t8.setEstimation((short) 5);
 
-//		return $($(t1, HttpStatus.BAD_REQUEST), $(t2, HttpStatus.BAD_REQUEST),
-//				$(t3, HttpStatus.BAD_REQUEST), $(t4, HttpStatus.BAD_REQUEST),
-//				$(t5, HttpStatus.BAD_REQUEST), $(t6, HttpStatus.NOT_FOUND),
-//				$(t7, HttpStatus.NOT_FOUND), $(t8, HttpStatus.BAD_REQUEST));
+		// return $($(t1, HttpStatus.BAD_REQUEST), $(t2,
+		// HttpStatus.BAD_REQUEST),
+		// $(t3, HttpStatus.BAD_REQUEST), $(t4, HttpStatus.BAD_REQUEST),
+		// $(t5, HttpStatus.BAD_REQUEST), $(t6, HttpStatus.NOT_FOUND),
+		// $(t7, HttpStatus.NOT_FOUND), $(t8, HttpStatus.BAD_REQUEST));
 		return $($(t7, HttpStatus.NOT_FOUND));
 
 	}

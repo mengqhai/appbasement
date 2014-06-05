@@ -22,6 +22,7 @@ import com.angularjsplay.e2e.util.BasicAuthRestTemplate;
 import com.angularjsplay.e2e.util.RestTestUtils;
 import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.Project;
+import com.angularjsplay.model.SingleValue;
 import com.angularjsplay.model.Sprint;
 import com.angularjsplay.persistence.util.ScrumTestConstants;
 import com.appbasement.component.IObjectPatcher;
@@ -75,7 +76,8 @@ public class ProjectRestTest {
 			Assert.assertNotNull(project.getCreatedAt());
 		}
 
-		Long projectCount = rest.getForObject(URL_BASE + "?count", Long.class);
+		Long projectCount = Long.valueOf((Integer) rest.getForObject(
+				URL_BASE + "?count", SingleValue.class).getValue());
 		Assert.assertEquals(Long.valueOf(projects.length), projectCount);
 
 		Project[] projects0 = rest.getForObject(URL_BASE + "?first=0&max=1",

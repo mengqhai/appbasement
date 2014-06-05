@@ -24,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 import com.angularjsplay.e2e.util.BasicAuthRestTemplate;
 import com.angularjsplay.e2e.util.RestTestUtils;
 import com.angularjsplay.model.Backlog;
+import com.angularjsplay.model.SingleValue;
 import com.angularjsplay.model.Sprint;
 import com.angularjsplay.model.Task;
 import com.angularjsplay.persistence.util.ScrumTestConstants;
@@ -54,7 +55,7 @@ public class SprintRestTest {
 				ScrumTestConstants.DATA_SET_SMALL_SPRINT,
 				ScrumTestConstants.DATA_SET_SMALL_BACKLOG,
 				ScrumTestConstants.DATA_SET_SMALL_TASK);
-		//rest = new RestTemplate();
+		// rest = new RestTemplate();
 		rest = new BasicAuthRestTemplate();
 		((BasicAuthRestTemplate) rest).setUsername("mqhnow1");
 		((BasicAuthRestTemplate) rest).setPassword("passw0rd");
@@ -74,8 +75,9 @@ public class SprintRestTest {
 			Assert.assertNotNull(s.getName());
 			Assert.assertNotNull(s.getCreatedAt());
 		}
-		
-		Long sprintCount = rest.getForObject(URL_BASE + "?count", Long.class);
+
+		Long sprintCount = Long.valueOf((Integer) rest.getForObject(
+				URL_BASE + "?count", SingleValue.class).getValue());
 		Assert.assertEquals(Long.valueOf(sprints.length), sprintCount);
 
 		int first = 1, max = 3;
@@ -401,8 +403,7 @@ public class SprintRestTest {
 
 	@Parameters(method = "getTasksForSprintParams")
 	@Test
-	public void testGetTasksForSprint(Long sprintId, Long count,
-			Long idOfFirst) {
+	public void testGetTasksForSprint(Long sprintId, Long count, Long idOfFirst) {
 		String commonUrl = URL_BASE + sprintId + "/tasks";
 		RestTestUtils.assertPagibleChildren(rest, commonUrl, Task.class, count,
 				idOfFirst);

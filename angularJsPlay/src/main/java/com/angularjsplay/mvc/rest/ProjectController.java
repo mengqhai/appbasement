@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.angularjsplay.exception.ScrumValidationException;
 import com.angularjsplay.model.Backlog;
 import com.angularjsplay.model.Project;
+import com.angularjsplay.model.SingleValue;
 import com.angularjsplay.model.Sprint;
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
@@ -50,8 +51,8 @@ public class ProjectController {
 
 	@RequestMapping(method = RequestMethod.GET, params = { "count" })
 	@ResponseBody
-	public Long getProjectCount() {
-		return scrumService.getAllCount(Project.class);
+	public SingleValue<Long> getProjectCount() {
+		return new SingleValue<Long>(scrumService.getAllCount(Project.class));
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -110,8 +111,9 @@ public class ProjectController {
 
 	@RequestMapping(value = "/{id}/backlogs", method = RequestMethod.GET, params = { "count" })
 	@ResponseBody
-	public Long getBacklogCountForProject(@PathVariable("id") long id) {
-		return scrumService.getBacklogCountForProject(id);
+	public SingleValue<Long> getBacklogCountForProject(
+			@PathVariable("id") long id) {
+		return new SingleValue<Long>(scrumService.getBacklogCountForProject(id));
 	}
 
 	@RequestMapping(value = "/{id}/sprints", method = RequestMethod.GET)
@@ -131,8 +133,9 @@ public class ProjectController {
 
 	@RequestMapping(value = "/{id}/sprints", method = RequestMethod.GET, params = { "count" })
 	@ResponseBody
-	public Long getSprintCountForProject(@PathVariable("id") long id) {
-		return scrumService.getSprintCountForProject(id);
+	public SingleValue<Long> getSprintCountForProject(
+			@PathVariable("id") long id) {
+		return new SingleValue<Long>(scrumService.getSprintCountForProject(id));
 	}
 
 }

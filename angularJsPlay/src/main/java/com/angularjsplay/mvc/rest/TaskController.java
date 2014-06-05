@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.angularjsplay.exception.ScrumValidationException;
+import com.angularjsplay.model.SingleValue;
 import com.angularjsplay.model.Task;
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
@@ -43,7 +44,7 @@ public class TaskController {
 	public Collection<Task> listTasks() {
 		return scrumService.getAll(Task.class);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET, params = { "first", "max" })
 	@ResponseBody
 	public Collection<Task> listTasks(@RequestParam("first") int first,
@@ -53,8 +54,8 @@ public class TaskController {
 
 	@RequestMapping(method = RequestMethod.GET, params = { "count" })
 	@ResponseBody
-	public Long getTaskCount() {
-		return scrumService.getAllCount(Task.class);
+	public SingleValue<Long> getTaskCount() {
+		return new SingleValue<Long>(scrumService.getAllCount(Task.class));
 	}
 
 	@RequestMapping(value = "/{id}", method = GET)

@@ -12,11 +12,19 @@
   <h1>'Allo, 'Allo!</h1>
   <p class="lead">
     <img src="images/yeoman.png" alt="I'm Yeoman"><br>
-    <ul>
-        <li ng-repeat="p in projects">{{p.id}} -- {{p.name}}</li>
-    </ul>
+    <div>
+        <h4>Selected: {{selectedProject.id}}</h4>
+        <ul>
+            <li ng-repeat="p in projects"><a ng-click="selectProject(p)">{{p.id}} -- {{p.name}}</a></li>
+        </ul>
+    </div>
+
+
   </p>
-  <p><a class="btn btn-lg btn-success" ng-click="listProjects()">Projects<span class="glyphicon glyphicon-ok"></span></a></p>
+  <p>
+      <a class="btn btn-lg btn-success" ng-click="listProjects()">Projects<span class="glyphicon glyphicon-ok"></span></a>
+      <a class="btn btn-lg btn-success" ng-click="listBacklogs(true,0,5)">Backlogs<span class="glyphicon glyphicon-ok"></span></a>
+  </p>
   <p><button class="btn btn-default" ng-click="open()">Open me</button>
       <button class="btn btn-default" ng-click="openLogin()">Login</button>
       <button class="btn btn-default" ng-click="showUser()">Show user</button>
@@ -27,7 +35,13 @@
 </div>
 
 <div class="row marketing">
-
+    <div ng-controller="BacklogsPaginationCtrl">
+        <h4>Count: {{backlogCount.value}}</h4>
+        <pagination ng-show="show()" total-items="backlogCount.value" ng-model="currentPage" items-per-page="itemsPerPage"></pagination>
+        <ul>
+            <li ng-repeat="b in backlogs">{{b.id}} -- {{b.name}}</li>
+        </ul>
+    </div>
 </div>
 
 <div class="footer">

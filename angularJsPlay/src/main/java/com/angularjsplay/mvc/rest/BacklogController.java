@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.angularjsplay.exception.ScrumValidationException;
 import com.angularjsplay.model.Backlog;
+import com.angularjsplay.model.SingleValue;
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.angularjsplay.service.IScrumService;
@@ -46,8 +47,8 @@ public class BacklogController {
 
 	@RequestMapping(method = RequestMethod.GET, params = { "count" })
 	@ResponseBody
-	public Long getBacklogCount() {
-		return scrumService.getAllCount(Backlog.class);
+	public SingleValue<Long> getBacklogCount() {
+		return new SingleValue<Long>(scrumService.getAllCount(Backlog.class));
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")

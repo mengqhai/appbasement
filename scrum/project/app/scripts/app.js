@@ -7,7 +7,9 @@ angular
         'ngSanitize',
         'ngRoute',
         'security.service',
-        'resources.projects'
+        'resources.projects',
+        'resources.backlogs',
+        'ui.bootstrap.pagination'
     ])
     .config(function ($routeProvider, $httpProvider) {
         $routeProvider
