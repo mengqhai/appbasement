@@ -74,6 +74,16 @@ public class ProjectRestTest {
 			Assert.assertNotNull(project.getId());
 			Assert.assertNotNull(project.getCreatedAt());
 		}
+
+		Long projectCount = rest.getForObject(URL_BASE + "?count", Long.class);
+		Assert.assertEquals(Long.valueOf(projects.length), projectCount);
+
+		Project[] projects0 = rest.getForObject(URL_BASE + "?first=0&max=1",
+				Project[].class);
+		Assert.assertEquals(1, projects0.length);
+		Assert.assertEquals(projects[0], projects0[0]);
+		Assert.assertEquals(projects[0].getId(), projects0[0].getId());
+
 	}
 
 	public Object[] getProjectParams() {

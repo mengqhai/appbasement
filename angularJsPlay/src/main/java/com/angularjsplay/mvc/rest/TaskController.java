@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -41,6 +42,19 @@ public class TaskController {
 	@ResponseBody
 	public Collection<Task> listTasks() {
 		return scrumService.getAll(Task.class);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, params = { "first", "max" })
+	@ResponseBody
+	public Collection<Task> listTasks(@RequestParam("first") int first,
+			@RequestParam("max") int max) {
+		return scrumService.getAll(Task.class, first, max);
+	}
+
+	@RequestMapping(method = RequestMethod.GET, params = { "count" })
+	@ResponseBody
+	public Long getTaskCount() {
+		return scrumService.getAllCount(Task.class);
 	}
 
 	@RequestMapping(value = "/{id}", method = GET)

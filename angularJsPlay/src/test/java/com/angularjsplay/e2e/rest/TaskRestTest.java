@@ -73,6 +73,16 @@ public class TaskRestTest {
 			Assert.assertNotNull(task.getId());
 			Assert.assertNotNull(task.getState());
 		}
+		
+		Long taskCount = rest.getForObject(URL_BASE + "?count", Long.class);
+		Assert.assertEquals(Long.valueOf(tasks.length), taskCount);
+
+		int first = 1, max = 3;
+		Task[] tasks0 = rest.getForObject(URL_BASE + "?first=" + first
+				+ "&max=" + max, Task[].class);
+		Assert.assertEquals(max, tasks0.length);
+		Assert.assertEquals(tasks[first], tasks0[0]);
+		Assert.assertEquals(tasks[first].getId(), tasks0[0].getId());
 	}
 
 	public Object[] getTaskParams() {

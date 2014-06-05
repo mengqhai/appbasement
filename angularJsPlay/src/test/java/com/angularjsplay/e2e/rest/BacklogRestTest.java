@@ -48,7 +48,7 @@ public class BacklogRestTest {
 				ScrumTestConstants.DATA_SET_SMALL_SPRINT,
 				ScrumTestConstants.DATA_SET_SMALL_BACKLOG,
 				ScrumTestConstants.DATA_SET_SMALL_TASK);
-		//rest = new RestTemplate();
+		// rest = new RestTemplate();
 		rest = new BasicAuthRestTemplate();
 		((BasicAuthRestTemplate) rest).setUsername("mqhnow1");
 		((BasicAuthRestTemplate) rest).setPassword("passw0rd");
@@ -71,6 +71,16 @@ public class BacklogRestTest {
 			Assert.assertNotNull(b.getName());
 			Assert.assertNotNull(b.getCreatedAt());
 		}
+
+		Long backlogCount = rest.getForObject(URL_BASE + "?count", Long.class);
+		Assert.assertEquals(Long.valueOf(backlogs.length), backlogCount);
+
+		int first = 1, max = 3;
+		Backlog[] backlogs0 = rest.getForObject(URL_BASE + "?first=" + first
+				+ "&max=" + max, Backlog[].class);
+		Assert.assertEquals(max, backlogs0.length);
+		Assert.assertEquals(backlogs[first], backlogs0[0]);
+		Assert.assertEquals(backlogs[first].getId(), backlogs0[0].getId());
 	}
 
 	public Object[] getBacklogParams() {

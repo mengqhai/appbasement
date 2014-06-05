@@ -74,6 +74,16 @@ public class SprintRestTest {
 			Assert.assertNotNull(s.getName());
 			Assert.assertNotNull(s.getCreatedAt());
 		}
+		
+		Long sprintCount = rest.getForObject(URL_BASE + "?count", Long.class);
+		Assert.assertEquals(Long.valueOf(sprints.length), sprintCount);
+
+		int first = 1, max = 3;
+		Sprint[] sprints0 = rest.getForObject(URL_BASE + "?first=" + first
+				+ "&max=" + max, Sprint[].class);
+		Assert.assertEquals(max, sprints0.length);
+		Assert.assertEquals(sprints[first], sprints0[0]);
+		Assert.assertEquals(sprints[first].getId(), sprints0[0].getId());
 	}
 
 	public Object[] getSprintsParams() {

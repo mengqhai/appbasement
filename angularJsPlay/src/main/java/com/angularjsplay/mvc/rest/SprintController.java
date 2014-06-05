@@ -38,6 +38,19 @@ public class SprintController {
 	public Collection<Sprint> listSprints() {
 		return scrumService.getAll(Sprint.class);
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, params = { "first", "max" })
+	@ResponseBody
+	public Collection<Sprint> listSprints(@RequestParam("first") int first,
+			@RequestParam("max") int max) {
+		return scrumService.getAll(Sprint.class, first, max);
+	}
+
+	@RequestMapping(method = RequestMethod.GET, params = { "count" })
+	@ResponseBody
+	public Long getSprintCount() {
+		return scrumService.getAllCount(Sprint.class);
+	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
