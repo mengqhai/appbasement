@@ -12,7 +12,7 @@
             </div>
             <div>
                 <label for="repeat">Repeat</label><input id="repeat" name="_repeat" type="password" ng-model="user.passwordRepeat" validate-equals="user.password" required>
-                <span ng-show="form.repeat.$error['equal']" class="help-inline">X</span>
+                <span ng-show="form._repeat.$error['equal']" class="help-inline">X</span>
             </div>
             <div>
                 <label for="email">Email</label><input id="email" name="email" type="email" ng-model="user.email" required>
