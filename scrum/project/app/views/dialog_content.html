@@ -2,6 +2,27 @@
     <h3 class="modal-title">I'm a modal!</h3>
 </div>
 <div class="modal-body">
+    <div>
+        <form name="form" novalidate patchable="getPatch" autocomplete="off">
+            <div>
+                <label for="username">Username</label><input id="username" name="username" type="text" ng-model="user.username" required>
+            </div>
+            <div>
+                <label for="password">Password</label><input id="password" name="password" type="password" ng-model="user.password" required autocomplete="off">
+            </div>
+            <div>
+                <label for="repeat">Repeat</label><input id="repeat" name="_repeat" type="password" ng-model="user.passwordRepeat" validate-equals="user.password" required>
+                <span ng-show="form.repeat.$error['equal']" class="help-inline">X</span>
+            </div>
+            <div>
+                <label for="email">Email</label><input id="email" name="email" type="email" ng-model="user.email" required>
+            </div>
+            <div>
+                <label for="description">Not Dirty</label><input id="description" name="description" type="text" ng-model="user.description" required>
+            </div>
+
+        </form>
+    </div>
     <ul>
         <li ng-repeat="item in items">
             <a ng-click="selected.item = item">{{ item }}</a>
@@ -10,6 +31,6 @@
     Selected: <b>{{ selected.item }}</b>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-primary" ng-click="ok()" ng-disabled="form.$invalid">OK</button>
     <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
 </div>

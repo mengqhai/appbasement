@@ -12,19 +12,6 @@
   <h1>'Allo, 'Allo!</h1>
   <p class="lead">
     <div>
-    <form name="form" novalidate>
-        <div>
-            <label for="password">Password</label><input id="password" name="password" type="password" ng-model="user.password" required>
-        </div>
-        <div>
-            <label for="repeat">Repeat</label><input id="repeat" name="repeat" type="password" ng-model="user.passwordRepeat" validate-equals="user.password" required>
-            <span ng-show="form.repeat.$error['equal']" class="help-inline">X</span>
-
-        </div>
-
-    </form>
-    </div>
-    <div>
         <h4>Selected: {{selectedProject.id}}</h4>
         <ul>
             <li ng-repeat="p in projects"><a ng-click="selectProject(p)">{{p.id}} -- {{p.name}}</a></li>

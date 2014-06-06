@@ -80,13 +80,18 @@ angular.module('scrumApp')
             }
         });
     })
-    .controller("ModalInstanceCtrl", function ($scope, $modalInstance, items) {
+    .controller("ModalInstanceCtrl", function ($scope, $modalInstance, items, $log) {
         $scope.items = items;
         $scope.selected = {
             item: $scope.items[0]
         };
-
+        $scope.getPatch = null; // for patchable directive
+        $scope.user={
+            description: 'Hello description'
+        }
         $scope.ok = function () {
+            var patch = this.form.$getPatch();
+            $log.info(patch);
             $modalInstance.close($scope.selected.item);
         };
 
