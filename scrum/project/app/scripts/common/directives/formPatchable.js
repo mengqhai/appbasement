@@ -8,15 +8,14 @@ angular.module('formPatchable', [])
             link: function (scope, element, attrs, ctrl) {
                 var getPatch = function () {
                     var patch = {};
-                    angular.forEach(form, function (input) {
-                        if (ctrl[input.name].$dirty && input.name.indexOf('_') !== 0) {
-                            if (ctrl[input.name] && ctrl[input.name].$modelValue !== undefined) {
-                                patch[input.name] = ctrl[input.name].$modelValue;
-                            } else {
-                                patch[input.name] = input.value;
-                            }
-                        }
-                    });
+                    for (fieldName in ctrl) {
+                        if (fieldName.indexOf('$') === 0 || fieldName.indexOf('_') === 0)
+                            continue;
+
+                        var field = ctrl[fieldName];
+                        if (ctrl[fieldName].$dirty)
+                            patch[fieldName] = ctrl[fieldName].$modelValue;
+                    };
                     return patch;
                 };
                 // added the function to the form controller
