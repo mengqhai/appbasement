@@ -17,6 +17,16 @@ describe('forPatchable', function () {
         expect($scope.form.$getPatch).toBeDefined();
     });
 
+    it('should attach a customized function to get patch', function() {
+        var linkingFn = $compile("<form name='form' patchable='helloMyPatch'>" +
+            "<input name='username' ng-model='user.username'>" +
+            "</form>")
+        var element = linkingFn($scope);
+        $scope.$digest();
+        expect($scope.form).toBeDefined();
+        expect($scope.form.$helloMyPatch).toBeDefined();
+    })
+
     describe('patch with dirty fields', function () {
         var element;
         beforeEach(function() {
