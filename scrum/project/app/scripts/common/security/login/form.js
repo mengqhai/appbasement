@@ -1,11 +1,12 @@
 angular.module('security.login.form', ['security.login.services', 'security.retryQueue', 'ui.bootstrap.modal', "ui.bootstrap.tpls"])
-    .factory('loginDialog', ['$modal', 'securityRetryQueue', function ($modal, queue) {
+    .factory('loginDialog', ['$modal', 'securityRetryQueue', '$log', function ($modal, queue, $log) {
         // Login form dialog stuff
         var loginDialog = null;
 
         function openLoginDialog() {
             if (loginDialog) {
-                throw new Error('Trying to open a dialog that is already open!');
+                $log.info('The dialog is already open.');
+                return;
             }
             loginDialog = $modal.open({
                 templateUrl: 'views/common/security/login/form.tpl.html',
