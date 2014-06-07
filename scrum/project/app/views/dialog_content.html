@@ -5,7 +5,8 @@
     <div>
         <form name="form" novalidate patchable="getPatch" autocomplete="off">
             <div>
-                <label for="username">Username</label><input id="username" name="username" type="text" ng-model="user.username" required>
+                <label for="username">Username</label><input id="username" name="username" type="text" ng-model="user.username" required unique-username>
+                <span ng-show="form.username.$error['uniqueUseranme']" class="help-inline">Not unique</span>
             </div>
             <div>
                 <label for="password">Password</label><input id="password" name="password" type="password" ng-model="user.password" required autocomplete="off">

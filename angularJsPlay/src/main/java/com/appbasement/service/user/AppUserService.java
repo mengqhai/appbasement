@@ -45,6 +45,12 @@ public class AppUserService implements IAppUserService {
 	}
 
 	@Override
+	public boolean isUsernameUnique(String username) {
+		User user = userDao.findByUsername(username);
+		return user == null;
+	}
+
+	@Override
 	public void deleteUserById(Long id) {
 		User userToDelete = userDao.getReference(id);
 		try {

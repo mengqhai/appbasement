@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.angularjsplay.exception.ScrumValidationException;
+import com.angularjsplay.model.SingleValue;
 import com.angularjsplay.mvc.validation.ValidateOnCreate;
 import com.angularjsplay.mvc.validation.ValidateOnUpdate;
 import com.appbasement.component.IObjectPatcher;
@@ -90,6 +92,16 @@ public class UserController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteUser(@PathVariable("id") long id) {
 		userService.deleteUserById(id);
+	}
+
+	@RequestMapping(method = RequestMethod.GET, params = { "isUsernameUnique" })
+	@ResponseBody
+	public SingleValue<Boolean> isUsernameUnique(
+			@RequestParam("isUsernameUnique") String username) {
+		if (username == null || username.equals("")) {
+			return new SingleValue<Boolean>(false);
+		}
+		return new SingleValue<Boolean>(userService.isUsernameUnique(username));
 	}
 
 }

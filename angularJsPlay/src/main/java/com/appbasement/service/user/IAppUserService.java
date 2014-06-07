@@ -31,4 +31,6 @@ public interface IAppUserService {
 
 	public abstract void deleteGroupById(Long id);
 
+	public abstract boolean isUsernameUnique(String username);
+
 }

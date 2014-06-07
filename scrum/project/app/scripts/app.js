@@ -10,7 +10,7 @@ angular
         'resources.projects',
         'resources.backlogs',
         'ui.bootstrap.pagination',
-        'validateEquals', 'formPatchable'
+        'validateEquals', 'formPatchable', 'uniqueChecks'
     ])
     .config(function ($routeProvider, $httpProvider) {
         $routeProvider

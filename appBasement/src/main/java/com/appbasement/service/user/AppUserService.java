@@ -2,11 +2,14 @@ package com.appbasement.service.user;
 
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.appbasement.exception.ResourceNotFoundException;
 import com.appbasement.model.Group;
 import com.appbasement.model.User;
 import com.appbasement.persistence.IGroupDAO;
@@ -42,9 +45,20 @@ public class AppUserService implements IAppUserService {
 	}
 
 	@Override
+	public boolean isUsernameUnique(String username) {
+		User user = userDao.findByUsername(username);
+		return user == null;
+	}
+
+	@Override
 	public void deleteUserById(Long id) {
 		User userToDelete = userDao.getReference(id);
-		userDao.remove(userToDelete);
+		try {
+			userDao.remove(userToDelete);
+		} catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException(e);
+		}
+
 	}
 
 	@Override
