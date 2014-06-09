@@ -64,6 +64,25 @@ angular.module('scrumApp')
 
         }
 
+        // for alerts
+        $scope.global_alerts=[{
+            type:'info',
+            msg:'Sample info message'
+        }, {
+            type:'danger',
+            msg:'Something dangerous'
+        }];
+        $scope.alertMsg='A new alert';
+        $scope.alertType='info';
+        $scope.addAlert=function() {
+            var newAlert={
+                msg:$scope.alertMsg,
+                type:$scope.alertType
+            };
+            $scope.global_alerts.push(newAlert);
+        }
+
+
 
     })
     .controller('BacklogsPaginationCtrl', function ($scope) {
