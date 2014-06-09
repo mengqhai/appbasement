@@ -1,12 +1,12 @@
 angular.module('uniqueChecks', ['resources.users'])
-    .directive('uniqueUsername', ['Users','$timeout', function (Users, $timeout) {
+    .directive('uniqueUsername', ['Users', '$timeout', function (Users, $timeout) {
         return {
             require: 'ngModel',
             restrict: 'A',
             link: function (scope, el, attrs, ctrl) {
-                //TODO: We need to check that the value is different to the original
+                // We need to check that the value is different to the original
                 var original;
-                ctrl.$formatters.unshift(function(modelValue) {
+                ctrl.$formatters.unshift(function (modelValue) {
                     original = modelValue;
                     return modelValue;
                 });
@@ -17,6 +17,10 @@ angular.module('uniqueChecks', ['resources.users'])
                 // name is typed, we will wait 500 ms to make the call to the backend. If we type again before the
                 // timeout is fired, we will cancel the previous call, and make a new one.
                 var stop_timeout;
+
+                // We are only checking with the server in the $parser, that is, when the user changes
+                // the input. If the value is updated programmatically, via the model, we assume that
+                // the application business logic ensures that this is a valid e-mail address.
                 //using push() here to run it as the last parser, after we are sure that other validators were run
                 ctrl.$parsers.push(function (viewValue) {
                     if (stop_timeout) {
@@ -24,17 +28,18 @@ angular.module('uniqueChecks', ['resources.users'])
                         // This means that we won't actually issue any request unless user stopped
                         // changing the value for more then 500 ms.  Which prevents sending too much
                         // request while user is typing.
-                    };
+                    }
+                    ;
 
                     if (!viewValue || viewValue === original) {
                         // we don't validate an empty string
                         ctrl.$setValidity('uniqueUseranme', true);
                         return viewValue;
-                    };
+                    }
+                    ;
 
 
-
-                    stop_timeout = $timeout(function() {
+                    stop_timeout = $timeout(function () {
                         Users.isUsernameUnique(viewValue, function (result) {
                             if (result.value) {
                                 ctrl.$setValidity('uniqueUseranme', true);
