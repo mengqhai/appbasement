@@ -94,7 +94,7 @@ public class UserController {
 		userService.deleteUserById(id);
 	}
 
-	@RequestMapping(method = RequestMethod.GET, params = { "isUsernameUnique" })
+	@RequestMapping(method = RequestMethod.GET, params = { "isUsernameUnique" }, value = "/checks")
 	@ResponseBody
 	public SingleValue<Boolean> isUsernameUnique(
 			@RequestParam("isUsernameUnique") String username) {

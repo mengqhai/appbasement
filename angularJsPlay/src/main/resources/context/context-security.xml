@@ -16,6 +16,7 @@
 			requires-channel="http" />
 		<intercept-url pattern="/rest/api-docs/**" access="permitAll"
 			requires-channel="http" />
+		<intercept-url pattern="/rest/users/checks/**" access="permitAll" />
 		<intercept-url pattern="/rest/**" access="isAuthenticated()" />
 	</http>
 
