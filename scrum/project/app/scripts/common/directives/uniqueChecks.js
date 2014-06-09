@@ -5,6 +5,12 @@ angular.module('uniqueChecks', ['resources.users'])
             restrict: 'A',
             link: function (scope, el, attrs, ctrl) {
                 //TODO: We need to check that the value is different to the original
+                var original;
+                ctrl.$formatters.unshift(function(modelValue) {
+                    original = modelValue;
+                    return modelValue;
+                });
+
 
                 // if we type too fast, we will be doing a lot of requests to the server (one for every new character typed).
                 // To avoid this unnecessary load, we will be using the $timeout function provided by AngularJS. When a
@@ -20,7 +26,7 @@ angular.module('uniqueChecks', ['resources.users'])
                         // request while user is typing.
                     };
 
-                    if (!viewValue) {
+                    if (!viewValue || viewValue === original) {
                         // we don't validate an empty string
                         ctrl.$setValidity('uniqueUseranme', true);
                         return viewValue;

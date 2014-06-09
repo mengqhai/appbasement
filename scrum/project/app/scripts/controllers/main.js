@@ -87,7 +87,8 @@ angular.module('scrumApp')
         };
         $scope.getPatch = null; // for patchable directive
         $scope.user={
-            description: 'Hello description'
+            description: 'Hello description',
+            username:'Risa'
         }
         $scope.ok = function () {
             var patch = this.form.$getPatch();
