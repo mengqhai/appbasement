@@ -63,7 +63,8 @@ angular.module('scrumApp')
             }
 
         }
-
+    })
+    .controller('AlertPlayCtrl', function($scope) {
         // for alerts
         $scope.global_alerts=[{
             type:'info',
@@ -81,9 +82,6 @@ angular.module('scrumApp')
             };
             $scope.global_alerts.push(newAlert);
         }
-
-
-
     })
     .controller('BacklogsPaginationCtrl', function ($scope) {
         $scope.itemsPerPage = 5;
