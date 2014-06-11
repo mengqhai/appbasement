@@ -1,4 +1,4 @@
-angular.module('alert', [])
+angular.module('alert', ['ngAnimate'])
     // a alert directive using transclusion
     // usage:
     // <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">

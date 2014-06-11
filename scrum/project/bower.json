@@ -12,7 +12,8 @@
     "angular-sanitize": "1.2.15",
     "angular-route": "1.2.15",
     "angular-bootstrap":"0.11.0",
-    "angular-loading-bar":"latest"
+    "angular-loading-bar":"latest",
+    "angular-animate": "latest"
   },
   "devDependencies": {
     "angular-mocks": "1.2.15",

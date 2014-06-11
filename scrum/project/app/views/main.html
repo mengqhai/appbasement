@@ -28,7 +28,7 @@
     <div>
         <h4>Selected: {{selectedProject.id}}</h4>
         <ul>
-            <li ng-repeat="p in projects"><a ng-click="selectProject(p)">{{p.id}} -- {{p.name}}</a></li>
+            <li ng-repeat="p in projects" class="animate-repeat"><a ng-click="selectProject(p)">{{p.id}} -- {{p.name}}</a></li>
         </ul>
     </div>
 
@@ -52,7 +52,7 @@
         <h4>Count: {{backlogCount.value}}</h4>
         <pagination ng-show="show()" total-items="backlogCount.value" ng-model="currentPage" items-per-page="itemsPerPage"></pagination>
         <ul>
-            <li ng-repeat="b in backlogs">{{b.id}} -- {{b.name}}</li>
+            <li ng-repeat="b in backlogs" class="animate-repeat">{{b.id}} -- {{b.name}}</li>
         </ul>
     </div>
 </div>

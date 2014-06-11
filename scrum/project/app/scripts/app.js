@@ -6,6 +6,7 @@ angular
         'ngResource',
         'ngSanitize',
         'ngRoute',
+        'ngAnimate',
         'security.service',
         'resources.projects',
         'resources.backlogs',
