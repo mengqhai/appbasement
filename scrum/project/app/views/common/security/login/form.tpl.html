@@ -13,10 +13,18 @@
         <div class="alert alert-info">
             {{authInfo}}
         </div>
-        <label>Username</label>
-        <input name="login" type="text" ng-model="user.username" required autofocus>
-        <label>Password</label>
-        <input name="pass" type="password" ng-model="user.password" required autocomplete="off">
+        <!--<label>Username</label>-->
+        <!--<input name="login" type="text" ng-model="user.username" required autofocus>-->
+        <!--<label>Password</label>-->
+        <!--<input name="pass" type="password" ng-model="user.password" required autocomplete="off">-->
+        <field name="login" type="text" ng-model="user.username" required autofocus>
+            <label>Username</label>
+            <validator key="required">{{$fieldLabel}} is required</validator>
+        </field>
+        <field name="pass" type="password" ng-model="user.password" required autocomplete="off">
+            <label>Password</label>
+            <validator key="required">{{$fieldLabel}} is required</validator>
+        </field>
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary login" ng-click="login()" ng-disabled="form.$invalid">Sign in</button>
