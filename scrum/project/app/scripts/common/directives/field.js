@@ -122,6 +122,10 @@ angular.module('field', [])
             // contain directives.
             require: ['?^form'], // If we are in a form then we can access the ngModelController
             compile: function (element, attrs) {
+                if (!attrs['ngModel']) {
+                    throw new Error('ng-model not set for field '+attrs.name);
+                }
+
                 var validationMsgs = getValidationMessageMaps(element);
                 var labelContent = getLabelContent(element);
                 element.html('');  // we emtpy out the content of the element so that we have a clean
