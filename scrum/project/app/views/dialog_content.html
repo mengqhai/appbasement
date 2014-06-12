@@ -4,10 +4,13 @@
 <div class="modal-body">
     <div>
         <form name="form" novalidate patchable="getPatch" autocomplete="off">
+            <!--
             <div>
                 <label for="username">Username</label><input id="username" name="username" type="text" ng-model="user.username" required unique-username>
                 <span ng-show="form.username.$error['uniqueUseranme']" class="help-inline">Not unique</span>
             </div>
+            -->
+            <!--
             <div>
                 <label for="password">Password</label><input id="password" name="password" type="password" ng-model="user.password" required autocomplete="off">
             </div>
@@ -15,13 +18,50 @@
                 <label for="repeat">Repeat</label><input id="repeat" name="_repeat" type="password" ng-model="user.passwordRepeat" validate-equals="user.password" required>
                 <span ng-show="form._repeat.$error['equal']" class="help-inline">X</span>
             </div>
-            <div>
-                <label for="email">Email</label><input id="email" name="email" type="email" ng-model="user.email" required>
-            </div>
-            <div>
-                <label for="description">Not Dirty</label><input id="description" name="description" type="text" ng-model="user.description" required>
-            </div>
+            -->
+            <field name="username" type="text" ng-model="user.username" required unique-username>
+                <label>Username</label>
+                <validator key="uniqueUseranme">Username not unique</validator>
+            </field>
 
+            <field name="password" ng-model="user.password" required autocomplete="off" type="password">
+                <label>Password</label>
+            </field>
+            <field name="_repeat" ng-model="user.passowrdRepeat" type="password" validate-equals="user.password" required>
+                <label>Repeat password</label>
+                <validator key="equal">Password not match</validator>
+            </field>
+
+
+            <field name="email" ng-model="user.email" type="email" required>
+                <label>Email</label>
+                <validator key="email">Not a valid Email address.</validator>
+            </field>
+
+            <field name="sampleTxt" type="text" ng-model="user.sampleTxt">
+                <label>(<span ng-repeat="i in [0,1,2,3,4,5]">{{i}}<span ng-if="!$last">, </span></span>)</label>
+            </field>
+            </field>
+            <field name="age" ng-model="user.age" type="number" required min="0">
+                <label>Age</label>
+                <validator key='required'>{{$fieldLabel}} is required</validator>
+                <validator key='number'>{{$fieldLabel}} must be a number</validator>
+                <validator key='min'>{{$fieldLabel}} must be no less then 0. (too young for {{user.username}})</validator>
+            </field>
+
+            <field name="gender" ng-model="user.gender" template="select" ng-options="x for x in ['male', 'female']" required>
+                <label>Gender</label>
+            </field>
+
+            <field name="description" template="textarea" ng-model="user.description" ng-maxlength="20" ng-minlength="3">
+                <label>Description</label>
+                <validator key="maxlength">{{$fieldLabel}} must be less than 20</validator>
+                <validator key="minlength">{{$fieldLabel}} must be greater than 3</validator>
+            </field>
+
+            <field name="isAdmin" type="checkbox" ng-model="user.isAdmin">
+                <label>Is Admin</label>
+            </field>
         </form>
     </div>
     <ul>

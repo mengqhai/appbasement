@@ -1,0 +1,12 @@
+<div class="control-group"
+     ng-class="{'has-error' : $field.$invalid && $field.$dirty, 'has-success' : $field.$valid && $field.$dirty}">
+    <!--<label class="control-label">{{label}}</label>-->
+
+    <div class="controls">
+        <label class="control-label">{{label}}</label>
+        <select></select>
+        <span ng-repeat="(key, error) in $field.$error"
+              ng-show="error && $field.$dirty"
+              class="help-block">{{$validationMessages[key]}}</span>
+    </div>
+</div>

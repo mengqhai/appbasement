@@ -103,3 +103,8 @@ body {
     opacity:1;
     max-height: 40px;
 }
+
+ .control-label {
+    width: 150px;
+    vertical-align: top;
+}
