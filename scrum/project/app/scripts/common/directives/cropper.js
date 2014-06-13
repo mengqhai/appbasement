@@ -38,15 +38,19 @@ angular.module('cropper', [])
                     clear();
                     img.removeAttr('style') // reset the width & height Jcrop has set
                     img.attr('src', newValue);
-                    img.Jcrop({
+                    var config = {
                         aspectRatio: scope.aspectRatio,
                         boxHeight: scope.boxHeight,
                         boxWidth: scope.boxWidth,
                         onChange: refreshCoords,
                         onSelect: refreshCoords,
-                        setSelect: scope.initSelect(),
                         maxSize:[scope.maxSelectWidth, scope.maxSelectHeight]
-                    }, function () {
+                    };
+                    if (!jcrop_api) {
+                        config.setSelect = scope.initSelect();
+                    };
+
+                    img.Jcrop(config, function () {
                         jcrop_api = this;
 
                     });
