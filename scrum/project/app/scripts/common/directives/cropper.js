@@ -5,20 +5,33 @@ angular.module('cropper', [])
         return {
             restrict: 'E',
             replace: true,
-            templateUrl: 'views/common/directives/cropper.tpl.html',
+            template:'<img>',
             scope: {
                 aspectRatio: '@',
-                src: '@',
-                selected: '&'
+                src: '=bindSrc'
             },
             link: function (scope, element, attrs) {
+                var img = element.eq(0);
 
-                var img = element.find('img').eq(0);
-                img.attr('src', scope.src);
-                img.Jcrop({
-                    aspectRatio: scope.aspectRatio,
-                    onSelect: scope.selected
+
+
+                var jcrop_api;
+                var clear = function() {
+                    if (jcrop_api) {
+                        jcrop_api.destroy();
+                    };
+                };
+                scope.$watch('src', function(newValue) {
+                    clear();
+                    img.attr('src', newValue);
+                    img.Jcrop({
+                        aspectRatio: scope.aspectRatio
+                    }, function() {
+                        jcrop_api = this;
+                    });
                 });
+
+                scope.$on('$destroy', clear);
             }
         }
     });
