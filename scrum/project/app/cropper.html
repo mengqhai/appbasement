@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Cropper</title>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="vendor/tapmodo-Jcrop-1902fbc/css/jquery.Jcrop.css" />
+    <style>
+        .test-area {
+            display: block;
+            height: 400px;
+        }
+
+        .img-container {
+            max-height: 400px;
+            max-width: 800px;
+            float: left;
+        }
+        .img-container img {
+            height: 380px;
+        }
+
+        .img-preview {
+            height:200px;
+            width: 200px;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="vendor/tapmodo-Jcrop-1902fbc/js/jquery.Jcrop.js"></script>
+
+<script src="scripts/common/directives/cropper.js"></script>
+<script src="scripts/cropperPlay.js"></script>
+
+<!-- Wrap the img with a block element -->
+<div class="test-area">
+    <h4>Native jQuery</h4>
+    <div class="img-container">
+        <img id="nativeCropper" class="cropper" src="images/motor.jpg">
+    </div>
+
+    <div class="img-preview" style="width:100px;height:100px;overflow:hidden;margin-left:5px;">
+        <img  id="nativePreview" src="images/motor.jpg">
+    </div>
+</div>
+<div ng-app="cropperPlay" class="test-area">
+    <h4>AngularJs</h4>
+    <cropper class="img-container" src="images/motor.jpg" aspect-ratio="1"></cropper>
+</div>
+
+
+
+</body>
+</html>
