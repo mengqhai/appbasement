@@ -29,6 +29,7 @@ angular.module('cropperPlay', ['cropper','field'])
         $scope.imgInfo = {
             src:"http://pic25.nipic.com/20121121/668573_131030162115_2.jpg"
         };
+        $scope.coords={};
         $scope.showPreview = function(coords) {
             var rx = 100/coords.w;
             var ry = 100/coords.h;

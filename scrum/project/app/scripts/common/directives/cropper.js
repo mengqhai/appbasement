@@ -5,39 +5,104 @@ angular.module('cropper', [])
         return {
             restrict: 'E',
             replace: true,
-            template:'<img>',
+            template: '<img>',
             scope: {
                 aspectRatio: '@',
                 src: '=bindSrc',
-                boxHeight:'@',
-                boxWidth:'@'
+                boxHeight: '@',
+                boxWidth: '@',
+                coords: '=bindCoords'
             },
             link: function (scope, element, attrs) {
                 var img = element.eq(0);
-
-
-
                 var jcrop_api;
-                var clear = function() {
+                var clear = function () {
                     if (jcrop_api) {
                         jcrop_api.destroy();
-                    };
+                    }
+                    ;
                 };
-                scope.$watch('src', function(newValue) {
+                var refreshCoords = function (coords) {
+                    scope.$apply(function () {
+                        angular.copy(coords, scope.coords);
+                    });
+                };
+
+                scope.$watch('src', function (newValue) {
                     clear();
                     img.removeAttr('style') // reset the width & height Jcrop has set
                     img.attr('src', newValue);
-                    console.info(img.width()+" "+img.height());
                     img.Jcrop({
                         aspectRatio: scope.aspectRatio,
                         boxHeight: scope.boxHeight,
-                        boxWidth: scope.boxWidth
-                    }, function() {
+                        boxWidth: scope.boxWidth,
+                        onChange: refreshCoords,
+                        onSelect: refreshCoords
+                    }, function () {
                         jcrop_api = this;
                     });
                 });
 
                 scope.$on('$destroy', clear);
+            }
+        }
+    })
+    .directive('cropperPreview', function () {
+        return {
+            restrict: 'E',
+            replace: true,
+            template: '<div>' +
+                '<img>' +
+                '<span>{{coords}}</span>' +
+                '</div>',
+            scope: {
+                src: '=bindSrc',
+                boxHeight: '@',
+                boxWidth: '@',
+                coords: '=bindCoords'
+            },
+            link: function (scope, element, attrs) {
+                scope.boxWidth = scope.boxWidth || 100;
+                scope.boxHeight = scope.boxHeight || 100;
+
+
+                var div = element.eq(0);
+                div.css({
+                    width: scope.boxWidth + 'px',
+                    height: scope.boxHeight + 'px',
+                    overflow: 'hidden',
+                    'margin-left': '5px'
+                });
+                var img = element.find('img').eq(0);
+                var originSize;
+                var showPreview = function (coords) {
+                    if (!originSize) {
+                        return;
+                    }
+                    var rx = 100 / coords.w;
+                    var ry = 100 / coords.h;
+                    img.css({
+                        width: Math.round(originSize.width * rx),
+                        height: Math.round(originSize.height * ry),
+                        marginLeft: '-' + Math.round(rx * coords.x) + 'px',
+                        marginTop: '-' + Math.round(ry * coords.y) + 'px'
+                    }).show();
+                };
+                scope.$watch('src', function (newValue) {
+                    img.removeAttr('style');
+                    img.attr('src', newValue);
+                    img.load(function () {
+                        originSize = {
+                            width: img.width(),
+                            height: img.height()
+                        };// must do this after image is loaded
+                        img.hide();
+                    });
+                });
+
+                scope.$watch('coords', function (newCoords) {
+                    showPreview(newCoords);
+                }, true);
             }
         }
     });

@@ -52,12 +52,18 @@
 <div ng-app="cropperPlay" class="test-area" ng-controller="cropperPlayCtrl">
     <h4>AngularJs</h4>
     <div class="img-container">
-        <cropper bind-src="imgInfo.src" aspect-ratio="1" box-height='300' box-width='300'></cropper>
+        <cropper bind-src="imgInfo.src" bind-coords="coords" aspect-ratio="1" box-height='300' box-width='300'></cropper>
+    </div>
+    <div class="img-preview">
+        <cropper-preview bind-src="imgInfo.src" bind-coords="coords" box-height='100' box-width='100'></cropper-preview>
     </div>
     <div>
         <field label="Img src" ng-model="imgInfo.src" ng-options="value as label for (label, value) in srcs" template="select">
         </field>
         <input ng-model="imgInfo.src" size="40">
+        <span>
+            {{coords | json}}
+        </span>
     </div>
 
 </div>
