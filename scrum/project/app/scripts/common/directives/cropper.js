@@ -8,7 +8,9 @@ angular.module('cropper', [])
             template:'<img>',
             scope: {
                 aspectRatio: '@',
-                src: '=bindSrc'
+                src: '=bindSrc',
+                boxHeight:'@',
+                boxWidth:'@'
             },
             link: function (scope, element, attrs) {
                 var img = element.eq(0);
@@ -23,9 +25,13 @@ angular.module('cropper', [])
                 };
                 scope.$watch('src', function(newValue) {
                     clear();
+                    img.removeAttr('style') // reset the width & height Jcrop has set
                     img.attr('src', newValue);
+                    console.info(img.width()+" "+img.height());
                     img.Jcrop({
-                        aspectRatio: scope.aspectRatio
+                        aspectRatio: scope.aspectRatio,
+                        boxHeight: scope.boxHeight,
+                        boxWidth: scope.boxWidth
                     }, function() {
                         jcrop_api = this;
                     });

@@ -15,10 +15,12 @@
             max-width: 600px;
             float: left;
         }
-        .img-container img {
-            max-height: 500px;
-            max-width: 500px;
-        }
+
+        /*.img-container img {*/
+            /*max-height: 200px;*/
+            /*max-width: 200px;*/
+        /*}*/
+
 
         .img-preview {
             height:200px;
@@ -32,7 +34,7 @@
 <script src="bower_components/angular/angular.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
 <script src="vendor/tapmodo-Jcrop-1902fbc/js/jquery.Jcrop.js"></script>
-
+<script src="scripts/common/directives/field.js"></script>
 <script src="scripts/common/directives/cropper.js"></script>
 <script src="scripts/cropperPlay.js"></script>
 
@@ -49,10 +51,13 @@
 </div>
 <div ng-app="cropperPlay" class="test-area" ng-controller="cropperPlayCtrl">
     <h4>AngularJs</h4>
-    <label for="imgSrc">Image src</label>
-    <input id="imgSrc" ng-model="imgSrc">
     <div class="img-container">
-        <cropper bind-src="imgSrc" aspect-ratio="1"></cropper>
+        <cropper bind-src="imgInfo.src" aspect-ratio="1" box-height='300' box-width='300'></cropper>
+    </div>
+    <div>
+        <field label="Img src" ng-model="imgInfo.src" ng-options="value as label for (label, value) in srcs" template="select">
+        </field>
+        <input ng-model="imgInfo.src" size="40">
     </div>
 
 </div>
