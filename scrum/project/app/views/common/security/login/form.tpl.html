@@ -17,12 +17,10 @@
         <!--<input name="login" type="text" ng-model="user.username" required autofocus>-->
         <!--<label>Password</label>-->
         <!--<input name="pass" type="password" ng-model="user.password" required autocomplete="off">-->
-        <field name="login" type="text" ng-model="user.username" required autofocus>
-            <label>Username</label>
+        <field name="login" label="Username" type="text" ng-model="user.username" required autofocus>
             <validator key="required">{{$fieldLabel}} is required</validator>
         </field>
-        <field name="pass" type="password" ng-model="user.password" required autocomplete="off">
-            <label>Password</label>
+        <field name="pass" label="Password" type="password" ng-model="user.password" required autocomplete="off">
             <validator key="required">{{$fieldLabel}} is required</validator>
         </field>
     </div>

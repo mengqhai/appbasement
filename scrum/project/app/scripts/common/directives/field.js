@@ -35,6 +35,10 @@ angular.module('field', [])
             return messageFns;
         };
         var getLabelContent = function (element) {
+            var labelContent = element.attr('label');
+            if (labelContent) {
+                return labelContent;
+            }
             var label = element.find('label');
             return label[0] && label.html();
         };

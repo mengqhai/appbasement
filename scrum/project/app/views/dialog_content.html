@@ -19,22 +19,18 @@
                 <span ng-show="form._repeat.$error['equal']" class="help-inline">X</span>
             </div>
             -->
-            <field name="username" type="text" ng-model="user.username" required unique-username>
-                <label>Username</label>
+            <field name="username" label="Username" type="text" ng-model="user.username" required unique-username>
                 <validator key="uniqueUseranme">Username not unique</validator>
             </field>
 
-            <field name="password" ng-model="user.password" required autocomplete="off" type="password">
-                <label>Password</label>
+            <field name="password" label="Password" ng-model="user.password" required autocomplete="off" type="password">
             </field>
-            <field name="_repeat" ng-model="user.passowrdRepeat" type="password" validate-equals="user.password" required>
-                <label>Repeat password</label>
+            <field name="_repeat" label="Repeat password" ng-model="user.passowrdRepeat" type="password" validate-equals="user.password" required>
                 <validator key="equal">Password not match</validator>
             </field>
 
 
-            <field name="email" ng-model="user.email" type="email" required>
-                <label>Email</label>
+            <field name="email" label="Email" ng-model="user.email" type="email" required>
                 <validator key="email">Not a valid Email address.</validator>
             </field>
 
@@ -42,8 +38,7 @@
                 <label>(<span ng-repeat="i in [0,1,2,3,4,5]">{{i}}<span ng-if="!$last">, </span></span>)</label>
             </field>
             </field>
-            <field name="age" ng-model="user.age" type="number" required min="0">
-                <label>Age</label>
+            <field name="age" label="Age" ng-model="user.age" type="number" required min="0">
                 <validator key='required'>{{$fieldLabel}} is required</validator>
                 <validator key='number'>{{$fieldLabel}} must be a number</validator>
                 <validator key='min'>{{$fieldLabel}} must be no less then 0. (too young for {{user.username}})</validator>
@@ -53,13 +48,13 @@
                 <label>Gender</label>
             </field>
 
-            <field name="description" template="textarea" ng-model="user.description" ng-maxlength="20" ng-minlength="3">
-                <label>Description</label>
+            <field name="description" label="Description" template="textarea" ng-model="user.description"
+                   ng-maxlength="20" ng-minlength="3">
                 <validator key="maxlength">{{$fieldLabel}} must be less than 20</validator>
                 <validator key="minlength">{{$fieldLabel}} must be greater than 3</validator>
             </field>
 
-            <field name="isAdmin" type="checkbox" ng-model="user.isAdmin">
+            <field name="isAdmin" label="Is Admin" type="checkbox" ng-model="user.isAdmin">
                 <label>Is Admin</label>
             </field>
         </form>
