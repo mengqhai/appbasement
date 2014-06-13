@@ -12,6 +12,8 @@ angular.module('cropper', [])
                 boxHeight: '@',
                 boxWidth: '@',
                 coords: '=bindCoords',
+                // TODO ? The bindCoords is now one-way binding (read only)
+                // TODO ? consider to use ngModel to make it two-way: setting the coords model can change the select
                 maxSelectWidth:'@',
                 maxSelectHeight:'@',
                 initSelect: '&' // initial selection [x,y,x2,y2]
