@@ -11,7 +11,10 @@ angular.module('cropper', [])
                 src: '=bindSrc',
                 boxHeight: '@',
                 boxWidth: '@',
-                coords: '=bindCoords'
+                coords: '=bindCoords',
+                maxSelectWidth:'@',
+                maxSelectHeight:'@',
+                initSelect: '&' // initial selection [x,y,x2,y2]
             },
             link: function (scope, element, attrs) {
                 var img = element.eq(0);
@@ -37,9 +40,12 @@ angular.module('cropper', [])
                         boxHeight: scope.boxHeight,
                         boxWidth: scope.boxWidth,
                         onChange: refreshCoords,
-                        onSelect: refreshCoords
+                        onSelect: refreshCoords,
+                        setSelect: scope.initSelect(),
+                        maxSize:[scope.maxSelectWidth, scope.maxSelectHeight]
                     }, function () {
                         jcrop_api = this;
+
                     });
                 });
 
@@ -79,8 +85,8 @@ angular.module('cropper', [])
                     if (!originSize) {
                         return;
                     }
-                    var rx = 100 / coords.w;
-                    var ry = 100 / coords.h;
+                    var rx = div.width() / coords.w;
+                    var ry = div.height() / coords.h;
                     img.css({
                         width: Math.round(originSize.width * rx),
                         height: Math.round(originSize.height * ry),

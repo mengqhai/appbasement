@@ -52,7 +52,9 @@
 <div ng-app="cropperPlay" class="test-area" ng-controller="cropperPlayCtrl">
     <h4>AngularJs</h4>
     <div class="img-container">
-        <cropper bind-src="imgInfo.src" bind-coords="coords" aspect-ratio="1" box-height='300' box-width='300'></cropper>
+        <cropper bind-src="imgInfo.src" bind-coords="coords" aspect-ratio="1" box-height='300' box-width='300'
+                init-select="[200,200,400,400]">
+        </cropper>
     </div>
     <div class="img-preview">
         <cropper-preview bind-src="imgInfo.src" bind-coords="coords" box-height='100' box-width='100'></cropper-preview>
