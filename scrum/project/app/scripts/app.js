@@ -7,6 +7,7 @@ angular
         'ngSanitize',
         'ngRoute',
         'ngAnimate',
+        'ngLocale',
         'security.service',
         'resources.projects',
         'resources.backlogs',

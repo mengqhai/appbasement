@@ -2,6 +2,8 @@
 
 angular.module('scrumApp')
     .controller('MainCtrl', function ($scope, $modal, $log, $http, loginDialog, Projects, Backlogs) {
+        $scope.now = new Date();
+
         $scope.awesomeThings = [
             'HTML5 Boilerplate',
             'AngularJS',
