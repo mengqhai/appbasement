@@ -58,14 +58,14 @@
     </div>
     <div class="img-preview">
         <cropper-preview bind-src="imgInfo.src" bind-coords="coords" box-height='100' box-width='100'></cropper-preview>
+        <cropper-preview bind-src="imgInfo.src" bind-coords="coords" box-height='80' box-width='80'></cropper-preview>
+        <cropper-preview bind-src="imgInfo.src" bind-coords="coords" box-height='50' box-width='50'></cropper-preview>
+        <cropper-preview bind-src="imgInfo.src" bind-coords="coords" box-height='20' box-width='20'></cropper-preview>
     </div>
     <div>
         <field label="Img src" ng-model="imgInfo.src" ng-options="value as label for (label, value) in srcs" template="select">
         </field>
         <input ng-model="imgInfo.src" size="40">
-        <span>
-            {{coords | json}}
-        </span>
     </div>
 
 </div>

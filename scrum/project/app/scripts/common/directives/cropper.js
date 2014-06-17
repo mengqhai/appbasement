@@ -1,7 +1,7 @@
 angular.module('cropper', [])
     // http://stackoverflow.com/questions/14319177/image-crop-with-angularjs
     // http://deepliquid.com/content/Jcrop.html
-    .directive('cropper', function () {
+    .directive('cropper', function ($timeout) {
         return {
             restrict: 'E',
             replace: true,
@@ -17,6 +17,7 @@ angular.module('cropper', [])
                 // TODO ? or maybe use scope.$on event to achieve that
                 maxSelectWidth:'@',
                 maxSelectHeight:'@',
+                commitOnRelease: "@",
                 initSelect: '&' // initial selection [x,y,x2,y2]
             },
             link: function (scope, element, attrs) {
@@ -29,8 +30,10 @@ angular.module('cropper', [])
                     ;
                 };
                 var refreshCoords = function (coords) {
-                    scope.$apply(function () {
-                        angular.copy(coords, scope.coords);
+                    $timeout(function() {
+                        scope.$apply(function () {
+                            angular.copy(coords, scope.coords);
+                        });
                     });
                 };
 
@@ -42,13 +45,16 @@ angular.module('cropper', [])
                         aspectRatio: scope.aspectRatio,
                         boxHeight: scope.boxHeight,
                         boxWidth: scope.boxWidth,
-                        onChange: refreshCoords,
                         onSelect: refreshCoords,
                         maxSize:[scope.maxSelectWidth, scope.maxSelectHeight]
                     };
                     if (!jcrop_api) {
                         config.setSelect = scope.initSelect();
                     };
+
+                    if (!scope.commitOnRelease) {
+                        config.onChange = refreshCoords;
+                    }
 
                     img.Jcrop(config, function () {
                         jcrop_api = this;
@@ -66,7 +72,6 @@ angular.module('cropper', [])
             replace: true,
             template: '<div>' +
                 '<img>' +
-                '<span>{{coords}}</span>' +
                 '</div>',
             scope: {
                 src: '=bindSrc',
