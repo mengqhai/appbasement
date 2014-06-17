@@ -1,4 +1,4 @@
-$(function() {
+$(document).ready(function() {
     var cropper = $('#nativeCropper');
     var showPreview = function(coords) {
         var rx = 100/coords.w;
@@ -12,8 +12,7 @@ $(function() {
             marginTop:'-'+Math.round(ry*coords.y)+'px'
         }).show();
     };
-
-    cropper.Jcrop({
+    cropper.Jcrop && cropper.Jcrop({
         onChange: showPreview,
         onSelect: showPreview,
         aspectRatio: 1,

@@ -5,7 +5,7 @@
     <li><a ng-href="#">About</a></li>
     <li><a ng-href="#">Contact</a></li>
   </ul>
-  <h3 class="text-muted">project({{now | date:'fullDate'}})</h3>
+  <h3 class="text-muted">project</h3>
 </div>
 
 <div ng-controller="AlertPlayCtrl">
@@ -23,10 +23,11 @@
 
 <hr>
 <div class="jumbotron">
-  <h1>'Allo, 'Allo!</h1>
+  <h3>'Allo, 'Allo!</h3>
+  <p class="text-info">({{now | date:'fullDate'}})</p>
   <p class="lead">
     <div>
-        <h4>Selected: {{selectedProject.id}}</h4>
+        <h4>Selected: <span>{{selectedProject.id}}</span></h4>
         <ul>
             <li ng-repeat="p in projects" class="animate-repeat"><a ng-click="selectProject(p)">{{p.id}} -- {{p.name}}</a></li>
         </ul>
@@ -43,13 +44,13 @@
       <button class="btn btn-default" ng-click="showUser()">Show user</button>
   </p>
   <p>
-      Current user: {{currentUsername}}
+      Current user: <span>{{currentUsername}}</span>
   </p>
 </div>
 
 <div class="row marketing">
     <div ng-controller="BacklogsPaginationCtrl">
-        <h4>Count: {{backlogCount.value}}</h4>
+        <h4>Count: <span>{{backlogCount.value}}</span></h4>
         <pagination ng-show="show()" total-items="backlogCount.value" ng-model="currentPage" items-per-page="itemsPerPage"></pagination>
         <ul>
             <li ng-repeat="b in backlogs" class="animate-repeat">{{b.id}} -- {{b.name}}</li>

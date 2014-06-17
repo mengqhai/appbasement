@@ -31,10 +31,15 @@ angular.module('cropper', [])
                 };
                 var refreshCoords = function (coords) {
                     $timeout(function() {
-                        scope.$apply(function () {
-                            angular.copy(coords, scope.coords);
-                        });
+                        angular.copy(coords, scope.coords);
                     });
+                    // $timeout service will call scope.$apply() each time
+                    // a timer fires
+//                    $timeout(function() {
+//                        scope.$apply(function () {
+//                            angular.copy(coords, scope.coords);
+//                        });
+//                    });
                 };
 
                 scope.$watch('src', function (newValue) {
