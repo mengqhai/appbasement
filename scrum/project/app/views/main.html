@@ -10,7 +10,7 @@
 
 <div ng-controller="AlertPlayCtrl" ng-cloak>
     <!--<alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{alert.msg}}</alert>-->
-    <alert-list alerts="global_alerts"></alert-list>
+    <alert-list alerts="global_alerts" ng-cloak></alert-list>
     <input type='text' ng-model="alertMsg">
     <select ng-model="alertType">
         <option value="info">info</option>

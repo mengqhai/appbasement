@@ -108,3 +108,8 @@ body {
     width: 150px;
     vertical-align: top;
 }
+
+.ng-cloak, 
+.x-ng-cloak {
+display: none;
+}
