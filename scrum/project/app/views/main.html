@@ -8,7 +8,7 @@
   <h3 class="text-muted">project</h3>
 </div>
 
-<div ng-controller="AlertPlayCtrl">
+<div ng-controller="AlertPlayCtrl" ng-cloak>
     <!--<alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{alert.msg}}</alert>-->
     <alert-list alerts="global_alerts"></alert-list>
     <input type='text' ng-model="alertMsg">
@@ -22,7 +22,7 @@
 </div>
 
 <hr>
-<div class="jumbotron">
+<div class="jumbotron" ng-cloak>
   <h3>'Allo, 'Allo!</h3>
   <p class="text-info">({{now | date:'fullDate'}})</p>
   <p class="lead">
@@ -49,7 +49,7 @@
 </div>
 
 <div class="row marketing">
-    <div ng-controller="BacklogsPaginationCtrl">
+    <div ng-controller="BacklogsPaginationCtrl" ng-cloak>
         <h4>Count: <span>{{backlogCount.value}}</span></h4>
         <pagination ng-show="show()" total-items="backlogCount.value" ng-model="currentPage" items-per-page="itemsPerPage"></pagination>
         <ul>
