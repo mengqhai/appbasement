@@ -9,6 +9,7 @@ angular
         'ngAnimate',
         'ngLocale',
         'controllers',
+        'services',
         'security.service',
         'resources.projects',
         'resources.backlogs',

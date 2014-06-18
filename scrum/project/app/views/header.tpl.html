@@ -1,12 +1,23 @@
-<div class="navbar header" ng-controller="HeaderCtrl">
-    <h3 class="text-muted pull-left"><a ng-click="home()">AScrum</a></h3>
-    <div class="pull-right">
-        <ul class="nav nav-pills pull-left" ng-show="isAuthenticated()">
-            <li ng-class="{active:isNavBarActive('projects'}"><a href="#/projects">Projects</a></li>
-            <li><a ng-href="#">About</a></li>
-            <li><a ng-href="#">Contact</a></li>
-        </ul>
-        <login-toolbar></login-toolbar>
+<div class="header"  ng-controller="HeaderCtrl">
+    <div class="navbar">
+        <h3 class="text-muted pull-left"><a ng-click="home()">AScrum</a></h3>
+        <div class="pull-right">
+            <ul class="nav nav-pills pull-left" ng-show="isAuthenticated()">
+                <li ng-class="{active:isNavBarActive('projects')}"><a href="#/projects">Projects</a></li>
+                <li><a ng-href="#">About</a></li>
+                <li><a ng-href="#">Contact</a></li>
+            </ul>
+            <login-toolbar></login-toolbar>
+        </div>
     </div>
-
+    <div>
+        <ul class="breadcrumb">
+            <li ng-repeat="breadcrumb in breadcrumbs.getAll()">
+                <ng-switch on="$last">
+                    <span ng-switch-when="true">{{breadcrumb.name}}</span>
+                    <span ng-switch-default><a href="{{breadcrumb.path}}">{{breadcrumb.name}}</a></span>
+                </ng-switch>
+            </li>
+        </ul>
+    </div>
 </div>
