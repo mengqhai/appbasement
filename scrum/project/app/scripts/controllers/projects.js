@@ -32,6 +32,10 @@ angular.module('controllers.projects', ['resources.projects',
     }])
     .controller('ProjectsEditCtrl', ['$scope', 'project', function ($scope, project) {
         $scope.project = project;
-
+        $scope.breadcrumbLabel = function(last, current) {
+            if (last === 'projects' && project.id == current) {
+                return project.name;
+            }
+        }
 
     }]);

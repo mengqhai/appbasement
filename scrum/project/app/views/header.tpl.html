@@ -14,8 +14,9 @@
         <ul class="breadcrumb">
             <li ng-repeat="breadcrumb in breadcrumbs.getAll()">
                 <ng-switch on="$last">
-                    <span ng-switch-when="true">{{breadcrumb.name}}</span>
-                    <span ng-switch-default><a href="#{{breadcrumb.path}}">{{breadcrumb.name}}</a></span>
+                    <span ng-switch-when="true">{{breadcrumb.name | limitTo:10}}</span>
+                    <span ng-switch-default><a href="#{{breadcrumb.path}}">{{breadcrumb.name | limitTo:10}}</a></span>
+                    <span ng-if="breadcrumb.name.length>10">...</span>
                 </ng-switch>
             </li>
         </ul>

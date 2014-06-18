@@ -1,4 +1,7 @@
 angular.module('services.breadcrumbs', [])
+    // a very simple breadcrumbs
+    // the label for id can be fixed if use ui-router https://gist.github.com/lossendae/8356512
+    // http://stackoverflow.com/questions/21970406/how-to-make-automated-dynamic-breadcrumbs-with-angularjs-angular-ui-router
     .factory('breadcrumbs', ['$rootScope', '$location', function ($rootScope, $location) {
         var breadcrumbs = [];
 
@@ -12,7 +15,13 @@ angular.module('services.breadcrumbs', [])
             };
             pathElements.shift();
             for (i = 0; i < pathElements.length; i++) {
-                result.push({name: pathElements[i], path: breadcrumbPath(i)});
+                var name = pathElements[i];
+                var label = name;
+                // workaround to convert to label
+                if (i>0 && current.scope.breadcrumbLabel) {
+                    label = current.scope.breadcrumbLabel(pathElements[i-1], pathElements[i]) || name;
+                }
+                result.push({name: label, path: breadcrumbPath(i)});
             }
             result.unshift({name:'home', path:'/'});
 
