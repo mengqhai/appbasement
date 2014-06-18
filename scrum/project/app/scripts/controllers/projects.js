@@ -1,7 +1,8 @@
 angular.module('controllers.projects', ['resources.projects',
         'services.crudRouteProvider',
         'directives.crud.edit',
-        'directives.crud.buttons'])
+        'directives.crud.buttons',
+        'formPatchable'])
     .config(['$routeProvider', 'crudRouteProvider', function ($routeProvider, crudRouteProvider) {
         $routeProvider.when('/projects', {
             templateUrl: 'views/projects/projects-list.tpl.html',
