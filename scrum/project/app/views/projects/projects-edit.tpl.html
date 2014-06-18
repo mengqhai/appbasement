@@ -4,6 +4,7 @@
             <div class="span6">
                 <field ng-model="project.name" name="name" type="text" label="Name"
                        size="60" required>
+                    <validator key="required">Name is required</validator>
                 </field>
                 <field ng-model="project.desc" name="desc" template="textarea" label="Description"
                         cols="65" rows="8">
@@ -12,6 +13,7 @@
         </div>
         <div class="row-fluid">
             <hr>
+            <div class="col-lg-6"></div>
             <crud-buttons class="span12"></crud-buttons>
         </div>
     </form>
