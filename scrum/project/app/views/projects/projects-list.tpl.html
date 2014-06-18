@@ -9,11 +9,11 @@
     </thead>
     <tbody>
     <tr ng-repeat="project in projects">
-        <td>{{project.name}}</td>
+        <td><a ng-href="#/projects/{{project.id}}">{{project.name}}</a></td>
         <td>{{project.desc}}</td>
         <td>{{project.productOwner}}</td>
         <td>
-            <a>Product backlog</a>
+            <a ng-click="manageBacklog(project)">Product backlog</a>
             <a>Sprints</a>
         </td>
     </tr>

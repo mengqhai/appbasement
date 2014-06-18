@@ -17,7 +17,7 @@ angular.module('services.crudRouteProvider', ['ngRoute'])
 
             // Prepend the urlPrefix if available
             if (angular.isString(templateUrlPrefix) && templateUrlPrefix !== '') {
-                baseUrl = templateUrlPrefix + '/' + baseUrl;
+                baseUrl = templateUrlPrefix +  baseUrl;
             }
 
             // Prepend the routePrefix if provided
@@ -69,7 +69,7 @@ angular.module('services.crudRouteProvider', ['ngRoute'])
                     return routeWrapper;
                 },
                 // Create a route that will handle editing an existing item
-                whenNew: function(resolveFns) {
+                whenEdit: function(resolveFns) {
                     $routeProvider.when(baseRoute+'/:itemId', {
                         templateUrl: templateUrl('Edit'),
                         controller: controllerName('Edit'),
