@@ -15,6 +15,11 @@ angular.module('controllers.projects', ['resources.projects',
         });
 
         crudRouteProvider.routeFor('Projects')
+            .whenNew({
+                project:['Projects', function(Projects) {
+                    return new Projects();
+                }]
+            })
             .whenEdit({
                 project: ['Projects', '$route', function (Projects, $route) {
                     // resolve watches promise, so we must return a promise
@@ -28,6 +33,10 @@ angular.module('controllers.projects', ['resources.projects',
 
         $scope.manageBacklog = function (project) {
             $location.path('/projects/' + project.id + '/backlogs')
+        };
+
+        $scope.newProject = function() {
+            $location.path('/projects/new');
         }
     }])
     .controller('ProjectsEditCtrl', ['$scope', 'project', function ($scope, project) {

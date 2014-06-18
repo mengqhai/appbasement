@@ -63,7 +63,7 @@ angular.module('directives.crud.edit', [])
                 };
 
                 scope.delete = function() {
-                    if (resource.$id()) {
+                    if (resource.id) {
                         resource.$delete();
                     }
                 };

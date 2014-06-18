@@ -1,21 +1,29 @@
-<table class="table table-bordered table-condensed table-striped table-hover">
-    <thead>
-    <tr>
-        <th class="span3">Name</th>
-        <th class="span5">Description</th>
-        <th class="span2">Owner</th>
-        <th class="span2">Tools</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr ng-repeat="project in projects">
-        <td><a ng-href="#/projects/{{project.id}}">{{project.name}}</a></td>
-        <td>{{project.desc}}</td>
-        <td>{{project.productOwner}}</td>
-        <td>
-            <a ng-click="manageBacklog(project)">Product backlog</a>
-            <a>Sprints</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+<div>
+    <div style="padding-bottom: 10px; padding-left: 10px">
+        <button class="btn btn-primary" ng-click="newProject()">
+            <span class="glyphicon glyphicon-plus"></span> New
+        </button>
+    </div>
+
+    <table class="table table-bordered table-condensed table-striped table-hover">
+        <thead>
+        <tr>
+            <th class="span3">Name</th>
+            <th class="span5">Description</th>
+            <th class="span2">Owner</th>
+            <th class="span2">Tools</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="project in projects">
+            <td><a ng-href="#/projects/{{project.id}}">{{project.name}}</a></td>
+            <td>{{project.desc}}</td>
+            <td>{{project.productOwner}}</td>
+            <td>
+                <a ng-click="manageBacklog(project)">Product backlog</a>
+                <a>Sprints</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
