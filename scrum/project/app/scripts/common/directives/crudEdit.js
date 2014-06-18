@@ -44,6 +44,7 @@ angular.module('directives.crud.edit', [])
                     if (angular.isFunction(form['$getPatch'])) {
                         var patch = form.$getPatch();
                         resource.$update(patch); // patchable support
+                        //resource.$save();
                     } else {
                         resource.$update();
                     }
