@@ -9,6 +9,6 @@ angular.module('controllers.header',['security.service', 'services.breadcrumbs']
         };
 
         $scope.isNavbarActive = function(navBarPath) {
-            return navBarPath === breadcrumbs.getFirst().name;
+            return navBarPath === breadcrumbs.getLast().name;
         }
     }]);

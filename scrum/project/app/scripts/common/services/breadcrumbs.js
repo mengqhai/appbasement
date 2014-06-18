@@ -23,8 +23,8 @@ angular.module('services.breadcrumbs', [])
             return breadcrumbs;
         };
 
-        breadcrumbsService.getFirst = function() {
-            return breadcrumbs[0] || {};
+        breadcrumbsService.getLast = function() {
+            return breadcrumbs[breadcrumbs.length - 1] || {};
         }
 
         return breadcrumbsService;
