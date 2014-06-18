@@ -25,7 +25,13 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div class="container" ng-view=""></div>
+    <div class="container">
+        <div ng-include="'views/header.tpl.html'"></div>
+        <div ng-view=""></div>
+        <div class="footer">
+            <p><span class="glyphicon glyphicon-heart"></span> from the Yeoman team</p>
+        </div>
+    </div>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
      <script>
@@ -59,33 +65,36 @@
     <!-- endbuild -->
     <script src="http://localhost:8081/angularJsPlay/locale/angular-locale.js"></script>
 
-        <!-- build:js({.tmp,app}) scripts/scripts.js -->
-        <!--SCRIPTS-->
-        <script src="scripts/app.js"></script>
-        <script src="scripts/common/directives/alert.js"></script>
-        <script src="scripts/common/directives/cropper.js"></script>
-        <script src="scripts/common/directives/field.js"></script>
-        <script src="scripts/common/directives/formPatchable.js"></script>
-        <script src="scripts/common/directives/uniqueChecks.js"></script>
-        <script src="scripts/common/directives/validateEquals.js"></script>
-        <script src="scripts/common/env.js"></script>
-        <script src="scripts/common/resources/backlogs.js"></script>
-        <script src="scripts/common/resources/projects.js"></script>
-        <script src="scripts/common/resources/sprints.js"></script>
-        <script src="scripts/common/resources/tasks.js"></script>
-        <script src="scripts/common/resources/users.js"></script>
-        <script src="scripts/common/security/interceptor.js"></script>
-        <script src="scripts/common/security/login/form.js"></script>
-        <script src="scripts/common/security/login/login.js"></script>
-        <script src="scripts/common/security/login/services.js"></script>
-        <script src="scripts/common/security/login/toolbar.js"></script>
-        <script src="scripts/common/security/retryQueue.js"></script>
-        <script src="scripts/common/security/security.js"></script>
-        <script src="scripts/common/services/crud.js"></script>
-        <script src="scripts/common/services/crudRouteProvider.js"></script>
-        <script src="scripts/controllers/main.js"></script>
-        <script src="scripts/cropperPlay.js"></script>
-        <!--SCRIPTS END-->
-        <!-- endbuild -->
+    <!-- build:js({.tmp,app}) scripts/scripts.js -->
+    <!--SCRIPTS-->
+    <script src="scripts/app.js"></script>
+    <script src="scripts/common/directives/alert.js"></script>
+    <script src="scripts/common/directives/cropper.js"></script>
+    <script src="scripts/common/directives/field.js"></script>
+    <script src="scripts/common/directives/formPatchable.js"></script>
+    <script src="scripts/common/directives/uniqueChecks.js"></script>
+    <script src="scripts/common/directives/validateEquals.js"></script>
+    <script src="scripts/common/env.js"></script>
+    <script src="scripts/common/resources/backlogs.js"></script>
+    <script src="scripts/common/resources/projects.js"></script>
+    <script src="scripts/common/resources/sprints.js"></script>
+    <script src="scripts/common/resources/tasks.js"></script>
+    <script src="scripts/common/resources/users.js"></script>
+    <script src="scripts/common/security/interceptor.js"></script>
+    <script src="scripts/common/security/login/form.js"></script>
+    <script src="scripts/common/security/login/login.js"></script>
+    <script src="scripts/common/security/login/services.js"></script>
+    <script src="scripts/common/security/login/toolbar.js"></script>
+    <script src="scripts/common/security/retryQueue.js"></script>
+    <script src="scripts/common/security/security.js"></script>
+    <script src="scripts/common/services/crud.js"></script>
+    <script src="scripts/common/services/crudRouteProvider.js"></script>
+    <script src="scripts/controllers/controllers.js"></script>
+    <script src="scripts/controllers/header.js"></script>
+    <script src="scripts/controllers/main.js"></script>
+    <script src="scripts/controllers/projects.js"></script>
+    <script src="scripts/cropperPlay.js"></script>
+    <!--SCRIPTS END-->
+    <!-- endbuild -->
 </body>
 </html>

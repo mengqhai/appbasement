@@ -8,6 +8,7 @@ angular
         'ngRoute',
         'ngAnimate',
         'ngLocale',
+        'controllers',
         'security.service',
         'resources.projects',
         'resources.backlogs',
