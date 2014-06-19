@@ -44,12 +44,17 @@ angular.module('controllers.projects', ['resources.projects',
         $scope.project = project;
 
         $scope.onSave = function(project) {
-            notifications.pushForNextRoute({message:'Project saved successfully.', type:'success'});
+            notifications.pushForCurrentRoute({msg:'Project saved successfully.', type:'success'});
             $location.path('/projects/');
         };
 
-        $scope.onError = function() {
-            notifications.pushForNextRoute({message:'Failed to save project.', type: 'error'})
+        $scope.onDelete = function(project) {
+            notifications.pushForCurrentRoute({msg:'Project deleted.', type:'success'});
+            $location.path('/projects/');
+        };
+
+        $scope.onError = function(project) {
+            notifications.pushForCurrentRoute({msg:'Failed to edit project.', type: 'danger'})
         }
 
         $scope.breadcrumbLabel = function(last, current) {

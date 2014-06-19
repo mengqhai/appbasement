@@ -52,7 +52,7 @@ angular.module('directives.crud.edit', [])
                     userOnSave(result, status, headers, config);
                 };
                 // onDelete attribute -> onRemove scope -> onSave attribute -> onSave scope -> noop
-                var onDelete = attrs.onDelete ? makeFn('onDelete') : (scope.onDelete || onSave);
+                var onDelete = attrs.onDelete ? makeFn('onDelete') : (scope.onDelete || angular.noop);
                 // onError attribute -> onError scope -> noop
                 var onError = attrs.onError ? makeFn('onError') : (scope.onError || angular.noop);
 
