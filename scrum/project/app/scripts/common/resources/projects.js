@@ -11,11 +11,11 @@ angular.module('resources.projects', ['ngResource', 'env'])
                 }
             });
 
-        Projects.prototype.$update = function(data) {
+        Projects.prototype.$update = function(data, onSuccess, onFail) {
             if (data.id === undefined) {
                 data.id = this.id;
             }
-          return Projects.doPatch(data);
+          return Projects.doPatch(data, onSuccess, onFail);
         };
 
         return Projects;

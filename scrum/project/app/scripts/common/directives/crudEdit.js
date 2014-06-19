@@ -35,18 +35,41 @@ angular.module('directives.crud.edit', [])
 
 
                 // TODO callback functions
+                // This function helps us extract the callback functions from the directive attributes
+                var makeFn = function(attrName) {
+                    var fun = scope.$eval(attrs[attrName]);
+                    if (!angular.isFunction(fn)) {
+                        throw new Error('crudEdit directive: The attribute "'+attrName+'" must evaluate to be a function');
+                    }
+                    return fn;
+                };
+                // Set up callbacks with fallback
+                // onSave attribute -> onSave scope -> noop
+                var userOnSave = attrs.onSave ? makeFun('onSave') : (scope.onSave || angular.noop);
+                var onSave = function(result, status, headers, config) {
+                    // Reset the original to help with reverting and pristine checks
+                    original = result;
+                    userOnSave(result, status, headers, config);
+                };
+                // onDelete attribute -> onRemove scope -> onSave attribute -> onSave scope -> noop
+                var onDelete = attrs.onDelete ? makeFn('onDelete') : (scope.onDelete || onSave);
+                // onError attribute -> onError scope -> noop
+                var onError = attrs.onError ? makeFn('onError') : (scope.onError || angular.noop);
 
+
+                // HTTP GET "class" actions: Resource.action([parameters], [success], [error])
+                // non-GET "class" actions: Resource.action([parameters], postData, [success], [error])
+                // non-GET instance actions: instance.$action([parameters], [success], [error])
                 scope.create = function() {
-                    resource.$save();
+                    resource.$save(onSave, onError);
                 };
 
                 scope.update = function() {
                     if (angular.isFunction(form['$getPatch'])) {
                         var patch = form.$getPatch();
-                        resource.$update(patch); // patchable support
-                        //resource.$save();
+                        resource.$update(patch, onSave, onError); // patchable support
                     } else {
-                        resource.$update();
+                        resource.$update(onSave, onError);
                     }
                 };
 
@@ -64,7 +87,9 @@ angular.module('directives.crud.edit', [])
 
                 scope.delete = function() {
                     if (resource.id) {
-                        resource.$delete();
+                        resource.$delete(onDelete, onError);
+                    } else {
+                        onDelete();
                     }
                 };
 

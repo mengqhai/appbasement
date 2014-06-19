@@ -1,4 +1,4 @@
-angular.module('services.crud', ['service.crudRouteProvider'])
+angular.module('services.crud', ['services.crudRouteProvider'])
     // the methods can be copied to $scope instance using angular.extend($scope, crudEditMethods('xxxx')
     .factory('crudEditMethods', function() {
         return function(itemName, item, formName, successcb, errorcb) {
