@@ -23,10 +23,31 @@ public class CORS403ForbiddenEntryPoint extends Http403ForbiddenEntryPoint {
 				: origin);
 		response.setHeader("Access-Control-Allow-Credentials", "true");
 		// must do so, otherwise angularJs $http.get got error status code = 0
-		// e.g. error in Chrome: Credentials flag is 'true', but the 'Access-Control-Allow-Credentials' header is ''. It must be 'true' to allow credentials. 
-		super.commence(request, response, arg2);
+		// e.g. error in Chrome: Credentials flag is 'true', but the
+		// 'Access-Control-Allow-Credentials' header is ''. It must be 'true' to
+		// allow credentials.
+
+		// The W3 spec for CORS preflight requests clearly states that user
+		// credentials should be excluded.
+		// See
+		// https://dvcs.w3.org/hg/cors/raw-file/tip/Overview.html#cross-origin-request-with-preflight-0
+		// So we should allow a preflight request
+		if (isPreflight(request)) {
+			response.setHeader("Access-Control-Allow-Methods",
+					"POST, GET, OPTIONS, DELETE, PUT, PATCH");
+
+			response.setHeader("Access-Control-Max-Age", "3600");
+
+			response.setHeader("Access-Control-Allow-Headers",
+					"x-requested-with, origin, content-type, accept");
+			response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		} else {
+			super.commence(request, response, arg2);
+		}
 	}
-	
-	
+
+	public boolean isPreflight(HttpServletRequest request) {
+		return "OPTIONS".equals(request.getMethod());
+	}
 
 }
