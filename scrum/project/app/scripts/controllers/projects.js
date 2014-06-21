@@ -45,7 +45,11 @@ angular.module('controllers.projects', ['resources.projects',
             $scope.project = project;
 
             // for states that needs to dynamically update the breadcrumbs
-            breadcrumbs.updateTitleForPath($state.current.name, project.name);
+            if (project.name) {
+                // we don't do this for state projects.new
+                breadcrumbs.updateTitleForPath($state.current.name, project.name);
+            }
+
 
             $scope.onSave = function (project) {
                 notifications.growl('Project ' + $scope.project.name + ' saved successfully.', 'success', -1);
