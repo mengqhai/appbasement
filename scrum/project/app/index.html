@@ -13,10 +13,10 @@
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="bower_components/angular-loading-bar/src/loading-bar.css" />
-    <link rel="stylesheet" href="bower_components/angular-growl/build/angular-growl.min.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css({.tmp,app}) styles/main.css -->
+    <link rel="stylesheet" href="bower_components/angular-growl/build/angular-growl.min.css" />
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
   </head>
@@ -26,9 +26,15 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
+
     <div class="container">
+        <div class="growl-holder">
+            <div growl></div>
+        </div>
+
+
         <div ng-include="'views/header.tpl.html'"></div>
-        <div ng-view=""></div>
+        <div ui-view=""></div>
         <div class="footer">
             <p><span class="glyphicon glyphicon-heart"></span> from the Yeoman team</p>
         </div>
@@ -63,6 +69,7 @@
     <script src="bower_components/angular-loading-bar/src/loading-bar.js"></script>
     <script src="bower_components/angular-animate/angular-animate.js"></script>
     <script src="bower_components/angular-growl/build/angular-growl.js"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
     <script src="http://localhost:8081/angularJsPlay/locale/angular-locale.js"></script>

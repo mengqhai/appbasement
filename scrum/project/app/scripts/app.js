@@ -5,7 +5,7 @@ angular
         'ngCookies',
         'ngResource',
         'ngSanitize',
-        'ngRoute',
+        'ui.router',//'ngRoute',
         'ngAnimate',
         'ngLocale',
         'controllers',
@@ -17,14 +17,16 @@ angular
         'angular-loading-bar',
         'validateEquals', 'formPatchable', 'uniqueChecks', 'alert', 'field'
     ])
-    .config(function ($routeProvider, $httpProvider) {
-        $routeProvider
-            .when('/', {
+    .config(function ($stateProvider,$urlRouterProvider, $httpProvider) {
+        $stateProvider
+            .state('home', {
+                url: '/',
                 templateUrl: 'views/main.html',
-                controller: 'MainCtrl'
-            })
-            .otherwise({
-                redirectTo: '/'
+                controller: 'MainCtrl',
+                data: {
+                    title: 'Home'
+                }
             });
+        $urlRouterProvider.otherwise('/');
         $httpProvider.defaults.withCredentials=true;
     });

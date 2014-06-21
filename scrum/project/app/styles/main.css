@@ -113,3 +113,13 @@ body {
 .x-ng-cloak {
 display: none;
 }
+
+.growl-holder {
+    /*position: relative;*/
+}
+.growl {
+    /*right: 10%;*/
+    /*position: absolute;*/
+    /*right: -20px;*/
+    top: 60px
+}

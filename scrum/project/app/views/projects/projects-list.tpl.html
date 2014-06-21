@@ -16,7 +16,7 @@
         </thead>
         <tbody>
         <tr ng-repeat="project in projects">
-            <td><a ng-href="#/projects/{{project.id}}">{{project.name}}</a></td>
+            <td><a ui-sref="projects.edit({itemId:project.id})">{{project.name}}</a></td>
             <td>{{project.desc}}</td>
             <td>{{project.productOwner}}</td>
             <td>

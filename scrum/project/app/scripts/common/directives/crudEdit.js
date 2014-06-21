@@ -67,7 +67,11 @@ angular.module('directives.crud.edit', [])
                 scope.update = function() {
                     if (angular.isFunction(form['$getPatch'])) {
                         var patch = form.$getPatch();
-                        resource.$update(patch, onSave, onError); // patchable support
+                        var patchOnSave = function (result, status, headers, config) {
+                            var patched = angular.extend(resource,patch);
+                            onSave(patched,status, headers, config);
+                        };
+                        resource.$update(patch, patchOnSave, onError); // patchable support
                     } else {
                         resource.$update(onSave, onError);
                     }
