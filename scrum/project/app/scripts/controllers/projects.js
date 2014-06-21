@@ -39,10 +39,13 @@ angular.module('controllers.projects', ['resources.projects',
             $state.go('projects.new');
         }
     }])
-    .controller('ProjectsEditCtrl', ['$scope', '$state', '$stateParams', 'project', 'projects', 'notifications',
-        function ($scope, $state, $stateParams, project, projects, notifications) {
+    .controller('ProjectsEditCtrl', ['$scope', '$state', '$stateParams', 'project', 'projects', 'notifications', 'breadcrumbs',
+        function ($scope, $state, $stateParams, project, projects, notifications, breadcrumbs) {
             // projects is inherited from parent state's resolve
             $scope.project = project;
+
+            // for states that needs to dynamically update the breadcrumbs
+            breadcrumbs.updateTitleForPath($state.current.name, project.name);
 
             $scope.onSave = function (project) {
                 notifications.growl('Project ' + $scope.project.name + ' saved successfully.', 'success', -1);

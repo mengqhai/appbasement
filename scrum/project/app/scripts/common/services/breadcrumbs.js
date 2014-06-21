@@ -51,7 +51,15 @@ angular.module('services.breadcrumbs', [])
 
         breadcrumbsService.getLast = function () {
             return breadcrumbs[breadcrumbs.length - 1] || {};
-        }
+        };
+
+        breadcrumbsService.updateTitleForPath= function(path, newTitle) {
+            angular.forEach(breadcrumbs, function(b) {
+                if (b.path === path) {
+                    b.name = newTitle;
+                }
+            });
+        };
 
         return breadcrumbsService;
     }]);
