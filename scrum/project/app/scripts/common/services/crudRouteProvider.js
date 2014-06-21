@@ -36,7 +36,10 @@ angular.module('services.crudRouteProvider', ['ui.router'])
                 abstract: true,
                 url: baseRoute,
                 template: '<ui-view/>',
-                resolve: commonResolve
+                resolve: commonResolve,
+                data: {
+                    title: resourceName
+                }
             });
 
             // This is the object that our `routesFor()` function returns.  It decorates `$routeProvider`,
@@ -52,7 +55,10 @@ angular.module('services.crudRouteProvider', ['ui.router'])
                         url: '/',
                         templateUrl: templateUrl('List'),
                         controller: controllerName('List'),
-                        resolve: resolveFns
+                        resolve: resolveFns,
+                        data: {
+                            title: null
+                        }
                      });
                     return routeWrapper;
                 },
@@ -65,7 +71,7 @@ angular.module('services.crudRouteProvider', ['ui.router'])
                         controller: controllerName('Edit'),
                         resolve: resolveFns,
                         data: {
-                            title: 'New project'
+                            title: 'New'
                         }
                     });
                     return routeWrapper;
@@ -78,7 +84,7 @@ angular.module('services.crudRouteProvider', ['ui.router'])
                         controller: controllerName('Edit'),
                         resolve: resolveFns,
                         data: {
-                            title: 'Edit project'
+                            title: 'Edit'
                         }
                     });
                     return routeWrapper;
