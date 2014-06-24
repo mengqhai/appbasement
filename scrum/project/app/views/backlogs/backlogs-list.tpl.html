@@ -12,7 +12,7 @@
         </thead>
         <tbody>
         <tr ng-repeat="backlogItem in backlogs" ng-click="edit(backlogItem.id)">
-            <td>{{backlogItem.name}}</td>
+            <td><a ui-sref="projects.backlogs.edit({itemId: backlogItem.id, projectId: project.id})">{{backlogItem.name}}</a></td>
             <td>{{backlogItem.desc}}</td>
             <td>{{backlogItem.priority}}</td>
             <td>{{backlogItem.estimation}}</td>
