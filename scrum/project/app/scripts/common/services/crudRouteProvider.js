@@ -9,23 +9,26 @@ angular.module('services.crudRouteProvider', ['ui.router'])
         //this function is the key part of this "provider helper".
         // We use it to create routes for CRUD operations.  We give it some basic information about
         // the resource and the urls then it it returns our own special routeProvider.
-        this.routeFor = function (resourceName, commonResolve) {
+        this.routeFor = function (resourceName, commonResolve, routeUrlPrefix, parentStateName) {
             var stateName = resourceName.toLowerCase();
+            parentStateName && (stateName = parentStateName +'.'+ stateName);
+
             var templateUrlPrefix = 'views/'
 
-            var baseUrl = resourceName.toLowerCase();
-            var baseRoute = '/' + resourceName.toLowerCase();
+            var templateBaseUrl = resourceName.toLowerCase();
+            var routeBaseUrl = '/' + resourceName.toLowerCase();
+            routeUrlPrefix && (routeBaseUrl = routeUrlPrefix+routeBaseUrl);
 
             // Prepend the urlPrefix if available
             if (angular.isString(templateUrlPrefix) && templateUrlPrefix !== '') {
-                baseUrl = templateUrlPrefix +  baseUrl;
+                templateBaseUrl = templateUrlPrefix +  templateBaseUrl;
             }
 
             // Create the templateUrl for a route to our resource that does the specified operation.
             // e.g routeFor('Backlogs', 'projects/:projectId'), operation=List
             // templateUrl will be views/backlogs/backlogs-list.tpl.html
             var templateUrl = function (operation) {
-                return baseUrl + '/' + resourceName.toLowerCase() + '-' + operation.toLowerCase() + '.tpl.html';
+                return templateBaseUrl + '/' + resourceName.toLowerCase() + '-' + operation.toLowerCase() + '.tpl.html';
             };
             // Create the controller name for a route to our resource that does the specified operation.
             var controllerName = function (operation) {
@@ -34,7 +37,7 @@ angular.module('services.crudRouteProvider', ['ui.router'])
 
             $stateProvider.state(stateName, {
                 abstract: true,
-                url: baseRoute,
+                url: routeBaseUrl,
                 template: '<ui-view/>',
                 resolve: commonResolve,
                 data: {
