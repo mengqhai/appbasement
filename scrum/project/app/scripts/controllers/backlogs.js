@@ -11,13 +11,21 @@ angular.module('controllers.backlogs', ['resources.backlogs'])
                 backlogs: ['$stateParams', 'Backlogs', function ($stateParams, Backlogs) {
                     return Backlogs.forProject($stateParams.projectId, first, max);
                 }]
+            })
+            .whenNew({
+                backlog: ['Backlogs', function(Backlogs) {
+                    return new Backlogs();
+                }]
             });
     }])
     .controller('BacklogsListCtrl', ['$scope', '$state', 'projectId', 'backlogs',
         function ($scope, $state, projectId, backlogs) {
             $scope.backlogs = backlogs;
             $scope.project = $state.current.data.project;
-            $scope.newBacklog = function() {
-                $state.go('backlogs.new')
+            $scope.new = function() {
+                $state.go('projects.backlogs.new')
             }
-        }]);
+        }])
+    .controller('BacklogsEditCtrl', ['$scope', 'backlog', function($scope, backlog) {
+        $scope.backlog = backlog;
+    }]);

@@ -11,7 +11,7 @@ angular.module('security.login.form', ['security.login.services', 'security.retr
             loginDialog = $modal.open({
                 templateUrl: 'views/common/security/login/form.tpl.html',
                 controller: 'LoginFormController',
-                size: 'sm'
+                size: 'md'
             });
             loginDialog.result.then(function() {
                 loginDialog = null;

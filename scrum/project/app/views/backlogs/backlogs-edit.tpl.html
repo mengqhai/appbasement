@@ -1,17 +1,27 @@
 <div class="well">
-    <h4>Product backlogs item</h4>
-    <hr>
-    <form name="form" crud-edit="backlogItem" patchable novalidate>
-        <field name="name" labe="Name" type="text" ng-model="backlogItem.name" required autofocus>
-            <validator key="required">Name is required</validator>
-        </field>
-        <field name="desc" label="User story" template="textarea" rows="8" cols="10" ng-model="backlogItem.desc">
-        </field>
-        <field name="priority" label="Priority" type="number" ng-model="backlogItem.priority" required>
-        </field>
-        <field name="estimation" ng-model="backlogItem.estimation" required>
-        </field>
-        <hr>
-        <crud-buttons></crud-buttons>
+    <form name="form" crud-edit="backlog" patchable novalidate class="form-horizontal">
+        <fieldset>
+            <field name="name" label="Name" type="text" ng-model="backlog.name" required autofocus>
+                <validator key='required'>{{$fieldLabel}} is required</validator>
+            </field>
+            <field name="desc" label="User story" template="textarea" rows="8" ng-model="backlog.desc">
+            </field>
+            <field name="priority" label="Priority" type="number" ng-model="backlog.priority" required max="10" min="1" size="10">
+                <validator key='required'>{{$fieldLabel}} is required</validator>
+                <validator key='number'>{{$fieldLabel}} must be a number</validator>
+                <validator key='min'>{{$fieldLabel}} must be no less then 1.</validator>
+                <validator key='max'>{{$fieldLabel}} must be less then 10.</validator>
+            </field>
+            <field name="estimation" label="Estimation" type="number" ng-model="backlog.estimation" required min="1" size="10">
+                <validator key='required'>{{$fieldLabel}} is required</validator>
+                <validator key='number'>{{$fieldLabel}} must be a number</validator>
+                <validator key='min'>{{$fieldLabel}} must be no less then 1.</validator>
+            </field>
+        </fieldset>
+
+        <div class="row">
+            <hr>
+            <crud-buttons></crud-buttons>
+        </div>
     </form>
 </div>

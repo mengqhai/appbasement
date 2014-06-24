@@ -1,4 +1,4 @@
-<form name="form" novalidate class="login-form" autocomplete="off">
+<form name="form" novalidate class="login-form form-horizontal" autocomplete="off">
     <!-- have to turn off autocomplete http://stackoverflow.com/questions/21168367/angularjs-chrome-autocomplete-dilemna -->
     <div class="modal-header">
         <h4>Sign in</h4>
@@ -17,12 +17,14 @@
         <!--<input name="login" type="text" ng-model="user.username" required autofocus>-->
         <!--<label>Password</label>-->
         <!--<input name="pass" type="password" ng-model="user.password" required autocomplete="off">-->
-        <field name="login" label="Username" type="text" ng-model="user.username" required autofocus>
-            <validator key="required">{{$fieldLabel}} is required</validator>
-        </field>
-        <field name="pass" label="Password" type="password" ng-model="user.password" required autocomplete="off">
-            <validator key="required">{{$fieldLabel}} is required</validator>
-        </field>
+        <fieldset>
+            <field name="login" label="Username" type="text" ng-model="user.username" required autofocus>
+                <validator key="required">{{$fieldLabel}} is required</validator>
+            </field>
+            <field name="pass" label="Password" type="password" ng-model="user.password" required autocomplete="off">
+                <validator key="required">{{$fieldLabel}} is required</validator>
+            </field>
+        </fieldset>
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary login" ng-click="login()" ng-disabled="form.$invalid">Sign in</button>

@@ -36,7 +36,7 @@ angular.module('controllers.projects', ['resources.projects',
             $state.go('projects.backlogs.list', {projectId: project.id})
         };
 
-        $scope.newProject = function () {
+        $scope.new = function () {
             $state.go('projects.new');
         }
     }])

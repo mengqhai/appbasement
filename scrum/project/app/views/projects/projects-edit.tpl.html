@@ -1,16 +1,12 @@
 <div class="well">
-    <form name="form" crud-edit="project" patchable novalidate>
-        <div class="row-fluid">
-            <div class="span6">
-                <field ng-model="project.name" name="name" type="text" label="Name"
-                       size="60" required>
-                    <validator key="required">Name is required</validator>
-                </field>
-                <field ng-model="project.desc" name="desc" template="textarea" label="Description"
-                        cols="65" rows="8">
-                </field>
-            </div>
-        </div>
+    <form name="form" crud-edit="project" patchable novalidate class="form-horizontal">
+        <fieldset>
+            <field ng-model="project.name" name="name" type="text" label="Name" required>
+                <validator key="required">Name is required</validator>
+            </field>
+            <field ng-model="project.desc" name="desc" rows="8" template="textarea" label="Description">
+            </field>
+        </fieldset>
         <div class="row">
             <hr>
             <crud-buttons></crud-buttons>
