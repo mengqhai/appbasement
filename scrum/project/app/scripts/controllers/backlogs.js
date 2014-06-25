@@ -49,7 +49,7 @@ angular.module('controllers.backlogs', ['resources.backlogs'])
             $scope.itemsPerPage = 5;
             $scope.currentPage = 1
             $scope.backlogCount = backlogCount;
-            if ($state.current.data.project) {
+            if ($state.current.data.project && $state.current.data.project.id == projectId) {
                 $scope.project = $state.current.data.project;
             } else {
                 $scope.project = Projects.get({projectId: projectId});
