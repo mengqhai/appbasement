@@ -5,11 +5,7 @@ angular.module('controllers.projects', ['resources.projects',
         'formPatchable',
         'services.notifications'])
     .config(['crudRouteProvider', function (crudRouteProvider) {
-        crudRouteProvider.routeFor('Projects', {
-            projects: ['Projects', function (Projects) {
-                return Projects.query();
-            }]
-        })
+        crudRouteProvider.routeFor('Projects', {})
             .whenList({
                 projects: ['Projects', function (Projects) {
                     return Projects.query();
@@ -21,7 +17,7 @@ angular.module('controllers.projects', ['resources.projects',
                 }]
             })
             .whenEdit({
-                project: ['Projects', '$stateParams', 'projects', function (Projects, $stateParams, projects) {
+                project: ['Projects', '$stateParams', function (Projects, $stateParams) {
                     // resolve watches promise, so we must return a promise
                     return Projects.get({projectId: $stateParams.itemId}).$promise;
                 }]
@@ -40,8 +36,8 @@ angular.module('controllers.projects', ['resources.projects',
             $state.go('projects.new');
         }
     }])
-    .controller('ProjectsEditCtrl', ['$scope', '$state', '$stateParams', 'project', 'projects', 'notifications', 'breadcrumbs',
-        function ($scope, $state, $stateParams, project, projects, notifications, breadcrumbs) {
+    .controller('ProjectsEditCtrl', ['$scope', '$state', '$stateParams', 'project', 'notifications', 'breadcrumbs',
+        function ($scope, $state, $stateParams, project, notifications, breadcrumbs) {
             // projects is inherited from parent state's resolve
             $scope.project = project;
 
