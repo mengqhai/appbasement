@@ -9,7 +9,10 @@ angular.module('controllers.backlogs', ['resources.backlogs'])
         }, '/:projectId', 'projects')
             .whenList({
                 backlogs: ['$stateParams', 'Backlogs', function ($stateParams, Backlogs) {
-                    return Backlogs.forProject($stateParams.projectId, first, max);
+                    return Backlogs.forProject($stateParams.projectId, first, max).$promise;
+                }],
+                backlogCount: ['$stateParams', 'Backlogs', function ($stateParams, Backlogs) {
+                    return Backlogs.forProjectCount($stateParams.projectId).$promise;
                 }]
             })
             .whenNew({
@@ -27,10 +30,33 @@ angular.module('controllers.backlogs', ['resources.backlogs'])
                 }]
             });
     }])
-    .controller('BacklogsListCtrl', ['$scope', '$state', 'projectId', 'backlogs',
-        function ($scope, $state, projectId, backlogs) {
+    .controller('BacklogsListCtrl', [
+        '$scope',
+        '$state',
+        'projectId',
+        'backlogs',
+        'backlogCount',
+        'Backlogs',
+        function ($scope, $state, projectId, backlogs, backlogCount, Backlogs) {
             $scope.backlogs = backlogs;
+            $scope.itemsPerPage = 5;
+            $scope.currentPage = 1
+            $scope.backlogCount = backlogCount;
             $scope.project = $state.current.data.project;
+
+            $scope.listBacklogs = function (updateCount, first, max) {
+                    $scope.backlogs = Backlogs.forProject($scope.project.id, first, max);
+                    if (updateCount)
+                        $scope.backlogCount = Backlogs.forProjectCount($scope.selectedProject.id);
+            };
+            // for page switches
+            $scope.$watch('currentPage', function (newPage, oldPage) {
+                if (oldPage !== newPage) {
+                    var first = (newPage - 1) * $scope.itemsPerPage;
+                    $scope.listBacklogs(false, first, $scope.itemsPerPage);
+                }
+            });
+
             $scope.new = function () {
                 $state.go('projects.backlogs.new')
             };

@@ -1,6 +1,10 @@
 <div>
     <h3>Backlogs for project {{project.name}}</h3>
-    <div ng-include="'views/new-btn.tpl.html'"></div>
+    <div class="row">
+        <div class="col-sm-2" ng-include="'views/new-btn.tpl.html'"></div>
+        <pagination ng-show="backlogCount.value > itemsPerPage" class="col-sm-9" total-items="backlogCount.value" ng-model="currentPage" items-per-page="itemsPerPage"></pagination>
+    </div>
+
     <table class="table table-bordered table-condensed table-striped table-hover">
         <thead>
         <tr>
