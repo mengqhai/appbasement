@@ -36,7 +36,13 @@ angular.module('controllers.projects', ['resources.projects',
             $state.go('projects.new');
         }
     }])
-    .controller('ProjectsEditCtrl', ['$scope', '$state', '$stateParams', 'project', 'notifications', 'breadcrumbs',
+    .controller('ProjectsEditCtrl', [
+        '$scope',
+        '$state',
+        '$stateParams',
+        'project',
+        'notifications',
+        'breadcrumbs',
         function ($scope, $state, $stateParams, project, notifications, breadcrumbs) {
             // projects is inherited from parent state's resolve
             $scope.project = project;
