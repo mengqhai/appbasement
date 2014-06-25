@@ -2,6 +2,19 @@ angular.module('controllers.backlogs', ['resources.backlogs'])
     .config(['crudRouteProvider', function (crudRouteProvider) {
         var first = 0, max = 5;
 
+        crudRouteProvider.routeFor('Backlogs')
+            .whenList({
+                projectId: function() {
+                    return null;
+                },
+                backlogs: ['Backlogs', function (Backlogs) {
+                    return Backlogs.query({first: first, max: max}).$promise;
+                }],
+                backlogCount: ['Backlogs', function (Backlogs) {
+                    return Backlogs.count().$promise;
+                }]
+            });
+
         crudRouteProvider.routeFor('Backlogs', {
             projectId: ['$stateParams', function ($stateParams) {
                 return $stateParams.projectId;
@@ -49,18 +62,26 @@ angular.module('controllers.backlogs', ['resources.backlogs'])
             $scope.itemsPerPage = 5;
             $scope.currentPage = 1
             $scope.backlogCount = backlogCount;
-            if ($state.current.data.project && $state.current.data.project.id == projectId) {
-                $scope.project = $state.current.data.project;
+
+            if (projectId) {
+                if ($state.current.data.project && $state.current.data.project.id == projectId) {
+                    $scope.project = $state.current.data.project;
+                } else {
+                    $scope.project = Projects.get({projectId: projectId});
+                }
+
+                $scope.listBacklogs = function (updateCount, first, max) {
+                    $scope.backlogs = Backlogs.forProject($scope.project.id, first, max);
+                    updateCount &&
+                    ($scope.backlogCount = Backlogs.forProjectCount($scope.selectedProject.id));
+                }
             } else {
-                $scope.project = Projects.get({projectId: projectId});
+                $scope.listBacklogs = function (updateCount, first, max) {
+                    $scope.backlogs = Backlogs.query({first: first, max: max});
+                    updateCount && ($scope.backlogCount = Backlogs.count());
+                }
             }
 
-
-            $scope.listBacklogs = function (updateCount, first, max) {
-                    $scope.backlogs = Backlogs.forProject($scope.project.id, first, max);
-                    if (updateCount)
-                        $scope.backlogCount = Backlogs.forProjectCount($scope.selectedProject.id);
-            };
             // for page switches
             $scope.$watch('currentPage', function (newPage, oldPage) {
                 if (oldPage !== newPage) {
@@ -72,8 +93,10 @@ angular.module('controllers.backlogs', ['resources.backlogs'])
             $scope.new = function () {
                 $state.go('projects.backlogs.new')
             };
-        }])
-    .controller('BacklogsEditCtrl', ['$scope', '$state', 'backlog', 'notifications', 'projectId','projects',
+        }
+    ])
+    .
+    controller('BacklogsEditCtrl', ['$scope', '$state', 'backlog', 'notifications', 'projectId', 'projects',
         function ($scope, $state, backlog, notifications, projectId, projects) {
             $scope.backlog = backlog;
             $scope.projects = projects;

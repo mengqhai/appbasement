@@ -1,10 +1,17 @@
-<div class="header"  ng-controller="HeaderCtrl">
+<div class="header" ng-controller="HeaderCtrl">
     <div class="navbar">
         <h3 class="text-muted pull-left"><a ng-click="home()">AScrum</a></h3>
+
         <div class="pull-right">
             <ul class="nav nav-pills pull-left" ng-show="isAuthenticated()">
                 <li ng-class="{active:isNavbarActive('projects')}"><a ui-sref="projects.list">Projects</a></li>
-                <li><a ng-href="#">About</a></li>
+                <li>
+                    <a class="dropdown-toggle btn-link" data-toggle="dropdown">Backlogs<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a ui-sref="backlogs.list">All Backlogs</a></li>
+                        <li><a href="#">Backlogs not planned</a></li>
+                    </ul>
+                </li>
                 <li><a ng-href="#">Contact</a></li>
             </ul>
             <login-toolbar></login-toolbar>
@@ -22,6 +29,6 @@
         </ul>
     </div>
     <!--<div>-->
-        <!--<alert-list alerts="notifications.current"></alert-list>-->
+    <!--<alert-list alerts="notifications.current"></alert-list>-->
     <!--</div>-->
 </div>
