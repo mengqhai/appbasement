@@ -4,7 +4,7 @@ angular.module('controllers.backlogs', ['resources.backlogs'])
 
         crudRouteProvider.routeFor('Backlogs')
             .whenList({
-                projectId: function() {
+                projectId: function () {
                     return null;
                 },
                 backlogs: ['Backlogs', function (Backlogs) {
@@ -112,7 +112,8 @@ angular.module('controllers.backlogs', ['resources.backlogs'])
                 $state.go('projects.backlogs.list', {projectId: projectId}, {reload: true})
             };
 
-            $scope.onError = function (backlog) {
-                notifications.growl('Failed to edit backlog ' + $scope.backlog.name, 'error', -1);
+            $scope.onError = function (error) {
+                notifications.growl('Failed to edit backlog ' + $scope.backlog.name + ":<br/> " +
+                    "<b>"+ error.data.message+"</b>", 'error', -1);
             }
         }]);

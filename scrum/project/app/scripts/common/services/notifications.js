@@ -2,6 +2,7 @@ angular.module('services.notifications', ['angular-growl'])
     // https://github.com/marcorinck/angular-growl
     .config(['growlProvider', function(growlProvider) {
         growlProvider.globalTimeToLive(5000);
+        growlProvider.globalEnableHtml(true);
     }])
     .factory('notifications', ['$rootScope','growl', function ($rootScope, growl) {
         var notificationService = {};
