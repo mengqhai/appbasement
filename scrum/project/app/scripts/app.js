@@ -15,7 +15,8 @@ angular
         'resources.backlogs',
         'ui.bootstrap.pagination',
         'angular-loading-bar',
-        'validateEquals', 'formPatchable', 'uniqueChecks', 'alert', 'field'
+        'validateEquals', 'formPatchable', 'uniqueChecks', 'alert', 'field',
+        'filters'
     ])
     .config(function ($stateProvider,$urlRouterProvider, $httpProvider) {
         $stateProvider

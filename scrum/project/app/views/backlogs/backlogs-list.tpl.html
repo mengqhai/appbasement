@@ -5,26 +5,28 @@
         <div class="col-sm-2" ng-include="'views/new-btn.tpl.html'"></div>
         <pagination ng-show="backlogCount.value > itemsPerPage" class="col-sm-9" total-items="backlogCount.value" ng-model="currentPage" items-per-page="itemsPerPage"></pagination>
     </div>
-
-    <table class="table table-condensed table-striped table-hover">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Priority</th>
-            <th>Estimation</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr ng-repeat="backlogItem in backlogs">
-            <td><a ng-click="goEdit(backlogItem.id)" class="btn btn-link">{{backlogItem.name}}</a></td>
-            <td>{{backlogItem.desc}}</td>
-            <td>{{backlogItem.priority}}</td>
-            <td>{{backlogItem.estimation}}</td>
-        </tr>
-        <tr ng-show="!backlogs.length">
-            <td colspan="4">No items in the backlogs</td>
-        </tr>
-        </tbody>
-    </table>
+    <ul class="collection">
+        <li ng-repeat="backlogItem in backlogs">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3><a ng-click="goEdit(backlogItem.id)" class="btn-link">{{backlogItem.name}}</a></h3>
+                    <div>{{backlogItem.desc}}</div>
+                    <div>
+                        <span class="meta-info">
+                            <span class="glyphicon glyphicon-flag"></span>
+                            {{backlogItem.priority}}
+                        </span>
+                        <span class="meta-info">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                            {{backlogItem.estimation}}
+                        </span>
+                        <span class="meta-info">
+                            <span class="glyphicon glyphicon-floppy-saved"></span>
+                            {{backlogItem.createdAt | date:'medium'}}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
 </div>

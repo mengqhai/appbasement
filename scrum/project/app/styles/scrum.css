@@ -1,0 +1,26 @@
+ul.collection {
+    padding-left: 10px;
+}
+ul.collection>li {
+    list-style: none;
+    margin-bottom: 30px;
+}
+ul.collection>li .hidden-actions {
+    display: none;
+    margin-top: 15px;
+}
+ul.collection>li:hover .hidden-actions {
+    display: inline;
+}
+ul.collection h3 {
+    margin-top: 10px;
+}
+
+
+
+.meta-info {
+    font-size: 13px;
+    color: #999;
+    margin-right: 10px;
+}
+
