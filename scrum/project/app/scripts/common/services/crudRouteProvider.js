@@ -82,7 +82,7 @@ angular.module('services.crudRouteProvider', ['ui.router'])
                 // Create a route that will handle editing an existing item
                 whenEdit: function(resolveFns) {
                     $stateProvider.state(stateName +".edit", {
-                        url: '/:itemId', // /<parentUrl>/:itemId
+                        url: '/{itemId:[0-9]+}', // /<parentUrl>/:itemId    distinguish /new with RegExp
                         templateUrl: templateUrl('Edit'),
                         controller: controllerName('Edit'),
                         resolve: resolveFns,

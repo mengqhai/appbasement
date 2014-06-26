@@ -2,16 +2,35 @@ angular.module('controllers.backlogs', ['resources.backlogs'])
     .config(['crudRouteProvider', function (crudRouteProvider) {
         var first = 0, max = 5;
 
-        crudRouteProvider.routeFor('Backlogs')
+        crudRouteProvider.routeFor('Backlogs', {
+            projectId: function () {
+                return null;
+            }
+        })
             .whenList({
-                projectId: function () {
-                    return null;
-                },
                 backlogs: ['Backlogs', function (Backlogs) {
                     return Backlogs.query({first: first, max: max}).$promise;
                 }],
                 backlogCount: ['Backlogs', function (Backlogs) {
                     return Backlogs.count().$promise;
+                }]
+            })
+            .whenEdit({
+                backlog: ['$stateParams', 'Backlogs', function ($stateParams, Backlogs) {
+                    return Backlogs.get({
+                        backlogId: $stateParams.itemId
+                    }).$promise;
+                }],
+                projects: ['Projects', function (Projects) {
+                    return Projects.query().$promise;
+                }]
+            })
+            .whenNew({
+                backlog: ['Backlogs', function (Backlogs) {
+                    return new Backlogs();
+                }],
+                projects: ['Projects', function (Projects) {
+                    return Projects.query().$promise;
                 }]
             });
 
@@ -69,6 +88,10 @@ angular.module('controllers.backlogs', ['resources.backlogs'])
                 } else {
                     $scope.project = Projects.get({projectId: projectId});
                 }
+                $scope.goEdit = function (backlogId) {
+                    $state.go('projects.backlogs.edit', {itemId: backlogId, projectId: projectId});
+                };
+
 
                 $scope.listBacklogs = function (updateCount, first, max) {
                     $scope.backlogs = Backlogs.forProject($scope.project.id, first, max);
@@ -80,6 +103,10 @@ angular.module('controllers.backlogs', ['resources.backlogs'])
                     $scope.backlogs = Backlogs.query({first: first, max: max});
                     updateCount && ($scope.backlogCount = Backlogs.count());
                 }
+
+                $scope.goEdit = function (backlogId) {
+                    $state.go('backlogs.edit', {itemId: backlogId, projectId: null});
+                };
             }
 
             // for page switches
@@ -91,29 +118,32 @@ angular.module('controllers.backlogs', ['resources.backlogs'])
             });
 
             $scope.new = function () {
-                $state.go('projects.backlogs.new')
+                var sName = $state.current.name;
+                $state.go(sName.substring(0, sName.lastIndexOf('.')) + '.new', {projectId: null})
             };
         }
     ])
-    .
-    controller('BacklogsEditCtrl', ['$scope', '$state', 'backlog', 'notifications', 'projectId', 'projects',
+    .controller('BacklogsEditCtrl', ['$scope', '$state', 'backlog', 'notifications', 'projectId', 'projects',
         function ($scope, $state, backlog, notifications, projectId, projects) {
             $scope.backlog = backlog;
             $scope.projects = projects;
 
+            var sName = $state.current.name;
+            var fromState = sName.substring(0, sName.lastIndexOf('.')) + ".list";
+
 
             $scope.onSave = function (backlog) {
                 notifications.growl('Backlog ' + $scope.backlog.name + ' saved successfully.', 'success', -1);
-                $state.go('projects.backlogs.list', {projectId: backlog.projectId}, {reload: true});
+                $state.go(fromState, {projectId: projectId}, {reload: true});
             };
 
             $scope.onDelete = function (backlog) {
                 notifications.growl('Backlog ' + $scope.backlog.name + ' deleted.', 'success', -1);
-                $state.go('projects.backlogs.list', {projectId: projectId}, {reload: true})
+                $state.go(fromState, {projectId: projectId}, {reload: true})
             };
 
             $scope.onError = function (error) {
                 notifications.growl('Failed to edit backlog ' + $scope.backlog.name + ":<br/> " +
-                    "<b>"+ error.data.message+"</b>", 'error', -1);
+                    "<b>" + error.data.message + "</b>", 'error', -1);
             }
         }]);

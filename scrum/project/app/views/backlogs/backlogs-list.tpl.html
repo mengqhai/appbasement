@@ -16,8 +16,8 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="backlogItem in backlogs" ng-click="edit(backlogItem.id)">
-            <td><a ui-sref="projects.backlogs.edit({itemId: backlogItem.id, projectId: project.id})">{{backlogItem.name}}</a></td>
+        <tr ng-repeat="backlogItem in backlogs">
+            <td><a ng-click="goEdit(backlogItem.id)" class="btn btn-link">{{backlogItem.name}}</a></td>
             <td>{{backlogItem.desc}}</td>
             <td>{{backlogItem.priority}}</td>
             <td>{{backlogItem.estimation}}</td>

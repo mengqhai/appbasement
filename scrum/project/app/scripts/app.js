@@ -2,6 +2,7 @@
 
 angular
     .module('scrumApp', [
+        'security.service',
         'ngCookies',
         'ngResource',
         'ngSanitize',
@@ -10,7 +11,6 @@ angular
         'ngLocale',
         'controllers',
         'services',
-        'security.service',
         'resources.projects',
         'resources.backlogs',
         'ui.bootstrap.pagination',
