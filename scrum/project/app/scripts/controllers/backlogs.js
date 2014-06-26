@@ -119,7 +119,7 @@ angular.module('controllers.backlogs', ['resources.backlogs'])
 
             $scope.new = function () {
                 var sName = $state.current.name;
-                $state.go(sName.substring(0, sName.lastIndexOf('.')) + '.new', {projectId: null})
+                $state.go(sName.substring(0, sName.lastIndexOf('.')) + '.new', {projectId: projectId})
             };
         }
     ])
