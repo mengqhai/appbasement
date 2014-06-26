@@ -1,10 +1,10 @@
 <div>
     <div ng-include="'views/new-btn.tpl.html'"/>
     <ul class="collection">
-        <li ng-repeat="project in projects">
+        <li ng-repeat="project in projects" class="animate-repeat">
             <div class="row">
                 <div class="col-md-10">
-                    <h3><a ui-sref="projects.edit({itemId:project.id})">{{project.name}}</a></h3>
+                    <h3><span class="glyphicon glyphicon-briefcase"></span> <a ui-sref="projects.edit({itemId:project.id})">{{project.name}}</a></h3>
                     <div>{{project.desc}}</div>
                     <div>
                         <span class="meta-info">

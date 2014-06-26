@@ -6,10 +6,10 @@
         <pagination ng-show="backlogCount.value > itemsPerPage" class="col-sm-9" total-items="backlogCount.value" ng-model="currentPage" items-per-page="itemsPerPage"></pagination>
     </div>
     <ul class="collection">
-        <li ng-repeat="backlogItem in backlogs">
+        <li ng-repeat="backlogItem in backlogs" class="animate-repeat">
             <div class="row">
                 <div class="col-md-12">
-                    <h3><a ng-click="goEdit(backlogItem.id)" class="btn-link">{{backlogItem.name}}</a></h3>
+                    <h3><span class="glyphicon glyphicon-list"></span> <a ng-click="goEdit(backlogItem.id)" class="btn-link">{{backlogItem.name}}</a></h3>
                     <div>{{backlogItem.desc}}</div>
                     <div>
                         <span class="meta-info">
