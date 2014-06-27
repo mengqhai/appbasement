@@ -1,6 +1,6 @@
 angular.module('controllers.header',['security.service', 'services.breadcrumbs', 'services.notifications'])
-    .controller('HeaderCtrl', ['$scope','$location', 'loginService','breadcrumbs','notifications',
-        function($scope, $location, loginService, breadcrumbs, notifications) {
+    .controller('HeaderCtrl', ['$scope','$location', '$state','loginService','breadcrumbs','notifications',
+        function($scope, $location, $state, loginService, breadcrumbs, notifications) {
             $scope.location = $location;
             $scope.isAuthenticated = loginService.isAuthenticated;
             $scope.breadcrumbs = breadcrumbs;
@@ -9,8 +9,9 @@ angular.module('controllers.header',['security.service', 'services.breadcrumbs',
                 $location.path('/')
             };
 
-            $scope.isNavbarActive = function(navBarPath) {
-                return navBarPath === breadcrumbs.getLast().name;
+            $scope.isNavbarActive = function(state) {
+                console.info($state.current.name);
+                return $state.current.name.indexOf(state) === 0;
             };
 
             $scope.notifications = notifications;
