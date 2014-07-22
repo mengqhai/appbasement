@@ -1,0 +1,194 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1.0,width=device-width" />
+    <link rel="stylesheet" href="../../bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="../styles/css/global.css" />
+    <link rel="stylesheet" href="../styles/css/sidebar.css" />
+    <script src="../../bower_components/jquery/dist/jquery.js">
+    </script>
+    <script src="../../bower_components/bootstrap/dist/js/bootstrap.js">
+    </script>
+
+</head>
+
+<body>
+
+    <div class="container">
+        <aside class="app-sidebar">
+            <a href="/" class="img-logo"></a>
+            <div class="sb-power-button btn-group">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-plus-sign"></span>
+                    Create
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="#"><span class="glyphicon glyphicon-check"></span>
+                        Task</a>
+                    </li>
+                    <li><a href="#"><span class="glyphicon glyphicon-comment"></span>
+                        Conversation</a>
+                    </li>
+                    <li><a href="#"><span class="glyphicon glyphicon-file"></span>
+                        Note</a>
+                    </li>
+                    <li><a href="#"><span class="glyphicon glyphicon-tasks"></span>
+                        Task List</a>
+                    </li>
+                    <li><a href="#"><span class="glyphicon glyphicon-briefcase"></span>
+                        Project</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="sb-menu-wrapper">
+                <div class="sb-menu">
+                    <ul class="sb-menu-list">
+                        <li>
+                            <a href="#" class="sb-menu-list-item active"><span class="glyphicon glyphicon-dashboard"></span>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="sb-menu-list-item"><span class="glyphicon glyphicon-check"></span>
+                                Tasks
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="sb-menu">
+                    <ul class="sb-menu-list">
+                        <li>
+                            <a href="#" class="sb-menu-list-item"><span class="glyphicon glyphicon-time"></span>
+                                Time tracking
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="sb-menu-list-item"><span class="glyphicon glyphicon-facetime-video"></span>
+                                HD Meetings
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="sb-menu-list-item"><span class="glyphicon glyphicon-stats"></span>
+                                Reporting
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="sb-menu-list-item"><span class="glyphicon glyphicon-comment"></span>
+                                Group Chart (beta)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="sb-menu-list-item"><span class="glyphicon glyphicon-plane"></span>
+                                Upgrade
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="sb-menu">
+                    <div class="sb-filter">
+                        <input type="text" placeholder="Filter projects">
+                    </div>
+
+                    <div class="sb-projects">
+                        <div class="sb-menu">
+                            <div class="sb-menu-title"><strong>Org #1</strong>
+                            </div>
+                            <div class="sb-projects-list">
+                                <ul class="sb-menu-list">
+                                    <li>
+                                        <a href="#" class="sb-menu-list-item sb-menu-list-item--with-menu">
+                                            <div class="color-pinned bg-picker-green-1"></div>
+                                            <div class="sb-menu-list-item-inner">Project A</div>
+                                            <div class="tb-select-menu btn-group">
+                                                <div class="dropdown-toggle" data-toggle="dropdown">
+                                                    <span class="caret"></span>
+                                                </div>
+                                                <ul class="dropdown-menu">
+                                                    <li>Add to favorites</li>
+                                                    <li class="divider"></li>
+                                                    <li>
+                                                        <div class="color-chooser">
+                                                            <p>Select a color:</p>
+                                                            <ul>
+                                                                <li class="color-box"></li>                          
+                                                                <li class="color-box bg-picker-brown"><span class="glyphicon glyphicon-ok"></span></li>
+                                                                <li class="color-box bg-picker-orange"><span class="glyphicon glyphicon-ok"></span></li>
+                                                                <li class="color-box bg-picker-yellow"><span class="glyphicon glyphicon-ok"></span></li>
+                                                                <li class="color-box bg-picker-green-1 active"><span class="glyphicon glyphicon-ok"></span></li>
+                                                                <li class="color-box bg-picker-green-2"><span class="glyphicon glyphicon-ok"></span></li>
+                                                                <li class="color-box bg-picker-blue-1"><span class="glyphicon glyphicon-ok"></span></li>
+                                                                <li class="color-box bg-picker-blue-2"><span class="glyphicon glyphicon-ok"></span></li>
+                                                                <li class="color-box bg-picker-blue-3"><span class="glyphicon glyphicon-ok"></span></li>
+                                                                <li class="color-box bg-picker-violet"><span class="glyphicon glyphicon-ok"></span></li>
+                                                                <li class="color-box bg-picker-rose"><span class="glyphicon glyphicon-ok"></span></li>
+                                                                <li class="color-box bg-picker-red"><span class="glyphicon glyphicon-ok"></span></li>
+                                                            </ul>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="sb-menu-list-item sb-menu-list-item--with-menu">
+                                            <div class="color-pinned bg-picker-violet"></div>
+                                            <div class="sb-menu-list-item-inner">Project B</div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="sb-menu-list-item sb-menu-list-item--with-menu">
+                                            <div class="color-pinned bg-picker-red"></div>
+                                            <div class="sb-menu-list-item-inner">Project C</div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="sb-menu">
+                            <div class="sb-menu-title"><strong>Org #2</strong>
+                            </div>
+                            <div class="sb-projects-list">
+                                <ul class="sb-menu-list">
+                                    <li>
+                                        <a href="#" class="sb-menu-list-item sb-menu-list-item--with-menu">
+                                            <div class="color-pinned bg-picker-brown"></div>
+                                            <div class="sb-menu-list-item-inner">
+                                                Project 1
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="sb-menu-list-item sb-menu-list-item--with-menu">
+                                            <div class="color-pinned bg-picker-yellow"></div>
+                                            <div class="sb-menu-list-item-inner">
+                                                Project 2
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="sb-menu-list-item sb-menu-list-item--with-menu">
+                                            <div class="color-pinned bg-picker-rose"></div>
+                                            <div class="sb-menu-list-item-inner">
+                                                Project 3
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </aside>
+    </div>
+</body>
+
+</html>
