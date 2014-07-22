@@ -1,0 +1,37 @@
+.soft-text {
+  font-weight: normal;
+  color: #888888;
+}
+.nice-checkbox {
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  -ms-border-radius: 2px;
+  border-radius: 2px;
+  position: relative;
+  top: 1px;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #bbbbbb;
+  margin: 0;
+}
+.nice-checkbox input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+}
+.nice-checkbox .glyphicon {
+  font-size: 5px;
+  position: absolute;
+  visibility: hidden;
+  opacity: 0.25;
+}
+.nice-checkbox:hover:not(.is-selected) .glyphicon {
+  visibility: visible;
+}
+.nice-checkbox.is-selected {
+  background: #91ce88;
+}
+.nice-checkbox.is-selected .glyphicon {
+  visibility: visible;
+  color: #ffffff;
+  opacity: 1;
+}
