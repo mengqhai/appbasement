@@ -1,0 +1,59 @@
+.soft-text {
+  font-weight: normal;
+  color: #888888;
+}
+.task-list-accordions.tb-centered-block {
+  margin: 0 auto 10px;
+  max-width: 700px;
+}
+.task-list-accordions .panel-heading {
+  position: relative;
+}
+.task-list-accordions .panel-heading h3 {
+  display: inline-block;
+  margin-left: 10px;
+}
+.task-list-accordions .panel-heading a {
+  display: block;
+}
+.task-list-accordions .panel-heading a > .icon-collapse {
+  font-weight: normal;
+  color: #888888;
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  transform: rotate(90deg);
+  position: relative;
+  left: 10px;
+  transition: all 0.25s ease-out;
+}
+.task-list-accordions .panel-heading a > .icon-collapse.glyphicon {
+  font-size: 10px;
+}
+.task-list-accordions .panel-heading a.collapsed > .icon-collapse {
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
+  transform: rotate(0deg);
+}
+.task-list-accordions .panel-heading .badge {
+  position: absolute;
+  right: 15px;
+}
+.task-list-accordions .panel-collapse .panel-body {
+  padding: 0;
+}
+.task-list-accordions .panel-collapse .panel-body .list-group {
+  margin: 0;
+}
+.task-list-accordions .panel-collapse .panel-body .list-group .list-group-item {
+  border-bottom: none;
+  border-left: none;
+  border-radius: none;
+}
+.task-list-accordions .panel-collapse .panel-body .list-group .list-group-item:first-child {
+  border-top: none;
+}
+.task-list-accordions .list-group-item:hover {
+  cursor: pointer;
+}

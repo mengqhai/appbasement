@@ -1,0 +1,107 @@
+// out: ../css/header.css
+@import "variables.less";
+
+.app-content {
+    background: @color-content-bg;
+    position: absolute;
+    right: 0;
+    top:0;
+    bottom: 0;
+    left: 250px;
+}
+
+.app-content-header {
+    height: @header-height;
+    background: @color-header-bg;
+    color: @text-color-w;
+    position: relative;
+    
+    .main-header-row {
+        position: relative;
+    }
+    
+    .main-header-title {
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 5;
+        white-space: nowrap;
+        
+        h1 {
+            margin: 0;
+            padding: 15px 10px;
+            font-size: 1.2em;
+            font-weight: 400;
+        }
+    }
+    
+    .main-header-search {
+        position: absolute;
+        right: 0;
+        top: 0;
+        padding: 10px;
+        input {
+            .round(16px);
+            height: 28px;
+            width: 180px;
+            outline: none;
+            border: none;
+            padding: 5px 25px 5px 10px;
+            background: lighten(@color-header-bg, 30%);
+            transition: @tran-default;
+            font-size: 0.9em;
+            
+            &:hover {
+                background: lighten(@color-header-bg, 50%);
+            }
+            
+            &:focus {
+                background: lighten(@color-header-bg, 100%);
+                color: @color-text-darkest;
+            }
+            
+            &:focus+.glyphicon {
+                color: lighten(@color-header-bg, 50%);
+            }
+        }
+        
+        .glyphicon {
+            transform: @tran-default;
+            color: lighten(@color-header-bg, 5%);
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            cursor: pointer;
+        }
+    }
+    
+    .header-nav {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        
+        
+        .nav-tabs {
+            font-size: 0.9em;
+            > li {
+                margin-left: 10px;
+                > a {
+                    padding: 8px 10px;
+                    color: lighten(@color-header-bg, 30%);
+                    &:hover {
+                        color: @text-color-w;
+                        background: lighten(@color-header-bg, 20%);
+                    }
+                }
+                
+                &.active {
+                    > a {
+                        color: @text-color-b;
+                        background: @color-content-bg;
+                    }
+                }
+            }
+        }
+    }
+}

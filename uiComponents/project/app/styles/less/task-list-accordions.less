@@ -1,0 +1,60 @@
+// out: ../css/task-list-accordions.css
+@import "variables.less";
+
+.task-list-accordions {
+    &.tb-centered-block {
+        margin: 0 auto 10px;
+        max-width: 700px;
+    }
+
+    .panel-heading {
+        position: relative;
+        h3 {
+            display: inline-block;
+            margin-left: 10px;
+        }
+        a {
+            display: block;
+            >.icon-collapse {
+                .soft-text; 
+                .rotate;
+                position: relative;
+                left: 10px;
+                transition: @tran-default;
+                &.glyphicon {
+                    font-size: 10px;
+                }
+            }
+
+            &.collapsed>.icon-collapse{
+                .rotate(0deg);
+            }
+        }
+
+        .badge {
+            position: absolute;
+            right: 15px;
+        }
+    }
+    
+    .panel-collapse .panel-body{
+        padding: 0;
+        .list-group {
+            margin: 0;
+            .list-group-item {
+                border-bottom: none;
+                border-left: none;
+                border-radius: none;
+                &:first-child {
+                    border-top: none;
+                }
+                
+            }
+        }
+    }
+    
+    .list-group-item:hover {
+        cursor: pointer;
+    }
+}
+

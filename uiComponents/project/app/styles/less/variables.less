@@ -1,0 +1,60 @@
+// main: header.less
+@sidebar-bg: hsl(0, 0%, 13%);
+@logo: url(../images/redbooth-color-114x29.png);
+
+@sb-item-height: 30px;
+
+
+@sb-item-color-high-light: #454545;
+@btn-color: #ebebeb;
+@text-color-b: #333;
+@text-color-w: #fff;
+@tran-default: all 0.25s ease-out;
+@color-high-light-blue: hsl(188, 69%, 43%);
+
+@color-content-bg: #eee;
+@color-header-bg: #454545;
+@color-mine-bg: #fdfdc2;
+
+@color-text-darkest: #000;
+@color-text-dark: #888;
+@color-text-light-dark: lighten(@color-text-dark,20%);
+
+@header-height: 80px;
+
+@color-line: #bbb;
+@color-line-light: #ddd;
+
+@color-danger: #ed6161;
+@color-info: hsl(112, 42%, 67%);
+
+.round(@radius:2px) {
+    -webkit-border-radius: @radius;
+    -moz-border-radius: @radius;
+    -ms-border-radius: @radius;
+    border-radius: @radius;
+}
+
+.none-select() {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.rotate(@d: 90deg) {
+    -webkit-transform: rotate(@d);
+    -moz-transform: rotate(@d);
+    -ms-transform: rotate(@d);
+    transform: rotate(@d);
+}
+
+.scroll-y() {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.soft-text {
+    font-weight: normal;
+    color: @color-text-dark;
+}

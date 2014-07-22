@@ -1,0 +1,215 @@
+.soft-text {
+  font-weight: normal;
+  color: #888888;
+}
+.app-sidebar {
+  background: #212121;
+  width: 250px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  transition: width 0.25s ease-in-out;
+}
+.app-sidebar .sb-power-button {
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  -ms-border-radius: 2px;
+  border-radius: 2px;
+  display: block;
+  height: 30px;
+  padding: 6px 10px;
+  margin: 6px 10px;
+  background: #ebebeb;
+  padding: 0px;
+  position: relative;
+  top: -8px;
+}
+.app-sidebar .sb-power-button .dropdown-menu li {
+  border-bottom: solid 1px #cccccc;
+}
+.app-sidebar .sb-power-button .dropdown-menu li a {
+  color: #4d4d4d;
+}
+.app-sidebar .sb-power-button .dropdown-menu li:last-child {
+  border: none;
+}
+.app-sidebar .sb-power-button a {
+  display: inline-block;
+  width: 100%;
+  position: relative;
+  padding: 6px 10px;
+  color: #333333;
+}
+.app-sidebar .sb-power-button a .caret {
+  position: absolute;
+  top: 12px;
+  right: 10px;
+}
+.app-sidebar .sb-menu-wrapper {
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: absolute;
+  width: 100%;
+  top: 88px;
+  bottom: 45px;
+}
+.app-sidebar ul.sb-menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.app-sidebar ul.sb-menu-list > li {
+  display: block;
+  height: 30px;
+  padding: 6px 10px;
+  margin: 6px 10px;
+  margin: 0;
+}
+.app-sidebar ul.sb-menu-list > li .sb-menu-list-item {
+  display: block;
+  padding: 5px 6px;
+  min-height: 30px;
+  cursor: pointer;
+  transition: all 0.25s ease-out;
+  color: #ffffff;
+}
+.app-sidebar ul.sb-menu-list > li .sb-menu-list-item .glyphicon {
+  color: rgba(255, 255, 255, 0.4);
+}
+.app-sidebar ul.sb-menu-list > li .sb-menu-list-item:hover:not(.active) {
+  background: #454545;
+}
+.app-sidebar ul.sb-menu-list > li .sb-menu-list-item:hover:not(.active) .glyphicon {
+  color: #ffffff;
+}
+.app-sidebar ul.sb-menu-list > li .active {
+  background: #22a5b9;
+}
+.app-sidebar ul.sb-menu-list > li .active .glyphicon {
+  color: #ffffff;
+}
+.app-sidebar .sb-filter {
+  display: block;
+  height: 30px;
+  padding: 6px 10px;
+  margin: 6px 10px;
+  margin-top: 15px;
+  padding: 0;
+}
+.app-sidebar .sb-filter input {
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  -ms-border-radius: 2px;
+  border-radius: 2px;
+  width: 100%;
+  border: none;
+  height: 2em;
+  padding-left: 10px;
+  background: #454545;
+  color: #ffffff;
+  outline-color: #ffffff;
+}
+.app-sidebar .sb-menu-title {
+  display: block;
+  height: 30px;
+  padding: 6px 10px;
+  margin: 6px 10px;
+  margin-bottom: 0;
+  line-height: 19px;
+  min-height: 24px;
+  text-transform: uppercase;
+  font-size: 1.1em;
+  color: #808080;
+}
+.app-sidebar .sb-projects-list .sb-menu-list {
+  margin-top: -6px;
+  margin-bottom: 12px;
+}
+.app-sidebar .sb-projects-list .sb-menu-list .sb-menu-list-item {
+  position: relative;
+  padding-right: 25px;
+}
+.app-sidebar .sb-projects-list .sb-menu-list .sb-menu-list-item .color-pinned {
+  left: -10px;
+  width: 4px;
+}
+.app-sidebar .sb-projects-list .sb-menu-list .sb-menu-list-item .sb-menu-list-item-inner {
+  padding-left: 6px;
+  font-size: 0.9em;
+  font-weight: 300;
+}
+.app-sidebar .sb-projects-list .sb-menu-list .sb-menu-list-item .tb-select-menu {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  border-left: solid 1px #212121;
+  width: 24px;
+  z-index: 3;
+}
+.app-sidebar .sb-projects-list .sb-menu-list .sb-menu-list-item .tb-select-menu .caret {
+  position: relative;
+  top: 5px;
+  left: 6px;
+  opacity: 0;
+}
+.app-sidebar .sb-projects-list .sb-menu-list .sb-menu-list-item .tb-select-menu > ul.dropdown-menu {
+  color: #333333;
+  left: auto;
+  right: 0;
+}
+.app-sidebar .sb-projects-list .sb-menu-list .sb-menu-list-item .tb-select-menu > ul.dropdown-menu > li:not(.divider) {
+  padding: 2px 10px;
+}
+.app-sidebar .sb-projects-list .sb-menu-list .sb-menu-list-item:hover .tb-select-menu .caret {
+  opacity: 1;
+}
+.img-logo {
+  display: inline-block;
+  clear: right;
+  width: 114px;
+  height: 29px;
+  background: url(../images/redbooth-color-114x29.png) no-repeat;
+  margin: 10px 17px;
+}
+.color-chooser {
+  cursor: default;
+}
+.color-chooser ul {
+  list-style: none;
+  padding: 0;
+  width: 180px;
+}
+.color-chooser ul > li.color-box {
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  -ms-border-radius: 2px;
+  border-radius: 2px;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-bottom: 3px;
+  margin-right: 3px;
+  text-align: center;
+  vertical-align: top;
+  cursor: pointer;
+}
+.color-chooser ul > li.color-box span.glyphicon {
+  position: relative;
+  top: 2px;
+  opacity: 0;
+}
+.color-chooser ul > li.color-box:hover span.glyphicon {
+  opacity: 0.5;
+}
+.color-chooser ul > li.color-box:first-child {
+  border: solid 1px #bbb;
+  background: linear-gradient(135deg, #ffffff 47%, #dd0004 50%, #ffffff 53%);
+}
+.color-chooser ul > li.color-box:nth-child(6n+0) {
+  margin-right: 0;
+}
+.color-chooser ul > li.color-box.active span.glyphicon {
+  opacity: 1;
+}
