@@ -1,0 +1,20 @@
+<div>
+    <h3 ng-if="project" >Sprints for project {{project.name}}</h3>
+    <div class="col-sm-2" ng-include="'views/new-btn.tpl.html'"></div>
+    <ul class="collection">
+        <li ng-repeat="sprint in sprints" class="animate-repeat">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3><span class="glyphicon glyphicon-list"></span> <a ng-click="goEdit(sprint.id)" class="btn-link">{{sprint.name}}</a></h3>
+                    <div>{{sprint.desc}}</div>
+                    <div>
+                        <span class="meta-info">
+                            <span class="glyphicon glyphicon-floppy-saved"></span>
+                            {{sprint.createdAt | date:'medium'}}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
