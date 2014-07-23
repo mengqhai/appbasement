@@ -17,7 +17,7 @@
 .nice-checkbox input[type="radio"]:checked + .glyphicon {
   color: #ffffff;
   opacity: 1;
-  background: #91ce88;
+  background-color: #91ce88;
 }
 .nice-checkbox .glyphicon {
   -webkit-border-radius: 2px;

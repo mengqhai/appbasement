@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.css"/>
     <link rel="stylesheet" href="/styles/css/nice-inputs.css"/>
+    <link rel="stylesheet" href="/styles/css/global.css"/>
+    <link rel="stylesheet" href="demo.css"/>
+
 </head>
 <body ng-app="nice-checkbox-demo">
 
@@ -143,6 +146,21 @@
                     </div>
                 </div>
 
+
+                <div class="row">
+                    <div class="col-lg-2">
+                        <fieldset>
+                            <legend>Color:<span class="glyphicon glyphicon-hand-right bg-picker-{{colorPicked.value}}">{{colorPicked.value}}</span></legend>
+                            <div class="colorPicker">
+                                <label class="nice-checkbox" ng-repeat="color in colors">
+                                    <input name="colorPicked" type="radio" ng-value="color" ng-model="colorPicked.value">
+                                    <span class="glyphicon glyphicon-ok bg-picker-{{color}}"></span>
+                                </label>
+                            </div>
+
+                        </fieldset>
+                    </div>
+                </div>
             </div>
         </div>
 
