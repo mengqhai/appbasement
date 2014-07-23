@@ -1,0 +1,43 @@
+@import "variables.less";
+
+.nice-checkbox {
+  position: relative;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  input[type="checkbox"], input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+
+    &:checked+.glyphicon {
+      color: @text-color-w;
+      opacity: 1;
+      background: @color-info;
+    }
+  }
+
+  .glyphicon {
+    .round;
+    font-size: 0.8em;
+    display: inline-block;
+    position: relative;
+    padding: 1px;
+    width: 16px;
+    height: 16px;
+    border: 1px solid @color-line;
+    margin: 0;
+    color: transparent;
+  }
+
+  &:hover {
+    input[type="checkbox"]:not(:checked)+.glyphicon, input[type="radio"]:not(:checked)+.glyphicon {
+      color: fadeout(@text-color-b, 75%);
+    }
+  }
+
+  &.nice-checkbox-round .glyphicon{
+    .round(8px);
+  }
+}

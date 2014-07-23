@@ -103,42 +103,6 @@
         min-width: 20px;
         display: inline-block;
         float: left;
-        
-        .tb-custom-checkbox {
-            position: relative;
-            top: 1px;
-            width: 16px;
-            height: 16px;
-            border: 1px solid @color-line;
-            .round;
-            
-            input[type="checkbox"] {
-                position: absolute;
-                opacity: 0;
-            }
-            
-            .glyphicon {
-                font-size: 5px;
-                position: absolute;
-                visibility: hidden;
-                opacity: 0.25;
-            }
-            
-            &:hover:not(.is-selected) {
-                .glyphicon {
-                    visibility: visible;
-                }
-            }
-            
-            &.is-selected {
-                background: @color-info;
-                .glyphicon {
-                    visibility: visible;
-                    color: @text-color-w;
-                    opacity: 1;
-                }
-            }
-        }
     }
 }
 

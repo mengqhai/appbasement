@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/styles/css/nice-inputs.css"/>
+</head>
+<body ng-app="nice-checkbox-demo">
+
+    <div class="page-header">
+        <h1>Nice Inputs</h1>
+    </div>
+
+    <div class="container">
+            <div class="panel panel-default">
+                <div class="panel-heading">Nice Checkbox</div>
+                <div class="panel-body" ng-controller="DemoCtrl">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div>Checked:
+                                <label class="nice-checkbox">
+                                    <input type="checkbox" ng-model="selected1"/>
+                                    <span class="glyphicon glyphicon-ok"></span>
+                                    Check me!
+                                </label>
+                                <span>Model value:{{selected1}}</span>
+                            </div>
+                            <div>Unchecked:
+                                <label class="nice-checkbox">
+                                    <input type="checkbox" ng-model="selected2"/>
+                                    <span class="glyphicon glyphicon-ok"></span>
+                                    Check me!
+                                </label>
+                                <span>Model value:{{selected2}}</span>
+                            </div>
+                            <div>Ordinary:
+                                <label>
+                                    <input type="checkbox" ng-model="selected3"/>
+                                    Check me!
+                                </label>
+                                <span>Model value:{{selected3}}</span>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div>Custom Icon:
+                                <label class="nice-checkbox">
+                                    <input type="checkbox" ng-model="selected1"/>
+                                    <span class="glyphicon glyphicon-pushpin"></span>
+                                    Check me!
+                                </label>
+                                <span>Model value:{{selected1}}</span>
+                            </div>
+                            <div>Custom Icon:
+                                <label class="nice-checkbox">
+                                    <input type="checkbox" ng-model="selected2"/>
+                                    <span class="glyphicon glyphicon-flash"></span>
+                                    Check me!
+                                </label>
+                                <span>Model value:{{selected2}}</span>
+                            </div>
+                            <div>Custom Icon:
+                                <label class="nice-checkbox">
+                                    <input type="checkbox" ng-model="selected3"/>
+                                    <span class="glyphicon glyphicon-heart-empty"></span>
+                                    Check me!
+                                </label>
+                                <span>Model value:{{selected3}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Nice Radio</div>
+            <div class="panel-body" ng-controller="DemoCtrl">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <fieldset>
+                            <legend>Selected option:{{selectedOption}}</legend>
+                            <label class="nice-checkbox">
+                                <input name="myRadio" type="radio" value="Option1" ng-model="selectedOption">
+                                <span class="glyphicon glyphicon-ok"></span>
+                                Option1
+                            </label>
+                            <label class="nice-checkbox">
+                                <input name="myRadio" type="radio" value="Option2" ng-model="selectedOption">
+                                <span class="glyphicon glyphicon-ok"></span>
+                                Option2
+                            </label>
+                            <label class="nice-checkbox">
+                                <input name="myRadio" type="radio" value="Option3" ng-model="selectedOption">
+                                <span class="glyphicon glyphicon-ok"></span>
+                                Option3
+                            </label>
+                        </fieldset>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <fieldset>
+                            <legend>Custom Icon:{{selectedOption}}</legend>
+                            <label class="nice-checkbox">
+                                <input name="myRadio1" type="radio" value="Option1" ng-model="selectedOption">
+                                <span class="glyphicon glyphicon-pushpin"></span>
+                                Option1
+                            </label>
+                            <label class="nice-checkbox">
+                                <input name="myRadio1" type="radio" value="Option2" ng-model="selectedOption">
+                                <span class="glyphicon glyphicon-flash"></span>
+                                Option2
+                            </label>
+                            <label class="nice-checkbox">
+                                <input name="myRadio1" type="radio" value="Option3" ng-model="selectedOption">
+                                <span class="glyphicon glyphicon-heart-empty"></span>
+                                Option3
+                            </label>
+                        </fieldset>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <fieldset>
+                            <legend>Round:{{selectedOption}}</legend>
+                            <label class="nice-checkbox nice-checkbox-round">
+                                <input name="myRadio2" type="radio" value="Option1" ng-model="selectedOption">
+                                <span class="glyphicon glyphicon-ok"></span>
+                                Option1
+                            </label>
+                            <label class="nice-checkbox nice-checkbox-round">
+                                <input name="myRadio2" type="radio" value="Option2" ng-model="selectedOption">
+                                <span class="glyphicon glyphicon-ok"></span>
+                                Option2
+                            </label>
+                            <label class="nice-checkbox nice-checkbox-round">
+                                <input name="myRadio2" type="radio" value="Option3" ng-model="selectedOption">
+                                <span class="glyphicon glyphicon-ok"></span>
+                                Option3
+                            </label>
+                        </fieldset>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <script src="/bower_components/jquery/dist/jquery.js"></script>
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/json3/lib/json3.js"></script>
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="/bower_components/angular-resource/angular-resource.js"></script>
+    <script src="/bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="/bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="/bower_components/angular-animate/angular-animate.js"></script>
+    <script src="/bower_components/angular-touch/angular-touch.js"></script>
+    <script src="/bower_components/angular-route/angular-route.js"></script>
+    <script src="demo.js"></script>
+</body>
+</html>
