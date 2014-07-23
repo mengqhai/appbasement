@@ -16,23 +16,44 @@
     </div>
 
     <div class="container">
-            <div class="panel panel-default" ng-controller="DemoCtrl">
-                <div class="panel-heading">Angular-bootstrap datepicker</div>
-                <div class="panel-body">
-                    <pre>Selected date is: <em>{{date1 | date:'fullDate'}}</em></pre>
-                    <div>
-                        <datepicker ng-model="date1" show-weeks="false" class="well well-sm"></datepicker>
-                    </div>
+        <div class="panel panel-default" ng-controller="DemoCtrl">
+            <div class="panel-heading">Angular-bootstrap datepicker</div>
+            <div class="panel-body">
+                <pre>Selected date is: <em>{{date1 | date:'fullDate'}}</em></pre>
+                <div>
+                    <datepicker ng-model="date1" show-weeks="false" class="well well-sm"></datepicker>
                 </div>
             </div>
+        </div>
 
-            <div class="panel panel-default" ng-controller="DemoCtrl">
-                <div class="panel-heading">Date picker panel</div>
-                <div class="panel-body">
-                    <pre>Selected date is: <em>{{dateInfo.date | date:'fullDate'}}</em> Urgent: <em>{{dateInfo.urgent}}</em></pre>
-                    <datepicker-panel date-info="dateInfo" ></datepicker-panel>
-                </div>
+        <div class="panel panel-default" ng-controller="DemoCtrl">
+            <div class="panel-heading">Date picker panel</div>
+            <div class="panel-body">
+                <pre>Selected date is: <em>{{dateInfo.date | date:'fullDate'}}</em> Urgent: <em>{{dateInfo.urgent}}</em></pre>
+                <datepicker-panel date-info="dateInfo" ></datepicker-panel>
             </div>
+        </div>
+
+        <div class="panel panel-default" ng-controller="DemoCtrl">
+            <div class="panel-heading">Date picker popup</div>
+            <div class="panel-body">
+                <pre>Selected date is: <em>{{dateInfo.date | date:'fullDate'}}</em> Urgent: <em>{{dateInfo.urgent}}</em></pre>
+                    <div class="btn-group">
+                        <button class="btn btn-default qh-icon-btn dropdown-toggle">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                            No due date
+                            <span class="caret"></span>
+                        </button>
+                        <div class="datepicker-panel-popup">
+                            <datepicker-panel date-info="dateInfo" ></datepicker-panel>
+                        </div>
+                    </div>
+
+
+
+
+            </div>
+        </div>
     </div>
 
 
