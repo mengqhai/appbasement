@@ -32,47 +32,47 @@ h4 {
 }
 
 .bg-picker-brown {
-    background: #b68542 !important;
+    background: @color-bg-picker-brown !important;
 }
 
 .bg-picker-orange {
-    background: #e59b32 !important;
+    background: @color-bg-picker-orange !important;
 }
 
 .bg-picker-yellow {
-    background: #e6c832 !important;
+    background: @color-bg-picker-yellow !important;
 }
 
 .bg-picker-green-1 {
-    background: #aac536 !important;
+    background: @color-bg-picker-green-1 !important;
 }
 
 .bg-picker-green-2 {
-    background: #aeda45 !important;
+    background: @color-bg-picker-green-2 !important;
 }
 
 .bg-picker-blue-1 {
-    background: #4acce6 !important;
+    background: @color-bg-picker-blue-1 !important;
 }
 
 .bg-picker-blue-2 {
-    background: #49a5e6 !important;
+    background: @color-bg-picker-blue-2 !important;
 }
 
 .bg-picker-blue-3 {
-    background: #5078f1 !important;
+    background: @color-bg-picker-blue-3 !important;
 }
 
 .bg-picker-violet {
-    background: #a15ae8 !important;
+    background: @color-bg-picker-violet !important;
 }
 
 .bg-picker-rose {
-    background: #ed78e0 !important;
+    background: @color-bg-picker-rose !important;
 }
 
 .bg-picker-red {
-    background: #e7546e !important;
+    background: @color-bg-picker-red !important;
 }
 
 .bg-picker-, .bg-picker-null {
@@ -106,4 +106,25 @@ h4 {
 
 .danger {
     color: @color-danger;
+}
+
+.qh-icon-btn {
+  & :first-child {
+    .left-round;
+    position: static;
+    background-color: @color-content-bg;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    font-size: 12px;
+    text-align: center;
+    vertical-align: middle;
+    overflow: hidden;
+  }
+  padding: 0 8px 0 0;
+  .round(2px);
+  outline: none;
+  &:focus, &:active {
+    outline: none;
+  }
 }

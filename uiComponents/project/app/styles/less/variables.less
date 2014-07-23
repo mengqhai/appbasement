@@ -28,11 +28,38 @@
 @color-danger: #ed6161;
 @color-info: hsl(112, 42%, 67%);
 
+
+@color-bg-picker-brown: #b68542;
+@color-bg-picker-orange: #e59b32;
+@color-bg-picker-yellow: #e6c832;
+@color-bg-picker-green-1: #aac536;
+@color-bg-picker-green-2: #aeda45;
+@color-bg-picker-blue-1: #4acce6;
+@color-bg-picker-blue-2: #49a5e6;
+@color-bg-picker-blue-3: #5078f1;
+@color-bg-picker-violet: #a15ae8;
+@color-bg-picker-rose: #ed78e0;
+@color-bg-picker-red: #e7546e;
+
+@size-avatar-big: 130px;
+@size-avatar-medium: 64px;
+@size-avatar-normal: 32px;
+@size-avatar-small:24px;
+@size-avatar-micro: 18px;
+
+
 .round(@radius:2px) {
     -webkit-border-radius: @radius;
     -moz-border-radius: @radius;
     -ms-border-radius: @radius;
     border-radius: @radius;
+}
+
+.left-round(@radius:2px) {
+  -webkit-border-radius: @radius 0 0 @radius !important;
+  -moz-border-radius: @radius 0 0 @radius !important;
+  -ms-border-radius: @radius 0 0 @radius !important;
+  border-radius: @radius 0 0 @radius !important;
 }
 
 .none-select() {

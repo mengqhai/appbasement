@@ -1,0 +1,51 @@
+@import "variables.less";
+
+.qh-avatars {
+  display: inline-block;
+  background-color: @color-bg-picker-blue-2 !important;
+  color: @text-color-w;
+  margin: 0 8px 0 0;
+  cursor: pointer;
+  text-align: center;
+  vertical-align: middle;
+  overflow: hidden;
+
+  .qh-avatars-size(@font-size, @size) {
+    font-size: @font-size;
+    height: ~"@{size-avatar-@{size}}";
+    width: ~"@{size-avatar-@{size}}";
+    line-height: ~"@{size-avatar-@{size}}";
+    .round(~"@{size-avatar-@{size}}");
+
+    &.qh-avatars-square {
+      .left-round;
+    }
+  }
+
+  &-big {
+    .qh-avatars-size(70px, big);
+  }
+
+  &-medium {
+    .qh-avatars-size(28px, medium);
+  }
+
+  &-normal {
+    .qh-avatars-size(16px, normal);
+  }
+
+  &-small {
+    .qh-avatars-size(12px, small);
+    margin-right: 4px;
+   }
+
+  &-micro {
+    .qh-avatars-size(10px, micro);
+    margin-right: 4px;
+  }
+}
+
+.label-avatars {
+  padding-left: 0;
+}
+
