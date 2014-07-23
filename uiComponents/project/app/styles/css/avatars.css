@@ -96,4 +96,10 @@
 }
 .label-avatars {
   padding-left: 0;
+  height: 26px;
+}
+.label-avatars .qh-avatars:first-child {
+  position: relative;
+  bottom: 1px;
+  left: 1px;
 }
