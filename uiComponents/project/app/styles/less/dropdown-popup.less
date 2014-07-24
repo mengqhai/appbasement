@@ -1,0 +1,30 @@
+@import "variables.less";
+
+.dropdown-popup-holder {
+  position: relative;
+}
+
+.dropdown-popup {
+  padding: 10px;
+  position: absolute;
+  top: 30px;
+  background-color: #ffffff;
+  box-shadow: 0 0 8px @color-header-bg;
+  visibility: hidden;
+  transition: @tran-default;
+  opacity: 0;
+  display: block;
+  &.is-opened {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  // for angular animation support
+  &.ng-enter, &.ng-leave.ng-leave-active {
+    opacity: 0;
+  }
+
+  &.ng-leave, &.ng-enter.ng-enter-active {
+    opacity: 1;
+  }
+}

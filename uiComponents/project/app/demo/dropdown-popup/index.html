@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/styles/css/global.css"/>
+    <link rel="stylesheet" href="/styles/css/dropdown-popup.css"/>
+</head>
+<body ng-app="dropdown-popup-demo">
+
+    <div class="page-header">
+        <h1>Example page header <small>Subtext for header</small></h1>
+    </div>
+
+    <div class="container">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">Panel heading without title</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="well">With ng-if</div>
+                            <div class="dropdown-popup-holder" ng-controller="DemoCtrl">
+                                <button class="btn btn-default" toggle-popup="myPopup" ng-click="toggleOpen()">Open</button>
+                                <span>Is opened: {{info.isOpened}}</span>
+                                <dropdown-popup id="myPopup" popup-info="info" ng-if="info.isOpened" class="dropdown-popup">
+                                    <div style="width: 300px; height: 200px">
+                                        Hello this is the content of the drop down popup
+                                        <button ng-click="innerBtnClick($event)" class="btn btn-default">Click me</button>
+                                    </div>
+                                </dropdown-popup>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="well">Without ng-if</div>
+                            <div class="dropdown-popup-holder" ng-controller="DemoCtrl">
+                                <button class="btn btn-default" toggle-popup="myPopup1" ng-click="toggleOpen()">Open</button>
+                                <span>Is opened: {{info.isOpened}}</span>
+                                <dropdown-popup id="myPopup1" popup-info="info" class="dropdown-popup">
+                                    <div style="width: 300px; height: 200px">
+                                        Hello this is the content of the drop down popup
+                                        <button ng-click="innerBtnClick($event)" class="btn btn-default">Click me</button>
+                                    </div>
+                                </dropdown-popup>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+    </div>
+
+
+
+
+
+
+    <script src="/bower_components/jquery/dist/jquery.js"></script>
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/json3/lib/json3.js"></script>
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="/bower_components/angular-resource/angular-resource.js"></script>
+    <script src="/bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="/bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="/bower_components/angular-animate/angular-animate.js"></script>
+    <script src="/bower_components/angular-touch/angular-touch.js"></script>
+    <script src="/bower_components/angular-route/angular-route.js"></script>
+    <script src="/scripts/components/dropdown-popup.js"></script>
+    <script src="demo.js"></script>
+</body>
+</html>
