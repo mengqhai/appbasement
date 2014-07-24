@@ -41,12 +41,12 @@
             <div class="panel-body">
                 <pre>Selected date is: <em>{{dateInfo.date | date:'fullDate'}}</em> Urgent: <em>{{dateInfo.urgent}}</em></pre>
                     <div class="dropdown-popup-holder">
-                        <button class="btn btn-default qh-icon-btn" btn-checkbox ng-model="popupInfo.isOpened">
+                        <button class="btn btn-default qh-icon-btn" btn-checkbox ng-model="popupInfo.isOpened" ng-click="$event.stopPropagation()">
                             <span class="glyphicon glyphicon-calendar"></span>
                             {{dateInfo.date | date}}
                             <span class="caret"></span>
                         </button>
-                        <dropdown-popup popup-info="popupInfo" class="dropdown-popup">
+                        <dropdown-popup popup-info="popupInfo" class="dropdown-popup" ng-if="popupInfo.isOpened">
                             <datepicker-panel date-info="dateInfo" ></datepicker-panel>
                         </dropdown-popup>
                     </div>

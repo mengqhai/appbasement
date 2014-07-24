@@ -41,11 +41,11 @@ angular.module('components.dropdown-popup', [])
 //                        scope.toggle=tEle;
 //                        return;
 //                    }
-                    var popupParent = ele.parent()[0];
-                    var tParent = angular.element(e.target).parent()[0];
-                    if (tParent === popupParent) {
-                        return;
-                    }
+//                    var popupParent = ele.parent()[0];
+//                    var tParent = angular.element(e.target).parent()[0];
+//                    if (tParent === popupParent) {
+//                        return;
+//                    }
 
                     scope.$apply(function () {
                         popupInfo.isOpened = false;

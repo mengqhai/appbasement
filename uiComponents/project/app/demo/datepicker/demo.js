@@ -1,5 +1,5 @@
 angular.module('datepicker-demo',['ui.bootstrap','ui.bootstrap.datepicker', 'components.datepicker-panel',
-        'components.dropdown-popup', 'ui.bootstrap.buttons'])
+        'components.dropdown-popup', 'ui.bootstrap.buttons', 'ngAnimate'])
     .controller('DemoCtrl', function($scope) {
 
         $scope.date1 = new Date();
