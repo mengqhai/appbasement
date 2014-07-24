@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.css"/>
     <link rel="stylesheet" href="/styles/css/global.css"/>
     <link rel="stylesheet" href="/styles/css/datepicker.css"/>
+    <link rel="stylesheet" href="/styles/css/dropdown-popup.css"/>
+
 </head>
 <body ng-app="datepicker-demo">
 
@@ -38,15 +40,15 @@
             <div class="panel-heading">Date picker popup</div>
             <div class="panel-body">
                 <pre>Selected date is: <em>{{dateInfo.date | date:'fullDate'}}</em> Urgent: <em>{{dateInfo.urgent}}</em></pre>
-                    <div class="btn-group">
-                        <button class="btn btn-default qh-icon-btn dropdown-toggle">
+                    <div class="dropdown-popup-holder">
+                        <button class="btn btn-default qh-icon-btn" ng-click="toggleOpen()">
                             <span class="glyphicon glyphicon-calendar"></span>
-                            No due date
+                            {{dateInfo.date | date}}
                             <span class="caret"></span>
                         </button>
-                        <div class="datepicker-panel-popup">
+                        <dropdown-popup popup-info="popupInfo" class="dropdown-popup">
                             <datepicker-panel date-info="dateInfo" ></datepicker-panel>
-                        </div>
+                        </dropdown-popup>
                     </div>
 
 
@@ -74,5 +76,6 @@
     <script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
     <script src="demo.js"></script>
     <script src="/scripts/components/datepicker-panel.js"></script>
+    <script src="/scripts/components/dropdown-popup.js"></script>
 </body>
 </html>
