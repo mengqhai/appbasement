@@ -53,6 +53,32 @@
         </div>
 
         <div class="panel panel-default" ng-controller="DemoCtrl">
+            <div class="panel-heading">Date picker Button</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <pre>Selected date is: <em>{{dateInfo | dateInfo}}</em> </pre>
+                        <datepicker-btn date-info="dateInfo" commit="commitDateWithMsg"></datepicker-btn>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div>
+                            <labe>
+                                <input type="checkbox" ng-model="commitSuccess"/>
+                                Commit Success
+                            </labe>
+                        </div>
+                        <pre>Success Message:{{successMsg}}</pre>
+                        <pre>Error Message:{{errorMsg}}</pre>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="panel panel-default" ng-controller="DemoCtrl">
             <div class="panel-heading">Date picker popup</div>
             <div class="panel-body">
                 <div class="row">
@@ -86,6 +112,9 @@
 
             </div>
         </div>
+
+
+
     </div>
 
 

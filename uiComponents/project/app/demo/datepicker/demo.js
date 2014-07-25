@@ -15,10 +15,6 @@ angular.module('datepicker-demo',['ui.bootstrap','ui.bootstrap.datepicker', 'com
             $scope.popupInfo.isOpened = false;
         },true);
 
-        $scope.toggleOpen = function() {
-            $scope.popupInfo.isOpened = !$scope.popupInfo.isOpened;
-        }
-
         $scope.commitSuccess = true;
 
         $scope.commitDate = function(dateInfo) {

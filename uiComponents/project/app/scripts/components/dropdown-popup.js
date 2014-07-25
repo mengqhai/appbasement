@@ -26,6 +26,7 @@ angular.module('components.dropdown-popup', [])
                         ele.removeClass('is-opened');
                         $document.unbind('click', docClickHandler);
                     }
+                    console.info("doOpen:"+opened);
                 };
                 doOpen(popupInfo.isOpened);
                 scope.$watch('popupInfo.isOpened', function (opened) {

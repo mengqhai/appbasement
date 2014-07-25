@@ -1,4 +1,5 @@
-angular.module('components.datepicker-panel', ['ui.bootstrap.datepicker', 'ui.bootstrap.buttons'])
+angular.module('components.datepicker-panel', ['ui.bootstrap.datepicker', 'ui.bootstrap.buttons',
+    'ngAnimate'])
     .directive('datepickerPanel', function($log, $filter) {
         return {
             restrict: 'E',
@@ -59,6 +60,26 @@ angular.module('components.datepicker-panel', ['ui.bootstrap.datepicker', 'ui.bo
                 }
             }
         };
+    })
+    .directive('datepickerBtn', function() {
+        return {
+            restrict: 'E',
+            replace: true,
+            templateUrl: '/views/components/datepicker-btn.tpl.html',
+            scope: {
+                dateInfo: '=',
+                commit: '='
+            },
+            link: function(scope, element, attrs) {
+                scope.popupInfo = {
+                    isOpened:false
+                };
+
+                scope.$watch('dateInfo', function(newValue) {
+                    scope.popupInfo.isOpened = false;
+                },true);
+            }
+        }
     })
     .filter('dateInfo', function($filter) {
         return function(dateInfo) {

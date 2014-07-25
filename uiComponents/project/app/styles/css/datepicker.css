@@ -24,6 +24,7 @@
   top: 30px;
   background-color: #ffffff;
   box-shadow: 0 0 8px #454545;
+  z-index: 3;
 }
 .datepicker-btn.btn-danger .glyphicon,
 .datepicker-btn.btn-warning .glyphicon {
