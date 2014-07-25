@@ -15,6 +15,7 @@ angular.module('components.datepicker-panel', ['ui.bootstrap.datepicker', 'ui.bo
                 var updateDateInfo = function() {
                     scope.dateInfo.date = scope.date;
                     scope.dateInfo.urgent = scope.urgent;
+                    updateDateType();
                 }
 
                 scope.save = function() {
@@ -23,6 +24,7 @@ angular.module('components.datepicker-panel', ['ui.bootstrap.datepicker', 'ui.bo
                         if (promise) {
                             promise.then(updateDateInfo, function(msg) {
                                 $log.error("datepicker failed to commit:"+msg);
+                                updateDateType(); // roll back the radio
                             });
                         }
                     } else {
@@ -30,12 +32,31 @@ angular.module('components.datepicker-panel', ['ui.bootstrap.datepicker', 'ui.bo
                     }
                 }
 
-                scope.toggleUrgent = function() {
+                var updateDateType = function () {
+                    // variable to toggle the Urgent/No Due Date button
+                    if (scope.dateInfo.urgent) {
+                        scope.dateType =  'urgent';
+                    } else if (scope.dateInfo.date) {
+                        scope.dateType =  scope.dateInfo.date;
+                    } else {
+                        scope.dateType =  'noDueDate';
+                    }
+                }
+
+                updateDateType();
+                scope.makeUrgent = function() {
+                    scope.urgent = true;
                     scope.save();
                 }
 
                 scope.makeNoDueDate = function() {
                     scope.date = null;
+                    scope.urgent = false;
+                    scope.save();
+                }
+
+                scope.pickDate = function() {
+                    scope.urgent = false;
                     scope.save();
                 }
             }
