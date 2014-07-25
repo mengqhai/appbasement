@@ -11,6 +11,10 @@ angular.module('datepicker-demo',['ui.bootstrap','ui.bootstrap.datepicker', 'com
             isOpened:false
         };
 
+        $scope.$watch('dateInfo', function(newValue) {
+            $scope.popupInfo.isOpened = false;
+        },true);
+
         $scope.toggleOpen = function() {
             $scope.popupInfo.isOpened = !$scope.popupInfo.isOpened;
         }

@@ -55,17 +55,34 @@
         <div class="panel panel-default" ng-controller="DemoCtrl">
             <div class="panel-heading">Date picker popup</div>
             <div class="panel-body">
-                <pre>Selected date is: <em>{{dateInfo.date | date:'fullDate'}}</em> Urgent: <em>{{dateInfo.urgent}}</em></pre>
-                    <div class="dropdown-popup-holder">
-                        <button class="btn btn-default qh-icon-btn" btn-checkbox ng-model="popupInfo.isOpened" ng-click="$event.stopPropagation()">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                            {{dateInfo.date | date}}
-                            <span class="caret"></span>
-                        </button>
-                        <dropdown-popup popup-info="popupInfo" ng-if="popupInfo.isOpened" >
-                            <datepicker-panel date-info="dateInfo" ></datepicker-panel>
-                        </dropdown-popup>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <pre>Selected date is: <em>{{dateInfo.date | date:'fullDate'}}</em> Urgent: <em>{{dateInfo.urgent}}</em></pre>
+                        <div class="dropdown-popup-holder">
+                            <button class="btn btn-default qh-icon-btn" btn-checkbox ng-model="popupInfo.isOpened" ng-click="$event.stopPropagation()">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                                {{dateInfo.date | date}}
+                                <span class="caret"></span>
+                            </button>
+                            <dropdown-popup popup-info="popupInfo" ng-if="popupInfo.isOpened" >
+                                <datepicker-panel date-info="dateInfo" commit="commitDateWithMsg"></datepicker-panel>
+                            </dropdown-popup>
+                        </div>
                     </div>
+
+                    <div class="col-lg-4">
+                        <div>
+                            <labe>
+                                <input type="checkbox" ng-model="commitSuccess"/>
+                                Commit Success
+                            </labe>
+                        </div>
+                        <pre>Success Message:{{successMsg}}</pre>
+                        <pre>Error Message:{{errorMsg}}</pre>
+                    </div>
+
+                </div>
+
             </div>
         </div>
     </div>

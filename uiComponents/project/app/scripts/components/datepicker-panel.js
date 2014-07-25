@@ -1,4 +1,4 @@
-angular.module('components.datepicker-panel', ['ui.bootstrap.datepicker'])
+angular.module('components.datepicker-panel', ['ui.bootstrap.datepicker', 'ui.bootstrap.buttons'])
     .directive('datepickerPanel', function($log) {
         return {
             restrict: 'E',
@@ -30,8 +30,7 @@ angular.module('components.datepicker-panel', ['ui.bootstrap.datepicker'])
                     }
                 }
 
-                scope.makeUrgent = function() {
-                    scope.urgent = true;
+                scope.toggleUrgent = function() {
                     scope.save();
                 }
 

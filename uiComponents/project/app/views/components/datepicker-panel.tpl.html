@@ -5,8 +5,8 @@
     <datepicker ng-model="date" show-weeks="false"></datepicker>
     <div class="footer-actions">
         <div class="footer-actions-l">
-            <button class="btn btn-warning" ng-click="makeUrgent()">Urgent</button>
-            <button class="btn btn-default" ng-click="makeNoDueDate()">No Due Date</button>
+            <button class="btn btn-warning" ng-click="toggleUrgent()" btn-checkbox ng-model="urgent">Urgent</button>
+            <button class="btn btn-default" ng-click="makeNoDueDate()" ng-disabled="!dateInfo.date">No Due Date</button>
         </div>
         <div class="footer-actions-r">
             <button class="btn btn-danger" ng-disabled="!date" ng-click="save()">Save</button>
