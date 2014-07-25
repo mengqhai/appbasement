@@ -1,25 +1,43 @@
 angular.module('components.datepicker-panel', ['ui.bootstrap.datepicker'])
-    .directive('datepickerPanel', function() {
+    .directive('datepickerPanel', function($log) {
         return {
             restrict: 'E',
             replace: true,
             templateUrl:'/views/components/datepicker-panel.tpl.html',
             scope: {
-                dateInfo: '='
+                dateInfo: '=',
+                commit: '=' // this method must return a promise
             },
             link: function(scope, element, attrs) {
                 scope.date = scope.dateInfo.date || new Date();
+                scope.urgent = scope.dateInfo.urgent;
+
+                var updateDateInfo = function() {
+                    scope.dateInfo.date = scope.date;
+                    scope.dateInfo.urgent = scope.urgent;
+                }
 
                 scope.save = function() {
-                    scope.dateInfo.date = scope.date;
+                    if (scope.commit) {
+                        var promise = scope.commit(scope.date);
+                        if (promise) {
+                            promise.then(updateDateInfo, function(msg) {
+                                $log.error("datepicker failed to commit:"+msg);
+                            });
+                        }
+                    } else {
+                        updateDateInfo();
+                    }
                 }
 
                 scope.makeUrgent = function() {
-                    scope.dateInfo.urgent = true;
+                    scope.urgent = true;
+                    scope.save();
                 }
 
                 scope.makeNoDueDate = function() {
-                    scope.dateInfo.date = null;
+                    scope.date = null;
+                    scope.save();
                 }
             }
         };

@@ -31,8 +31,24 @@
         <div class="panel panel-default" ng-controller="DemoCtrl">
             <div class="panel-heading">Date picker panel</div>
             <div class="panel-body">
-                <pre>Selected date is: <em>{{dateInfo.date | date:'fullDate'}}</em> Urgent: <em>{{dateInfo.urgent}}</em></pre>
-                <datepicker-panel date-info="dateInfo" ></datepicker-panel>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <pre>Selected date is: <em>{{dateInfo.date | date:'fullDate'}}</em> Urgent: <em>{{dateInfo.urgent}}</em></pre>
+                        <datepicker-panel date-info="dateInfo" commit="commitDateWithMsg"></datepicker-panel>
+                    </div>
+                    <div class="col-lg-4">
+                        <div>
+                            <labe>
+                                <input type="checkbox" ng-model="commitSuccess"/>
+                                Commit Success
+                            </labe>
+                        </div>
+                        <pre>Success Message:{{successMsg}}</pre>
+                        <pre>Error Message:{{errorMsg}}</pre>
+                    </div>
+                </div>
+
+
             </div>
         </div>
 
