@@ -6,10 +6,10 @@
     <div class="footer-actions">
         <div class="footer-actions-l btn-group">
             <button class="btn btn-default" ng-click="makeUrgent()" btn-radio="'urgent'" ng-model="dateType">Urgent</button>
-            <button class="btn btn-default" ng-click="makeNoDueDate()" btn-radio="'noDueDate'" ng-model="dateType">No Due Date</button>
+            <button class="btn btn-default" ng-click="makeNoDueDate()" btn-radio="'no due date'" ng-model="dateType">No Due Date</button>
         </div>
         <div class="footer-actions-r">
-            <button class="btn btn-danger" ng-disabled="!date" ng-click="pickDate()">Save</button>
+            <button class="btn btn-danger" ng-disabled="disablePick()" ng-click="pickDate()">Save</button>
         </div>
     </div>
 </div>

@@ -1,5 +1,5 @@
 angular.module('components.datepicker-panel', ['ui.bootstrap.datepicker', 'ui.bootstrap.buttons'])
-    .directive('datepickerPanel', function($log) {
+    .directive('datepickerPanel', function($log, $filter) {
         return {
             restrict: 'E',
             replace: true,
@@ -34,13 +34,7 @@ angular.module('components.datepicker-panel', ['ui.bootstrap.datepicker', 'ui.bo
 
                 var updateDateType = function () {
                     // variable to toggle the Urgent/No Due Date button
-                    if (scope.dateInfo.urgent) {
-                        scope.dateType =  'urgent';
-                    } else if (scope.dateInfo.date) {
-                        scope.dateType =  scope.dateInfo.date;
-                    } else {
-                        scope.dateType =  'noDueDate';
-                    }
+                    scope.dateType = $filter('dateInfo')(scope.dateInfo);
                 }
 
                 updateDateType();
@@ -59,6 +53,35 @@ angular.module('components.datepicker-panel', ['ui.bootstrap.datepicker', 'ui.bo
                     scope.urgent = false;
                     scope.save();
                 }
+
+                scope.disablePick = function () {
+                    return Math.abs(scope.date-scope.dateInfo.date)<=86400000;
+                }
+            }
+        };
+    })
+    .filter('dateInfo', function($filter) {
+        return function(dateInfo) {
+            var result;
+            if (dateInfo.urgent) {
+                result =  'urgent';
+            } else if (dateInfo.date) {
+                result =  $filter('date')(dateInfo.date);
+            } else {
+                result =  'no due date';
+            }
+            return result;
+        };
+    })
+    .filter('dateInfoClass', function($filter) {
+        return function(dateInfo) {
+            var str = $filter('dateInfo')(dateInfo);
+            if (str === 'urgent') {
+                return 'warning';
+            } else if (str === 'no due date') {
+                return 'default';
+            } else {
+                return 'danger';
             }
         };
     });
