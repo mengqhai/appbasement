@@ -18,6 +18,18 @@
   text-transform: uppercase;
   font-size: 0.8em;
 }
+table button .ng-binding.text-info {
+  font-weight: bolder;
+  color: #22a5b9;
+  display: inline-block;
+}
+table button:active .ng-binding.text-info,
+table button:checked .ng-binding.text-info,
+table button:focus .ng-binding.text-info,
+table button.active .ng-binding.text-info,
+table button.btn-info .ng-binding.text-info {
+  color: #ffffff;
+}
 .datepicker-panel-popup {
   padding: 10px;
   position: absolute;

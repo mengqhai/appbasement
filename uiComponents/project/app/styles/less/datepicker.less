@@ -17,8 +17,28 @@
       text-transform: uppercase;
       font-size: 0.8em;
     }
+
+
+
+
   }
 }
+
+table button {
+  .ng-binding.text-info {
+    font-weight: bolder;
+    color: @color-high-light-blue;
+    display: inline-block;
+  }
+
+  &:active, &:checked, &:focus,&.active,&.btn-info {
+    .ng-binding.text-info {
+      color: @text-color-w;
+    }
+  }
+}
+
+
 
 .datepicker-panel-popup {
   padding: 10px;
