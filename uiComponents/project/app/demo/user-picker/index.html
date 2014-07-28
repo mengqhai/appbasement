@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/styles/css/global.css"/>
+    <link rel="stylesheet" href="/styles/css/nice-inputs.css"/>
+    <link rel="stylesheet" href="/styles/css/avatars.css"/>
+</head>
+<body ng-app="user-picker-demo">
+
+    <div class="page-header">
+        <h1>User picker demo</h1>
+    </div>
+
+    <div class="container">
+            <div class="panel panel-default">
+                <div class="panel-heading">User picker panel without directive</div>
+                <div class="panel-body">
+                    <div class="row" ng-controller="DemoCtrl">
+                        <div class="col-lg-4">
+                            <div class="search-panel" >
+                                <div class="search-input">
+                                    <input id="search" type="text" class="form-control" ng-model="query"/>
+                                    <label for="search" class="glyphicon glyphicon-search"></label>
+                                </div>
+                                <div class="list-group">
+                                    <a href class="list-group-item" ng-class="{active: item === selected}" ng-click="select(item)" ng-repeat="item in users | filter:{username: query}">
+                                        <span class="qh-avatars qh-avatars-small">{{item.username[0].toUpperCase()}}</span> {{item.username}}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <pre>Selected item: {{selected}}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+
+
+
+
+
+    <script src="/bower_components/jquery/dist/jquery.js"></script>
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/json3/lib/json3.js"></script>
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="/bower_components/angular-resource/angular-resource.js"></script>
+    <script src="/bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="/bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="/bower_components/angular-animate/angular-animate.js"></script>
+    <script src="/bower_components/angular-touch/angular-touch.js"></script>
+    <script src="/bower_components/angular-route/angular-route.js"></script>
+    <script src="demo.js"></script>
+</body>
+</html>
