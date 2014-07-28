@@ -41,3 +41,29 @@
     .round(8px);
   }
 }
+
+.search-input {
+  position: relative;
+  margin-bottom: 10px;
+  .form-control {
+    padding-right: 22px;
+    padding-left: 6px;
+
+    &:active+.glyphicon, &:focus+.glyphicon {
+      color: @color-high-light-blue;
+    }
+  }
+  .glyphicon {
+    position: absolute;
+    top: 10px;
+    right: 8px;
+  }
+}
+
+.search-panel {
+  width: 260px;
+  .list-group {
+    height: 206px;
+    .scroll-y();
+  }
+}

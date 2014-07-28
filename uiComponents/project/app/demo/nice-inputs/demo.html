@@ -164,6 +164,33 @@
             </div>
         </div>
 
+        <div class="panel panel-default">
+            <div class="panel-heading">Search</div>
+            <div class="panel-body" ng-controller="SearchCtrl">
+                <div class="row">
+                    <div class="col-lg-4">
+
+                        <div class="search-panel" >
+                            <div class="search-input">
+                                <input id="search" type="text" class="form-control" ng-model="query"/>
+                                <label for="search" class="glyphicon glyphicon-search"></label>
+                            </div>
+                            <div class="list-group">
+                                <a href class="list-group-item" ng-class="{active: item === selected}" ng-click="select(item)" ng-repeat="item in options | filter:query">
+                                    {{item}}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <pre>Selected item: {{selected}}</pre>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 

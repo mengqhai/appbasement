@@ -7,4 +7,13 @@ angular.module('nice-checkbox-demo', [])
         $scope.colorPicked = {value:"red"};
         $scope.colors = [null, 'brown', 'orange', 'yellow', 'green-1', 'green-2', 'blue-1', 'blue-2', 'blue-3',
             'violet', 'rose', 'red'];
+    })
+    .controller('SearchCtrl', function($scope) {
+        $scope.options = ['Dapibus ac facilisis in', 'Morbi leo risus', 'Porta ac consectetur ac', 'Vestibulum at eros'
+            ,'Vestibulum at eros xxx', 'Cras justo odio'];
+
+        $scope.select = function(item) {
+            $scope.selected = item;
+        }
+
     });

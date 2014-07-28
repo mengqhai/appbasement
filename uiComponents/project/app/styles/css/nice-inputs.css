@@ -44,3 +44,28 @@
   -ms-border-radius: 8px;
   border-radius: 8px;
 }
+.search-input {
+  position: relative;
+  margin-bottom: 10px;
+}
+.search-input .form-control {
+  padding-right: 22px;
+  padding-left: 6px;
+}
+.search-input .form-control:active + .glyphicon,
+.search-input .form-control:focus + .glyphicon {
+  color: #22a5b9;
+}
+.search-input .glyphicon {
+  position: absolute;
+  top: 10px;
+  right: 8px;
+}
+.search-panel {
+  width: 260px;
+}
+.search-panel .list-group {
+  height: 206px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
