@@ -10,7 +10,7 @@ angular.module('nice-checkbox-demo', [])
     })
     .controller('SearchCtrl', function($scope) {
         $scope.options = ['Dapibus ac facilisis in', 'Morbi leo risus', 'Porta ac consectetur ac', 'Vestibulum at eros'
-            ,'Vestibulum at eros xxx', 'Cras justo odio'];
+            ,'Vestibulum at eros xxx', 'Cras justo odio', 'item 1', 'item 2', 'item 3' , 'item 4', 'item 5'];
 
         $scope.select = function(item) {
             $scope.selected = item;

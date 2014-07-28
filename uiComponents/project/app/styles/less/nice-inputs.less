@@ -62,8 +62,16 @@
 
 .search-panel {
   width: 260px;
+  padding: 10px;
+  background-color: @color-content-bg;
   .list-group {
-    height: 206px;
+    height: 40px * 5;
+    margin-bottom: 0px;
     .scroll-y();
+    .round(4px);
+    border: 1px solid @color-line-light;
+    .list-group-item {
+      border: 0;
+    }
   }
 }
