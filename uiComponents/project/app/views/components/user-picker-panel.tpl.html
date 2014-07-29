@@ -1,0 +1,16 @@
+<div class="search-panel" >
+    <div class="search-input">
+        <input id="{{searchInputId}}" type="text" class="form-control" ng-model="query" placeholder="Search or invite..."/>
+        <label for="{{searchInputId}}" class="glyphicon glyphicon-search"></label>
+    </div>
+    <div class="list-group">
+        <a href class="list-group-item" ng-class="{active: unassigned === _selected}" ng-click="select(unassigned)"
+           ng-if="filterUsers(unassigned)">
+            <span class="qh-avatars qh-avatars-small glyphicon glyphicon-user unassigned"></span>
+            <strong>Unassigned</strong>
+        </a>
+        <a href class="list-group-item" ng-class="{active: item === _selected}" ng-click="select(item)" ng-repeat="item in users | filter:filterUsers">
+            <span class="qh-avatars qh-avatars-small">{{item.username[0].toUpperCase()}}</span> {{item.username}}
+        </a>
+    </div>
+</div>

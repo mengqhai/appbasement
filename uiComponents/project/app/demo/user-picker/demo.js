@@ -1,4 +1,4 @@
-angular.module('user-picker-demo',[])
+angular.module('user-picker-demo',['components.user-picker'])
     .controller('DemoCtrl', function($scope) {
         $scope.users = [{
             username: 'Riso',
@@ -24,8 +24,21 @@ angular.module('user-picker-demo',[])
             }
 
         ];
+
+        $scope.unassigned = {username:'Unassigned', email:'Unassigned'};
+
         $scope.selected = $scope.users[0];
         $scope.select = function(item) {
             $scope.selected = item;
+        }
+
+
+
+        $scope.filterUsers = function(user) {
+            if (!$scope.query) {
+                return true;
+            }
+            return (user.username.toLowerCase().indexOf($scope.query.toLowerCase()) !== -1 ||
+                user.email.toLowerCase().indexOf($scope.query.toLowerCase())!== -1);
         }
     });

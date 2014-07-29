@@ -103,3 +103,7 @@
   bottom: 1px;
   left: 1px;
 }
+.unassigned.glyphicon {
+  color: #bbbbbb;
+  background-color: transparent !important;
+}
