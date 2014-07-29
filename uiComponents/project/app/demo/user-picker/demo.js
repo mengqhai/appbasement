@@ -1,5 +1,5 @@
 angular.module('user-picker-demo',['components.user-picker'])
-    .controller('DemoCtrl', function($scope) {
+    .controller('DemoCtrl', function($scope, $q, $timeout) {
         $scope.users = [{
             username: 'Riso',
             email:'riso@wprss.com'
@@ -45,4 +45,35 @@ angular.module('user-picker-demo',['components.user-picker'])
         $scope.sInfo = {
             selected: null
         };
+
+        $scope.commitSuccess = true;
+
+        $scope.commitUser = function(selectedInfo) {
+            var deferred = $q.defer();
+            $timeout(function() {
+                if ($scope.commitSuccess) {
+                    deferred.resolve("Date info updated on server");
+                } else {
+                    deferred.reject("Server error");
+                };
+            }, 1000);
+
+            return deferred.promise;
+        };
+        // a decorated function to update the message also
+        $scope.commitUserWithMsg=function(selectedInfo) {
+            resetMsg();
+            return $scope.commitUser(selectedInfo).then(function(msg){
+                $scope.successMsg=msg;
+            },function(msg){
+                $scope.errorMsg=msg;
+                // rethrow (forward) the error to other chained failure callbacks
+                return $q.reject(msg);
+            })
+        }
+        var resetMsg = function() {
+            $scope.successMsg="";
+            $scope.errorMsg="";
+        };
+        resetMsg();
     });

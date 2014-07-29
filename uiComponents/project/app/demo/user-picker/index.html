@@ -68,11 +68,19 @@
             <div class="panel-body">
                 <div class="row" ng-controller="DemoCtrl">
                     <div class="col-lg-4">
-                        <user-picker-btn users="users" selected-info="sInfo"></user-picker-btn>
+                        <user-picker-btn users="users" selected-info="sInfo" commit="commitUserWithMsg"></user-picker-btn>
                     </div>
 
                     <div class="col-lg-4">
                         <pre>Selected item: {{sInfo.selected}}</pre>
+                        <div>
+                            <labe>
+                                <input type="checkbox" ng-model="commitSuccess"/>
+                                Commit Success
+                            </labe>
+                        </div>
+                        <pre>Success Message:{{successMsg}}</pre>
+                        <pre>Error Message:{{errorMsg}}</pre>
                     </div>
                 </div>
             </div>
