@@ -1,4 +1,4 @@
-angular.module('components.user-picker', ['components.dropdown-popup', 'ui.bootstrap.buttons',
+angular.module('components.user-picker', ['components.dropdown-popup', 'components.avatar', 'ui.bootstrap.buttons',
         'ngAnimate'])
     .directive('userPickerPanel', function($log) {
         return {

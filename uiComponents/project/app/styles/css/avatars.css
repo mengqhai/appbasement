@@ -107,3 +107,7 @@
   color: #bbbbbb;
   background-color: transparent !important;
 }
+button.qh-icon-btn .unassigned.glyphicon {
+  color: #333333;
+  background-color: #eeeeee !important;
+}
