@@ -1,0 +1,12 @@
+<div class="dropdown-popup-holder">
+    <button class="btn qh-icon-btn"
+            btn-checkbox ng-model="popupInfo.isOpened" ng-click="$event.stopPropagation()">
+        <span class="glyphicon glyphicon-user" ng-if="!selectedInfo.selected"></span>
+        <span class="qh-avatars qh-avatars-small" ng-if="selectedInfo.selected">{{selectedInfo.selected.username[0].toUpperCase()}}</span>
+        <span>{{selectedInfo | selectedInfoUsername}}</span>
+        <span class="caret"></span>
+    </button>
+    <dropdown-popup popup-info="popupInfo" ng-if="popupInfo.isOpened" >
+        <user-picker-panel users="users" selected="selectedInfo.selected"></user-picker-panel>
+    </dropdown-popup>
+</div>

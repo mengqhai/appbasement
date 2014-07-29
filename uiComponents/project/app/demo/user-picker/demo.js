@@ -41,4 +41,8 @@ angular.module('user-picker-demo',['components.user-picker'])
             return (user.username.toLowerCase().indexOf($scope.query.toLowerCase()) !== -1 ||
                 user.email.toLowerCase().indexOf($scope.query.toLowerCase())!== -1);
         }
+
+        $scope.sInfo = {
+            selected: null
+        };
     });

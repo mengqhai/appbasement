@@ -1,4 +1,5 @@
-angular.module('components.user-picker', [])
+angular.module('components.user-picker', ['components.dropdown-popup', 'ui.bootstrap.buttons',
+        'ngAnimate'])
     .directive('userPickerPanel', function() {
         return {
             restrict: 'E',
@@ -13,7 +14,7 @@ angular.module('components.user-picker', [])
 
                 scope.unassigned = {username:'Unassigned', email:'Unassigned'};
 
-                scope._selected = scope.users[0];
+                scope._selected = (angular.isDefined(scope.selected) && scope.selected) ? scope.selected : scope.unassigned;
 
                 scope.select = function(item) {
                     scope._selected = item;
@@ -21,8 +22,9 @@ angular.module('components.user-picker', [])
                 };
 
                 scope.save = function() {
-                    if (angular.isDefined(scope.selected))
-                        scope.selected = scope._selected;
+                    if (angular.isDefined(scope.selected)) {
+                        scope.selected = scope._selected === scope.unassigned ? null : scope._selected;
+                    }
                 }
 
                 scope.filterUsers = function(user) {
@@ -37,3 +39,37 @@ angular.module('components.user-picker', [])
             }
         };
     })
+    .directive('userPickerBtn', function() {
+        return {
+            restrict: 'E',
+            replace: true,
+            templateUrl: '/views/components/user-picker-btn.tpl.html',
+            scope: {
+                users: '=',
+                selectedInfo: '='
+            },
+            link: function(scope, ele, attrs) {
+                scope.popupInfo = {
+                    isOpened:false
+                };
+
+                if (!angular.isDefined(scope.selectedInfo)) {
+                    scope.selectedInfo = {
+                        selected : null
+                    };
+                };
+                scope.$watch('selectedInfo', function(newValue) {
+                    scope.popupInfo.isOpened = false;
+                }, true)
+            }
+        }
+    })
+    .filter('selectedInfoUsername', function() {
+        return function(selectedInfo) {
+            if (selectedInfo.selected === null) {
+                return 'Unassigned';
+            } else {
+                return selectedInfo.selected.username;
+            }
+        }
+    });

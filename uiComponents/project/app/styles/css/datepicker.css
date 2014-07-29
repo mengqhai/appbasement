@@ -2,6 +2,9 @@
   font-weight: normal;
   color: #888888;
 }
+.datepicker-panel {
+  padding: 10px;
+}
 .datepicker-panel .footer-actions {
   width: 252px;
   margin-top: 10px;
