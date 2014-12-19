@@ -465,7 +465,7 @@
             <borderStyle>roundedSolid</borderStyle>
           </controlProperties>
         </control>
-        <control controlID="1" controlTypeID="com.balsamiq.mockups::Label" x="14" y="18" w="198" h="-1" measuredW="213" measuredH="26" zOrder="1" locked="false" isInGroup="83">
+        <control controlID="1" controlTypeID="com.balsamiq.mockups::Label" x="14" y="18" w="238" h="-1" measuredW="213" measuredH="26" zOrder="1" locked="false" isInGroup="83">
           <controlProperties>
             <size>18</size>
             <text>Start%20by%20opening%20this%20task</text>
