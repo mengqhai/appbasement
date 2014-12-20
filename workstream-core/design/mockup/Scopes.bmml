@@ -1,4 +1,4 @@
-<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="575" measuredH="596" mockupW="516" mockupH="574">
+<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="1436" measuredH="1051" mockupW="1407" mockupH="1029">
   <controls>
     <control controlID="0" controlTypeID="com.balsamiq.mockups::FieldSet" x="59" y="22" w="516" h="391" measuredW="200" measuredH="170" zOrder="0" locked="false" isInGroup="-1">
       <controlProperties>
@@ -69,6 +69,16 @@
     <control controlID="14" controlTypeID="com.balsamiq.mockups::StickyNote" x="67" y="456" w="235" h="140" measuredW="109" measuredH="123" zOrder="14" locked="false" isInGroup="-1">
       <controlProperties>
         <text>There%20are%202%20types%20of%20tasks%2C%20Project%20Task%20and%20Process%20Task.%0AThere%20shouldn%27t%20be%20any%20task%20without%20a%20related%20project.</text>
+      </controlProperties>
+    </control>
+    <control controlID="15" controlTypeID="com.balsamiq.mockups::SiteMap" x="29" y="621" w="-1" h="-1" measuredW="1323" measuredH="430" zOrder="15" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Organization%0A-Members%0A--user1%0A--user2%0A-Groups%0A--Admin%0A---user1%0A--Sales%0A---user2%0A-Projects%0A--project1%0A---task1%0A---task2%0A--project2%0A-Process%20Templates%0A--template1%0A--template2%0A-Process%20instances%0A--activeProcess1%0A--activeProcess2</text>
+      </controlProperties>
+    </control>
+    <control controlID="16" controlTypeID="com.balsamiq.mockups::SiteMap" x="942" y="80" w="-1" h="-1" measuredW="494" measuredH="190" zOrder="16" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>System%0A-System%20Processes%0A-All%20Users%0A-Tasks%0A-Organizations</text>
       </controlProperties>
     </control>
   </controls>
