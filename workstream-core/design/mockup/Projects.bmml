@@ -1,4 +1,4 @@
-<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="1435" measuredH="514" mockupW="1429" mockupH="475">
+<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="1435" measuredH="546" mockupW="1429" mockupH="507">
   <controls>
     <control controlID="0" controlTypeID="com.balsamiq.mockups::Canvas" x="6" y="39" w="110" h="474" measuredW="100" measuredH="70" zOrder="0" locked="false" isInGroup="-1"/>
     <control controlID="1" controlTypeID="com.balsamiq.mockups::Label" x="34" y="118" w="-1" h="-1" measuredW="77" measuredH="24" zOrder="1" locked="false" isInGroup="-1">
@@ -453,6 +453,11 @@
     <control controlID="43" controlTypeID="com.balsamiq.mockups::Label" x="1023" y="130" w="-1" h="-1" measuredW="130" measuredH="21" zOrder="31" locked="false" isInGroup="-1">
       <controlProperties>
         <text>Task%20name%20balababaa</text>
+      </controlProperties>
+    </control>
+    <control controlID="44" controlTypeID="com.balsamiq.mockups::StickyNote" x="422" y="423" w="141" h="123" measuredW="109" measuredH="123" zOrder="32" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Like%20tasks%2C%20projects%20can%27t%20be%20deleted%28may%20be%20archived%20in%20the%20futhure%3F%29</text>
       </controlProperties>
     </control>
   </controls>
