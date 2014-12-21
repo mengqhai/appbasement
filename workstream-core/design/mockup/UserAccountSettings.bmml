@@ -1,4 +1,4 @@
-<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="1331" measuredH="990" mockupW="1325" mockupH="951">
+<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="1530" measuredH="990" mockupW="1524" mockupH="951">
   <controls>
     <control controlID="12" controlTypeID="__group__" x="6" y="39" w="112" h="474" measuredW="112" measuredH="474" zOrder="5" locked="false" isInGroup="-1">
       <groupChildrenDescriptors>
@@ -588,6 +588,11 @@
     <control controlID="91" controlTypeID="com.balsamiq.mockups::Button" x="312" y="766" w="-1" h="-1" measuredW="82" measuredH="27" zOrder="42" locked="false" isInGroup="-1">
       <controlProperties>
         <text>Select%20file</text>
+      </controlProperties>
+    </control>
+    <control controlID="92" controlTypeID="com.balsamiq.mockups::StickyNote" x="1271" y="44" w="259" h="162" measuredW="109" measuredH="123" zOrder="43" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Required%20REST%20APIs%3A%0AUser%3A%20Retrieve%28one%29%2C%20Update%0A%20%0AAdditional%3A%20%20Image%20Upload%20%26%20retrieve</text>
       </controlProperties>
     </control>
   </controls>

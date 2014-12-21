@@ -809,5 +809,10 @@
         </control>
       </groupChildrenDescriptors>
     </control>
+    <control controlID="143" controlTypeID="com.balsamiq.mockups::StickyNote" x="873" y="657" w="328" h="162" measuredW="109" measuredH="123" zOrder="74" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Required%20REST%20APIs%3A%0AUser%3A%20Retrieve%28one%2C%20many%29%2C%20Update%0AGroup%3A%20Retrieve%2C%20Create%2C%20Update%0AOrganization%3A%20Create%2C%20Retrieve%2C%20Update%0A%20%0AAdditional%3A%20%20Start%20a%20org%20join%20System%20Process.</text>
+      </controlProperties>
+    </control>
   </controls>
 </mockup>

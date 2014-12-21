@@ -669,5 +669,10 @@
         </control>
       </groupChildrenDescriptors>
     </control>
+    <control controlID="117" controlTypeID="com.balsamiq.mockups::StickyNote" x="935" y="906" w="285" h="162" measuredW="109" measuredH="123" zOrder="54" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Required%20REST%20APIs%3A%0AProject%3A%20Retrieve%2C%20Update%0ATask%3A%20Create%2C%20Retrieve%2C%20Update%0AComments/Activities%3A%20%20Retrieve%2C%20Create%0AUser%3A%20Retrieve</text>
+      </controlProperties>
+    </control>
   </controls>
 </mockup>

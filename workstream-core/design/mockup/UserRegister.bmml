@@ -1,4 +1,4 @@
-<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="865" measuredH="379" mockupW="762" mockupH="330">
+<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="865" measuredH="561" mockupW="762" mockupH="512">
   <controls>
     <control controlID="0" controlTypeID="com.balsamiq.mockups::Button" x="256" y="325" w="-1" h="-1" measuredW="73" measuredH="27" zOrder="1" locked="false" isInGroup="-1">
       <controlProperties>
@@ -100,9 +100,9 @@
         <text>Account%20created%20successful%21%20%20You%20want%20to</text>
       </controlProperties>
     </control>
-    <control controlID="23" controlTypeID="com.balsamiq.mockups::RadioButton" x="535" y="242" w="-1" h="-1" measuredW="127" measuredH="22" zOrder="9" locked="false" isInGroup="-1">
+    <control controlID="23" controlTypeID="com.balsamiq.mockups::RadioButton" x="535" y="242" w="-1" h="-1" measuredW="134" measuredH="22" zOrder="9" locked="false" isInGroup="-1">
       <controlProperties>
-        <text>Join%20an%20orgnization</text>
+        <text>Join%20an%20organization</text>
       </controlProperties>
     </control>
     <control controlID="24" controlTypeID="com.balsamiq.mockups::TextInput" x="672" y="262" w="97" h="-1" measuredW="79" measuredH="26" zOrder="10" locked="false" isInGroup="-1"/>
@@ -111,10 +111,10 @@
         <text>Orgnization%20id%3A</text>
       </controlProperties>
     </control>
-    <control controlID="26" controlTypeID="com.balsamiq.mockups::RadioButton" x="535" y="150" w="-1" h="-1" measuredW="137" measuredH="22" zOrder="12" locked="false" isInGroup="-1">
+    <control controlID="26" controlTypeID="com.balsamiq.mockups::RadioButton" x="535" y="150" w="-1" h="-1" measuredW="143" measuredH="22" zOrder="12" locked="false" isInGroup="-1">
       <controlProperties>
         <state>selected</state>
-        <text>Creat%20an%20orgnization</text>
+        <text>Creat%20an%20organization</text>
       </controlProperties>
     </control>
     <control controlID="27" controlTypeID="com.balsamiq.mockups::Label" x="553" y="175" w="-1" h="-1" measuredW="109" measuredH="21" zOrder="13" locked="false" isInGroup="-1">
@@ -138,6 +138,49 @@
       <controlProperties>
         <direction>bottom</direction>
         <leftArrow>false</leftArrow>
+      </controlProperties>
+    </control>
+    <control controlID="33" controlTypeID="com.balsamiq.mockups::FieldSet" x="103" y="405" w="341" h="137" measuredW="200" measuredH="170" zOrder="19" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Login</text>
+      </controlProperties>
+    </control>
+    <control controlID="34" controlTypeID="__group__" x="130" y="432" w="194" h="26" measuredW="194" measuredH="26" zOrder="20" locked="false" isInGroup="-1">
+      <groupChildrenDescriptors>
+        <control controlID="0" controlTypeID="com.balsamiq.mockups::TextInput" x="66" y="0" w="128" h="-1" measuredW="79" measuredH="26" zOrder="0" locked="false" isInGroup="34">
+          <controlProperties>
+            <text/>
+          </controlProperties>
+        </control>
+        <control controlID="1" controlTypeID="com.balsamiq.mockups::Label" x="0" y="3" w="-1" h="-1" measuredW="35" measuredH="21" zOrder="1" locked="false" isInGroup="34">
+          <controlProperties>
+            <text>Email%3A</text>
+          </controlProperties>
+        </control>
+      </groupChildrenDescriptors>
+    </control>
+    <control controlID="35" controlTypeID="__group__" x="130" y="467" w="194" h="26" measuredW="194" measuredH="26" zOrder="21" locked="false" isInGroup="-1">
+      <groupChildrenDescriptors>
+        <control controlID="0" controlTypeID="com.balsamiq.mockups::TextInput" x="66" y="0" w="128" h="-1" measuredW="79" measuredH="26" zOrder="0" locked="false" isInGroup="35">
+          <controlProperties>
+            <text/>
+          </controlProperties>
+        </control>
+        <control controlID="1" controlTypeID="com.balsamiq.mockups::Label" x="0" y="3" w="-1" h="-1" measuredW="59" measuredH="21" zOrder="1" locked="false" isInGroup="35">
+          <controlProperties>
+            <text>Password%3A</text>
+          </controlProperties>
+        </control>
+      </groupChildrenDescriptors>
+    </control>
+    <control controlID="36" controlTypeID="com.balsamiq.mockups::Button" x="329" y="508" w="-1" h="-1" measuredW="54" measuredH="27" zOrder="22" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Login</text>
+      </controlProperties>
+    </control>
+    <control controlID="37" controlTypeID="com.balsamiq.mockups::StickyNote" x="571" y="399" w="230" h="162" measuredW="109" measuredH="123" zOrder="23" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Required%20REST%20APIs%3A%0AUser%3A%20Create%0AOrganization%3A%20Create%2C%20Retrieve%0A%20%0AAdditional%3A%0ASecurity%26Login%20enabled</text>
       </controlProperties>
     </control>
   </controls>

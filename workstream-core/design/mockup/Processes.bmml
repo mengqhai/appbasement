@@ -823,5 +823,10 @@
         <text>System%20level%20process/templates%20are%20not%20visible%20to%20any%20end%20users.</text>
       </controlProperties>
     </control>
+    <control controlID="108" controlTypeID="com.balsamiq.mockups::StickyNote" x="304" y="708" w="362" h="173" measuredW="109" measuredH="123" zOrder="73" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Required%20REST%20APIs%3A%0AProcess%3A%20Create%28start%29%2C%20Retrieve%2C%20Update%2C%20Delete%0AProcess/Task%3A%20Retrieve%0AProcess/Variable%3A%20Retrieve%0A%20%0AProcess%20Template%28Deployed%29%3A%20Create%28Deploy%29%2C%20Retrieve%2C%20Delete%28Undeploy%29%0AProcess%20Draft%28Design%29%3A%20Create%2C%20Retrieve%2C%20Update%2C%20Delete</text>
+      </controlProperties>
+    </control>
   </controls>
 </mockup>
