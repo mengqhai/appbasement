@@ -574,7 +574,7 @@
     </control>
     <control controlID="114" controlTypeID="com.balsamiq.mockups::StickyNote" x="668" y="979" w="126" h="100" measuredW="109" measuredH="123" zOrder="53" locked="false" isInGroup="-1">
       <controlProperties>
-        <text>There%27s%20no%20delete%20action%20for%20task.</text>
+        <text>There%27s%20no%20delete%20action%20for%20task%3F</text>
       </controlProperties>
     </control>
     <control controlID="115" controlTypeID="__group__" x="114" y="39" w="581" h="51" measuredW="581" measuredH="51" zOrder="1" locked="false" isInGroup="-1">
