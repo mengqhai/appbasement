@@ -44,7 +44,7 @@ public class Organization implements Serializable {
 	@Column(nullable = false, unique = true, length = 50)
 	private String identifier;
 
-	@Column(nullable = false, unique = true, length = 500)
+	@Column(nullable = false, unique = false, length = 500)
 	private String description;
 
 	@Column(nullable = false, updatable = false)
@@ -56,11 +56,11 @@ public class Organization implements Serializable {
 	@ForeignKey(name = "FK_ORG_USER_ORG", inverseName = "FK_ORG_USER_USER")
 	private Set<UserX> users = new HashSet<UserX>();
 
-//	@OneToMany(mappedBy = "org")
-//	private Set<GroupX> groups = new HashSet<GroupX>();
-//
-//	@OneToMany(mappedBy = "org")
-//	private Set<Project> projects = new HashSet<Project>();
+	// @OneToMany(mappedBy = "org")
+	// private Set<GroupX> groups = new HashSet<GroupX>();
+	//
+	// @OneToMany(mappedBy = "org")
+	// private Set<Project> projects = new HashSet<Project>();
 
 	public Long getId() {
 		return id;
@@ -98,13 +98,13 @@ public class Organization implements Serializable {
 		return users;
 	}
 
-//	public Set<GroupX> getGroups() {
-//		return groups;
-//	}
-//
-//	public Set<Project> getProjects() {
-//		return projects;
-//	}
+	// public Set<GroupX> getGroups() {
+	// return groups;
+	// }
+	//
+	// public Set<Project> getProjects() {
+	// return projects;
+	// }
 
 	@Override
 	public int hashCode() {
