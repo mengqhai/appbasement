@@ -93,7 +93,7 @@ public class Project {
 
 	public void setOrg(Organization org) {
 		this.org = org;
-		org.getProjects().add(this);
+		//org.getProjects().add(this);
 	}
 
 	@Override

@@ -1,18 +1,14 @@
 package com.workstream.core.model;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -31,8 +27,8 @@ public class UserX {
 	@Column(nullable = false, updatable = false)
 	private String userId;
 
-	@ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
-	private Set<Organization> orgs = new HashSet<Organization>();
+//	@ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
+//	private Set<Organization> orgs = new HashSet<Organization>();
 
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -54,19 +50,19 @@ public class UserX {
 		this.userId = userId;
 	}
 
-	public Set<Organization> getOrgs() {
-		return orgs;
-	}
+//	public Set<Organization> getOrgs() {
+//		return orgs;
+//	}
 
-	public void joinOrg(Organization org) {
-		this.getOrgs().add(org);
-		org.getUsers().add(this);
-	}
-
-	public void leaveOrg(Organization org) {
-		this.getOrgs().remove(org);
-		org.getUsers().remove(this);
-	}
+//	public void joinOrg(Organization org) {
+//		this.getOrgs().add(org);
+//		org.getUsers().add(this);
+//	}
+//
+//	public void leaveOrg(Organization org) {
+//		this.getOrgs().remove(org);
+//		org.getUsers().remove(this);
+//	}
 
 	@Override
 	public int hashCode() {

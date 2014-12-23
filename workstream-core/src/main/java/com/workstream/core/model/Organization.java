@@ -16,7 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -54,11 +53,11 @@ public class Organization implements Serializable {
 	@JoinTable(name = "APP_ORG_USER", joinColumns = { @JoinColumn(name = "ORG_ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID") })
 	private Set<UserX> users = new HashSet<UserX>();
 
-	@OneToMany(mappedBy = "org")
-	private Set<GroupX> groups = new HashSet<GroupX>();
-
-	@OneToMany(mappedBy = "org")
-	private Set<Project> projects = new HashSet<Project>();
+//	@OneToMany(mappedBy = "org")
+//	private Set<GroupX> groups = new HashSet<GroupX>();
+//
+//	@OneToMany(mappedBy = "org")
+//	private Set<Project> projects = new HashSet<Project>();
 
 	public Long getId() {
 		return id;
@@ -96,13 +95,13 @@ public class Organization implements Serializable {
 		return users;
 	}
 
-	public Set<GroupX> getGroups() {
-		return groups;
-	}
-
-	public Set<Project> getProjects() {
-		return projects;
-	}
+//	public Set<GroupX> getGroups() {
+//		return groups;
+//	}
+//
+//	public Set<Project> getProjects() {
+//		return projects;
+//	}
 
 	@Override
 	public int hashCode() {

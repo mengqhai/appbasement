@@ -77,7 +77,7 @@ public class GroupX implements Serializable {
 
 	public void setOrg(Organization org) {
 		this.org = org;
-		org.getGroups().add(this);
+		//org.getGroups().add(this);
 	}
 
 	@Override
