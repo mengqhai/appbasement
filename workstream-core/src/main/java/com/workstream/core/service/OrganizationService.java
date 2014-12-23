@@ -11,11 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.workstream.core.CoreConstants;
 import com.workstream.core.model.Organization;
 import com.workstream.core.persistence.IOrganizationDAO;
 
 @Service
-@Transactional(propagation = Propagation.REQUIRED, value = "txManager")
+@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
 public class OrganizationService {
 
 	private final Logger log = LoggerFactory

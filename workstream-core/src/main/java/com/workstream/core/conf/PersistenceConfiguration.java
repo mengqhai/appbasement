@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -41,7 +42,8 @@ public class PersistenceConfiguration {
 //	}
 
 	@Bean
-	public PlatformTransactionManager txManager() {
+	@Scope("singleton")
+	public PlatformTransactionManager wsTxManager() {
 		JpaTransactionManager mgmt = new JpaTransactionManager();
 		mgmt.setEntityManagerFactory(emf().getObject());
 		log.info("JPA Transaction Manager created.");
