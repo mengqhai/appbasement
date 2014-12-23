@@ -1,5 +1,8 @@
 package com.workstream.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.workstream.core.conf.ApplicationConfiguration;
@@ -22,9 +25,11 @@ public class App {
 
 		OrganizationService service = context
 				.getBean(OrganizationService.class);
-		service.createOrg("hellowOrg", "helloOrg01",
-				"Hello this a my first organization");
-
+//		service.createOrg("hellowOrg", "helloOrg01",
+//				"Hello this a my first organization");
+		Map<String, String> props = new HashMap<String, String>();
+		props.put("identifierx", "Hello");
+		service.updateOrg(0L, props);
 		context.close();
 	}
 }

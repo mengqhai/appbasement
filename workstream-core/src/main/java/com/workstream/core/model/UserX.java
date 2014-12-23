@@ -14,6 +14,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 @Entity
 @Table(name = "WS_USER")
 @Access(AccessType.FIELD)
@@ -27,8 +30,8 @@ public class UserX {
 	@Column(nullable = false, updatable = false)
 	private String userId;
 
-//	@ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
-//	private Set<Organization> orgs = new HashSet<Organization>();
+	// @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
+	// private Set<Organization> orgs = new HashSet<Organization>();
 
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -50,19 +53,19 @@ public class UserX {
 		this.userId = userId;
 	}
 
-//	public Set<Organization> getOrgs() {
-//		return orgs;
-//	}
+	// public Set<Organization> getOrgs() {
+	// return orgs;
+	// }
 
-//	public void joinOrg(Organization org) {
-//		this.getOrgs().add(org);
-//		org.getUsers().add(this);
-//	}
-//
-//	public void leaveOrg(Organization org) {
-//		this.getOrgs().remove(org);
-//		org.getUsers().remove(this);
-//	}
+	// public void joinOrg(Organization org) {
+	// this.getOrgs().add(org);
+	// org.getUsers().add(this);
+	// }
+	//
+	// public void leaveOrg(Organization org) {
+	// this.getOrgs().remove(org);
+	// org.getUsers().remove(this);
+	// }
 
 	@Override
 	public int hashCode() {
@@ -119,6 +122,12 @@ public class UserX {
 		if (getCreatedAt() == null) {
 			setCreatedAt(new Date());
 		}
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this,
+				ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 }
