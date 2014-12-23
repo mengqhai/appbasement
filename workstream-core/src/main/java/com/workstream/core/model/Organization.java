@@ -115,8 +115,10 @@ public class Organization implements Serializable {
 				+ ((getIdentifier() == null) ? 0 : getIdentifier().hashCode());
 		result = prime * result
 				+ ((getName() == null) ? 0 : getName().hashCode());
-		result = prime * result
-				+ ((getCreatedAt() == null) ? 0 : getCreatedAt().hashCode());
+		// result = prime * result
+		// + ((getCreatedAt() == null) ? 0 : getCreatedAt().hashCode());
+		// comment the createdAt field, as before and after persistence, the
+		// hashcode changes, which should never happen
 		return result;
 	}
 

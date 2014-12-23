@@ -74,9 +74,11 @@ public class UserX {
 		int result = 1;
 		result = prime * result
 				+ ((getUserId() == null) ? 0 : getUserId().hashCode());
-		
-		result = prime * result
-				+ ((getCreatedAt() == null) ? 0 : getCreatedAt().hashCode());
+
+		// result = prime * result
+		// + ((getCreatedAt() == null) ? 0 : getCreatedAt().hashCode());
+		// comment the createdAt field, as before and after persistence, the
+		// hashcode changes, which should never happen
 		return result;
 	}
 
