@@ -17,6 +17,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.ForeignKey;
+
 @Entity
 @Table(name = "WS_PROJECT")
 @Access(AccessType.FIELD)
@@ -45,6 +47,7 @@ public class Project {
 
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ORG_ID", nullable = false, updatable = false)
+	@ForeignKey(name = "FK_PROJECT_ORG")
 	private Organization org;
 
 	public Long getId() {

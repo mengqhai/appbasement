@@ -57,7 +57,7 @@ public class ActivitiEngineConfiguration {
 	}
 
 	@Bean
-	public PlatformTransactionManager transactionManager() {
+	public PlatformTransactionManager actTransactionManager() {
 		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
 		transactionManager.setDataSource(dataSource());
 		return transactionManager;
@@ -69,7 +69,7 @@ public class ActivitiEngineConfiguration {
 		cfg.setDataSource(dataSource());
 		cfg.setDatabaseSchemaUpdate(environment.getProperty(
 				"engine.schema.update", "true"));
-		cfg.setTransactionManager(transactionManager());
+		cfg.setTransactionManager(actTransactionManager());
 		cfg.setJobExecutorActivate(Boolean.valueOf(environment.getProperty(
 				"engine.activate.jobexecutor", "false")));
 		cfg.setHistory(environment.getProperty("engine.history.level", "full"));

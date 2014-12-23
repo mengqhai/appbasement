@@ -18,6 +18,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.ForeignKey;
+
 @Entity
 @Table(name = "WS_GROUP")
 @Access(AccessType.FIELD)
@@ -41,6 +43,7 @@ public class GroupX implements Serializable {
 
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ORG_ID")
+	@ForeignKey(name = "FK_GROUP_ORG")
 	private Organization org;
 
 	@Column(nullable = false, updatable = false)

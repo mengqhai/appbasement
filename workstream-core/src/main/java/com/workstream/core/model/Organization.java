@@ -21,6 +21,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.ForeignKey;
+
 @Entity
 @Table(name = "WS_ORG")
 @Access(AccessType.FIELD)
@@ -50,7 +52,8 @@ public class Organization implements Serializable {
 	private Date createdAt;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_ORG_USER", joinColumns = { @JoinColumn(name = "ORG_ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID") })
+	@JoinTable(name = "WS_ORG_USER", joinColumns = { @JoinColumn(name = "ORG_ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID") })
+	@ForeignKey(name = "FK_ORG_USER_ORG", inverseName = "FK_ORG_USER_USER")
 	private Set<UserX> users = new HashSet<UserX>();
 
 //	@OneToMany(mappedBy = "org")
