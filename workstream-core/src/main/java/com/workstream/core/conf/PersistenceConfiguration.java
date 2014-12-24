@@ -36,10 +36,10 @@ public class PersistenceConfiguration {
 	private DataSource dataSource; // reuse the dataSource of Activiti
 
 	// https://jira.spring.io/browse/SPR-10787
-//	@Override
-//	public PlatformTransactionManager annotationDrivenTransactionManager() {
-//		return txManager();
-//	}
+	// @Override
+	// public PlatformTransactionManager annotationDrivenTransactionManager() {
+	// return txManager();
+	// }
 
 	@Bean
 	@Scope("singleton")
@@ -55,8 +55,11 @@ public class PersistenceConfiguration {
 		HibernateJpaVendorAdapter adpater = new HibernateJpaVendorAdapter();
 		adpater.setDatabase(Database.H2);
 		adpater.setShowSql(true);
-		adpater.setGenerateDdl(true);
+		//adpater.setGenerateDdl(true);
 		adpater.setDatabasePlatform(H2Dialect.class.getName());
+		adpater.getJpaPropertyMap()
+				.put("hibernate.hbm2ddl.auto", "create-drop");
+		adpater.getJpaPropertyMap().put("hibernate.format_sql", false);
 		log.info("Hibernate JPA Vendor Adapter created.");
 		return adpater;
 	}

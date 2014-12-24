@@ -47,8 +47,8 @@ public class UserServiceTest {
 			for (Organization org : orgs) {
 				orgService.userLeaveOrg(userX, org);
 			}
-			service.removeUser(userId);
 		}
+		service.removeUser(userId);
 	}
 
 	@Test
