@@ -60,4 +60,30 @@ public class OrganizationService {
 		log.debug("Successfully update org: {}", org);
 	}
 
+	public Organization findOrgById(Long id) {
+		return orgDao.findById(id);
+	}
+
+	public Organization findOrgByIdentifier(String identifier) {
+		return orgDao.findByIdentifier(identifier);
+	}
+
+	public void removeOrg(Organization org) {
+		orgDao.remove(org);
+	}
+
+	public void removeOrg(String identifier) {
+		Organization org = findOrgByIdentifier(identifier);
+		if (org != null) {
+			removeOrg(org);
+		}
+	}
+
+	public void removeOrg(Long id) {
+		Organization org = orgDao.findById(id);
+		if (org != null) {
+			removeOrg(id);
+		}
+	}
+
 }

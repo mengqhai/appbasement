@@ -8,4 +8,6 @@ public interface IOrganizationDAO extends IGenericDAO<Organization, Long> {
 
 	public abstract Long countWithIdentifier(String identifier);
 
+	public abstract Organization findByIdentifier(String identifier);
+
 }

@@ -26,4 +26,10 @@ public class OrganizationJpaDAO extends GenericJpaDAO<Organization, Long>
 		}
 	}
 
+	@Override
+	public Organization findByIdentifier(String identifier) {
+		Organization result = findFor("identifier", identifier);
+		return result;
+	}
+
 }

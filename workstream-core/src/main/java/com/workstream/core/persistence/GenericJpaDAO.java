@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -14,8 +15,13 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 		IGenericDAO<T, ID> {
+
+	private final Logger log = LoggerFactory.getLogger(GenericJpaDAO.class);
 
 	@PersistenceContext
 	private EntityManager em;
@@ -105,6 +111,10 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity is null");
 		}
+		if (!em.contains(entity)) {
+			// the object is detached, must merge before remove
+			entity = merge(entity);
+		}
 		em.remove(entity);
 	}
 
@@ -154,6 +164,26 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 		}
 		return em.createQuery(c).setFirstResult(first).setMaxResults(max)
 				.getResultList();
+	}
+
+	protected T findFor(String attributeName, Serializable attributeValue) {
+		Class<T> getClass = persistentClass;
+		CriteriaBuilder cb = getEm().getCriteriaBuilder();
+		CriteriaQuery<T> c = cb.createQuery(getClass);
+		Root<T> all = c.from(getClass);
+		if (attributeName != null && !attributeName.equals("")) {
+			Expression<Boolean> ex = cb.equal(parsePath(all, attributeName),
+					attributeValue);
+			c.where(ex);
+		}
+		c.select(all);
+		try {
+			return em.createQuery(c).getSingleResult();
+		} catch (NoResultException e) {
+			log.debug("No entity matching {}={}", attributeName,
+					attributeValue, e);
+			return null;
+		}
 	}
 
 	protected Long countFilteredFor(String attributeName,
