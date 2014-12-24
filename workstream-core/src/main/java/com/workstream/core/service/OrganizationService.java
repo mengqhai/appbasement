@@ -101,14 +101,24 @@ public class OrganizationService {
 	}
 
 	public void userJoinOrg(UserX userX, Organization org) {
-		org = orgDao.merge(org); // re-attach the org
+		if (!orgDao.emContains(org)) {
+			org = orgDao.merge(org); // re-attach the org
+		}
 		org.getUsers().add(userX);
-
 	}
 
 	public void userLeaveOrg(UserX userX, Organization org) {
-		org = orgDao.merge(org); // re-attach the org
+		if (!orgDao.emContains(org)) {
+			org = orgDao.merge(org); // re-attach the org
+		}
 		org.getUsers().remove(userX);
+	}
+
+	public boolean isUserInOrg(UserX userX, Organization org) {
+		if (!orgDao.emContains(org)) {
+			org = orgDao.merge(org); // re-attach the org
+		}
+		return org.getUsers().contains(userX);
 	}
 
 }

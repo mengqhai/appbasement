@@ -11,6 +11,7 @@ import org.activiti.engine.identity.GroupQuery;
 import org.activiti.engine.identity.NativeGroupQuery;
 import org.activiti.engine.identity.NativeUserQuery;
 import org.activiti.engine.identity.User;
+import org.activiti.engine.identity.UserQuery;
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,6 +139,19 @@ public class UserService {
 		return nq.list();
 	}
 
+	public List<User> filterUserByGroupId(String groupId) {
+		UserQuery q = idService.createUserQuery();
+		return q.memberOfGroup(groupId).list();
+	}
+
+	public List<User> filterUser(Group group) {
+		return filterUserByGroupId(group.getId());
+	}
+
+	public List<User> filterUsers(GroupX groupX) {
+		return filterUserByGroupId(groupX.getGroupId());
+	}
+
 	/**
 	 * Create both the Group(Activiti) & GroupX
 	 * 
@@ -216,6 +230,16 @@ public class UserService {
 		builder.append(org.getId()).append("|%'");
 		log.debug("Filtering Activiti groups with where clause: {}", builder);
 		return nq.sql(builder.toString()).list();
+	}
+	
+	
+
+	public void addUserToGroup(String userId, String groupId) {
+		idService.createMembership(userId, groupId);
+	}
+
+	public void removeUserFromGroup(String userId, String groupId) {
+		idService.deleteMembership(userId, groupId);
 	}
 
 }

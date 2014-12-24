@@ -156,4 +156,13 @@ public class UserServiceTest {
 		Assert.assertEquals(1, users.size());
 		Assert.assertEquals(userId, users.get(0).getId());
 	}
+
+	public void testGroupUser() {
+		Organization org = orgService.createOrg("group user test org",
+				"groupUserTestOrg", null);
+		Group group1 = service.createGroup(org, "test group 1",
+				"Hello test group");
+		service.createUser(userId, "孟庆华", "passw0rd");
+		service.addUserToGroup(userId, group1.getId());
+	}
 }
