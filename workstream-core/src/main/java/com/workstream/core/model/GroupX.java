@@ -40,7 +40,7 @@ public class GroupX implements Serializable {
 	@Column(nullable = true, unique = true, length = 50)
 	private String groupId;
 
-	@Column(length = 500)
+	@Column(nullable = true, length = 500)
 	private String description;
 
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)
@@ -151,7 +151,23 @@ public class GroupX implements Serializable {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		return ToStringBuilder.reflectionToString(this,
+				ToStringStyle.SHORT_PREFIX_STYLE);
+	}
+
+	public String generateGroupId() {
+		if (getId() == null) {
+			throw new IllegalStateException(
+					"The groupX hasn't been persisted, so unable to generate groupId");
+		}
+		if (getOrg() == null) {
+			throw new IllegalStateException(
+					"The groupX doesn't have org, so unable to generate groupId");
+		}
+		StringBuilder builder = new StringBuilder();
+		builder.append(getOrg().getId()).append("|");
+		builder.append(getId());
+		return builder.toString();
 	}
 
 }
