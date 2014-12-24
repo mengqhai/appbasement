@@ -146,13 +146,14 @@ public class UserServiceTest {
 		Organization orgLoaded = orgService.findOrgByIdEagerUsers(org.getId());
 		Assert.assertEquals(1, orgLoaded.getUsers().size());
 		Assert.assertTrue(orgLoaded.getUsers().contains(userX));
-	}
 
-	// @Transactional(value = CoreConstants.TX_MANAGER, propagation =
-	// Propagation.REQUIRED)
-	// public void assertUserOrg(Long orgId, UserX userX) {
-	// Organization orgLoaded = orgService.findOrgByIdEagerUsers(orgId);
-	// Assert.assertEquals(1, orgLoaded.getUsers().size());
-	// Assert.assertTrue(orgLoaded.getUsers().contains(userX));
-	// }
+		// test filter user by org
+		Collection<UserX> userXes = service.filterUserX(org);
+		Assert.assertEquals(1, userXes.size());
+		Assert.assertTrue(userXes.contains(userX));
+
+		List<User> users = service.filterUser(org);
+		Assert.assertEquals(1, users.size());
+		Assert.assertEquals(userId, users.get(0).getId());
+	}
 }

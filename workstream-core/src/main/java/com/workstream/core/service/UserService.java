@@ -9,8 +9,8 @@ import org.activiti.engine.ManagementService;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.GroupQuery;
 import org.activiti.engine.identity.NativeGroupQuery;
+import org.activiti.engine.identity.NativeUserQuery;
 import org.activiti.engine.identity.User;
-import org.activiti.engine.identity.UserQuery;
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,13 +111,31 @@ public class UserService {
 		saveUser(user);
 	}
 
-	public void filterUserX(Organization org) {
-
+	public Collection<UserX> filterUserX(Organization org) {
+		if (!orgDao.emContains(org)) {
+			org = orgDao.findById(org.getId());
+		}
+		org.getUsers().size(); // make it eager
+		return org.getUsers();
 	}
 
-	public void filterUser(Organization org) {
-		UserQuery q = idService.createUserQuery();
-
+	public List<User> filterUser(Organization org) {
+		NativeUserQuery nq = idService.createNativeUserQuery();
+		StringBuilder builder = new StringBuilder("select * from ").append(
+				mgmtService.getTableName(User.class)).append(" where ID_ in (");
+		Collection<UserX> userXes = filterUserX(org);
+		int added = 0;
+		for (UserX userX : userXes) {
+			builder.append("'").append(userX.getUserId()).append("'");
+			added++;
+			if (added < userXes.size()) {
+				builder.append(",");
+			}
+		}
+		builder.append(")");
+		log.debug("Filtering Activiti users with where clause: {}", builder);
+		nq.sql(builder.toString());
+		return nq.list();
 	}
 
 	/**
@@ -196,7 +214,7 @@ public class UserService {
 				mgmtService.getTableName(Group.class)).append(
 				" where ID_ like '");
 		builder.append(org.getId()).append("|%'");
-		log.info("Filtering Activiti groups with where clause: {}", builder);
+		log.debug("Filtering Activiti groups with where clause: {}", builder);
 		return nq.sql(builder.toString()).list();
 	}
 
