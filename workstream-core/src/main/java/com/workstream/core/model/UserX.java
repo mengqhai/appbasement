@@ -1,5 +1,6 @@
 package com.workstream.core.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Access;
@@ -20,7 +21,12 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @Entity
 @Table(name = "WS_USER")
 @Access(AccessType.FIELD)
-public class UserX {
+public class UserX implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 275822027877410645L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

@@ -1,5 +1,6 @@
 package com.workstream.core.service;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
 import com.workstream.core.model.Organization;
+import com.workstream.core.model.UserX;
 import com.workstream.core.persistence.IOrganizationDAO;
 
 @Service
@@ -64,6 +66,14 @@ public class OrganizationService {
 		return orgDao.findById(id);
 	}
 
+	public Organization findOrgByIdEagerUsers(Long id) {
+		Organization org = findOrgById(id);
+		if (org != null) {
+			org.getUsers().size();
+		}
+		return org;
+	}
+
 	public Organization findOrgByIdentifier(String identifier) {
 		return orgDao.findByIdentifier(identifier);
 	}
@@ -84,6 +94,21 @@ public class OrganizationService {
 		if (org != null) {
 			removeOrg(id);
 		}
+	}
+
+	public Collection<Organization> filterOrg(UserX userX) {
+		return orgDao.filterByUserX(userX);
+	}
+
+	public void userJoinOrg(UserX userX, Organization org) {
+		org = orgDao.merge(org); // re-attach the org
+		org.getUsers().add(userX);
+
+	}
+
+	public void userLeaveOrg(UserX userX, Organization org) {
+		org = orgDao.merge(org); // re-attach the org
+		org.getUsers().remove(userX);
 	}
 
 }

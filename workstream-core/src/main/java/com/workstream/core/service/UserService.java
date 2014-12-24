@@ -10,6 +10,7 @@ import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.GroupQuery;
 import org.activiti.engine.identity.NativeGroupQuery;
 import org.activiti.engine.identity.User;
+import org.activiti.engine.identity.UserQuery;
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ import com.workstream.core.model.GroupX;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.UserX;
 import com.workstream.core.persistence.IGroupXDAO;
+import com.workstream.core.persistence.IOrganizationDAO;
 import com.workstream.core.persistence.IUserXDAO;
 
 @Service
@@ -37,6 +39,9 @@ public class UserService {
 
 	@Autowired
 	private IGroupXDAO groupDao;
+
+	@Autowired
+	private IOrganizationDAO orgDao;
 
 	@Autowired
 	private IdentityService idService;
@@ -106,6 +111,15 @@ public class UserService {
 		saveUser(user);
 	}
 
+	public void filterUserX(Organization org) {
+
+	}
+
+	public void filterUser(Organization org) {
+		UserQuery q = idService.createUserQuery();
+		
+	}
+
 	/**
 	 * Create both the Group(Activiti) & GroupX
 	 * 
@@ -172,7 +186,5 @@ public class UserService {
 		log.info("Filtering Activiti groups with where clause: {}", builder);
 		return nq.sql(builder.toString()).list();
 	}
-	
-	
 
 }

@@ -13,6 +13,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.slf4j.Logger;
@@ -164,6 +165,31 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 		}
 		return em.createQuery(c).setFirstResult(first).setMaxResults(max)
 				.getResultList();
+	}
+
+	/**
+	 * Filter all the entities with a collection field that contains a given
+	 * value object
+	 * 
+	 * @param collectionName
+	 * @param elementValue
+	 * @return
+	 */
+	protected Collection<T> filterForContains(String collectionName,
+			Serializable elementValue) {
+		Class<T> getClass = persistentClass;
+		CriteriaBuilder cb = getEm().getCriteriaBuilder();
+		CriteriaQuery<T> c = cb.createQuery(getClass);
+		Root<T> all = c.from(getClass);
+		// http://www.objectdb.com/java/jpa/query/jpql/collection#Criteria_Query_Collection_Expressions_
+		if (collectionName != null && !collectionName.equals("")) {
+			Expression<Collection<Serializable>> collection = all
+					.get(collectionName);
+			Predicate isMember = cb.isMember(elementValue, collection);
+			c.where(isMember);
+		}
+		c.select(all);
+		return em.createQuery(c).getResultList();
 	}
 
 	protected T findFor(String attributeName, Serializable attributeValue) {

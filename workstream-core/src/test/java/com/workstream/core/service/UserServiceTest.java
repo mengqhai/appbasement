@@ -22,6 +22,7 @@ import com.workstream.core.CoreConstants;
 import com.workstream.core.conf.ApplicationConfiguration;
 import com.workstream.core.model.GroupX;
 import com.workstream.core.model.Organization;
+import com.workstream.core.model.UserX;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ApplicationConfiguration.class)
@@ -36,8 +37,16 @@ public class UserServiceTest {
 	String userId = "mqhnow1@sina.com";
 
 	@Before
+	@Transactional(value = CoreConstants.TX_MANAGER, propagation = Propagation.REQUIRES_NEW)
 	public void before() {
-		service.removeUser(userId);
+		UserX userX = service.getUserX(userId);
+		if (userX != null) {
+			Collection<Organization> orgs = orgService.filterOrg(userX);
+			for (Organization org : orgs) {
+				orgService.userLeaveOrg(userX, org);
+			}
+			service.removeUser(userId);
+		}
 	}
 
 	@Test
@@ -109,4 +118,24 @@ public class UserServiceTest {
 		orgService.removeOrg(org); // cascade removes org & groupXes
 	}
 
+	@Test
+	public void testUserOrganization() {
+		service.createUser(userId, "孟庆华", "passw0rd");
+		Organization org = orgService.createOrg("user join test org",
+				"userJoinTestOrg", null);
+		UserX userX = service.getUserX(userId);
+		orgService.userJoinOrg(userX, org);
+
+		Organization orgLoaded = orgService.findOrgByIdEagerUsers(org.getId());
+		Assert.assertEquals(1, orgLoaded.getUsers().size());
+		Assert.assertTrue(orgLoaded.getUsers().contains(userX));
+	}
+
+	// @Transactional(value = CoreConstants.TX_MANAGER, propagation =
+	// Propagation.REQUIRED)
+	// public void assertUserOrg(Long orgId, UserX userX) {
+	// Organization orgLoaded = orgService.findOrgByIdEagerUsers(orgId);
+	// Assert.assertEquals(1, orgLoaded.getUsers().size());
+	// Assert.assertTrue(orgLoaded.getUsers().contains(userX));
+	// }
 }
