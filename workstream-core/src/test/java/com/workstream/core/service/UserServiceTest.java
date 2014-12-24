@@ -12,15 +12,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.workstream.core.CoreConstants;
 import com.workstream.core.conf.ApplicationConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ApplicationConfiguration.class)
-@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
 public class UserServiceTest {
 	@Autowired
 	UserService service;
@@ -29,7 +25,7 @@ public class UserServiceTest {
 	
 	@Before
 	public void before() {
-		service.deleteUser(userId);
+		service.removeUser(userId);
 	}
 
 	@Test

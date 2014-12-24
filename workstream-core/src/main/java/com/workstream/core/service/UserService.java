@@ -40,7 +40,12 @@ public class UserService {
 		}
 	}
 
-	public void deleteUser(String userId) {
+	/**
+	 * Delete both the User(Activiti) and the UserX
+	 * 
+	 * @param userId
+	 */
+	public void removeUser(String userId) {
 		idService.deleteUser(userId);
 		deleteUserX(userId);
 	}

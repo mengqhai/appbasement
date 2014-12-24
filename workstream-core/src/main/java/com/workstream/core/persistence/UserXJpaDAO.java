@@ -1,7 +1,5 @@
 package com.workstream.core.persistence;
 
-import java.util.Collection;
-
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,12 +14,7 @@ public class UserXJpaDAO extends GenericJpaDAO<UserX, Long> implements
 
 	@Override
 	public UserX findByUserId(String userId) {
-		Collection<UserX> result = filterFor("userId", userId, 0, 1);
-		if (result.isEmpty()) {
-			return null;
-		} else {
-			return result.iterator().next();
-		}
+		return findFor("userId", userId);
 	}
 
 }
