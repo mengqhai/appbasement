@@ -31,4 +31,6 @@ public interface IGenericDAO<T, ID extends Serializable> {
 
 	public abstract Collection<T> findAll(int first, int max);
 
+	public abstract boolean emContains(T entity);
+
 }

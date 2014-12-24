@@ -113,9 +113,26 @@ public class UserServiceTest {
 		for (GroupX groupX : groupXes) {
 			service.removeGroup(groupX);
 		}
+
 		Assert.assertEquals(0, service.filterGroupX(org).size());
 		Assert.assertEquals(0, service.filterGroup(org).size());
+		Assert.assertNull(service.getGroupX(groupX1Created.getId()));
+		Assert.assertNull(service.getGroupX(groupX2Created.getId()));
 		orgService.removeOrg(org); // cascade removes org & groupXes
+
+	}
+
+	@Test
+	public void testCreateRemoveGroup() {
+		Organization org = orgService.createOrg("group test org",
+				"groupTestOrg", null);
+		Group group1 = service.createGroup(org, "test group 1",
+				"Hello test group");
+		GroupX groupX1Created = service.getGroupX(group1.getId());
+		service.removeGroup(groupX1Created);
+		Assert.assertNull(service.getGroupX(groupX1Created.getId()));
+		Assert.assertEquals(0, service.filterGroup(org).size());
+		Assert.assertEquals(0, service.filterGroupX(org).size());
 	}
 
 	@Test

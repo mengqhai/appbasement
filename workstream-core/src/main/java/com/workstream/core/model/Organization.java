@@ -60,7 +60,8 @@ public class Organization implements Serializable {
 	@ForeignKey(name = "FK_ORG_USER_ORG", inverseName = "FK_ORG_USER_USER")
 	private Set<UserX> users = new HashSet<UserX>();
 
-	@OneToMany(mappedBy = "org", cascade = { CascadeType.ALL })
+	@OneToMany(mappedBy = "org", cascade = { CascadeType.ALL }, orphanRemoval = true)
+	// http://stackoverflow.com/questions/22261067/hibernate-deletes-a-record-but-the-record-doesnt-go-away
 	private Set<GroupX> groups = new HashSet<GroupX>();
 
 	// @OneToMany(mappedBy = "org")

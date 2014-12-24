@@ -117,7 +117,7 @@ public class UserService {
 
 	public void filterUser(Organization org) {
 		UserQuery q = idService.createUserQuery();
-		
+
 	}
 
 	/**
@@ -127,12 +127,14 @@ public class UserService {
 	public Group createGroup(Organization org, String name, String description) {
 		GroupX groupX = new GroupX();
 		groupX.setOrg(org);
-		org.getGroups().add(groupX);
+
 		groupX.setDescription(description);
 		groupDao.persist(groupX);
 
 		String groupId = groupX.generateGroupId();
 		groupX.setGroupId(groupId);
+		org.getGroups().add(groupX); // must do this here, to prevent hashCode
+										// from changing
 
 		Group group = idService.newGroup(groupId);
 		group.setName(name);
@@ -170,6 +172,17 @@ public class UserService {
 	 * @param id
 	 */
 	public void removeGroup(GroupX groupX) {
+		if (!groupDao.emContains(groupX)) {
+			groupX = groupDao.merge(groupX); // attach the groupX;
+		}
+
+		if (!groupX.getOrg().getGroups().contains(groupX)) {
+			throw new IllegalStateException(
+					"The group's org doesn't contain the group itself! Have you did any thing that changed the group's hash code?");
+		}
+
+		groupX.getOrg().getGroups().remove(groupX); // must, orphanRemoval =
+													// true
 		String groupId = groupX.getGroupId();
 		idService.deleteGroup(groupId);
 		groupDao.remove(groupX);

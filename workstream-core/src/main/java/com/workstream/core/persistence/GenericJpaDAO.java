@@ -108,6 +108,11 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 	}
 
 	@Override
+	public boolean emContains(T entity) {
+		return em.contains(entity);
+	}
+
+	@Override
 	public void remove(T entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity is null");
