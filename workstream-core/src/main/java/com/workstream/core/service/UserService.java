@@ -231,11 +231,35 @@ public class UserService {
 		log.debug("Filtering Activiti groups with where clause: {}", builder);
 		return nq.sql(builder.toString()).list();
 	}
-	
-	
+
+	public void addUserToGroup(UserX userX, GroupX groupX) {
+		if (!groupDao.emContains(groupX)) {
+			groupX = groupDao.merge(groupX);
+		}
+		Collection<Organization> orgs = orgDao.filterByUserX(userX);
+		boolean belongsToGroupOrg = false;
+		for (Organization org : orgs) {
+			if (groupX.getOrg().getId().equals(org.getId())) {
+				belongsToGroupOrg = true;
+				break;
+			}
+		}
+		if (!belongsToGroupOrg) {
+			log.error("User {} doesn't belong to group's org. {}", userX,
+					groupX.getId());
+			throw new RuntimeException("Unable to add user to group.");
+		}
+		idService.createMembership(userX.getUserId(), groupX.getGroupId());
+	}
+
+	public void addUserToGroup(String userId, GroupX groupX) {
+		UserX userX = userDao.findByUserId(userId);
+		addUserToGroup(userX, groupX);
+	}
 
 	public void addUserToGroup(String userId, String groupId) {
-		idService.createMembership(userId, groupId);
+		GroupX groupX = groupDao.findByGroupId(groupId);
+		addUserToGroup(userId, groupX);
 	}
 
 	public void removeUserFromGroup(String userId, String groupId) {

@@ -2,8 +2,10 @@ package com.workstream.core.service;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
@@ -106,8 +108,11 @@ public class UserServiceTest {
 
 		List<Group> groups = service.filterGroup(org);
 		Assert.assertEquals(2, groups.size());
-		Assert.assertEquals(group1.getId(), groups.get(0).getId());
-		Assert.assertEquals(group2.getId(), groups.get(1).getId());
+		Set<String> ids = new HashSet<String>();
+		ids.add(groups.get(0).getId());
+		ids.add(groups.get(1).getId());
+		Assert.assertTrue(ids.contains(group1.getId()));
+		Assert.assertTrue(ids.contains(group2.getId()));
 
 		// test delete
 		for (GroupX groupX : groupXes) {
@@ -157,12 +162,35 @@ public class UserServiceTest {
 		Assert.assertEquals(userId, users.get(0).getId());
 	}
 
-	public void testGroupUser() {
+	@Test(expected = RuntimeException.class)
+	public void testGroupUserFail() {
 		Organization org = orgService.createOrg("group user test org",
 				"groupUserTestOrg", null);
 		Group group1 = service.createGroup(org, "test group 1",
 				"Hello test group");
 		service.createUser(userId, "孟庆华", "passw0rd");
 		service.addUserToGroup(userId, group1.getId());
+
+		List<User> users = service.filterUserByGroupId(group1.getId());
+		Assert.assertEquals(1, users.size());
+		Assert.assertEquals(userId, users.get(0).getId());
+	}
+
+	@Test
+	public void testGroupUser() {
+		Organization org = orgService.createOrg("group user test org",
+				"groupUserTestOrg", null);
+		Group group1 = service.createGroup(org, "test group 1",
+				"Hello test group");
+		service.createUser(userId, "孟庆华", "passw0rd");
+		UserX createdUser = service.getUserX(userId);
+
+		orgService.userJoinOrg(createdUser, org);
+
+		service.addUserToGroup(userId, group1.getId());
+
+		List<User> users = service.filterUserByGroupId(group1.getId());
+		Assert.assertEquals(1, users.size());
+		Assert.assertEquals(userId, users.get(0).getId());
 	}
 }
