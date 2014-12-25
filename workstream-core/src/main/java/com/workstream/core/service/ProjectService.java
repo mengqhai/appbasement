@@ -85,10 +85,26 @@ public class ProjectService {
 		return proDao.filterFor(org);
 	}
 
+	public Task createTask(Long projectId, String name) {
+		return createTask(projectId, name, null, null, null, null);
+	}
+
 	public Task createTask(Long projectId, String name, String description,
 			Date dueDate, String assigneeId, Integer priority) {
+		Project pro = proDao.findById(projectId);
+		return createTask(pro, name, description, dueDate, assigneeId, priority);
+	}
+
+	public Task createTask(Project pro, String name, String description,
+			Date dueDate, String assigneeId, Integer priority) {
+		if (!proDao.emContains(pro)) {
+			pro = proDao.findById(pro.getId());
+		}
+
 		Task task = taskSer.newTask();
+		task.setTenantId(String.valueOf(pro.getOrg().getId()));
 		task.setName(name);
+		task.setCategory(String.valueOf(pro.getId()));
 		if (description != null) {
 			task.setDescription(description);
 		}
