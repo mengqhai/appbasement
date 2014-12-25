@@ -34,7 +34,7 @@ public class Project {
 	@Column(nullable = false, unique = false, length = 50)
 	private String name;
 
-	@Column(nullable = false, unique = false, length = 500)
+	@Column(nullable = true, unique = false, length = 500)
 	private String description;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -98,7 +98,7 @@ public class Project {
 
 	public void setOrg(Organization org) {
 		this.org = org;
-		//org.getProjects().add(this);
+		// org.getProjects().add(this);
 	}
 
 	@Override
@@ -189,10 +189,11 @@ public class Project {
 			setCreatedAt(new Date());
 		}
 	}
-	
+
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		return ToStringBuilder.reflectionToString(this,
+				ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 }
