@@ -79,6 +79,10 @@ public class OrganizationService {
 	}
 
 	public void removeOrg(Organization org) {
+		if (!orgDao.emContains(org)) {
+			org = orgDao.findById(org.getId()); // may contain staled data so
+												// don't merge
+		}
 		orgDao.remove(org);
 	}
 
@@ -102,21 +106,21 @@ public class OrganizationService {
 
 	public void userJoinOrg(UserX userX, Organization org) {
 		if (!orgDao.emContains(org)) {
-			org = orgDao.merge(org); // re-attach the org
+			org = orgDao.findById(org.getId()); // re-attach the org
 		}
 		org.getUsers().add(userX);
 	}
 
 	public void userLeaveOrg(UserX userX, Organization org) {
 		if (!orgDao.emContains(org)) {
-			org = orgDao.merge(org); // re-attach the org
+			org = orgDao.findById(org.getId()); // re-attach the org
 		}
 		org.getUsers().remove(userX);
 	}
 
 	public boolean isUserInOrg(UserX userX, Organization org) {
 		if (!orgDao.emContains(org)) {
-			org = orgDao.merge(org); // re-attach the org
+			org = orgDao.findById(org.getId()); // re-attach the org
 		}
 		return org.getUsers().contains(userX);
 	}

@@ -232,6 +232,12 @@ public class UserService {
 		return nq.sql(builder.toString()).list();
 	}
 
+	public boolean isUserInGroup(String userId, String groupId) {
+		long groupMatching = idService.createGroupQuery().groupId(groupId)
+				.groupMember(userId).count();
+		return (groupMatching > 0);
+	}
+
 	public void addUserToGroup(UserX userX, GroupX groupX) {
 		if (!groupDao.emContains(groupX)) {
 			groupX = groupDao.merge(groupX);
@@ -254,6 +260,11 @@ public class UserService {
 
 	public void addUserToGroup(String userId, GroupX groupX) {
 		UserX userX = userDao.findByUserId(userId);
+		addUserToGroup(userX, groupX);
+	}
+
+	public void addUserToGroup(UserX userX, String groupId) {
+		GroupX groupX = groupDao.findByGroupId(groupId);
 		addUserToGroup(userX, groupX);
 	}
 

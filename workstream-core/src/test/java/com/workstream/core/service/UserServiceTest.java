@@ -41,14 +41,7 @@ public class UserServiceTest {
 	@Before
 	@Transactional(value = CoreConstants.TX_MANAGER, propagation = Propagation.REQUIRES_NEW)
 	public void before() {
-		UserX userX = service.getUserX(userId);
-		if (userX != null) {
-			Collection<Organization> orgs = orgService.filterOrg(userX);
-			for (Organization org : orgs) {
-				orgService.userLeaveOrg(userX, org);
-			}
-		}
-		service.removeUser(userId);
+		TestUtils.clearUser(userId, service, orgService);
 	}
 
 	@Test
