@@ -113,9 +113,7 @@ public class UserService {
 	}
 
 	public Collection<UserX> filterUserX(Organization org) {
-		if (!orgDao.emContains(org)) {
-			org = orgDao.findById(org.getId());
-		}
+		org = orgDao.reattachIfNeeded(org, org.getId());
 		org.getUsers().size(); // make it eager
 		return org.getUsers();
 	}
@@ -204,10 +202,7 @@ public class UserService {
 	 * @param id
 	 */
 	public void removeGroup(GroupX groupX) {
-		if (!groupDao.emContains(groupX)) {
-			groupX = groupDao.merge(groupX); // attach the groupX;
-		}
-
+		groupX = groupDao.reattachIfNeeded(groupX, groupX.getId());
 		if (!groupX.getOrg().getGroups().contains(groupX)) {
 			throw new IllegalStateException(
 					"The group's org doesn't contain the group itself! Have you did any thing that changed the group's hash code?");
@@ -239,9 +234,7 @@ public class UserService {
 	}
 
 	public void addUserToGroup(UserX userX, GroupX groupX) {
-		if (!groupDao.emContains(groupX)) {
-			groupX = groupDao.merge(groupX);
-		}
+		groupX = groupDao.reattachIfNeeded(groupX, groupX.getId());
 		Collection<Organization> orgs = orgDao.filterByUserX(userX);
 		boolean belongsToGroupOrg = false;
 		for (Organization org : orgs) {

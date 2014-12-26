@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
 import org.junit.Assert;
@@ -35,6 +36,9 @@ public class UserServiceTest {
 
 	@Autowired
 	OrganizationService orgService;
+	
+	@Autowired
+	IdentityService idService;
 
 	String userId = "mqhnow1@sina.com";
 
@@ -42,6 +46,7 @@ public class UserServiceTest {
 	@Transactional(value = CoreConstants.TX_MANAGER, propagation = Propagation.REQUIRES_NEW)
 	public void before() {
 		TestUtils.clearUser(userId, service, orgService);
+		TestUtils.clearOrphanGroups(idService);
 	}
 
 	@Test

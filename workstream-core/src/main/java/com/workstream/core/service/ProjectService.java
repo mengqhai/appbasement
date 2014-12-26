@@ -44,9 +44,7 @@ public class ProjectService {
 
 	public Project createProject(Organization org, String name, Date startTime,
 			Date dueTime, String description) {
-		if (!orgDao.emContains(org)) {
-			org = orgDao.findById(org.getId());
-		}
+		org = orgDao.reattachIfNeeded(org, org.getId());
 		Project pro = new Project();
 		if (startTime != null) {
 			pro.setStartTime(startTime);
@@ -98,10 +96,7 @@ public class ProjectService {
 
 	public Task createTask(Project pro, String name, String description,
 			Date dueDate, String assigneeId, Integer priority) {
-		if (!proDao.emContains(pro)) {
-			pro = proDao.findById(pro.getId());
-		}
-
+		pro = proDao.reattachIfNeeded(pro, pro.getId());
 		Task task = taskSer.newTask();
 		task.setTenantId(String.valueOf(pro.getOrg().getId()));
 		task.setName(name);
@@ -123,9 +118,7 @@ public class ProjectService {
 	}
 
 	public List<Task> filterTask(Project pro) {
-		if (!proDao.emContains(pro)) {
-			pro = proDao.findById(pro.getId());
-		}
+		pro = proDao.reattachIfNeeded(pro, pro.getId());
 		if (pro == null) {
 			log.warn("Filtering tasks for a non-existing project {} ", pro);
 			return new ArrayList<Task>();
@@ -168,9 +161,7 @@ public class ProjectService {
 		for (Task task : tasks) {
 			deleteTask(task);
 		}
-		if (!proDao.emContains(pro)) {
-			pro = proDao.findById(pro.getId());
-		}
+		pro = proDao.reattachIfNeeded(pro, pro.getId());
 		proDao.remove(pro);
 		log.info("Deleted project {}", pro);
 	}

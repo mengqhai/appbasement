@@ -33,4 +33,6 @@ public interface IGenericDAO<T, ID extends Serializable> {
 
 	public abstract boolean emContains(T entity);
 
+	public abstract T reattachIfNeeded(T entity, ID id);
+
 }
