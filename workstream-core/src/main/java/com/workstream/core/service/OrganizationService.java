@@ -84,6 +84,7 @@ public class OrganizationService {
 												// don't merge
 		}
 		orgDao.remove(org);
+		log.info("Deleted org {} ", org);
 	}
 
 	public void removeOrg(String identifier) {

@@ -67,18 +67,16 @@ public class CoreFacadeService {
 		Collection<GroupX> groupXes = uSer.filterGroupX(org);
 		for (GroupX groupX : groupXes) {
 			uSer.removeGroup(groupX);
-			log.info("Deleted group {}", groupX);
 		}
 
 		// delete projects of the org
 		Collection<Project> projects = pSer.filterProject(org);
 		for (Project pro : projects) {
 			pSer.deleteProject(pro);
-			log.info("Deleted project {}", pro);
 		}
 
 		orgSer.removeOrg(org); // cascade removes org & groupXes
-		log.info("Deleted org {} ", org);
+		log.info("Cleared org {}", org);
 
 		// do users needs to leave the org? No, the relationship between org and
 		// user is deleted by cascading

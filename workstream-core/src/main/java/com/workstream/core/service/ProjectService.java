@@ -1,5 +1,6 @@
 package com.workstream.core.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -125,6 +126,11 @@ public class ProjectService {
 		if (!proDao.emContains(pro)) {
 			pro = proDao.findById(pro.getId());
 		}
+		if (pro == null) {
+			log.warn("Filtering tasks for a non-existing project {} ", pro);
+			return new ArrayList<Task>();
+		}
+
 		Long orgId = pro.getOrg().getId();
 		Long proId = pro.getId();
 
@@ -154,6 +160,7 @@ public class ProjectService {
 
 	public void deleteTask(Task task) {
 		taskSer.deleteTask(task.getId());
+		log.info("Deleted task {}", task);
 	}
 
 	public void deleteProject(Project pro) {
@@ -165,6 +172,7 @@ public class ProjectService {
 			pro = proDao.findById(pro.getId());
 		}
 		proDao.remove(pro);
+		log.info("Deleted project {}", pro);
 	}
 
 }
