@@ -47,13 +47,13 @@ public class ProjectServiceTest {
 	private UserX userX;
 
 	@Before
-	@Transactional(value = CoreConstants.TX_MANAGER, propagation = Propagation.REQUIRES_NEW)
-	public void before() {
+	@Transactional(value = CoreConstants.TX_MANAGER, propagation = Propagation.REQUIRED)
+	public void before() throws Exception{
 		TestUtils
 				.clearUser(userId, core.getUserService(), core.getOrgService());
 		TestUtils.clearOrg(orgIdentifier, core);
 		TestUtils.clearOrphanGroups(idService);
-
+		core.getUserService().removeUser(userId);
 		core.getUserService().createUser(userId, "Project tester user", "123");
 		userX = core.getUserService().getUserX(userId);
 		org = core
@@ -80,7 +80,7 @@ public class ProjectServiceTest {
 		Assert.assertEquals("something to say...", updated.getDescription());
 	}
 
-	@Transactional(value = CoreConstants.TX_MANAGER, propagation = Propagation.REQUIRED)
+	@Transactional(value = CoreConstants.TX_MANAGER, propagation = Propagation.REQUIRES_NEW)
 	@Test
 	public void testCreateTask() {
 		Project pro = proSer.createProject(org, "Project #2");

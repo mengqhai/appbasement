@@ -152,4 +152,19 @@ public class ProjectService {
 		}
 	}
 
+	public void deleteTask(Task task) {
+		taskSer.deleteTask(task.getId());
+	}
+
+	public void deleteProject(Project pro) {
+		List<Task> tasks = filterTask(pro);
+		for (Task task : tasks) {
+			deleteTask(task);
+		}
+		if (!proDao.emContains(pro)) {
+			pro = proDao.findById(pro.getId());
+		}
+		proDao.remove(pro);
+	}
+
 }
