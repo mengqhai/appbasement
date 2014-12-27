@@ -79,10 +79,10 @@ public class UserJoinOrgTest {
 	@Test
 	@Transactional(value = CoreConstants.TX_MANAGER, propagation = Propagation.REQUIRED)
 	public void testUserJoinOrgProcess() {
-		repoSer.createDeployment()
-				.addClasspathResource(
-						"com/workstream/core/sysprocess/UserJoinOrg.bpmn")
-				.name("UserJoinOrgDeployment").deploy();
+//		repoSer.createDeployment()
+//				.addClasspathResource(
+//						"com/workstream/core/sysprocess/UserJoinOrg.bpmn")
+//				.name("UserJoinOrgDeployment").deploy();
 
 		String adminGroupId = core.getOrgAdminGroup(
 				core.getOrgService().findOrgByIdentifier(orgIdentifier))

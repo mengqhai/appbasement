@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -74,6 +76,9 @@ public class ActivitiEngineConfiguration {
 				"engine.activate.jobexecutor", "false")));
 		cfg.setHistory(environment.getProperty("engine.history.level", "full"));
 
+		// auto deploy system leave templates
+		cfg.setDeploymentResources(new Resource[] { new ClassPathResource(
+				"com/workstream/core/sysprocess/UserJoinOrg.bpmn") });
 		return cfg;
 	}
 
