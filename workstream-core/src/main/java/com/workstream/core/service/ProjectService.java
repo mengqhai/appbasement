@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.TaskService;
-import org.activiti.engine.impl.ServiceImpl;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Event;
@@ -220,8 +219,7 @@ public class ProjectService {
 		}
 
 		// create the event if needed
-		eventHelper.createEventCommentIfNeeded(id, props,
-				((ServiceImpl) taskSer).getCommandExecutor());
+		eventHelper.createEventCommentIfNeeded(id, props);
 		return task;
 	}
 

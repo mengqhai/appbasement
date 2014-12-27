@@ -6,14 +6,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.activiti.engine.ManagementService;
 import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.impl.interceptor.Command;
 import org.activiti.engine.impl.interceptor.CommandContext;
-import org.activiti.engine.impl.interceptor.CommandExecutor;
 import org.activiti.engine.impl.persistence.entity.CommentEntity;
 import org.activiti.engine.impl.persistence.entity.CommentEntityManager;
 import org.activiti.engine.task.Event;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,6 +28,9 @@ import org.springframework.stereotype.Component;
 public class TaskEventHelper {
 
 	private static final Set<String> monitorProps;
+	
+	@Autowired
+	private ManagementService mgmtService;
 
 	public static class TaskEventCommand implements Command<Event> {
 
@@ -69,8 +73,7 @@ public class TaskEventHelper {
 	}
 
 	public void createEventCommentIfNeeded(String taskId,
-			Map<String, ? extends Object> props, String authenticatedUserId,
-			CommandExecutor executor) {
+			Map<String, ? extends Object> props, String authenticatedUserId) {
 		for (String key : props.keySet()) {
 			if (monitorProps.contains(key)) {
 				Object value = props.get(key);
@@ -86,15 +89,15 @@ public class TaskEventHelper {
 				TaskEventCommand cmd = new TaskEventCommand(taskId,
 						authenticatedUserId, new String[] { valueStr, key },
 						new StringBuilder("Set_").append(key).toString());
-				executor.execute(cmd);
+				mgmtService.executeCommand(cmd);
 			}
 		}
 	}
 
 	public void createEventCommentIfNeeded(String taskId,
-			Map<String, ? extends Object> props, CommandExecutor executor) {
+			Map<String, ? extends Object> props) {
 		String authenticatedUserId = Authentication.getAuthenticatedUserId();
-		createEventCommentIfNeeded(taskId, props, authenticatedUserId, executor);
+		createEventCommentIfNeeded(taskId, props, authenticatedUserId);
 	}
 
 }
