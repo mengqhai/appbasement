@@ -270,4 +270,12 @@ public class UserService {
 		idService.deleteMembership(userId, groupId);
 	}
 
+	public void login(String userId) {
+		idService.setAuthenticatedUserId(userId);
+	}
+
+	public void logout() {
+		idService.setAuthenticatedUserId(null);
+	}
+
 }

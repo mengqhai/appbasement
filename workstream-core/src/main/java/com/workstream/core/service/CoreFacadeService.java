@@ -76,7 +76,8 @@ public class CoreFacadeService {
 		}
 
 		orgSer.removeOrg(org); // cascade removes org & groupXes
-		log.info("Cleared org {}", org);
+		log.info("Cleared org id={} name={} identifier={}", org.getId(),
+				org.getName(), org.getIdentifier());
 
 		// do users needs to leave the org? No, the relationship between org and
 		// user is deleted by cascading

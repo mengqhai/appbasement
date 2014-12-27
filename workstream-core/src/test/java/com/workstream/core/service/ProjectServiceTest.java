@@ -2,11 +2,14 @@ package com.workstream.core.service;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
 import org.junit.Assert;
@@ -135,8 +138,8 @@ public class ProjectServiceTest {
 		Project pro1 = proSer.createProject(org, "Project #4");
 		Task task = proSer.createTask(pro.getId(), userId, "Task #3.1", null,
 				null, null, null);
-		proSer.createTask(pro1.getId(), userId, "Task #4.1", null,
-				null, userId, null);
+		proSer.createTask(pro1.getId(), userId, "Task #4.1", null, null,
+				userId, null);
 		Map<String, String> props = new HashMap<String, String>();
 		props.put("assignee", userX.getUserId());
 		proSer.updateTask(task.getId(), props);
@@ -158,5 +161,30 @@ public class ProjectServiceTest {
 		for (Task t : taskList) {
 			Assert.assertEquals(userId, t.getOwner());
 		}
+	}
+
+	@Test
+	public void testCommentTask() {
+		Project pro = proSer.createProject(org, "Project comment task");
+		Task task = proSer.createTask(pro.getId(), userId,
+				"Task with comments", null, null, null, null);
+		// AddCommentCmd uses Authentication.getAuthenticatedUserId(); to decide
+		// the current user
+		core.getUserService().login(userId);
+		Comment com = proSer.addTaskComment(task.getId(), "Comment 1");
+		Comment com1 = proSer.addTaskComment(task.getId(), "Comment 2");
+		Set<String> comments = new HashSet<String>();
+		comments.add(com.getFullMessage());
+		comments.add(com1.getFullMessage());
+
+		List<Comment> commentList = proSer.filterTaskComment(task.getId());
+		Assert.assertEquals(2, commentList.size());
+		for (Comment comment : commentList) {
+			Assert.assertTrue(comments.contains(comment.getFullMessage()));
+		}
+
+		proSer.deleteTask(task); // this makes the task archived
+		Assert.assertEquals(2, proSer.filterTaskComment(task.getId()).size()); // so
+		// the comments must still be there.
 	}
 }

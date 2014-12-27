@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.TaskService;
+import org.activiti.engine.impl.identity.Authentication;
+import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -194,6 +196,12 @@ public class ProjectService {
 		taskSer.saveTask(task);
 	}
 
+	/**
+	 * Deletes the given task, not deleting historic information that is related
+	 * to this task(the task is still in the archive table).
+	 * 
+	 * @param task
+	 */
 	public void deleteTask(Task task) {
 		taskSer.deleteTask(task.getId());
 		log.info("Deleted task {}", task);
@@ -207,6 +215,24 @@ public class ProjectService {
 		pro = proDao.reattachIfNeeded(pro, pro.getId());
 		proDao.remove(pro);
 		log.info("Deleted project {}", pro);
+	}
+
+	public void completeTask(String taskId) {
+		taskSer.complete(taskId);
+	}
+
+	public Comment addTaskComment(String taskId, String message) {
+		if (Authentication.getAuthenticatedUserId() == null) {
+			throw new RuntimeException(
+					"No authenticated user, no comments can be made.");
+		}
+
+		Comment com = taskSer.addComment(taskId, null, message);
+		return com;
+	}
+
+	public List<Comment> filterTaskComment(String taskId) {
+		return taskSer.getTaskComments(taskId);
 	}
 
 }
