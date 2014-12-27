@@ -236,4 +236,20 @@ public class ProjectServiceTest {
 		events = proSer.filterTaskEvent(task.getId());
 		Assert.assertEquals(3, events.size()); // so does the events
 	}
+
+	@Test
+	public void testUpdateTaskWithEvent() {
+		idService.setAuthenticatedUserId(userId);
+		Project pro = proSer.createProject(org, "Project test task with event");
+		Task task = proSer.createTask(pro.getId(), userId,
+				"Task with update events", null, null, null, null);
+		Map<String, Object> props = new HashMap<String, Object>();
+		props.put("dueDate", new Date());
+		props.put("name", "Updated Task Name");
+		props.put("description", "Updated Task Description");
+		proSer.updateTask(task.getId(), props);
+
+		List<Event> events = proSer.filterTaskEvent(task.getId());
+		Assert.assertEquals(4, events.size());
+	}
 }

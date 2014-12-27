@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.TaskService;
+import org.activiti.engine.impl.ServiceImpl;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Event;
@@ -43,6 +44,9 @@ public class ProjectService {
 
 	@Autowired
 	private IProjectDAO proDao;
+
+	@Autowired
+	private TaskEventHelper eventHelper;
 
 	public Project createProject(Organization org, String name) {
 		return createProject(org, name, null, null, null);
@@ -192,7 +196,7 @@ public class ProjectService {
 		return taskSer.createTaskQuery().taskId(taskId).singleResult();
 	}
 
-	public void updateTask(String id, Map<String, ? extends Object> props) {
+	public Task updateTask(String id, Map<String, ? extends Object> props) {
 		Task task = taskSer.createTaskQuery().taskId(id).singleResult();
 		if (task == null) {
 			log.warn("Trying to update non-existing task id={} with {} ", id,
@@ -215,6 +219,10 @@ public class ProjectService {
 			taskSer.addUserIdentityLink(id, owner, IdentityLinkType.ASSIGNEE);
 		}
 
+		// create the event if needed
+		eventHelper.createEventCommentIfNeeded(id, props,
+				((ServiceImpl) taskSer).getCommandExecutor());
+		return task;
 	}
 
 	/**
