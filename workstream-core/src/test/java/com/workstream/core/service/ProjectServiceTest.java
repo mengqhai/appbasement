@@ -10,6 +10,7 @@ import java.util.Set;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.task.Comment;
+import org.activiti.engine.task.Event;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
 import org.junit.Assert;
@@ -109,6 +110,11 @@ public class ProjectServiceTest {
 		Assert.assertEquals(1, taskList.size());
 		Assert.assertEquals(created.getId(), taskList.get(0).getId());
 
+		// there should be events for this created task
+		List<Event> events = proSer.filterTaskEvent(task.getId());
+		Assert.assertEquals(1, events.size());
+		Assert.assertEquals(userId + "_|_owner", events.get(0).getMessage());
+
 		// test task deletion
 		task = proSer.createTask(pro.getId(), userId, "Task #2", null, null,
 				null, null);
@@ -138,16 +144,35 @@ public class ProjectServiceTest {
 		Project pro1 = proSer.createProject(org, "Project #4");
 		Task task = proSer.createTask(pro.getId(), userId, "Task #3.1", null,
 				null, null, null);
-		proSer.createTask(pro1.getId(), userId, "Task #4.1", null, null,
-				userId, null);
+		Task task1 = proSer.createTask(pro1.getId(), userId, "Task #4.1", null,
+				null, userId, null);
 		Map<String, String> props = new HashMap<String, String>();
-		props.put("assignee", userX.getUserId());
+		props.put("assignee", userX.getUserId()); // must check if an assignee
+													// event is created
 		proSer.updateTask(task.getId(), props);
 
 		List<Task> taskList = proSer.filterTask(pro, userId);
 		Assert.assertEquals(1, taskList.size());
 		Assert.assertEquals(task.getId(), taskList.get(0).getId());
 		Assert.assertEquals(userId, taskList.get(0).getAssignee());
+
+		// there should be events for this created task
+		List<Event> events = proSer.filterTaskEvent(task.getId());
+		Assert.assertEquals(2, events.size());
+		Set<String> messages = new HashSet<String>();
+		messages.add(events.get(0).getMessage());
+		messages.add(events.get(1).getMessage());
+		Assert.assertTrue(messages.contains(userId + "_|_owner"));
+		Assert.assertTrue(messages.contains(userId + "_|_assignee"));
+
+		// there should be events for this created task
+		events = proSer.filterTaskEvent(task1.getId());
+		Assert.assertEquals(2, events.size());
+		messages = new HashSet<String>();
+		messages.add(events.get(0).getMessage());
+		messages.add(events.get(1).getMessage());
+		Assert.assertTrue(messages.contains(userId + "_|_owner"));
+		Assert.assertTrue(messages.contains(userId + "_|_assignee"));
 
 		taskList = proSer.fitlerTaskByAssignee(userId); // only by user, doesn't
 														// care about project
@@ -161,10 +186,24 @@ public class ProjectServiceTest {
 		for (Task t : taskList) {
 			Assert.assertEquals(userId, t.getOwner());
 		}
+
+		// unassign task1
+		props = new HashMap<String, String>();
+		props.put("assignee", null);
+		proSer.updateTask(task1.getId(), props);
+		task1 = proSer.getTask(task1.getId());
+		Assert.assertNull(task1.getAssignee());
+		// one more unset assignee event should be in db
+		events = proSer.filterTaskEvent(task1.getId());
+		Assert.assertEquals(3, events.size());
+		Event latestEvent = events.get(0);
+		latestEvent.getAction().equals(Event.ACTION_DELETE_USER_LINK);
+		latestEvent.getMessage().equals("null_|_assignee");
+
 	}
 
 	@Test
-	public void testCommentTask() {
+	public void testCommentTask() throws Exception {
 		Project pro = proSer.createProject(org, "Project comment task");
 		Task task = proSer.createTask(pro.getId(), userId,
 				"Task with comments", null, null, null, null);
@@ -172,6 +211,7 @@ public class ProjectServiceTest {
 		// the current user
 		core.getUserService().login(userId);
 		Comment com = proSer.addTaskComment(task.getId(), "Comment 1");
+		Thread.sleep(100L); // makes the time stamp definitely different
 		Comment com1 = proSer.addTaskComment(task.getId(), "Comment 2");
 		Set<String> comments = new HashSet<String>();
 		comments.add(com.getFullMessage());
@@ -183,8 +223,17 @@ public class ProjectServiceTest {
 			Assert.assertTrue(comments.contains(comment.getFullMessage()));
 		}
 
+		List<Event> events = proSer.filterTaskEvent(task.getId());
+		Assert.assertEquals(3, events.size()); // one owner event and 2 comment
+												// events
+		Event latestEvent = events.get(0);
+		Assert.assertEquals("AddComment", latestEvent.getAction());
+		Assert.assertEquals("Comment 2", latestEvent.getMessage());
+
 		proSer.deleteTask(task); // this makes the task archived
 		Assert.assertEquals(2, proSer.filterTaskComment(task.getId()).size()); // so
 		// the comments must still be there.
+		events = proSer.filterTaskEvent(task.getId());
+		Assert.assertEquals(3, events.size()); // so does the events
 	}
 }

@@ -2,6 +2,8 @@ package com.workstream.core.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +11,8 @@ import java.util.Map;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.task.Comment;
+import org.activiti.engine.task.Event;
+import org.activiti.engine.task.IdentityLinkType;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -113,13 +117,20 @@ public class ProjectService {
 		if (dueDate != null) {
 			task.setDueDate(dueDate);
 		}
-		if (assigneeId != null) {
-			task.setAssignee(assigneeId);
-		}
 		if (priority != null) {
 			task.setPriority(priority);
 		}
 		taskSer.saveTask(task);
+
+		// for owner and assignee, must invoke addUserIdentityLink
+		// because AddIdentityLinkCmd adds event comment to the comments table
+		taskSer.addUserIdentityLink(task.getId(), creator,
+				IdentityLinkType.OWNER);
+		if (assigneeId != null) {
+			// task.setAssignee(assigneeId);
+			taskSer.addUserIdentityLink(task.getId(), assigneeId,
+					IdentityLinkType.ASSIGNEE);
+		}
 		return task;
 	}
 
@@ -194,6 +205,16 @@ public class ProjectService {
 			throw new RuntimeException(e);
 		}
 		taskSer.saveTask(task);
+		// see org.activiti.engine.task.Event
+		if (props.containsKey("owner")) {
+			String owner = (String) props.get("owner");
+			taskSer.addUserIdentityLink(id, owner, IdentityLinkType.OWNER);
+		}
+		if (props.containsKey("assignee")) {
+			String owner = (String) props.get("assignee");
+			taskSer.addUserIdentityLink(id, owner, IdentityLinkType.ASSIGNEE);
+		}
+
 	}
 
 	/**
@@ -233,6 +254,21 @@ public class ProjectService {
 
 	public List<Comment> filterTaskComment(String taskId) {
 		return taskSer.getTaskComments(taskId);
+	}
+
+	public List<Event> filterTaskEvent(String taskId) {
+		List<Event> result = taskSer.getTaskEvents(taskId);
+		// the order is not correct when a task has both comments and events, so
+		// resort is needed
+		Collections.sort(result, new Comparator<Event>() {
+			@Override
+			public int compare(Event event1, Event event2) {
+				// reorder the list by time desc
+				return event2.getTime().compareTo(event1.getTime());
+			}
+		});
+
+		return result;
 	}
 
 }
