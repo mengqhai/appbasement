@@ -72,6 +72,8 @@ public class ProjectServiceTest {
 
 	@Test
 	public void testCreateProject() {
+		Assert.assertNotNull(CoreFacadeService.getInstance());
+
 		Project pro = proSer.createProject(org, "Project #1");
 		Project proCreated = proSer.getProject(pro.getId());
 		Assert.assertEquals(pro.getId(), proCreated.getId());

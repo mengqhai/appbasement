@@ -1,6 +1,8 @@
 package com.workstream.core.service;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.activiti.engine.identity.Group;
 import org.slf4j.Logger;
@@ -30,6 +32,19 @@ public class CoreFacadeService {
 	@Autowired
 	private ProjectService pSer;
 
+	private static AtomicReference<CoreFacadeService> INSTANCE = new AtomicReference<CoreFacadeService>();
+
+	protected CoreFacadeService() {
+		final CoreFacadeService previous = INSTANCE.getAndSet(this);
+		if (previous != null)
+			throw new IllegalStateException("Second singleton " + this
+					+ " created after " + previous);
+	}
+
+	public static CoreFacadeService getInstance() {
+		return INSTANCE.get();
+	}
+
 	public Organization createInitOrg(UserX creator, String name,
 			String identifier, String description) {
 		Organization org = orgSer.createOrg(name, identifier, description);
@@ -42,6 +57,18 @@ public class CoreFacadeService {
 				"Process Designers of the organization");
 		uSer.addUserToGroup(creator, group.getId());
 		return org;
+	}
+
+	public Group getOrgAdminGroup(Organization org) {
+		List<Group> groups = uSer.filterGroup(org);
+		for (Group group : groups) {
+			if ("Admin".equals(group.getName())) {
+				return group;
+			}
+		}
+		log.error("Org {} has no admin group!", org.getIdentifier());
+		throw new RuntimeException("Org {} has no admin group!"
+				+ org.getIdentifier());
 	}
 
 	public void userLeaveOrg(UserX userX, Organization org) {

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/bpmn20" id="review-definitions">
+  <process id="UserJoinOrg" name="User Join Org Process" isExecutable="true">
+    <documentation>The system level process that is triggered when a user applies to join an organization.</documentation>
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <userTask id="adminApproval" name="Admin Approval" activiti:candidateGroups="${adminGroupId}">
+      <extensionElements>
+        <activiti:formProperty id="approval" type="boolean" variable="${approval}" required="true"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="approvalGateway" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow1" sourceRef="adminApproval" targetRef="approvalGateway"></sequenceFlow>
+    <serviceTask id="addUserToOrg" name="Add User To Org" activiti:class="com.workstream.core.sysprocess.AddUserToOrg"></serviceTask>
+    <sequenceFlow id="approved" name="Approved" sourceRef="approvalGateway" targetRef="addUserToOrg">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${approval == true}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="rejected" name="Rejected" sourceRef="approvalGateway" targetRef="endevent1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${approval == false}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow3" sourceRef="addUserToOrg" targetRef="endevent1"></sequenceFlow>
+    <serviceTask id="lookupGroupId" name="Look Up Group Id" activiti:class="com.workstream.core.sysprocess.LookUpAdminGroupId"></serviceTask>
+    <sequenceFlow id="flow4" sourceRef="startevent1" targetRef="lookupGroupId"></sequenceFlow>
+    <sequenceFlow id="flow5" sourceRef="lookupGroupId" targetRef="adminApproval"></sequenceFlow>
+    <dataObject id="userId" name="userId" itemSubjectRef="xsd:string">
+      <extensionElements>
+        <activiti:value></activiti:value>
+      </extensionElements>
+    </dataObject>
+    <dataObject id="orgId" name="orgId" itemSubjectRef="xsd:long">
+      <extensionElements>
+        <activiti:value></activiti:value>
+      </extensionElements>
+    </dataObject>
+    <dataObject id="approval" name="approval" itemSubjectRef="xsd:string">
+      <extensionElements>
+        <activiti:value>false</activiti:value>
+      </extensionElements>
+    </dataObject>
+    <dataObject id="adminGroupId" name="adminGroupId" itemSubjectRef="xsd:string">
+      <extensionElements>
+        <activiti:value></activiti:value>
+      </extensionElements>
+    </dataObject>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_UserJoinOrg">
+    <bpmndi:BPMNPlane bpmnElement="UserJoinOrg" id="BPMNPlane_UserJoinOrg">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="120.0" y="117.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="715.0" y="117.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="adminApproval" id="BPMNShape_adminApproval">
+        <omgdc:Bounds height="55.0" width="105.0" x="355.0" y="107.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="approvalGateway" id="BPMNShape_approvalGateway">
+        <omgdc:Bounds height="40.0" width="40.0" x="485.0" y="114.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="addUserToOrg" id="BPMNShape_addUserToOrg">
+        <omgdc:Bounds height="55.0" width="105.0" x="555.0" y="180.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lookupGroupId" id="BPMNShape_lookupGroupId">
+        <omgdc:Bounds height="55.0" width="105.0" x="210.0" y="107.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="460.0" y="134.0"></omgdi:waypoint>
+        <omgdi:waypoint x="485.0" y="134.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="approved" id="BPMNEdge_approved">
+        <omgdi:waypoint x="505.0" y="154.0"></omgdi:waypoint>
+        <omgdi:waypoint x="505.0" y="207.0"></omgdi:waypoint>
+        <omgdi:waypoint x="555.0" y="207.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="100.0" x="515.0" y="154.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="rejected" id="BPMNEdge_rejected">
+        <omgdi:waypoint x="525.0" y="134.0"></omgdi:waypoint>
+        <omgdi:waypoint x="715.0" y="134.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="100.0" x="535.0" y="134.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="660.0" y="207.0"></omgdi:waypoint>
+        <omgdi:waypoint x="732.0" y="207.0"></omgdi:waypoint>
+        <omgdi:waypoint x="732.0" y="152.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="155.0" y="134.0"></omgdi:waypoint>
+        <omgdi:waypoint x="210.0" y="134.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="315.0" y="134.0"></omgdi:waypoint>
+        <omgdi:waypoint x="355.0" y="134.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
