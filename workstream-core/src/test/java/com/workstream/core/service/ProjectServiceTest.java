@@ -58,6 +58,7 @@ public class ProjectServiceTest {
 				.clearUser(userId, core.getUserService(), core.getOrgService());
 		TestUtils.clearOrg(orgIdentifier, core);
 		TestUtils.clearOrphanGroups(idService);
+		TestUtils.clearOrphanTasks(taskSer);
 		core.getUserService().removeUser(userId);
 		core.getUserService().createUser(userId, "Project tester user", "123");
 		userX = core.getUserService().getUserX(userId);
@@ -95,8 +96,8 @@ public class ProjectServiceTest {
 		Project pro = proSer.createProject(org, "Project #2");
 		Assert.assertEquals(0, proSer.filterTask(pro).size());
 
-		Task task = proSer.createTask(pro.getId(), "Task #1", null, null, null,
-				null);
+		Task task = proSer.createTask(pro.getId(), userId, "Task #1", null,
+				null, null, null);
 		Task created = proSer.getTask(task.getId());
 		Assert.assertEquals("Task #1", created.getName());
 		Assert.assertEquals(String.valueOf(pro.getOrg().getId()),
@@ -106,8 +107,8 @@ public class ProjectServiceTest {
 		Assert.assertEquals(created.getId(), taskList.get(0).getId());
 
 		// test task deletion
-		task = proSer
-				.createTask(pro.getId(), "Task #2", null, null, null, null);
+		task = proSer.createTask(pro.getId(), userId, "Task #2", null, null,
+				null, null);
 		taskList = proSer.filterTask(pro);
 		Assert.assertEquals(2, taskList.size());
 		proSer.deleteTask(task);
@@ -128,4 +129,34 @@ public class ProjectServiceTest {
 		Assert.assertEquals(0, q.count());
 	}
 
+	@Test
+	public void testAssignTask() {
+		Project pro = proSer.createProject(org, "Project #3");
+		Project pro1 = proSer.createProject(org, "Project #4");
+		Task task = proSer.createTask(pro.getId(), userId, "Task #3.1", null,
+				null, null, null);
+		proSer.createTask(pro1.getId(), userId, "Task #4.1", null,
+				null, userId, null);
+		Map<String, String> props = new HashMap<String, String>();
+		props.put("assignee", userX.getUserId());
+		proSer.updateTask(task.getId(), props);
+
+		List<Task> taskList = proSer.filterTask(pro, userId);
+		Assert.assertEquals(1, taskList.size());
+		Assert.assertEquals(task.getId(), taskList.get(0).getId());
+		Assert.assertEquals(userId, taskList.get(0).getAssignee());
+
+		taskList = proSer.fitlerTaskByAssignee(userId); // only by user, doesn't
+														// care about project
+		Assert.assertEquals(2, taskList.size());
+		for (Task t : taskList) {
+			Assert.assertEquals(userId, t.getAssignee());
+		}
+
+		taskList = proSer.filterTaskByCreator(userId);
+		Assert.assertEquals(2, taskList.size());
+		for (Task t : taskList) {
+			Assert.assertEquals(userId, t.getOwner());
+		}
+	}
 }

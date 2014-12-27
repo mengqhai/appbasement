@@ -84,21 +84,25 @@ public class ProjectService {
 		return proDao.filterFor(org);
 	}
 
-	public Task createTask(Long projectId, String name) {
-		return createTask(projectId, name, null, null, null, null);
+	public Task createTask(Long projectId, String creator, String name) {
+		return createTask(projectId, creator, name, null, null, null, null);
 	}
 
-	public Task createTask(Long projectId, String name, String description,
-			Date dueDate, String assigneeId, Integer priority) {
+	public Task createTask(Long projectId, String creator, String name,
+			String description, Date dueDate, String assigneeId,
+			Integer priority) {
 		Project pro = proDao.findById(projectId);
-		return createTask(pro, name, description, dueDate, assigneeId, priority);
+		return createTask(pro, creator, name, description, dueDate, assigneeId,
+				priority);
 	}
 
-	public Task createTask(Project pro, String name, String description,
-			Date dueDate, String assigneeId, Integer priority) {
+	public Task createTask(Project pro, String creator, String name,
+			String description, Date dueDate, String assigneeId,
+			Integer priority) {
 		pro = proDao.reattachIfNeeded(pro, pro.getId());
 		Task task = taskSer.newTask();
 		task.setTenantId(String.valueOf(pro.getOrg().getId()));
+		task.setOwner(creator);
 		task.setName(name);
 		task.setCategory(String.valueOf(pro.getId()));
 		if (description != null) {
@@ -133,6 +137,44 @@ public class ProjectService {
 		return q.list();
 	}
 
+	public List<Task> filterTask(Project pro, String assignee) {
+		pro = proDao.reattachIfNeeded(pro, pro.getId());
+		if (pro == null) {
+			log.warn("Filtering tasks for a non-existing project {} ", pro);
+			return new ArrayList<Task>();
+		}
+
+		Long orgId = pro.getOrg().getId();
+		Long proId = pro.getId();
+
+		TaskQuery q = taskSer.createTaskQuery()
+				.taskTenantId(String.valueOf(orgId))
+				.taskCategory(String.valueOf(proId)).taskAssignee(assignee);
+		return q.list();
+	}
+
+	/**
+	 * Doesn't care about org or project.
+	 * 
+	 * @param assigneeId
+	 * @return
+	 */
+	public List<Task> fitlerTaskByAssignee(String assigneeId) {
+		TaskQuery q = taskSer.createTaskQuery().taskAssignee(assigneeId);
+		return q.list();
+	}
+
+	/**
+	 * Doesn't care about org or project.
+	 * 
+	 * @param creatorId
+	 * @return
+	 */
+	public List<Task> filterTaskByCreator(String creatorId) {
+		TaskQuery q = taskSer.createTaskQuery().taskOwner(creatorId);
+		return q.list();
+	}
+
 	public Task getTask(String taskId) {
 		return taskSer.createTaskQuery().taskId(taskId).singleResult();
 	}
@@ -149,6 +191,7 @@ public class ProjectService {
 			log.error("Failed to populate the props to task: {}", props, e);
 			throw new RuntimeException(e);
 		}
+		taskSer.saveTask(task);
 	}
 
 	public void deleteTask(Task task) {
