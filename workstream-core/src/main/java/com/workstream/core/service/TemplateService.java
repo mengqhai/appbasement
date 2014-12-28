@@ -144,9 +144,13 @@ public class TemplateService {
 			repoSer.addModelEditorSource(model.getId(), baos.toByteArray());
 
 			// create and save the process diagram
+//			InputStream diaIn = diagramGenerator.generateDiagram(
+//					con.getBpmnModel(), "png", peCfg.getActivityFontName(),
+//					peCfg.getLabelFontName(), peCfg.getClassLoader());
 			InputStream diaIn = diagramGenerator.generateDiagram(
-					con.getBpmnModel(), "png", peCfg.getActivityFontName(),
-					peCfg.getLabelFontName(), peCfg.getClassLoader());
+					con.getBpmnModel(), "png", "sansserif",
+					"sansserif", peCfg.getClassLoader());
+			// to support chinese
 
 			repoSer.addModelEditorSourceExtra(model.getId(),
 					IOUtils.toByteArray(diaIn));

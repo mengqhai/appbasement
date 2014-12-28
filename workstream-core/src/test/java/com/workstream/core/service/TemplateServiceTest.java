@@ -123,7 +123,7 @@ public class TemplateServiceTest {
 		WorkflowDefinition def = new WorkflowDefinition();
 		def.setName("Test simple workflow.");
 		def.setDescription("This is the simplest workflow");
-		def.addHumanStep("HelloTask", userId);
+		def.addHumanStep("HelloTask哦", userId);
 
 		Model model = temSer.saveToModel(org.getId(), def);
 		Assert.assertNotNull(model.getId());
@@ -133,7 +133,7 @@ public class TemplateServiceTest {
 		Assert.assertEquals(1, defSaved.getSteps().size());
 		HumanStepDefinition step1 = (HumanStepDefinition) defSaved.getSteps()
 				.get(0);
-		Assert.assertEquals("HelloTask", step1.getName());
+		Assert.assertEquals("HelloTask哦", step1.getName());
 		Assert.assertEquals(userId, step1.getAssignee());
 	}
 }
