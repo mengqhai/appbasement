@@ -11,7 +11,6 @@ import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.workflow.simple.definition.HumanStepDefinition;
-import org.activiti.workflow.simple.definition.StepDefinition;
 import org.activiti.workflow.simple.definition.WorkflowDefinition;
 import org.junit.Assert;
 import org.junit.Before;
@@ -135,5 +134,16 @@ public class TemplateServiceTest {
 				.get(0);
 		Assert.assertEquals("HelloTask哦", step1.getName());
 		Assert.assertEquals(userId, step1.getAssignee());
+
+		Deployment deploy = temSer.deployModel(model.getId());
+		List<Model> modelList = temSer
+				.filterModelByDeploymentId(deploy.getId());
+		Assert.assertEquals(1, modelList.size());
+		Assert.assertEquals(model.getId(), modelList.get(0).getId());
+
+		temSer.removeDeployment(deploy.getId());
+		modelList = temSer.filterModelByDeploymentId(deploy.getId());
+		Assert.assertEquals(0, modelList.size());
+
 	}
 }

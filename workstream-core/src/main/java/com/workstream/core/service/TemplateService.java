@@ -6,6 +6,7 @@ import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.zip.ZipInputStream;
 
+import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.Deployment;
@@ -115,6 +116,10 @@ public class TemplateService {
 				.list();
 	}
 
+	public List<Model> filterModelByDeploymentId(String deploymentId) {
+		return repoSer.createModelQuery().deploymentId(deploymentId).list();
+	}
+
 	public void removeModel(String modelId) {
 		repoSer.deleteModel(modelId);
 	}
@@ -144,12 +149,12 @@ public class TemplateService {
 			repoSer.addModelEditorSource(model.getId(), baos.toByteArray());
 
 			// create and save the process diagram
-//			InputStream diaIn = diagramGenerator.generateDiagram(
-//					con.getBpmnModel(), "png", peCfg.getActivityFontName(),
-//					peCfg.getLabelFontName(), peCfg.getClassLoader());
 			InputStream diaIn = diagramGenerator.generateDiagram(
-					con.getBpmnModel(), "png", "sansserif",
-					"sansserif", peCfg.getClassLoader());
+					con.getBpmnModel(), "png", peCfg.getActivityFontName(),
+					peCfg.getLabelFontName(), peCfg.getClassLoader());
+			// InputStream diaIn = diagramGenerator.generateDiagram(
+			// con.getBpmnModel(), "png", "sansserif", "sansserif",
+			// peCfg.getClassLoader());
 			// to support chinese
 
 			repoSer.addModelEditorSourceExtra(model.getId(),
@@ -174,6 +179,25 @@ public class TemplateService {
 
 	public byte[] getModelDiagram(String modelId) {
 		return repoSer.getModelEditorSourceExtra(modelId);
+	}
+
+	public Deployment deployModel(String modelId) {
+		WorkflowDefinition def = getModelWorkflowDef(modelId);
+		// see EditorProcessDefinitionDetailPanel.deployModel()
+		WorkflowDefinitionConversion con = conFactory
+				.createWorkflowDefinitionConversion(def);
+		con.convert();
+		BpmnModel bpmn = con.getBpmnModel();
+		Model model = getModel(modelId);
+		Deployment deploy = repoSer.createDeployment()
+				.addBpmnModel(def.getName() + ".bpmn", bpmn)
+				.name(def.getName()).tenantId(model.getTenantId()).deploy();
+		
+		model.setDeploymentId(deploy.getId());
+		repoSer.saveModel(model);
+		// must update the deployment Id
+		// see DeploymentEntityManager.deleteDeployment()
+		return deploy;
 	}
 
 }

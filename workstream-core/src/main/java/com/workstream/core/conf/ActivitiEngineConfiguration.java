@@ -80,6 +80,8 @@ public class ActivitiEngineConfiguration {
 		// auto deploy system leave templates
 		cfg.setDeploymentResources(new Resource[] { new ClassPathResource(
 				"com/workstream/core/sysprocess/UserJoinOrg.bpmn") });
+		cfg.setActivityFontName("sansserif");
+		cfg.setLabelFontName("sansserif"); // to support Chinese in diagram
 		return cfg;
 	}
 
