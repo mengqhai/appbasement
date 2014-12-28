@@ -10,6 +10,9 @@ import org.activiti.engine.TaskService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.workflow.simple.definition.HumanStepDefinition;
+import org.activiti.workflow.simple.definition.StepDefinition;
+import org.activiti.workflow.simple.definition.WorkflowDefinition;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -113,5 +116,24 @@ public class TemplateServiceTest {
 		temSer.removeModel(model.getId());
 		models = temSer.filterModel(org.getId());
 		Assert.assertEquals(0, models.size());
+	}
+
+	@Test
+	public void testConvertWorkflow() {
+		WorkflowDefinition def = new WorkflowDefinition();
+		def.setName("Test simple workflow.");
+		def.setDescription("This is the simplest workflow");
+		def.addHumanStep("HelloTask", userId);
+
+		Model model = temSer.saveToModel(org.getId(), def);
+		Assert.assertNotNull(model.getId());
+		WorkflowDefinition defSaved = temSer.getModelWorkflowDef(model.getId());
+		Assert.assertEquals(def.getDescription(), defSaved.getDescription());
+		Assert.assertEquals(def.getName(), defSaved.getName());
+		Assert.assertEquals(1, defSaved.getSteps().size());
+		HumanStepDefinition step1 = (HumanStepDefinition) defSaved.getSteps()
+				.get(0);
+		Assert.assertEquals("HelloTask", step1.getName());
+		Assert.assertEquals(userId, step1.getAssignee());
 	}
 }

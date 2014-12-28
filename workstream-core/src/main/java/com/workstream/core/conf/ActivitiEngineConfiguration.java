@@ -13,6 +13,7 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.activiti.image.ProcessDiagramGenerator;
 import org.activiti.spring.ProcessEngineFactoryBean;
 import org.activiti.spring.SpringProcessEngineConfiguration;
 import org.slf4j.Logger;
@@ -80,6 +81,11 @@ public class ActivitiEngineConfiguration {
 		cfg.setDeploymentResources(new Resource[] { new ClassPathResource(
 				"com/workstream/core/sysprocess/UserJoinOrg.bpmn") });
 		return cfg;
+	}
+
+	@Bean
+	public ProcessDiagramGenerator diagramGenerator() {
+		return processEngineConfiguration().getProcessDiagramGenerator();
 	}
 
 	@Bean
