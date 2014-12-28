@@ -7,6 +7,7 @@ import java.util.zip.ZipInputStream;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.DeploymentBuilder;
+import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,6 +72,27 @@ public class TemplateService {
 	public List<ProcessDefinition> filterProcessTemplate(String deploymentId) {
 		return repoSer.createProcessDefinitionQuery()
 				.deploymentId(deploymentId).list();
+	}
+
+	public Model createModel(Long orgId, String name) {
+		Model model = repoSer.newModel();
+		model.setName(name);
+		model.setTenantId(String.valueOf(orgId));
+		repoSer.saveModel(model);
+		return model;
+	}
+
+	public Model getModel(String modelId) {
+		return repoSer.createModelQuery().modelId(modelId).singleResult();
+	}
+
+	public List<Model> filterModel(Long orgId) {
+		return repoSer.createModelQuery().modelTenantId(String.valueOf(orgId))
+				.list();
+	}
+
+	public void removeModel(String modelId) {
+		repoSer.deleteModel(modelId);
 	}
 
 }

@@ -8,8 +8,8 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.repository.Deployment;
+import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -99,4 +99,19 @@ public class TemplateServiceTest {
 		Assert.assertEquals(0, pdList1.size());
 	}
 
+	@Test
+	public void testCreateModel() {
+		Model model = temSer.createModel(org.getId(), "An empty model");
+		Model created = temSer.getModel(model.getId());
+		Assert.assertNotNull(created);
+		Assert.assertEquals(String.valueOf(org.getId()), created.getTenantId());
+		Assert.assertEquals("An empty model", created.getName());
+
+		List<Model> models = temSer.filterModel(org.getId());
+		Assert.assertEquals(1, models.size());
+
+		temSer.removeModel(model.getId());
+		models = temSer.filterModel(org.getId());
+		Assert.assertEquals(0, models.size());
+	}
 }

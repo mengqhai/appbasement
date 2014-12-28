@@ -57,6 +57,11 @@
 			<artifactId>activiti-spring</artifactId>
 			<version>5.16.4</version>
 		</dependency>
+		    <dependency>
+	      <groupId>org.activiti</groupId>
+	      <artifactId>activiti-simple-workflow</artifactId>
+	      <version>5.16.4</version>
+	    </dependency>
 
 		<!-- Database -->
 		<dependency>
