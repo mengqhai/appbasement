@@ -17,6 +17,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -35,6 +37,9 @@ import com.workstream.core.service.TestUtils;
 @ContextConfiguration(classes = ApplicationConfiguration.class)
 @TransactionConfiguration(transactionManager = CoreConstants.TX_MANAGER, defaultRollback = false)
 public class UserJoinOrgTest {
+
+	private final static Logger log = LoggerFactory
+			.getLogger(UserJoinOrgTest.class);
 
 	@Autowired
 	RepositoryService repoSer;
@@ -79,29 +84,34 @@ public class UserJoinOrgTest {
 	@Test
 	@Transactional(value = CoreConstants.TX_MANAGER, propagation = Propagation.REQUIRED)
 	public void testUserJoinOrgProcess() {
-//		repoSer.createDeployment()
-//				.addClasspathResource(
-//						"com/workstream/core/sysprocess/UserJoinOrg.bpmn")
-//				.name("UserJoinOrgDeployment").deploy();
+		// repoSer.createDeployment()
+		// .addClasspathResource(
+		// "com/workstream/core/sysprocess/UserJoinOrg.bpmn")
+		// .name("UserJoinOrgDeployment").deploy();
 
 		String adminGroupId = core.getOrgAdminGroup(
 				core.getOrgService().findOrgByIdentifier(orgIdentifier))
 				.getId();
 		Map<String, Object> variableMap = new HashMap<String, Object>();
 		variableMap.put("orgId", org.getId());
+		variableMap.put("orgName", org.getName());
 		variableMap.put("userId", userId);
 		variableMap.put("adminGroupId", adminGroupId);
 		ProcessInstance processInstance = ruSer.startProcessInstanceByKey(
 				"UserJoinOrg", variableMap);
 		assertNotNull(processInstance.getId());
-		System.out.println("process instance id " + processInstance.getId()
-				+ " " + processInstance.getProcessDefinitionId());
+		log.info("process instance id " + processInstance.getId() + " "
+				+ processInstance.getProcessDefinitionId());
 
 		List<Task> approvalTasks = taskSer.createTaskQuery()
 				.processInstanceId(processInstance.getId())
 				.taskCandidateGroup(adminGroupId).list();
 		Assert.assertEquals(1, approvalTasks.size());
 		Task approvalTask = approvalTasks.get(0);
+		Assert.assertTrue(approvalTask.getName().contains(userId));
+		Assert.assertTrue(approvalTask.getName().contains(org.getName()));
+		log.info("Task description: {}", approvalTask.getDescription());
+
 		taskSer.claim(approvalTask.getId(), adminId);
 
 		Map<String, Object> props = new HashMap<String, Object>();
