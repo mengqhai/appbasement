@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.zip.ZipInputStream;
 
 import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.engine.ManagementService;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.Deployment;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
+import com.workstream.core.service.cmd.DeleteEditorSourceWithExtraForModelCmd;
 
 /**
  * Process template(deployment & process definitions) related service.
@@ -53,6 +55,9 @@ public class TemplateService {
 
 	@Autowired
 	private ProcessEngineConfiguration peCfg;
+
+	@Autowired
+	private ManagementService mgmtService;
 
 	public Deployment createDeployment(Long orgId, String fileName,
 			InputStream in) {
@@ -167,6 +172,51 @@ public class TemplateService {
 		return model;
 	}
 
+	public Model updateModel(Long orgId, String modelId, WorkflowDefinition flow) {
+		WorkflowDefinitionConversion con = conFactory
+				.createWorkflowDefinitionConversion(flow);
+		con.convert();
+		Model model = repoSer.getModel(modelId);
+		model.setName(flow.getName());
+		model.setTenantId(String.valueOf(orgId));
+		model.setCategory("table-editor");
+		repoSer.saveModel(model);
+
+		try {
+			// See SimpleTableEditor.save()
+			// Write JSON to byte-array and set as editor-source
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			jsonCon.writeWorkflowDefinition(flow, new OutputStreamWriter(baos));
+
+			// create and save the process diagram
+			InputStream diaIn = diagramGenerator.generateDiagram(
+					con.getBpmnModel(), "png", peCfg.getActivityFontName(),
+					peCfg.getLabelFontName(), peCfg.getClassLoader());
+			// InputStream diaIn = diagramGenerator.generateDiagram(
+			// con.getBpmnModel(), "png", "sansserif", "sansserif",
+			// peCfg.getClassLoader());
+			// to support chinese
+
+			// must delete the old source and extra first
+			mgmtService
+					.executeCommand(new DeleteEditorSourceWithExtraForModelCmd(
+							model));
+			// after this the ModelEntity's sourceId and sourceExtraId are set
+			// to null
+
+			// source saved in byte array and linked to the model entity
+			repoSer.addModelEditorSource(model.getId(), baos.toByteArray());
+			repoSer.addModelEditorSourceExtra(model.getId(),
+					IOUtils.toByteArray(diaIn));
+
+		} catch (Exception e) {
+			log.error("Failed to save model source and extra.", e);
+			throw new RuntimeException(
+					"Failed to save model source and extra.", e);
+		}
+		return model;
+	}
+
 	public byte[] getModelJsonBytes(String modelId) {
 		return repoSer.getModelEditorSource(modelId);
 	}
@@ -192,7 +242,7 @@ public class TemplateService {
 		Deployment deploy = repoSer.createDeployment()
 				.addBpmnModel(def.getName() + ".bpmn", bpmn)
 				.name(def.getName()).tenantId(model.getTenantId()).deploy();
-		
+
 		model.setDeploymentId(deploy.getId());
 		repoSer.saveModel(model);
 		// must update the deployment Id

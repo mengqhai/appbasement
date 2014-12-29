@@ -135,6 +135,21 @@ public class TemplateServiceTest {
 		Assert.assertEquals("HelloTask哦", step1.getName());
 		Assert.assertEquals(userId, step1.getAssignee());
 
+		// test update workflow
+		defSaved.addHumanStep("AddedTask", userId);
+		temSer.updateModel(org.getId(), model.getId(), defSaved);
+		temSer.getModel(model.getId());
+		WorkflowDefinition defUpdated = temSer.getModelWorkflowDef(model
+				.getId());
+		Assert.assertEquals(2, defUpdated.getSteps().size());
+		step1 = (HumanStepDefinition) defUpdated.getSteps().get(0);
+		Assert.assertEquals("HelloTask哦", step1.getName());
+		Assert.assertEquals(userId, step1.getAssignee());
+		HumanStepDefinition step2 = (HumanStepDefinition) defUpdated.getSteps()
+				.get(1);
+		Assert.assertEquals("AddedTask", step2.getName());
+		Assert.assertEquals(userId, step2.getAssignee());
+
 		Deployment deploy = temSer.deployModel(model.getId());
 		List<Model> modelList = temSer
 				.filterModelByDeploymentId(deploy.getId());
@@ -144,6 +159,5 @@ public class TemplateServiceTest {
 		temSer.removeDeployment(deploy.getId());
 		modelList = temSer.filterModelByDeploymentId(deploy.getId());
 		Assert.assertEquals(0, modelList.size());
-
 	}
 }
