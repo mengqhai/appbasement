@@ -9,6 +9,7 @@ import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricProcessInstanceQuery;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,6 +155,11 @@ public class ProcessService extends TaskCapable {
 
 	public void removeProcess(String processInstanceId, String deleteReason) {
 		ruSer.deleteProcessInstance(processInstanceId, deleteReason);
+	}
+
+	public List<Task> filterTaskByProcess(String processInstanceId) {
+		return taskSer.createTaskQuery().processInstanceId(processInstanceId)
+				.list();
 	}
 
 }
