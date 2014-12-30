@@ -130,6 +130,7 @@
 				<version>2.10</version>
 				<configuration>
 					<forkMode>once</forkMode>
+					<argLine>-Dfile.encoding=UTF-8</argLine> 
 				</configuration>
 			</plugin>
 		</plugins>
