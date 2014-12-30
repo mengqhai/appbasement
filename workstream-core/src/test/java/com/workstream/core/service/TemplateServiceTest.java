@@ -1,6 +1,7 @@
 package com.workstream.core.service;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 
 import org.activiti.engine.IdentityService;
@@ -134,6 +135,22 @@ public class TemplateServiceTest {
 				.get(0);
 		Assert.assertEquals("HelloTask哦", step1.getName());
 		Assert.assertEquals(userId, step1.getAssignee());
+
+		// test duplicate a model
+		Model copy = temSer.duplicateModel(model.getId());
+		Assert.assertNotNull(copy.getId());
+		Assert.assertTrue(copy.getName().endsWith("_copy"));
+		Assert.assertEquals(model.getTenantId(), copy.getTenantId());
+		WorkflowDefinition defCopy = temSer.getModelWorkflowDef(model.getId());
+		Assert.assertEquals(defSaved.getSteps().size(), defCopy.getSteps()
+				.size());
+		HumanStepDefinition step1copy = (HumanStepDefinition) defSaved
+				.getSteps().get(0);
+		Assert.assertEquals(step1.getName(), step1copy.getName());
+		Assert.assertEquals(step1.getAssignee(), step1copy.getAssignee());
+
+		Assert.assertTrue(Arrays.equals(temSer.getModelDiagram(model.getId()),
+				temSer.getModelDiagram(copy.getId())));
 
 		// test update workflow
 		defSaved.addHumanStep("AddedTask", userId);

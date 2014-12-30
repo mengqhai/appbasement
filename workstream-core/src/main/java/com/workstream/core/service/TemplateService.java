@@ -113,7 +113,12 @@ public class TemplateService {
 	}
 
 	public Model getModel(String modelId) {
-		return repoSer.createModelQuery().modelId(modelId).singleResult();
+		Model model = repoSer.createModelQuery().modelId(modelId)
+				.singleResult();
+		if (model == null) {
+			log.warn("Unable to find the model id={} ", modelId);
+		}
+		return model;
 	}
 
 	public List<Model> filterModel(Long orgId) {
@@ -172,6 +177,15 @@ public class TemplateService {
 		return model;
 	}
 
+	/**
+	 * Update the model with a new WorkflowDefinition. The old source &
+	 * sourceExtra of the model will be deteted.
+	 * 
+	 * @param orgId
+	 * @param modelId
+	 * @param flow
+	 * @return
+	 */
 	public Model updateModel(Long orgId, String modelId, WorkflowDefinition flow) {
 		WorkflowDefinitionConversion con = conFactory
 				.createWorkflowDefinitionConversion(flow);
@@ -215,6 +229,26 @@ public class TemplateService {
 					"Failed to save model source and extra.", e);
 		}
 		return model;
+	}
+
+	/**
+	 * Duplicate a model. The newly created copy has separated source &
+	 * sourceExtra from the original model.
+	 * 
+	 * @param modelId
+	 * @return
+	 */
+	public Model duplicateModel(String modelId) {
+		Model source = getModel(modelId);
+		Long orgId = null;
+		String orgIdStr = source.getTenantId();
+		if (orgIdStr != null) {
+			orgId = Long.valueOf(orgIdStr);
+		}
+		WorkflowDefinition def = getModelWorkflowDef(modelId);
+		def.setName(new StringBuilder(def.getName()).append("_copy").toString());
+		Model target = saveToModel(orgId, def);
+		return target;
 	}
 
 	public byte[] getModelJsonBytes(String modelId) {
