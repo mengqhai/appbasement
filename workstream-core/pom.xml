@@ -34,11 +34,11 @@
 			<version>4.0.6.RELEASE</version>
 		</dependency>
 		<dependency>
-	      <groupId>org.springframework</groupId>
-	      <artifactId>spring-test</artifactId>
-	      <version>4.0.6.RELEASE</version>
-	      <scope>test</scope>
-	    </dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>4.0.6.RELEASE</version>
+			<scope>test</scope>
+		</dependency>
 		<!-- <dependency> <groupId>org.springframework</groupId> <artifactId>spring-tx</artifactId> 
 			<version>4.1.3.RELEASE</version> </dependency> <dependency> <groupId>org.springframework</groupId> 
 			<artifactId>spring-aop</artifactId> <version>4.1.3.RELEASE</version> </dependency> 
@@ -57,11 +57,11 @@
 			<artifactId>activiti-spring</artifactId>
 			<version>5.16.4</version>
 		</dependency>
-		    <dependency>
-	      <groupId>org.activiti</groupId>
-	      <artifactId>activiti-simple-workflow</artifactId>
-	      <version>5.16.4</version>
-	    </dependency>
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-simple-workflow</artifactId>
+			<version>5.16.4</version>
+		</dependency>
 
 		<!-- Database -->
 		<dependency>
@@ -119,6 +119,17 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<!-- This resolves the chinese encoding problem when running test -->
+				<!-- See http://yong3773.iteye.com/blog/1971454 -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.10</version>
+				<configuration>
+					<forkMode>once</forkMode>
 				</configuration>
 			</plugin>
 		</plugins>
