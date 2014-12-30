@@ -24,7 +24,7 @@ public class TaskCapable {
 	@Autowired
 	protected TaskService taskSer;
 	@Autowired
-	private TaskEventHelper eventHelper;
+	protected TaskEventHelper eventHelper;
 
 	/**
 	 * Doesn't care about org or project. (Process related tasks will also be
@@ -84,7 +84,9 @@ public class TaskCapable {
 
 	/**
 	 * Deletes the given task, not deleting historic information that is related
-	 * to this task(the task is still in the archive table).
+	 * to this task(the task is still in the archive table). If the task belongs
+	 * to a running process instance, then an ActivitiException will be thrown:<br/>
+	 * The task cannot be deleted because is part of a running process.
 	 * 
 	 * @param task
 	 */

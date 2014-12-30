@@ -10,6 +10,7 @@ import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -102,10 +103,20 @@ public class ProcessServiceTest {
 		Assert.assertEquals(1, hiList.size());
 		Assert.assertEquals(hi.getId(), hiList.get(0).getId());
 
+		List<Task> myTasks = pSer.fitlerTaskByAssignee(userId);
+		Assert.assertEquals(1, myTasks.size());
+		Task myTask = myTasks.get(0);
+		Assert.assertEquals(pi.getId(), myTask.getProcessInstanceId());
+		Assert.assertEquals(pDef.getId(), myTask.getProcessDefinitionId());
+
 		// test get ProcessInstance
 		ProcessInstance piLoaded = pSer.getProcess(pi.getId());
 		Assert.assertEquals(pi.getId(), piLoaded.getId());
 		Assert.assertEquals(String.valueOf(org.getId()), piLoaded.getTenantId());
+
+		// the related task must be no longer there
+		myTasks = pSer.fitlerTaskByAssignee(userId);
+		Assert.assertEquals(0, myTasks.size());
 
 		// must firstly remove the running instance
 		pSer.removeProcess(pi.getId(), "test_delete");
@@ -114,7 +125,6 @@ public class ProcessServiceTest {
 		pSer.removeHiProcess(hi.getId());
 		Assert.assertEquals(0, pSer.filterHiProcessByStarter(userId, false)
 				.size());
-
 	}
 
 }
