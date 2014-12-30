@@ -69,6 +69,10 @@ public class TemplateServiceTest {
 		UserX userX = core.getUserService().getUserX(userId);
 		org = core.createInitOrg(userX, "Template Service Test Org",
 				orgIdentifier, null);
+		// clear old models for the org
+		TestUtils.clearModelForOrg(org.getId(), temSer);
+		// clear old deployments for the org
+		TestUtils.clearDeploymentForOrg(org.getId(), temSer);
 	}
 
 	@Test
@@ -76,8 +80,7 @@ public class TemplateServiceTest {
 		String fileName = "TestProcess1.bpmn";
 		InputStream bpmnIn = this.getClass().getResourceAsStream(
 				"/process/" + fileName);
-		Deployment deploy = temSer.deployFile(org.getId(), fileName,
-				bpmnIn);
+		Deployment deploy = temSer.deployFile(org.getId(), fileName, bpmnIn);
 		Assert.assertNotNull(deploy.getId());
 		Assert.assertEquals(String.valueOf(org.getId()), deploy.getTenantId());
 

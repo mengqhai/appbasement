@@ -7,8 +7,12 @@ import org.activiti.engine.IdentityService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.identity.Group;
+import org.activiti.engine.repository.Deployment;
+import org.activiti.engine.repository.Model;
+import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +78,26 @@ public class TestUtils {
 			pSer.removeHiProcess(hi.getId());
 			log.info("Deleted historic process instance: {} ", hi.getId());
 		}
+	}
+
+	public static void clearModelForOrg(Long orgId, TemplateService tSer) {
+		List<Model> models = tSer.filterModel(orgId);
+		for (Model model : models) {
+			tSer.removeModel(model.getId());
+			log.info("Deleted model: {} ", model.getId());
+		}
+	}
+
+	public static void clearDeploymentForOrg(Long orgId, TemplateService tSer) {
+		List<Deployment> deploys = tSer.filterDeployment(orgId);
+		for (Deployment deploy : deploys) {
+			tSer.removeDeployment(deploy.getId());
+			log.info("Deleted deployment: {} ", deploy.getId());
+			List<ProcessDefinition> templates = tSer
+					.filterProcessTemplate(deploy.getId());
+			Assert.assertEquals(0, templates.size());
+		}
+
 	}
 
 }
