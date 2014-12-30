@@ -26,7 +26,7 @@ import com.workstream.core.CoreConstants;
  */
 @Service
 @Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
-public class ProcessService {
+public class ProcessService extends TaskCapable {
 
 	private final Logger log = LoggerFactory.getLogger(ProcessService.class);
 
