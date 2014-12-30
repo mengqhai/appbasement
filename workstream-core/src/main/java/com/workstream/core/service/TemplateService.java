@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
 import com.workstream.core.service.cmd.DeleteEditorSourceWithExtraForModelCmd;
+import com.workstream.core.worflow.simple.CoreWorkflowDefinitionConversionFactory;
 
 /**
  * Process template(deployment & process definitions) related service.
@@ -46,7 +47,7 @@ public class TemplateService {
 	@Autowired
 	private RepositoryService repoSer;
 
-	private WorkflowDefinitionConversionFactory conFactory = new WorkflowDefinitionConversionFactory();
+	private WorkflowDefinitionConversionFactory conFactory = new CoreWorkflowDefinitionConversionFactory();
 
 	private SimpleWorkflowJsonConverter jsonCon = new SimpleWorkflowJsonConverter();
 
@@ -59,8 +60,7 @@ public class TemplateService {
 	@Autowired
 	private ManagementService mgmtService;
 
-	public Deployment deployFile(Long orgId, String fileName,
-			InputStream in) {
+	public Deployment deployFile(Long orgId, String fileName, InputStream in) {
 		DeploymentBuilder deploymentBuilder = repoSer.createDeployment()
 				.name(fileName).tenantId(String.valueOf(orgId));
 		if (fileName.endsWith(".bpmn20.xml") || fileName.endsWith(".bpmn")) {

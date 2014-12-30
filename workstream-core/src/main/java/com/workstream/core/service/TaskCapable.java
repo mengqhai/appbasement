@@ -33,7 +33,7 @@ public class TaskCapable {
 	 * @param assigneeId
 	 * @return
 	 */
-	public List<Task> fitlerTaskByAssignee(String assigneeId) {
+	public List<Task> filterTaskByAssignee(String assigneeId) {
 		TaskQuery q = taskSer.createTaskQuery().taskAssignee(assigneeId);
 		return q.list();
 	}

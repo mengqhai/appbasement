@@ -176,7 +176,7 @@ public class ProjectServiceTest {
 		Assert.assertTrue(messages.contains(userId + "_|_owner"));
 		Assert.assertTrue(messages.contains(userId + "_|_assignee"));
 
-		taskList = proSer.fitlerTaskByAssignee(userId); // only by user, doesn't
+		taskList = proSer.filterTaskByAssignee(userId); // only by user, doesn't
 														// care about project
 		Assert.assertEquals(2, taskList.size());
 		for (Task t : taskList) {

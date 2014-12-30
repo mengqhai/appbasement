@@ -1,18 +1,30 @@
 package com.workstream.core.service;
 
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.activiti.engine.FormService;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.form.FormProperty;
+import org.activiti.engine.form.TaskFormData;
+import org.activiti.engine.impl.form.BooleanFormType;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
+import org.activiti.workflow.simple.converter.json.SimpleWorkflowJsonConverter;
 import org.activiti.workflow.simple.definition.HumanStepDefinition;
 import org.activiti.workflow.simple.definition.WorkflowDefinition;
+import org.activiti.workflow.simple.definition.form.BooleanPropertyDefinition;
+import org.activiti.workflow.simple.definition.form.FormDefinition;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +59,9 @@ public class TemplateServiceTest {
 	private IdentityService idService;
 
 	@Autowired
+	private ProcessService proSer;
+
+	@Autowired
 	private TaskService taskSer;
 
 	String userId = "templateServiceTester@sina.com";
@@ -57,6 +72,9 @@ public class TemplateServiceTest {
 
 	@Autowired
 	private TemplateService temSer;
+
+	@Autowired
+	private FormService formSer;
 
 	@Before
 	@Transactional(value = CoreConstants.TX_MANAGER, propagation = Propagation.REQUIRED)
@@ -71,6 +89,8 @@ public class TemplateServiceTest {
 				orgIdentifier, null);
 		// clear old models for the org
 		TestUtils.clearModelForOrg(org.getId(), temSer);
+		// clear process instances
+		TestUtils.clearProcessForOrg(org.getId(), proSer);
 		// clear old deployments for the org
 		TestUtils.clearDeploymentForOrg(org.getId(), temSer);
 	}
@@ -119,6 +139,55 @@ public class TemplateServiceTest {
 		temSer.removeModel(model.getId());
 		models = temSer.filterModel(org.getId());
 		Assert.assertEquals(0, models.size());
+	}
+
+	@Test
+	public void testChoiceWorkflow() {
+		WorkflowDefinition def = new WorkflowDefinition();
+		def.setName("Process with choice");
+		def.addHumanStep("Do you agree?", userId).inChoice().inList()
+				.addCondition("agree", "==", "true")
+				.addHumanStep("Agreed task", userId).endList().inList()
+				.addHumanStep("Not agreed task", userId).endList().endChoice();
+
+		HumanStepDefinition agree = (HumanStepDefinition) def.getSteps().get(0);
+		FormDefinition form = new FormDefinition();
+		BooleanPropertyDefinition prop1 = new BooleanPropertyDefinition();
+		prop1.setType("boolean");
+		prop1.setDisplayName("Agree?");
+		prop1.setName("agree");
+		prop1.setWritable(true);
+		prop1.setMandatory(true);
+		form.addFormProperty(prop1);
+		agree.addForm(form);
+
+		SimpleWorkflowJsonConverter con = new SimpleWorkflowJsonConverter();
+		con.writeWorkflowDefinition(def, new PrintWriter(System.out));
+		Model model = temSer.saveToModel(org.getId(), def);
+		Deployment deploy = temSer.deployModel(model.getId());
+		idService.setAuthenticatedUserId(userId);
+		ProcessDefinition proDef = temSer.getProcessTemplateByDeployment(deploy
+				.getId());
+		ProcessInstance pi = proSer.startProcess(proDef.getId());
+
+		List<Task> tasks = proSer.filterTaskByAssignee(userId);
+		Assert.assertEquals(1, tasks.size());
+		Task task = tasks.get(0);
+		Assert.assertEquals("Do you agree?", task.getName());
+		TaskFormData formData = formSer.getTaskFormData(task.getId());
+		Assert.assertEquals(1, formData.getFormProperties().size());
+		FormProperty formProp = formData.getFormProperties().get(0);
+		Assert.assertEquals("agree", formProp.getName());
+		Assert.assertTrue(formProp.getType() instanceof BooleanFormType);
+		Map<String, String> props = new HashMap<String, String>();
+		props.put("agree", "true");
+		formSer.submitTaskFormData(task.getId(), props);
+
+		tasks = proSer.filterTaskByAssignee(userId);
+		Assert.assertEquals(1, tasks.size());
+		task = tasks.get(0);
+		
+		Assert.assertEquals("Agreed task", task.getName());
 	}
 
 	@Test

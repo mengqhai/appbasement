@@ -102,7 +102,7 @@ public class ProcessServiceTest {
 		Assert.assertEquals(1, hiList.size());
 		Assert.assertEquals(hi.getId(), hiList.get(0).getId());
 
-		List<Task> myTasks = pSer.fitlerTaskByAssignee(userId);
+		List<Task> myTasks = pSer.filterTaskByAssignee(userId);
 		Assert.assertEquals(1, myTasks.size());
 		Task myTask = myTasks.get(0);
 		Assert.assertEquals(pi.getId(), myTask.getProcessInstanceId());
@@ -117,7 +117,7 @@ public class ProcessServiceTest {
 		pSer.removeProcess(pi.getId(), "test_delete");
 		Assert.assertNull(pSer.getProcess(pi.getId()));
 		// the related task must be no longer there
-		myTasks = pSer.fitlerTaskByAssignee(userId);
+		myTasks = pSer.filterTaskByAssignee(userId);
 		Assert.assertEquals(0, myTasks.size());
 		// then the historic instance can be removed
 		pSer.removeHiProcess(hi.getId());
@@ -139,7 +139,7 @@ public class ProcessServiceTest {
 		pSer.completeTask(myTask.getId());
 		Assert.assertNull(pSer.getProcess(pi.getId()));
 
-		myTasks = pSer.fitlerTaskByAssignee(userId);
+		myTasks = pSer.filterTaskByAssignee(userId);
 		Assert.assertEquals(0, myTasks.size());
 		// then the historic instance can be removed
 		pSer.removeHiProcess(pi.getProcessInstanceId());
