@@ -170,7 +170,8 @@ public class ProjectService {
 	}
 
 	/**
-	 * Doesn't care about org or project.
+	 * Doesn't care about org or project. (Process related tasks will also be
+	 * included)
 	 * 
 	 * @param assigneeId
 	 * @return
@@ -181,7 +182,8 @@ public class ProjectService {
 	}
 
 	/**
-	 * Doesn't care about org or project.
+	 * Doesn't care about org or project. (Process related tasks will also be
+	 * included)
 	 * 
 	 * @param creatorId
 	 * @return

@@ -76,7 +76,7 @@ public class TemplateServiceTest {
 		String fileName = "TestProcess1.bpmn";
 		InputStream bpmnIn = this.getClass().getResourceAsStream(
 				"/process/" + fileName);
-		Deployment deploy = temSer.createDeployment(org.getId(), fileName,
+		Deployment deploy = temSer.deployFile(org.getId(), fileName,
 				bpmnIn);
 		Assert.assertNotNull(deploy.getId());
 		Assert.assertEquals(String.valueOf(org.getId()), deploy.getTenantId());

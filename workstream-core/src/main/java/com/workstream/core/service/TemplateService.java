@@ -59,7 +59,7 @@ public class TemplateService {
 	@Autowired
 	private ManagementService mgmtService;
 
-	public Deployment createDeployment(Long orgId, String fileName,
+	public Deployment deployFile(Long orgId, String fileName,
 			InputStream in) {
 		DeploymentBuilder deploymentBuilder = repoSer.createDeployment()
 				.name(fileName).tenantId(String.valueOf(orgId));
@@ -102,6 +102,19 @@ public class TemplateService {
 	public List<ProcessDefinition> filterProcessTemplate(String deploymentId) {
 		return repoSer.createProcessDefinitionQuery()
 				.deploymentId(deploymentId).list();
+	}
+
+	/**
+	 * Return single ProcessDefinition for a deployment. If there are more than
+	 * one ProcessDefinition for the deployment, an ActivitiException will be
+	 * thrown. See AbstractQuery.executeSingleResult().
+	 * 
+	 * @param deploymentId
+	 * @return
+	 */
+	public ProcessDefinition getProcessTemplateByDeployment(String deploymentId) {
+		return repoSer.createProcessDefinitionQuery()
+				.deploymentId(deploymentId).singleResult();
 	}
 
 	public Model createModel(Long orgId, String name) {

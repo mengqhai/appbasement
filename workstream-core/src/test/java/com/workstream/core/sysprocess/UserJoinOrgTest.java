@@ -97,6 +97,10 @@ public class UserJoinOrgTest {
 		variableMap.put("orgName", org.getName());
 		variableMap.put("userId", userId);
 		variableMap.put("adminGroupId", adminGroupId);
+
+		// There must be a logged in user
+		idService.setAuthenticatedUserId(userId);
+
 		ProcessInstance processInstance = ruSer.startProcessInstanceByKey(
 				"UserJoinOrg", variableMap);
 		assertNotNull(processInstance.getId());

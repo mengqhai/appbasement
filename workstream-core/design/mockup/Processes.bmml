@@ -815,7 +815,7 @@
     </control>
     <control controlID="106" controlTypeID="com.balsamiq.mockups::StickyNote" x="1303" y="895" w="281" h="102" measuredW="109" measuredH="123" zOrder="71" locked="false" isInGroup="-1">
       <controlProperties>
-        <text>A%20separate%20table%20is%20needed%20to%20hold%20the%20revision%20history%20of%20process%20models.</text>
+        <text>A%20separate%20table%20is%20needed%20to%20hold%20the%20revision%20history%20of%20process%20models.%0ANo%2C%20seems%20not.%20%20The%20revision%20history%20can%20be%20saved%20as%20a%20json%20in%20the%20metaInfo%20field%20of%20the%20model</text>
       </controlProperties>
     </control>
     <control controlID="107" controlTypeID="com.balsamiq.mockups::StickyNote" x="94" y="542" w="167" h="123" measuredW="109" measuredH="123" zOrder="72" locked="false" isInGroup="-1">

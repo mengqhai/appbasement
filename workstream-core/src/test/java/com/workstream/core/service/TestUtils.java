@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.identity.Group;
+import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +59,20 @@ public class TestUtils {
 		for (Task task : tasks) {
 			taskSer.deleteTask(task.getId());
 			log.info("Deleted orphan task: {} {}", task.getId(), task.getName());
+		}
+	}
+
+	public static void clearProcessForOrg(Long orgId, ProcessService pSer) {
+		List<ProcessInstance> piList = pSer.filterProcess(orgId);
+		for (ProcessInstance pi : piList) {
+			pSer.removeProcess(pi.getId());
+			log.info("Deleted process instance: {} ", pi.getId());
+		}
+
+		List<HistoricProcessInstance> hiList = pSer.filterHiProcessByOrg(orgId);
+		for (HistoricProcessInstance hi : hiList) {
+			pSer.removeHiProcess(hi.getId());
+			log.info("Deleted historic process instance: {} ", hi.getId());
 		}
 	}
 
