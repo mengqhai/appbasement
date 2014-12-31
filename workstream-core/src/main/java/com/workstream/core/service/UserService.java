@@ -10,6 +10,7 @@ import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.GroupQuery;
 import org.activiti.engine.identity.NativeGroupQuery;
 import org.activiti.engine.identity.NativeUserQuery;
+import org.activiti.engine.identity.Picture;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.identity.UserQuery;
 import org.apache.commons.beanutils.BeanUtils;
@@ -278,4 +279,33 @@ public class UserService {
 		idService.setAuthenticatedUserId(null);
 	}
 
+	public Picture getUserPicture(String userId) {
+		Picture pic = idService.getUserPicture(userId);
+		return pic;
+	}
+
+	public void setUserPicture(String userId, String mimeType, byte[] bytes) {
+		Picture pic = new Picture(bytes, mimeType);
+		idService.setUserPicture(userId, pic);
+	}
+
+	public void deleteUserPicture(String userId) {
+		idService.setUserPicture(userId, null);
+	}
+
+	public String getUserInfo(String userId, String key) {
+		return idService.getUserInfo(userId, key);
+	}
+
+	public void setUserInfo(String userId, String key, String value) {
+		idService.setUserInfo(userId, key, value);
+	}
+
+	public boolean checkPassword(String userId, String password) {
+		return idService.checkPassword(userId, password);
+	}
+
+	public List<String> getUserInfoKeys(String userId) {
+		return idService.getUserInfoKeys(userId);
+	}
 }
