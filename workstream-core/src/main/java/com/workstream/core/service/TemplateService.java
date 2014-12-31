@@ -10,6 +10,7 @@ import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.engine.ManagementService;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.RepositoryService;
+import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.DeploymentBuilder;
 import org.activiti.engine.repository.Model;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
+import com.workstream.core.model.ProcessModelMetaInfo;
 import com.workstream.core.service.cmd.DeleteEditorSourceWithExtraForModelCmd;
 import com.workstream.core.worflow.simple.CoreWorkflowDefinitionConversionFactory;
 
@@ -59,6 +61,9 @@ public class TemplateService {
 
 	@Autowired
 	private ManagementService mgmtService;
+
+	@Autowired
+	private ProcessModelMetaInfoHelper metaHelper;
 
 	public Deployment deployFile(Long orgId, String fileName, InputStream in) {
 		DeploymentBuilder deploymentBuilder = repoSer.createDeployment()
@@ -161,6 +166,12 @@ public class TemplateService {
 		model.setName(flow.getName());
 		model.setTenantId(String.valueOf(orgId));
 		model.setCategory("table-editor");
+		String authorId = Authentication.getAuthenticatedUserId();
+		ProcessModelMetaInfo metaInfo = metaHelper.addRevision(authorId, null,
+				null);
+		metaInfo.setName(flow.getName());
+		metaInfo.setDescription(flow.getDescription());
+		model.setMetaInfo(metaHelper.getStr(metaInfo));
 		repoSer.saveModel(model);
 
 		try {
