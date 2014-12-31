@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.workstream.core.CoreConstants;
 import com.workstream.core.conf.ApplicationConfiguration;
 import com.workstream.core.model.Organization;
+import com.workstream.core.model.ProcessModelMetaInfo;
 import com.workstream.core.model.UserX;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -186,7 +187,7 @@ public class TemplateServiceTest {
 		tasks = proSer.filterTaskByAssignee(userId);
 		Assert.assertEquals(1, tasks.size());
 		task = tasks.get(0);
-		
+
 		Assert.assertEquals("Agreed task", task.getName());
 	}
 
@@ -207,6 +208,13 @@ public class TemplateServiceTest {
 				.get(0);
 		Assert.assertEquals("HelloTask哦", step1.getName());
 		Assert.assertEquals(userId, step1.getAssignee());
+
+		// check meta info
+		Model saved = temSer.getModel(model.getId());
+		ProcessModelMetaInfo meta = temSer.getModelMetaInfo(saved);
+		Assert.assertEquals(def.getName(), meta.getName());
+		Assert.assertEquals(def.getDescription(), meta.getDescription());
+		Assert.assertEquals(1, meta.getRevisions().size());
 
 		// test duplicate a model
 		Model copy = temSer.duplicateModel(model.getId());

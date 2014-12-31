@@ -24,6 +24,9 @@ public class ProcessModelMetaInfoHelper {
 	}
 
 	public ProcessModelMetaInfo getMetaInfo(String metaStr) {
+		if (metaStr == null) {
+			return new ProcessModelMetaInfo();
+		}
 		if (metaStr.length() > 4000) {
 			log.error("Meta info string too long: {}", metaStr);
 			throw new RuntimeException("Meta info string too long");

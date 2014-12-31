@@ -201,6 +201,10 @@ public class TemplateService {
 		return model;
 	}
 
+	public ProcessModelMetaInfo getModelMetaInfo(Model model) {
+		return metaHelper.getMetaInfo(model.getMetaInfo());
+	}
+
 	/**
 	 * Update the model with a new WorkflowDefinition. The old source &
 	 * sourceExtra of the model will be deteted.
@@ -218,6 +222,7 @@ public class TemplateService {
 		model.setName(flow.getName());
 		model.setTenantId(String.valueOf(orgId));
 		model.setCategory("table-editor");
+		// TODO add revision meta info
 		repoSer.saveModel(model);
 
 		try {
