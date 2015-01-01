@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.activiti.engine.IdentityService;
+import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.identity.Group;
@@ -66,6 +67,18 @@ public class TestUtils {
 		}
 	}
 
+	public static void clearOrphanProcesses(RuntimeService ru) {
+		List<ProcessInstance> piList = ru
+				.createNativeProcessInstanceQuery()
+				.sql("select * from ACT_RU_EXECUTION as ps where not exists "
+						+ "(select * from WS_ORG as o where convert(o.id, varchar) = ps.tenant_Id_)"
+						+ " and not ps.tenant_Id_=''").list();
+		for (ProcessInstance pi : piList) {
+			ru.deleteProcessInstance(pi.getId(), "Test clear");
+			log.info("Deleted process instance: {} ", pi.getId());
+		}
+	}
+
 	public static void clearProcessForOrg(Long orgId, ProcessService pSer) {
 		List<ProcessInstance> piList = pSer.filterProcess(orgId);
 		for (ProcessInstance pi : piList) {
@@ -87,7 +100,7 @@ public class TestUtils {
 			log.info("Deleted model: {} ", model.getId());
 		}
 	}
-	
+
 	public static void clearDeploymentForOrg(Long orgId, TemplateService tSer) {
 		List<Deployment> deploys = tSer.filterDeployment(orgId);
 		for (Deployment deploy : deploys) {

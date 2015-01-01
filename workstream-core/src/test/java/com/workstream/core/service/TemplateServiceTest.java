@@ -88,10 +88,13 @@ public class TemplateServiceTest {
 		UserX userX = core.getUserService().getUserX(userId);
 		org = core.createInitOrg(userX, "Template Service Test Org",
 				orgIdentifier, null);
+
 		// clear old models for the org
 		TestUtils.clearModelForOrg(org.getId(), temSer);
 		// clear process instances
 		TestUtils.clearProcessForOrg(org.getId(), proSer);
+		TestUtils.clearOrphanProcesses(ruSer);
+		// TestUtils.clearTaskForAssignee(userId, proSer);
 		// clear old deployments for the org
 		TestUtils.clearDeploymentForOrg(org.getId(), temSer);
 	}
