@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.HistoryService;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.repository.Deployment;
@@ -44,6 +45,9 @@ public class ProcessServiceTest {
 
 	@Autowired
 	private TemplateService tSer;
+
+	@Autowired
+	private HistoryService hiSer;
 
 	String userId = "processServiceTester@sina.com";
 	String orgIdentifier = "processServiceTestOrg";

@@ -5,7 +5,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.HistoryService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Event;
@@ -25,6 +27,9 @@ public class TaskCapable {
 	protected TaskService taskSer;
 	@Autowired
 	protected TaskEventHelper eventHelper;
+
+	@Autowired
+	protected HistoryService hiSer;
 
 	/**
 	 * Doesn't care about org or project. (Process related tasks will also be
@@ -126,6 +131,28 @@ public class TaskCapable {
 		});
 
 		return result;
+	}
+
+	/**
+	 * Filter <b>finished</b> tasks by assigneeId
+	 * 
+	 * @param assigneeId
+	 * @return
+	 */
+	public List<HistoricTaskInstance> filterArchTaskByAssignee(String assigneeId) {
+		return hiSer.createHistoricTaskInstanceQuery().taskAssignee(assigneeId)
+				.finished().list();
+	}
+
+	/**
+	 * Filter <b>finished</b> tasks by creatorId
+	 * 
+	 * @param assigneeId
+	 * @return
+	 */
+	public List<HistoricTaskInstance> filterArchTaskByCreator(String creator) {
+		return hiSer.createHistoricTaskInstanceQuery().taskOwner(creator)
+				.finished().list();
 	}
 
 }

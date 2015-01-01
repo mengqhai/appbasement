@@ -15,6 +15,7 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.form.FormProperty;
 import org.activiti.engine.form.TaskFormData;
+import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.impl.form.BooleanFormType;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
@@ -183,6 +184,11 @@ public class TemplateServiceTest {
 		ProcessDefinition proDef = temSer.getProcessTemplateByDeployment(deploy
 				.getId());
 		proSer.startProcess(proDef.getId());
+
+		// check historic process instance
+		List<HistoricProcessInstance> hiList = proSer
+				.filterHiProcessByOrgStarter(org.getId(), userId, false);
+		Assert.assertEquals(1, hiList.size());
 
 		List<Task> tasks = proSer.filterTaskByAssignee(userId);
 		Assert.assertEquals(1, tasks.size());

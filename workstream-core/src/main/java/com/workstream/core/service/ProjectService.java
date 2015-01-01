@@ -1,13 +1,17 @@
 package com.workstream.core.service;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.history.HistoricTaskInstanceQuery;
 import org.activiti.engine.task.IdentityLinkType;
 import org.activiti.engine.task.Task;
+import org.activiti.engine.task.TaskInfo;
+import org.activiti.engine.task.TaskInfoQuery;
 import org.activiti.engine.task.TaskQuery;
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
@@ -125,36 +129,87 @@ public class ProjectService extends TaskCapable {
 		return task;
 	}
 
-	public List<Task> filterTask(Project pro) {
+	protected TaskInfoQuery<? extends TaskInfoQuery<?, ?>, ? extends TaskInfo> prepairTaskInfoQuery(
+			Project pro,
+			TaskInfoQuery<? extends TaskInfoQuery<?, ?>, ? extends TaskInfo> q) {
 		pro = proDao.reattachIfNeeded(pro, pro.getId());
 		if (pro == null) {
 			log.warn("Filtering tasks for a non-existing project {} ", pro);
-			return new ArrayList<Task>();
+			return null;
 		}
 
 		Long orgId = pro.getOrg().getId();
 		Long proId = pro.getId();
-
-		TaskQuery q = taskSer.createTaskQuery()
-				.taskTenantId(String.valueOf(orgId))
-				.taskCategory(String.valueOf(proId));
-		return q.list();
+		q.taskTenantId(String.valueOf(orgId)).taskCategory(
+				String.valueOf(proId));
+		return q;
 	}
 
-	public List<Task> filterTask(Project pro, String assignee) {
+	protected TaskInfoQuery<? extends TaskInfoQuery<?, ?>, ? extends TaskInfo> prepairTaskInfoQuery(
+			Project pro, String assignee,
+			TaskInfoQuery<? extends TaskInfoQuery<?, ?>, ? extends TaskInfo> q) {
 		pro = proDao.reattachIfNeeded(pro, pro.getId());
 		if (pro == null) {
 			log.warn("Filtering tasks for a non-existing project {} ", pro);
-			return new ArrayList<Task>();
+			return null;
 		}
 
 		Long orgId = pro.getOrg().getId();
 		Long proId = pro.getId();
-
-		TaskQuery q = taskSer.createTaskQuery()
-				.taskTenantId(String.valueOf(orgId))
+		q.taskTenantId(String.valueOf(orgId))
 				.taskCategory(String.valueOf(proId)).taskAssignee(assignee);
-		return q.list();
+		return q;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Task> filterTask(Project pro) {
+		TaskQuery q = (TaskQuery) prepairTaskInfoQuery(pro,
+				taskSer.createTaskQuery());
+		if (q == null) {
+			return Collections.EMPTY_LIST;
+		} else {
+			return (List<Task>) q.list();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Task> filterTask(Project pro, String assignee) {
+		TaskQuery q = (TaskQuery) prepairTaskInfoQuery(pro, assignee,
+				taskSer.createTaskQuery());
+		if (q == null) {
+			return Collections.EMPTY_LIST;
+		} else {
+			return (List<Task>) q.list();
+		}
+	}
+
+	/**
+	 * Query finished task.
+	 * 
+	 * @param pro
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<HistoricTaskInstance> filterArchTask(Project pro) {
+		HistoricTaskInstanceQuery q = (HistoricTaskInstanceQuery) prepairTaskInfoQuery(
+				pro, taskSer.createTaskQuery());
+		if (q == null) {
+			return Collections.EMPTY_LIST;
+		} else {
+			return (List<HistoricTaskInstance>) q.finished().list();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<HistoricTaskInstance> filterArchTask(Project pro,
+			String assignee) {
+		HistoricTaskInstanceQuery q = (HistoricTaskInstanceQuery) prepairTaskInfoQuery(
+				pro, assignee, taskSer.createTaskQuery());
+		if (q == null) {
+			return Collections.EMPTY_LIST;
+		} else {
+			return (List<HistoricTaskInstance>) q.finished().list();
+		}
 	}
 
 	public void deleteProject(Project pro) {

@@ -1,12 +1,15 @@
 package com.workstream.core.service;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.activiti.engine.HistoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricProcessInstanceQuery;
+import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
@@ -33,9 +36,6 @@ public class ProcessService extends TaskCapable {
 
 	@Autowired
 	private RuntimeService ruSer;
-
-	@Autowired
-	private HistoryService hiSer;
 
 	/**
 	 * 
@@ -87,12 +87,27 @@ public class ProcessService extends TaskCapable {
 	public List<HistoricProcessInstance> filterHiProcessByOrgStarter(
 			Long orgId, String starterUserId, boolean finished) {
 		HistoricProcessInstanceQuery q = hiSer
-				.createHistoricProcessInstanceQuery()
-				.processInstanceTenantId(String.valueOf(orgId))
-				.startedBy(starterUserId);
+				.createHistoricProcessInstanceQuery().startedBy(starterUserId);
 		if (finished) {
+			// has to directly touch the history table
+			q.processInstanceTenantId(String.valueOf(orgId));
 			q.finished();
 		} else {
+			// The historic process instance table can easily get extremely
+			// large.
+			// So need to firstly query a smaller table to get ids, then
+			// query the historic process instance table with ids where index
+			// has already been created.
+			List<ProcessInstance> piList = ruSer.createProcessInstanceQuery()
+					.processInstanceTenantId(String.valueOf(orgId)).list();
+			if (piList.isEmpty()) {
+				return Collections.emptyList();
+			}
+			Set<String> ids = new HashSet<String>(piList.size());
+			for (ProcessInstance pi : piList) {
+				ids.add(pi.getProcessInstanceId());
+			}
+			q.processInstanceIds(ids);
 			q.unfinished();
 		}
 		return q.list();
@@ -111,8 +126,24 @@ public class ProcessService extends TaskCapable {
 				.createHistoricProcessInstanceQuery().processInstanceTenantId(
 						String.valueOf(orgId));
 		if (finished) {
+			// has to directly touch the history table
 			q.finished();
 		} else {
+			// The historic process instance table can easily get extremely
+			// large.
+			// So need to firstly query a smaller table to get ids, then
+			// query the historic process instance table with ids where index
+			// has already been created.
+			List<ProcessInstance> piList = ruSer.createProcessInstanceQuery()
+					.processInstanceTenantId(String.valueOf(orgId)).list();
+			if (piList.isEmpty()) {
+				return Collections.emptyList();
+			}
+			Set<String> ids = new HashSet<String>(piList.size());
+			for (ProcessInstance pi : piList) {
+				ids.add(pi.getProcessInstanceId());
+			}
+			q.processInstanceIds(ids);
 			q.unfinished();
 		}
 		return q.list();
@@ -123,8 +154,24 @@ public class ProcessService extends TaskCapable {
 		HistoricProcessInstanceQuery q = hiSer
 				.createHistoricProcessInstanceQuery().startedBy(starterUserId);
 		if (finished) {
+			// has to directly touch the history table
 			q.finished();
 		} else {
+			// The historic process instance table can easily get extremely
+			// large.
+			// So need to firstly query a smaller table to get ids, then
+			// query the historic process instance table with ids where index
+			// has already been created.
+			List<ProcessInstance> piList = ruSer.createProcessInstanceQuery()
+					.involvedUser(starterUserId).list();
+			if (piList.isEmpty()) {
+				return Collections.emptyList();
+			}
+			Set<String> ids = new HashSet<String>(piList.size());
+			for (ProcessInstance pi : piList) {
+				ids.add(pi.getProcessInstanceId());
+			}
+			q.processInstanceIds(ids);
 			q.unfinished();
 		}
 		return q.list();
@@ -160,6 +207,12 @@ public class ProcessService extends TaskCapable {
 	public List<Task> filterTaskByProcess(String processInstanceId) {
 		return taskSer.createTaskQuery().processInstanceId(processInstanceId)
 				.list();
+	}
+
+	public List<HistoricTaskInstance> filterArchTaskByProcess(
+			String processInstanceId) {
+		return hiSer.createHistoricTaskInstanceQuery()
+				.processInstanceId(processInstanceId).list();
 	}
 
 }
