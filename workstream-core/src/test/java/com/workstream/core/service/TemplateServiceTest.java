@@ -3,6 +3,7 @@ package com.workstream.core.service;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,6 @@ import org.activiti.engine.impl.form.BooleanFormType;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
-import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.activiti.workflow.simple.converter.json.SimpleWorkflowJsonConverter;
 import org.activiti.workflow.simple.definition.HumanStepDefinition;
@@ -39,7 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.workstream.core.CoreConstants;
 import com.workstream.core.conf.ApplicationConfiguration;
 import com.workstream.core.model.Organization;
-import com.workstream.core.model.ProcessModelMetaInfo;
+import com.workstream.core.model.Revision;
 import com.workstream.core.model.UserX;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -137,9 +137,19 @@ public class TemplateServiceTest {
 		List<Model> models = temSer.filterModel(org.getId());
 		Assert.assertEquals(1, models.size());
 
+		// check revision
+		Collection<Revision> revisions = temSer.filterModelRevision(model
+				.getId());
+		Assert.assertEquals(1, revisions.size());
+		Revision rev = revisions.iterator().next();
+		Assert.assertEquals(Revision.TYPE_CREATE, rev.getAction());
+
 		temSer.removeModel(model.getId());
 		models = temSer.filterModel(org.getId());
 		Assert.assertEquals(0, models.size());
+
+		revisions = temSer.filterModelRevision(model.getId());
+		Assert.assertEquals(0, revisions.size());
 	}
 
 	@Test
@@ -169,7 +179,7 @@ public class TemplateServiceTest {
 		idService.setAuthenticatedUserId(userId);
 		ProcessDefinition proDef = temSer.getProcessTemplateByDeployment(deploy
 				.getId());
-		ProcessInstance pi = proSer.startProcess(proDef.getId());
+		proSer.startProcess(proDef.getId());
 
 		List<Task> tasks = proSer.filterTaskByAssignee(userId);
 		Assert.assertEquals(1, tasks.size());
@@ -193,6 +203,7 @@ public class TemplateServiceTest {
 
 	@Test
 	public void testConvertWorkflow() {
+		idService.setAuthenticatedUserId(userId); // for revision record
 		WorkflowDefinition def = new WorkflowDefinition();
 		def.setName("Test simple workflow.");
 		def.setDescription("This is the simplest workflow");
@@ -209,12 +220,13 @@ public class TemplateServiceTest {
 		Assert.assertEquals("HelloTask哦", step1.getName());
 		Assert.assertEquals(userId, step1.getAssignee());
 
-		// check meta info
-		Model saved = temSer.getModel(model.getId());
-		ProcessModelMetaInfo meta = temSer.getModelMetaInfo(saved);
-		Assert.assertEquals(def.getName(), meta.getName());
-		Assert.assertEquals(def.getDescription(), meta.getDescription());
-		Assert.assertEquals(1, meta.getRevisions().size());
+		// check revision record
+		Collection<Revision> revisions = temSer.filterModelRevision(model
+				.getId());
+		Assert.assertEquals(1, revisions.size());
+		Revision rev = revisions.iterator().next();
+		Assert.assertEquals(userId, rev.getUserId());
+		Assert.assertEquals(Revision.TYPE_CREATE, rev.getAction());
 
 		// test duplicate a model
 		Model copy = temSer.duplicateModel(model.getId());
@@ -234,7 +246,8 @@ public class TemplateServiceTest {
 
 		// test update workflow
 		defSaved.addHumanStep("AddedTask", userId);
-		temSer.updateModel(org.getId(), model.getId(), defSaved);
+		temSer.updateModel(org.getId(), model.getId(), defSaved,
+				"Added an Action 哦");
 		temSer.getModel(model.getId());
 		WorkflowDefinition defUpdated = temSer.getModelWorkflowDef(model
 				.getId());
@@ -246,6 +259,14 @@ public class TemplateServiceTest {
 				.get(1);
 		Assert.assertEquals("AddedTask", step2.getName());
 		Assert.assertEquals(userId, step2.getAssignee());
+
+		// check the edit revision record
+		revisions = temSer.filterModelRevision(model.getId());
+		Assert.assertEquals(2, revisions.size());
+		rev = revisions.iterator().next();
+		Assert.assertEquals(userId, rev.getUserId());
+		Assert.assertEquals(Revision.ACTION_EDIT, rev.getAction());
+		Assert.assertEquals("Added an Action 哦", rev.getComment());
 
 		Deployment deploy = temSer.deployModel(model.getId());
 		List<Model> modelList = temSer

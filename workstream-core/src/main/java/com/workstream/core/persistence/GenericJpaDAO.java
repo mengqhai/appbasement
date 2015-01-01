@@ -4,11 +4,13 @@ import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -144,6 +146,80 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 			}
 		}
 		return path;
+	}
+
+	/**
+	 * Batch delete.
+	 * 
+	 * @param attributes
+	 * @return
+	 */
+	protected int removeFor(Map<String, ? extends Serializable> attributes) {
+		// JPA supports CriteriaDelete since 2.1
+		// http://www.thoughts-on-java.org/2013/10/criteria-updatedelete-easy-way-to.html
+		// needs at least Hibernate 4.3.0.beta4
+		// but for now, let's use query
+		if (attributes.isEmpty()) {
+			log.warn("No filter condition for delete action, so nothing is deleted.");
+			return 0;
+		}
+
+		Class<T> getClass = persistentClass;
+		String entityName = getClass.getSimpleName();
+		StringBuilder builder = new StringBuilder("delete from ").append(
+				entityName).append(" as e where ");
+		int attCount = 0;
+		for (String attributeName : attributes.keySet()) {
+			attCount++;
+			builder.append("e.").append(attributeName).append("=");
+			builder.append(":").append(attributeName);
+			if (attCount < attributes.size()) {
+				builder.append(" and ");
+			}
+		}
+
+		Query q = getEm().createQuery(builder.toString());
+		for (String attributeName : attributes.keySet()) {
+			Serializable attributeValue = attributes.get(attributeName);
+			q.setParameter(attributeName, attributeValue);
+		}
+		int deletedCount = q.executeUpdate();
+		return deletedCount;
+	}
+
+	protected Collection<T> filterFor(
+			Map<String, ? extends Serializable> attributes, int first, int max) {
+		return filterFor(attributes, first, max, "id");
+	}
+
+	protected Collection<T> filterFor(
+			Map<String, ? extends Serializable> attributes, int first, int max,
+			String descBy) {
+		Class<T> getClass = persistentClass;
+		CriteriaBuilder cb = getEm().getCriteriaBuilder();
+		CriteriaQuery<T> c = cb.createQuery(getClass);
+		Root<T> all = c.from(getClass);
+		Expression<Boolean> lastEx = null;
+		for (String attributeName : attributes.keySet()) {
+			Serializable attributeValue = attributes.get(attributeName);
+			if (attributeName != null && !attributeName.equals("")) {
+				Expression<Boolean> ex = cb.equal(
+						parsePath(all, attributeName), attributeValue);
+				if (lastEx == null) {
+					lastEx = ex;
+				} else {
+					lastEx = cb.and(lastEx, ex);
+				}
+			}
+		}
+		c.where(lastEx);
+		c.select(all);
+		if (descBy != null) {
+			// order by xxx desc
+			c.orderBy(cb.desc(parsePath(all, descBy)));
+		}
+		return em.createQuery(c).setFirstResult(first).setMaxResults(max)
+				.getResultList();
 	}
 
 	/**

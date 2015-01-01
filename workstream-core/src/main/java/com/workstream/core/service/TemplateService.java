@@ -3,6 +3,7 @@ package com.workstream.core.service;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.util.Collection;
 import java.util.List;
 import java.util.zip.ZipInputStream;
 
@@ -29,7 +30,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
-import com.workstream.core.model.ProcessModelMetaInfo;
+import com.workstream.core.model.Revision;
+import com.workstream.core.persistence.IRevisionDAO;
 import com.workstream.core.service.cmd.DeleteEditorSourceWithExtraForModelCmd;
 import com.workstream.core.worflow.simple.CoreWorkflowDefinitionConversionFactory;
 
@@ -63,7 +65,7 @@ public class TemplateService {
 	private ManagementService mgmtService;
 
 	@Autowired
-	private ProcessModelMetaInfoHelper metaHelper;
+	private IRevisionDAO revDao;
 
 	public Deployment deployFile(Long orgId, String fileName, InputStream in) {
 		DeploymentBuilder deploymentBuilder = repoSer.createDeployment()
@@ -127,6 +129,7 @@ public class TemplateService {
 		model.setName(name);
 		model.setTenantId(String.valueOf(orgId));
 		repoSer.saveModel(model);
+		addRevision(model.getId(), null, Revision.TYPE_CREATE);
 		return model;
 	}
 
@@ -150,6 +153,7 @@ public class TemplateService {
 
 	public void removeModel(String modelId) {
 		repoSer.deleteModel(modelId);
+		removeRevisions(modelId);
 	}
 
 	/**
@@ -166,12 +170,6 @@ public class TemplateService {
 		model.setName(flow.getName());
 		model.setTenantId(String.valueOf(orgId));
 		model.setCategory("table-editor");
-		String authorId = Authentication.getAuthenticatedUserId();
-		ProcessModelMetaInfo metaInfo = metaHelper.addRevision(authorId, null,
-				null);
-		metaInfo.setName(flow.getName());
-		metaInfo.setDescription(flow.getDescription());
-		model.setMetaInfo(metaHelper.getStr(metaInfo));
 		repoSer.saveModel(model);
 
 		try {
@@ -193,16 +191,30 @@ public class TemplateService {
 
 			repoSer.addModelEditorSourceExtra(model.getId(),
 					IOUtils.toByteArray(diaIn));
+			addRevision(model.getId(), null, Revision.TYPE_CREATE);
 		} catch (Exception e) {
 			log.error("Failed to save model source and extra.", e);
 			throw new RuntimeException(
 					"Failed to save model source and extra.", e);
 		}
+
 		return model;
 	}
 
-	public ProcessModelMetaInfo getModelMetaInfo(Model model) {
-		return metaHelper.getMetaInfo(model.getMetaInfo());
+	protected void removeRevisions(String modelId) {
+		revDao.deleteFor(Model.class.getSimpleName(), modelId);
+	}
+
+	protected void addRevision(String modelId, String comment, String type) {
+		String authorId = Authentication.getAuthenticatedUserId();
+		Revision rev = new Revision(authorId, Model.class.getSimpleName(),
+				modelId, comment);
+		rev.setAction(type);
+		revDao.persist(rev);
+	}
+
+	public Collection<Revision> filterModelRevision(String modelId) {
+		return revDao.filterFor(Model.class.getSimpleName(), modelId);
 	}
 
 	/**
@@ -215,6 +227,20 @@ public class TemplateService {
 	 * @return
 	 */
 	public Model updateModel(Long orgId, String modelId, WorkflowDefinition flow) {
+		return updateModel(orgId, modelId, flow, null);
+	}
+
+	/**
+	 * Update the model with a new WorkflowDefinition. The old source &
+	 * sourceExtra of the model will be deteted.
+	 * 
+	 * @param orgId
+	 * @param modelId
+	 * @param flow
+	 * @return
+	 */
+	public Model updateModel(Long orgId, String modelId,
+			WorkflowDefinition flow, String comment) {
 		WorkflowDefinitionConversion con = conFactory
 				.createWorkflowDefinitionConversion(flow);
 		con.convert();
@@ -222,9 +248,7 @@ public class TemplateService {
 		model.setName(flow.getName());
 		model.setTenantId(String.valueOf(orgId));
 		model.setCategory("table-editor");
-		// TODO add revision meta info
 		repoSer.saveModel(model);
-
 		try {
 			// See SimpleTableEditor.save()
 			// Write JSON to byte-array and set as editor-source
@@ -257,6 +281,7 @@ public class TemplateService {
 			throw new RuntimeException(
 					"Failed to save model source and extra.", e);
 		}
+		addRevision(model.getId(), comment, Revision.ACTION_EDIT);
 		return model;
 	}
 
