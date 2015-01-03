@@ -40,6 +40,7 @@ public class BasicAuthenticationProvider implements AuthenticationProvider {
 						.add(new SimpleGrantedAuthority(group.getId()));
 			}
 			uSer.login(userId);
+			log.info("User logged in: {}", userId);
 			log.info("UserX: {}", uSer.getUserX(userId));
 			return new UsernamePasswordAuthenticationToken(userId, password,
 					grantedAuthorities);

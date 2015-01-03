@@ -6,6 +6,7 @@ import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,9 @@ import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
+import org.springframework.web.servlet.DispatcherServlet;
+
+import com.workstream.rest.DispatcherServletConfiguration;
 
 /**
  * ' See http://docs.spring.io/autorepo/docs/spring/3.1.x/javadoc-api/org/
@@ -34,7 +38,7 @@ public class RestApplicationInitializer implements WebApplicationInitializer {
 		rootContext.refresh();
 		servletContext.addListener(new ContextLoaderListener(rootContext));
 
-		initSpring(servletContext);
+		initSpring(servletContext, rootContext);
 		initSpringSecurity(servletContext);
 		log.info("Web application fully configured");
 	}
@@ -44,8 +48,26 @@ public class RestApplicationInitializer implements WebApplicationInitializer {
 	 * 
 	 * @param servletContext
 	 */
-	private void initSpring(ServletContext servletContext) {
+	private ServletRegistration.Dynamic initSpring(
+			ServletContext servletContext,
+			AnnotationConfigWebApplicationContext rootContext) {
+		log.debug("Configuring Spring Web application context");
+		AnnotationConfigWebApplicationContext dispatcherServletConfiguration = new AnnotationConfigWebApplicationContext();
+		dispatcherServletConfiguration.setParent(rootContext);
+		dispatcherServletConfiguration
+				.register(DispatcherServletConfiguration.class);
 
+		log.debug("Registering Spring MVC Servlet");
+		// see
+		// http://www.rockhoppertech.com/blog/spring-mvc-configuration-without-xml/
+		ServletRegistration.Dynamic dispatcherServlet = servletContext
+				.addServlet("dispatcher", new DispatcherServlet(
+						dispatcherServletConfiguration));
+		dispatcherServlet.addMapping("/*");
+		dispatcherServlet.setLoadOnStartup(1);
+		dispatcherServlet.setAsyncSupported(true);
+		log.debug("Spring MVC Servlet registered");
+		return dispatcherServlet;
 	}
 
 	/**
