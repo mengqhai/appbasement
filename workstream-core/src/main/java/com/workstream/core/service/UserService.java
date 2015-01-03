@@ -228,6 +228,10 @@ public class UserService {
 		return nq.sql(builder.toString()).list();
 	}
 
+	public List<Group> filterGroupByUser(String userId) {
+		return idService.createGroupQuery().groupMember(userId).list();
+	}
+
 	public boolean isUserInGroup(String userId, String groupId) {
 		long groupMatching = idService.createGroupQuery().groupId(groupId)
 				.groupMember(userId).count();

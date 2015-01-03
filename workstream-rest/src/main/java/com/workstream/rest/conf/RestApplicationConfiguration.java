@@ -1,4 +1,4 @@
-package com.workstream.core.conf;
+package com.workstream.rest.conf;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -9,8 +9,8 @@ import org.springframework.context.annotation.PropertySources;
 @PropertySources({
 		@PropertySource(value = "classpath:db.properties", ignoreResourceNotFound = true),
 		@PropertySource(value = "classpath:engine.properties", ignoreResourceNotFound = true) })
-@ComponentScan(basePackages = { "com.workstream.core.conf",
-		"com.workstream.core.persistence", "com.workstream.core.service" })
-public class ApplicationConfiguration {
+@ComponentScan(basePackages = { "com.workstream.rest.conf",
+		"com.workstream.core.conf" })
+public class RestApplicationConfiguration {
 
 }

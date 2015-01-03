@@ -8,6 +8,8 @@ import org.activiti.engine.identity.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ import com.workstream.core.model.Project;
 import com.workstream.core.model.UserX;
 
 @Service
+@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 @Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
 public class CoreFacadeService {
 	private final Logger log = LoggerFactory.getLogger(CoreFacadeService.class);
@@ -36,9 +39,14 @@ public class CoreFacadeService {
 
 	protected CoreFacadeService() {
 		final CoreFacadeService previous = INSTANCE.getAndSet(this);
-		if (previous != null)
-			throw new IllegalStateException("Second singleton " + this
-					+ " created after " + previous);
+		// if (previous != null)
+		// throw new IllegalStateException("Second singleton " + this
+		// + " created after " + previous);
+		if (previous != null) {
+			log.warn(
+					"Creating a second instance of CoreFacadeService: old: {} new: {}",
+					previous, this);
+		}
 	}
 
 	public static CoreFacadeService getInstance() {
