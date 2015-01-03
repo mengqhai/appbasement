@@ -59,6 +59,10 @@ public class TaskCapable {
 		return taskSer.createTaskQuery().taskId(taskId).singleResult();
 	}
 
+	public List<Task> getSubTasks(String parentTaskId) {
+		return taskSer.getSubTasks(parentTaskId);
+	}
+
 	public Task updateTask(String id, Map<String, ? extends Object> props) {
 		Task task = taskSer.createTaskQuery().taskId(id).singleResult();
 		if (task == null) {

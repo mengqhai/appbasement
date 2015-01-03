@@ -96,6 +96,23 @@ public class ProjectServiceTest {
 		Assert.assertNull(proDeleted);
 	}
 
+	@Test
+	public void testCreateSubTask() {
+		Project pro = proSer.createProject(org, "Project test subtask");
+		Task parent = proSer.createTask(pro.getId(), userId, "Task #1", null,
+				null, null, null);
+		Task sub = proSer.createTask(pro, userId, "Task #1", null, null, null,
+				null, parent.getId());
+
+		Task subSaved = proSer.getTask(sub.getId());
+		Assert.assertEquals(parent.getId(), subSaved.getParentTaskId());
+
+		proSer.deleteTask(parent);
+		subSaved = proSer.getTask(sub.getId());
+		// if the parent task is deleted sub task will also be deleted
+		Assert.assertNull(subSaved);
+	}
+
 	@Transactional(value = CoreConstants.TX_MANAGER, propagation = Propagation.REQUIRES_NEW)
 	@Test
 	public void testCreateTask() {

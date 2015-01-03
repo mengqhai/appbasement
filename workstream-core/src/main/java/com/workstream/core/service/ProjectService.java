@@ -99,7 +99,7 @@ public class ProjectService extends TaskCapable {
 
 	public Task createTask(Project pro, String creator, String name,
 			String description, Date dueDate, String assigneeId,
-			Integer priority) {
+			Integer priority, String parentId) {
 		pro = proDao.reattachIfNeeded(pro, pro.getId());
 		Task task = taskSer.newTask();
 		task.setTenantId(String.valueOf(pro.getOrg().getId()));
@@ -115,6 +115,9 @@ public class ProjectService extends TaskCapable {
 		if (priority != null) {
 			task.setPriority(priority);
 		}
+		if (parentId != null) {
+			task.setParentTaskId(parentId);
+		}
 		taskSer.saveTask(task);
 
 		// for owner and assignee, must invoke addUserIdentityLink
@@ -127,6 +130,13 @@ public class ProjectService extends TaskCapable {
 					IdentityLinkType.ASSIGNEE);
 		}
 		return task;
+	}
+
+	public Task createTask(Project pro, String creator, String name,
+			String description, Date dueDate, String assigneeId,
+			Integer priority) {
+		return createTask(pro, creator, name, description, dueDate, assigneeId,
+				priority, null);
 	}
 
 	protected TaskInfoQuery<? extends TaskInfoQuery<?, ?>, ? extends TaskInfo> prepairTaskInfoQuery(
