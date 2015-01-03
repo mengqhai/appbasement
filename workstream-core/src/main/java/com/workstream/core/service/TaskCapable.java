@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.FormService;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricTaskInstance;
@@ -30,6 +31,9 @@ public class TaskCapable {
 
 	@Autowired
 	protected HistoryService hiSer;
+
+	@Autowired
+	protected FormService formService;
 
 	/**
 	 * Doesn't care about org or project. (Process related tasks will also be
@@ -157,6 +161,10 @@ public class TaskCapable {
 	public List<HistoricTaskInstance> filterArchTaskByCreator(String creator) {
 		return hiSer.createHistoricTaskInstanceQuery().taskOwner(creator)
 				.finished().list();
+	}
+
+	public FormService getFormService() {
+		return formService;
 	}
 
 }
