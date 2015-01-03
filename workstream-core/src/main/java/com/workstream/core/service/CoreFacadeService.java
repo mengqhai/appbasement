@@ -39,13 +39,16 @@ public class CoreFacadeService {
 
 	protected CoreFacadeService() {
 		final CoreFacadeService previous = INSTANCE.getAndSet(this);
-		// if (previous != null)
-		// throw new IllegalStateException("Second singleton " + this
-		// + " created after " + previous);
 		if (previous != null) {
 			log.warn(
 					"Creating a second instance of CoreFacadeService: old: {} new: {}",
 					previous, this);
+			if (previous.getClass() == this.getClass()) {
+				// this constructor can also be called by the subclass, so only
+				// throw exception when the classes are exactly the same
+				throw new IllegalStateException("Second singleton " + this
+						+ " created after " + previous);
+			}
 		}
 	}
 
