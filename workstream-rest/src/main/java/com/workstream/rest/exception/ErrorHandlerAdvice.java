@@ -29,4 +29,12 @@ public class ErrorHandlerAdvice {
 		return r;
 	}
 
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(BadStateException.class)
+	@ResponseBody
+	public RestErrorResponse handleBadState(BadStateException e) {
+		RestErrorResponse r = new RestErrorResponse(400, e.getMessage());
+		return r;
+	}
+
 }

@@ -68,15 +68,8 @@ public class UserService {
 		deleteUserX(userId);
 	}
 
-	/**
-	 * Create both the User(Activiti) and the UserX
-	 * 
-	 * @param email
-	 * @param name
-	 * @param password
-	 */
-	public User createUser(String email, String name, String password) {
-		User user = idService.newUser(email);
+	public User createUser(String id, String email, String name, String password) {
+		User user = idService.newUser(id);
 		user.setEmail(email);
 		user.setFirstName(name);
 		user.setPassword(password);
@@ -84,10 +77,22 @@ public class UserService {
 		log.info("User created in Activiti: {}", user.getId());
 
 		UserX userX = new UserX();
-		userX.setUserId(email);
+		userX.setUserId(id);
 		userDao.persist(userX);
 		log.info("UserX created: {}", userX);
 		return user;
+	}
+
+	/**
+	 * Create both the User(Activiti) and the UserX, with an email address. The
+	 * email address is used as user id.
+	 * 
+	 * @param email
+	 * @param name
+	 * @param password
+	 */
+	public User createUser(String email, String name, String password) {
+		return createUser(email, email, name, password);
 	}
 
 	public User getUser(String userId) {

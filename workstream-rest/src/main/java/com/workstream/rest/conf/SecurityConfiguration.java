@@ -52,10 +52,14 @@ public class SecurityConfiguration {
 					.disable();
 			http.authorizeRequests()
 					.antMatchers(HttpMethod.POST,
-							RestConstants.REST_ROOT + "/users") // enable user
-																// reg to pass
-																// the security
-					.permitAll().anyRequest().authenticated().and();
+							RestConstants.REST_ROOT + "/users")
+					// enable user
+					// reg to pass
+					// the security
+					.permitAll()
+					.antMatchers(HttpMethod.GET,
+							RestConstants.REST_ROOT + "/captcha").permitAll()
+					.anyRequest().authenticated().and();
 			http.httpBasic();
 		}
 	}

@@ -53,6 +53,13 @@
       <version>3.2.3.RELEASE</version>
     </dependency>
     
+    <!-- Captcha -->
+    <dependency>
+	  <groupId>com.github.cage</groupId>
+	  <artifactId>cage</artifactId>
+	  <version>1.0</version>
+	</dependency>
+    
   </dependencies>
   <build>
     <finalName>workstream-rest</finalName>
