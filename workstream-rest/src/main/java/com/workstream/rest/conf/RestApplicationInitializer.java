@@ -1,9 +1,5 @@
 package com.workstream.rest.conf;
 
-import java.util.EnumSet;
-
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
@@ -13,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import com.workstream.rest.DispatcherServletConfiguration;
@@ -40,7 +35,7 @@ public class RestApplicationInitializer implements WebApplicationInitializer {
 		servletContext.addListener(new ContextLoaderListener(rootContext));
 
 		initSpring(servletContext, rootContext);
-		initSpringSecurity(servletContext);
+		//initSpringSecurity(servletContext);
 		log.info("Web application fully configured");
 	}
 
@@ -76,15 +71,15 @@ public class RestApplicationInitializer implements WebApplicationInitializer {
 	 * 
 	 * @param servletContext
 	 */
-	private void initSpringSecurity(ServletContext servletContext) {
-		log.debug("Registering Spring Security Filter");
-		FilterRegistration.Dynamic springSecurityFilter = servletContext
-				.addFilter("springSecurityFilterChain",
-						new DelegatingFilterProxy());
-		EnumSet<DispatcherType> disps = EnumSet.of(DispatcherType.REQUEST,
-				DispatcherType.FORWARD, DispatcherType.ASYNC);
-		springSecurityFilter.addMappingForUrlPatterns(disps, false, "/*");
-		springSecurityFilter.setAsyncSupported(true);
-	}
+//	private void initSpringSecurity(ServletContext servletContext) {
+//		log.debug("Registering Spring Security Filter");
+//		DelegatingFilterProxy proxy = new DelegatingFilterProxy();
+//		FilterRegistration.Dynamic springSecurityFilter = servletContext
+//				.addFilter("springSecurityFilterChain", proxy);
+//		EnumSet<DispatcherType> disps = EnumSet.of(DispatcherType.REQUEST,
+//				DispatcherType.FORWARD, DispatcherType.ASYNC);
+//		springSecurityFilter.addMappingForUrlPatterns(disps, false, "/*");
+//		springSecurityFilter.setAsyncSupported(true);
+//	}
 
 }

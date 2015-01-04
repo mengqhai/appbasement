@@ -60,6 +60,9 @@ public class UserController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
 	public UserResponse getUser(@PathVariable("id") String userIdBase64) {
+		log.info("Activiti user logged in: {}",
+				org.activiti.engine.impl.identity.Authentication
+						.getAuthenticatedUserId());
 		// the id field in the url must be encoded in base64
 		// browsers can natively encode/decode the id string btoa(idString)
 		// atob(stringToDecode)
