@@ -41,7 +41,9 @@ public class BasicAuthenticationProvider implements AuthenticationProvider {
 			}
 			uSer.login(userId);
 			log.info("User logged in: {}", userId);
-			log.info("UserX: {}", uSer.getUserX(userId));
+			if (log.isTraceEnabled()) {
+				log.trace("UserX: {}", uSer.getUserX(userId));
+			}
 			return new UsernamePasswordAuthenticationToken(userId, password,
 					grantedAuthorities);
 		} else {

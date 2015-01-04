@@ -26,7 +26,7 @@ import com.workstream.rest.model.UserRequest;
 import com.workstream.rest.model.UserResponse;
 
 @RestController
-@RequestMapping(value = RestConstants.REST_ROOT + "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
 
 	private final static Logger log = LoggerFactory

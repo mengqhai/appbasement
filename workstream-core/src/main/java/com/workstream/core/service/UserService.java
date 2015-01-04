@@ -95,6 +95,11 @@ public class UserService {
 		return createUser(email, email, name, password);
 	}
 
+	public boolean isUserIdUnique(String userId) {
+		long count = idService.createUserQuery().userId(userId).count();
+		return count == 0L;
+	}
+
 	public User getUser(String userId) {
 		return idService.createUserQuery().userId(userId).singleResult();
 	}

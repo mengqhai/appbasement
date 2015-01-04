@@ -17,7 +17,7 @@ import com.github.cage.YCage;
 import com.workstream.rest.RestConstants;
 
 @RestController
-@RequestMapping(value = RestConstants.REST_ROOT + "/captcha")
+@RequestMapping(value = "/captcha")
 public class CaptchaController {
 	private static final Logger log = LoggerFactory
 			.getLogger(CaptchaController.class);

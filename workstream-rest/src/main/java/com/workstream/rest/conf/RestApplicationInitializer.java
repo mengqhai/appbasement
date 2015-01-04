@@ -17,6 +17,7 @@ import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import com.workstream.rest.DispatcherServletConfiguration;
+import com.workstream.rest.RestConstants;
 
 /**
  * ' See http://docs.spring.io/autorepo/docs/spring/3.1.x/javadoc-api/org/
@@ -63,7 +64,7 @@ public class RestApplicationInitializer implements WebApplicationInitializer {
 		ServletRegistration.Dynamic dispatcherServlet = servletContext
 				.addServlet("dispatcher", new DispatcherServlet(
 						dispatcherServletConfiguration));
-		dispatcherServlet.addMapping("/*");
+		dispatcherServlet.addMapping(RestConstants.REST_ROOT + "/*");
 		dispatcherServlet.setLoadOnStartup(1);
 		dispatcherServlet.setAsyncSupported(true);
 		log.debug("Spring MVC Servlet registered");
