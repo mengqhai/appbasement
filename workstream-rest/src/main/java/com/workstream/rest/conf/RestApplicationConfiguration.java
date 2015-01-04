@@ -10,7 +10,7 @@ import org.springframework.context.annotation.PropertySources;
 		@PropertySource(value = "classpath:db.properties", ignoreResourceNotFound = true),
 		@PropertySource(value = "classpath:engine.properties", ignoreResourceNotFound = true) })
 @ComponentScan(basePackages = { "com.workstream.rest.conf",
-		"com.workstream.core.conf" })
+		"com.workstream.core.conf", "com.workstream.rest.exception" })
 public class RestApplicationConfiguration {
 
 }
