@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
+import com.workstream.core.exception.BeanPropertyException;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.UserX;
 import com.workstream.core.persistence.IOrganizationDAO;
@@ -48,7 +49,8 @@ public class OrganizationService {
 		return org;
 	}
 
-	public void updateOrg(Long id, Map<String, ? extends Object> props) {
+	public void updateOrg(Long id, Map<String, ? extends Object> props)
+			throws BeanPropertyException {
 		Organization org = orgDao.findById(id);
 		if (org == null) {
 			log.warn("Tring to update non-existing org: id={}", id);
@@ -57,7 +59,7 @@ public class OrganizationService {
 			BeanUtils.populate(org, props);
 		} catch (Exception e) {
 			log.error("Failed to populate the props to org: {}", props, e);
-			throw new RuntimeException(e);
+			throw new BeanPropertyException(e);
 		}
 		log.debug("Successfully update org: {}", org);
 	}

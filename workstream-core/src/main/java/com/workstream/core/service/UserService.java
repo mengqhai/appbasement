@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
+import com.workstream.core.exception.BeanPropertyException;
+import com.workstream.core.exception.DataBadStateException;
 import com.workstream.core.model.GroupX;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.UserX;
@@ -112,13 +114,14 @@ public class UserService {
 		idService.saveUser(user);
 	}
 
-	public void updateUser(String userId, Map<String, ? extends Object> props) {
+	public void updateUser(String userId, Map<String, ? extends Object> props)
+			throws BeanPropertyException {
 		User user = getUser(userId);
 		try {
 			BeanUtils.populate(user, props);
 		} catch (Exception e) {
 			log.error("Failed to populate the props to user: {}", props, e);
-			throw new RuntimeException(e);
+			throw new BeanPropertyException(e);
 		}
 		saveUser(user);
 	}
@@ -261,7 +264,8 @@ public class UserService {
 		if (!belongsToGroupOrg) {
 			log.error("User {} doesn't belong to group's org. {}", userX,
 					groupX.getId());
-			throw new RuntimeException("Unable to add user to group.");
+			throw new DataBadStateException(
+					"Unable to add user to group.  User doesn't belong to group's org");
 		}
 		idService.createMembership(userX.getUserId(), groupX.getGroupId());
 	}

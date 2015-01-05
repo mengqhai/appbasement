@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
+import com.workstream.core.exception.DataBadStateException;
 import com.workstream.core.model.GroupX;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.Project;
@@ -70,7 +71,8 @@ public class CoreFacadeService {
 		return org;
 	}
 
-	public Group getOrgAdminGroup(Organization org) {
+	public Group getOrgAdminGroup(Organization org)
+			throws DataBadStateException {
 		List<Group> groups = uSer.filterGroup(org);
 		for (Group group : groups) {
 			if ("Admin".equals(group.getName())) {
@@ -78,7 +80,7 @@ public class CoreFacadeService {
 			}
 		}
 		log.error("Org {} has no admin group!", org.getIdentifier());
-		throw new RuntimeException("Org {} has no admin group!"
+		throw new DataBadStateException("Org {} has no admin group!"
 				+ org.getIdentifier());
 	}
 

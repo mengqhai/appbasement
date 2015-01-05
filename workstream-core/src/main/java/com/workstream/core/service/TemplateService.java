@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
+import com.workstream.core.exception.DataPersistException;
 import com.workstream.core.model.Revision;
 import com.workstream.core.persistence.IRevisionDAO;
 import com.workstream.core.service.cmd.DeleteEditorSourceWithExtraForModelCmd;
@@ -161,7 +162,8 @@ public class TemplateService {
 	 * 
 	 * @return
 	 */
-	public Model saveToModel(Long orgId, WorkflowDefinition flow) {
+	public Model saveToModel(Long orgId, WorkflowDefinition flow)
+			throws DataPersistException {
 		WorkflowDefinitionConversion con = conFactory
 				.createWorkflowDefinitionConversion(flow);
 		con.convert();
@@ -194,7 +196,7 @@ public class TemplateService {
 			addRevision(model.getId(), null, Revision.TYPE_CREATE);
 		} catch (Exception e) {
 			log.error("Failed to save model source and extra.", e);
-			throw new RuntimeException(
+			throw new DataPersistException(
 					"Failed to save model source and extra.", e);
 		}
 
@@ -240,7 +242,8 @@ public class TemplateService {
 	 * @return
 	 */
 	public Model updateModel(Long orgId, String modelId,
-			WorkflowDefinition flow, String comment) {
+			WorkflowDefinition flow, String comment)
+			throws DataPersistException {
 		WorkflowDefinitionConversion con = conFactory
 				.createWorkflowDefinitionConversion(flow);
 		con.convert();
@@ -278,7 +281,7 @@ public class TemplateService {
 
 		} catch (Exception e) {
 			log.error("Failed to save model source and extra.", e);
-			throw new RuntimeException(
+			throw new DataPersistException(
 					"Failed to save model source and extra.", e);
 		}
 		addRevision(model.getId(), comment, Revision.ACTION_EDIT);

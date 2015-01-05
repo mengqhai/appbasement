@@ -28,6 +28,8 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.workstream.core.exception.ConfigurationException;
+
 @Configuration
 public class ActivitiEngineConfiguration {
 
@@ -107,7 +109,7 @@ public class ActivitiEngineConfiguration {
 			return processEngineFactoryBean().getObject();
 		} catch (Exception e) {
 			log.error("Failed create process engine.", e);
-			throw new RuntimeException(e);
+			throw new ConfigurationException(e);
 		}
 	}
 

@@ -1,6 +1,8 @@
 package com.workstream.rest.exception;
 
-public class RestException extends RuntimeException {
+import com.workstream.core.exception.WorkStreamException;
+
+public class RestException extends WorkStreamException {
 
 	/**
 	 * 

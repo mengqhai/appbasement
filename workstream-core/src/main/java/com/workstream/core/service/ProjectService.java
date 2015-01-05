@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
+import com.workstream.core.exception.BeanPropertyException;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.Project;
 import com.workstream.core.persistence.IOrganizationDAO;
@@ -67,7 +68,8 @@ public class ProjectService extends TaskCapable {
 		return proDao.findById(id);
 	}
 
-	public void updateProject(Long id, Map<String, ? extends Object> props) {
+	public void updateProject(Long id, Map<String, ? extends Object> props)
+			throws BeanPropertyException {
 		Project pro = proDao.findById(id);
 		if (pro == null) {
 			log.warn("Trying to update non-existing project id={} with {} ",
@@ -77,7 +79,7 @@ public class ProjectService extends TaskCapable {
 			BeanUtils.populate(pro, props);
 		} catch (Exception e) {
 			log.error("Failed to populate the props to project: {}", props, e);
-			throw new RuntimeException(e);
+			throw new BeanPropertyException(e);
 		}
 	}
 

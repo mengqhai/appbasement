@@ -1,6 +1,6 @@
-package com.workstream.rest.exception;
+package com.workstream.core.exception;
 
-public class BadArgumentException extends RestException {
+public class BadArgumentException extends WorkStreamException {
 
 	/**
 	 * 

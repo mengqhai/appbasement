@@ -20,6 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.workstream.core.exception.AuthenticationNotSetException;
+import com.workstream.core.exception.BeanPropertyException;
+
 public class TaskCapable {
 
 	protected final Logger log = LoggerFactory.getLogger(TaskCapable.class);
@@ -77,7 +80,7 @@ public class TaskCapable {
 			BeanUtils.populate(task, props);
 		} catch (Exception e) {
 			log.error("Failed to populate the props to task: {}", props, e);
-			throw new RuntimeException(e);
+			throw new BeanPropertyException(e);
 		}
 		taskSer.saveTask(task);
 		// see org.activiti.engine.task.Event
@@ -114,7 +117,7 @@ public class TaskCapable {
 
 	public Comment addTaskComment(String taskId, String message) {
 		if (Authentication.getAuthenticatedUserId() == null) {
-			throw new RuntimeException(
+			throw new AuthenticationNotSetException(
 					"No authenticated user, no comments can be made.");
 		}
 

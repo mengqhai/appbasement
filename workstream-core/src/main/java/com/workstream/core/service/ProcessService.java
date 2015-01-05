@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
+import com.workstream.core.exception.AuthenticationNotSetException;
 
 /**
  * A service related with process instances.
@@ -44,9 +45,10 @@ public class ProcessService extends TaskCapable {
 	 * 
 	 * @return
 	 */
-	public ProcessInstance startProcess(String processDefinitionId) {
+	public ProcessInstance startProcess(String processDefinitionId)
+			throws AuthenticationNotSetException {
 		if (Authentication.getAuthenticatedUserId() == null) {
-			throw new RuntimeException(
+			throw new AuthenticationNotSetException(
 					"No authenticated user, no process can be started.");
 		}
 		ProcessInstance p = ruSer.startProcessInstanceById(processDefinitionId);
@@ -56,9 +58,9 @@ public class ProcessService extends TaskCapable {
 	}
 
 	public ProcessInstance startProcess(String processDefinitionId,
-			Map<String, Object> vars) {
+			Map<String, Object> vars) throws AuthenticationNotSetException {
 		if (Authentication.getAuthenticatedUserId() == null) {
-			throw new RuntimeException(
+			throw new AuthenticationNotSetException(
 					"No authenticated user, no process can be started.");
 		}
 		ProcessInstance p = ruSer.startProcessInstanceById(processDefinitionId,
