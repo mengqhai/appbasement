@@ -30,12 +30,21 @@ public class RestApplicationInitializer implements WebApplicationInitializer {
 		log.info("Configuring Spring root application context");
 		AnnotationConfigWebApplicationContext rootContext;
 		rootContext = new AnnotationConfigWebApplicationContext();
+		rootContext.setServletContext(servletContext);
+		// see
+		// http://stackoverflow.com/questions/25878554/spring-javaconfig-configuration-exception-a-servletcontext-is-required-to-conf
 		rootContext.register(RestApplicationConfiguration.class);
 		rootContext.refresh();
 		servletContext.addListener(new ContextLoaderListener(rootContext));
 
 		initSpring(servletContext, rootContext);
-		//initSpringSecurity(servletContext);
+		// After this line:
+		// The context hierarchy is like:
+		// root -- RestApplicationConfiguration
+		//  |_  child DispatcherServletConfiguration
+		//
+		
+		// initSpringSecurity(servletContext);
 		log.info("Web application fully configured");
 	}
 
@@ -48,17 +57,17 @@ public class RestApplicationInitializer implements WebApplicationInitializer {
 			ServletContext servletContext,
 			AnnotationConfigWebApplicationContext rootContext) {
 		log.debug("Configuring Spring Web application context");
-		AnnotationConfigWebApplicationContext dispatcherServletConfiguration = new AnnotationConfigWebApplicationContext();
-		dispatcherServletConfiguration.setParent(rootContext);
-		dispatcherServletConfiguration
-				.register(DispatcherServletConfiguration.class);
+		AnnotationConfigWebApplicationContext dispatcherContext = new AnnotationConfigWebApplicationContext();
+		dispatcherContext.setParent(rootContext);
+		dispatcherContext.register(DispatcherServletConfiguration.class);
 
 		log.debug("Registering Spring MVC Servlet");
 		// see
 		// http://www.rockhoppertech.com/blog/spring-mvc-configuration-without-xml/
+		// http://www.oschina.net/question/214338_125228
 		ServletRegistration.Dynamic dispatcherServlet = servletContext
 				.addServlet("dispatcher", new DispatcherServlet(
-						dispatcherServletConfiguration));
+						dispatcherContext));
 		dispatcherServlet.addMapping(RestConstants.REST_ROOT + "/*");
 		dispatcherServlet.setLoadOnStartup(1);
 		dispatcherServlet.setAsyncSupported(true);
@@ -71,15 +80,15 @@ public class RestApplicationInitializer implements WebApplicationInitializer {
 	 * 
 	 * @param servletContext
 	 */
-//	private void initSpringSecurity(ServletContext servletContext) {
-//		log.debug("Registering Spring Security Filter");
-//		DelegatingFilterProxy proxy = new DelegatingFilterProxy();
-//		FilterRegistration.Dynamic springSecurityFilter = servletContext
-//				.addFilter("springSecurityFilterChain", proxy);
-//		EnumSet<DispatcherType> disps = EnumSet.of(DispatcherType.REQUEST,
-//				DispatcherType.FORWARD, DispatcherType.ASYNC);
-//		springSecurityFilter.addMappingForUrlPatterns(disps, false, "/*");
-//		springSecurityFilter.setAsyncSupported(true);
-//	}
+	// private void initSpringSecurity(ServletContext servletContext) {
+	// log.debug("Registering Spring Security Filter");
+	// DelegatingFilterProxy proxy = new DelegatingFilterProxy();
+	// FilterRegistration.Dynamic springSecurityFilter = servletContext
+	// .addFilter("springSecurityFilterChain", proxy);
+	// EnumSet<DispatcherType> disps = EnumSet.of(DispatcherType.REQUEST,
+	// DispatcherType.FORWARD, DispatcherType.ASYNC);
+	// springSecurityFilter.addMappingForUrlPatterns(disps, false, "/*");
+	// springSecurityFilter.setAsyncSupported(true);
+	// }
 
 }

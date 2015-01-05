@@ -70,7 +70,8 @@ public class SecurityConfiguration {
 							RestConstants.REST_ROOT + "/captcha").permitAll()
 					.antMatchers(RestConstants.REST_ROOT + "/login")
 					.permitAll().antMatchers("/logout").permitAll()
-					.anyRequest().authenticated().and();
+					.antMatchers(RestConstants.REST_ROOT + "/api-docs/**")
+					.permitAll().anyRequest().authenticated().and();
 			http.httpBasic();
 			http.logout().logoutUrl("/logout")
 					.logoutSuccessHandler(noRedirectLogoutSuccessHandler);
