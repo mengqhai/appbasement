@@ -11,6 +11,8 @@ public class LoginResponse {
 	private String failReason;
 
 	private UserResponse user;
+	
+	private String apiToken;
 
 	public boolean isSuccess() {
 		return success;
@@ -36,4 +38,11 @@ public class LoginResponse {
 		this.user = user;
 	}
 
+	public String getApiToken() {
+		return apiToken;
+	}
+
+	public void setApiToken(String apiToken) {
+		this.apiToken = apiToken;
+	}
 }

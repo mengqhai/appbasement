@@ -7,19 +7,29 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.context.HttpRequestResponseHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.util.DigestUtils;
+import org.springframework.security.web.context.SaveContextOnUpdateOrErrorResponseWrapper;
+
+import com.workstream.core.exception.ConfigurationException;
+import com.workstream.rest.RestConstants;
 
 public class RestTokenSecurityContextRepository extends
 		HttpSessionSecurityContextRepository {
+	private static final Logger log = LoggerFactory
+			.getLogger(RestTokenSecurityContextRepository.class);
+
 	CacheManager cacheMgmt = CacheManager.getInstance();
 
 	protected Cache getCache() {
 		Cache c = cacheMgmt.getCache(SPRING_SECURITY_CONTEXT_KEY);
 		if (c == null) {
-			// TODO create the cache
+			throw new ConfigurationException("Unable to find cache named "
+					+ SPRING_SECURITY_CONTEXT_KEY + ", check you ehcache.xml");
 		}
 		return c;
 	}
@@ -44,11 +54,32 @@ public class RestTokenSecurityContextRepository extends
 	@Override
 	public void saveContext(SecurityContext context,
 			HttpServletRequest request, HttpServletResponse response) {
-		super.saveContext(context, request, response);
-		String token = generateRestToken(context.getAuthentication().getName());
-		this.getCache().put(new Element(token, context));
+		if (response instanceof SaveContextOnUpdateOrErrorResponseWrapper) {
+			super.saveContext(context, request, response);
+		}
 
-		response.addHeader("API_TOKEN", token);
+		if (!(context.getAuthentication() instanceof AnonymousAuthenticationToken)) {
+			String token = response.getHeader(RestConstants.API_KEY);
+			// the response is somehow read-only at this stage
+			// so someone must generated the api_key and put it in the response
+			// header
+			if (token == null) {
+				String reqToken = getRestToken(request);
+				if (reqToken != null) {
+					return; // already saved in cache so don't do it again
+				}
+
+				log.error("No token is set in the response header {}",
+						RestConstants.API_KEY);
+				throw new ConfigurationException(
+						"No token is set in the response header "
+								+ RestConstants.API_KEY);
+			}
+			if (!this.getCache().isKeyInCache(token)) {
+				log.info("Saved security context for token {} ", token);
+				this.getCache().put(new Element(token, context));
+			}
+		}
 	}
 
 	@Override
@@ -62,13 +93,7 @@ public class RestTokenSecurityContextRepository extends
 	}
 
 	public String getRestToken(HttpServletRequest request) {
-		return (String) request.getAttribute("api_key");
-	}
-
-	public String generateRestToken(String authName) {
-		String org = authName + System.currentTimeMillis();
-		String token = DigestUtils.md5DigestAsHex(org.getBytes());
-		return token;
+		return (String) request.getParameter(RestConstants.API_KEY);
 	}
 
 }
