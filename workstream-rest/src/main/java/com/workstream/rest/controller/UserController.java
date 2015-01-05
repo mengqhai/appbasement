@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.service.UserService;
 import com.workstream.rest.RestConstants;
@@ -36,10 +38,12 @@ public class UserController {
 	@Autowired
 	private UserService uSer;
 
+	@ApiOperation(value = "Create a user, e.g. user registration")
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public UserResponse createUser(@RequestBody UserRequest uReq,
-			@RequestParam String captcha, HttpSession session) {
+	public UserResponse createUser(
+			@ApiParam(required = true) @RequestBody UserRequest uReq,
+			@RequestParam String captcha, @ApiIgnore HttpSession session) {
 		if (captcha == null || captcha.equals("")) {
 			throw new BadArgumentException("No captcha");
 		}
