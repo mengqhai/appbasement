@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.servlet.configuration.
 
 import com.workstream.rest.RestConstants;
 import com.workstream.rest.security.BasicAuthenticationProvider;
+import com.workstream.rest.security.CORS403ForbiddenEntryPoint;
 import com.workstream.rest.security.NoRedirectLogoutSuccessHandler;
 
 /**
@@ -54,6 +55,11 @@ public class SecurityConfiguration {
 
 		@Autowired
 		NoRedirectLogoutSuccessHandler noRedirectLogoutSuccessHandler;
+		
+		@Bean
+		public CORS403ForbiddenEntryPoint cors403ForbiddenEntryPoint() {
+			return new CORS403ForbiddenEntryPoint();
+		}
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
@@ -72,7 +78,7 @@ public class SecurityConfiguration {
 					.permitAll().antMatchers("/logout").permitAll()
 					.antMatchers(RestConstants.REST_ROOT + "/api-docs/**")
 					.permitAll().anyRequest().authenticated().and();
-			http.httpBasic();
+			http.httpBasic().authenticationEntryPoint(cors403ForbiddenEntryPoint());
 			http.logout().logoutUrl("/logout")
 					.logoutSuccessHandler(noRedirectLogoutSuccessHandler);
 		}
