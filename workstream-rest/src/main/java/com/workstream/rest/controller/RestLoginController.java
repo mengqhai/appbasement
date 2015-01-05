@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wordnik.swagger.annotations.ApiOperation;
 import com.workstream.core.service.UserService;
 import com.workstream.rest.RestConstants;
 import com.workstream.rest.model.LoginRequest;
@@ -40,6 +41,10 @@ public class RestLoginController {
 		return token;
 	}
 
+	@ApiOperation(value = "A login operation, this operation will generate an api_token that the client can further use.", notes = "Try login the test user: <br/>"
+			+ "{ <br/>"
+			+ "\"password\": \"passw0rd\",<br/>"
+			+ "\"userId\": \"mqhnow1@sina.com\"<br/>" + "}")
 	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public LoginResponse login(@RequestBody LoginRequest req,
 			HttpServletResponse httpResponse) {

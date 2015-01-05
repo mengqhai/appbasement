@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wordnik.swagger.annotations.ApiOperation;
 import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.service.UserService;
 import com.workstream.rest.RestConstants;
@@ -58,6 +59,8 @@ public class UserController {
 		return resp;
 	}
 
+	@ApiOperation(value = "Get the user object for the given user id (base64 encoded)", notes = "test user id: <br/> mqhnow1@sina.com: <b>bXFobm93MUBzaW5hLmNvbQ==</b> "
+			+ "<br/>projectTester@sina.com:<b>cHJvamVjdFRlc3RlckBzaW5hLmNvbQ==</b>")
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
 	public UserResponse getUser(@PathVariable("id") String userIdBase64) {
 		log.info("Activiti user logged in: {}",
