@@ -15,6 +15,7 @@ import com.workstream.rest.RestConstants;
 import com.workstream.rest.security.BasicAuthenticationProvider;
 import com.workstream.rest.security.CORS403ForbiddenEntryPoint;
 import com.workstream.rest.security.NoRedirectLogoutSuccessHandler;
+import com.workstream.rest.security.RestTokenSecurityContextRepository;
 
 /**
  * See
@@ -55,10 +56,15 @@ public class SecurityConfiguration {
 
 		@Autowired
 		NoRedirectLogoutSuccessHandler noRedirectLogoutSuccessHandler;
-		
+
 		@Bean
 		public CORS403ForbiddenEntryPoint cors403ForbiddenEntryPoint() {
 			return new CORS403ForbiddenEntryPoint();
+		}
+
+		@Bean
+		public RestTokenSecurityContextRepository restTokenSecurityContextRepository() {
+			return new RestTokenSecurityContextRepository();
 		}
 
 		@Override
@@ -78,9 +84,12 @@ public class SecurityConfiguration {
 					.permitAll().antMatchers("/logout").permitAll()
 					.antMatchers(RestConstants.REST_ROOT + "/api-docs/**")
 					.permitAll().anyRequest().authenticated().and();
-			http.httpBasic().authenticationEntryPoint(cors403ForbiddenEntryPoint());
+			http.httpBasic().authenticationEntryPoint(
+					cors403ForbiddenEntryPoint());
 			http.logout().logoutUrl("/logout")
 					.logoutSuccessHandler(noRedirectLogoutSuccessHandler);
+			http.securityContext().securityContextRepository(
+					restTokenSecurityContextRepository());
 		}
 
 	}
