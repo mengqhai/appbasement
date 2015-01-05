@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mangofactory.swagger.annotations.ApiIgnore;
+import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.BadArgumentException;
@@ -28,6 +29,7 @@ import com.workstream.rest.exception.ResourceNotFoundException;
 import com.workstream.rest.model.UserRequest;
 import com.workstream.rest.model.UserResponse;
 
+@Api(value = "User", position = 2)
 @RestController
 @RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {

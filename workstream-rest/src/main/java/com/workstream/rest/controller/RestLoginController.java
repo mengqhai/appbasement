@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.workstream.core.service.UserService;
 import com.workstream.rest.RestConstants;
@@ -21,6 +22,7 @@ import com.workstream.rest.model.LoginRequest;
 import com.workstream.rest.model.LoginResponse;
 import com.workstream.rest.model.UserResponse;
 
+@Api(value = "Login", description = "Login endpoint", position = 1)
 @RestController
 public class RestLoginController {
 

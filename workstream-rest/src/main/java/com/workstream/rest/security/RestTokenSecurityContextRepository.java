@@ -58,7 +58,8 @@ public class RestTokenSecurityContextRepository extends
 			super.saveContext(context, request, response);
 		}
 
-		if (!(context.getAuthentication() instanceof AnonymousAuthenticationToken)) {
+		if (context.getAuthentication() != null
+				&& !(context.getAuthentication() instanceof AnonymousAuthenticationToken)) {
 			String token = response.getHeader(RestConstants.API_KEY);
 			// the response is somehow read-only at this stage
 			// so someone must generated the api_key and put it in the response
@@ -69,13 +70,13 @@ public class RestTokenSecurityContextRepository extends
 					return; // already saved in cache so don't do it again
 				}
 
-				log.error("No token is set in the response header {}",
+				log.warn("No token is set in the response header {}",
 						RestConstants.API_KEY);
-				throw new ConfigurationException(
-						"No token is set in the response header "
-								+ RestConstants.API_KEY);
+				// throw new ConfigurationException(
+				// "No token is set in the response header "
+				// + RestConstants.API_KEY);
 			}
-			if (!this.getCache().isKeyInCache(token)) {
+			if (token != null && !this.getCache().isKeyInCache(token)) {
 				log.info("Saved security context for token {} ", token);
 				this.getCache().put(new Element(token, context));
 			}

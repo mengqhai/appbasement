@@ -14,8 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.cage.Cage;
 import com.github.cage.YCage;
+import com.mangofactory.swagger.annotations.ApiIgnore;
+import com.wordnik.swagger.annotations.Api;
 import com.workstream.rest.RestConstants;
 
+@Api(value = "Captcha", description = "Captcha image service", position=3)
 @RestController
 @RequestMapping(value = "/captcha")
 public class CaptchaController {
@@ -25,7 +28,7 @@ public class CaptchaController {
 	private final Cage cage = new YCage();
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
-	public byte[] getCaptcha(HttpSession session) {
+	public byte[] getCaptcha(@ApiIgnore HttpSession session) {
 		String token = cage.getTokenGenerator().next();
 		session.setAttribute(RestConstants.CAPTCHA_TOKEN, token);
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
