@@ -29,7 +29,7 @@ import com.workstream.rest.exception.ResourceNotFoundException;
 import com.workstream.rest.model.UserRequest;
 import com.workstream.rest.model.UserResponse;
 
-@Api(value = "User", position = 2)
+@Api(value = "/users", description = "User related operations", position = 2)
 @RestController
 @RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {

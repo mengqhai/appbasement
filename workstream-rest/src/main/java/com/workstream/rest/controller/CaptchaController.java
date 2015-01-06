@@ -18,7 +18,7 @@ import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.Api;
 import com.workstream.rest.RestConstants;
 
-@Api(value = "Captcha", description = "Captcha image service", position=3)
+@Api(value = "/captcha", description = "Captcha image service", position=3)
 @RestController
 @RequestMapping(value = "/captcha")
 public class CaptchaController {

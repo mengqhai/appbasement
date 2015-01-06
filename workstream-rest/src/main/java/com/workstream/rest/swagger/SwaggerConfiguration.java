@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.mangofactory.swagger.configuration.SpringSwaggerConfig;
+import com.mangofactory.swagger.models.dto.ApiInfo;
 import com.mangofactory.swagger.paths.SwaggerPathProvider;
 import com.mangofactory.swagger.plugin.EnableSwagger;
 import com.mangofactory.swagger.plugin.SwaggerSpringMvcPlugin;
@@ -33,6 +34,8 @@ public class SwaggerConfiguration {
 	// Don't forget the @Bean annotation
 	public SwaggerSpringMvcPlugin customImplementation() {
 		return new SwaggerSpringMvcPlugin(this.springSwaggerConfig)
-				.pathProvider(swaggerPathProvider());
+				.pathProvider(swaggerPathProvider()).apiInfo(
+						new ApiInfo("Work Stream REST API", "", "",
+								"mengqhai@gmail.com", "", ""));
 	}
 }

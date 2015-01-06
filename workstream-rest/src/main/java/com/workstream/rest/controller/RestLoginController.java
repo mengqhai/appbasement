@@ -22,7 +22,7 @@ import com.workstream.rest.model.LoginRequest;
 import com.workstream.rest.model.LoginResponse;
 import com.workstream.rest.model.UserResponse;
 
-@Api(value = "Login", description = "Login endpoint", position = 1)
+@Api(value = "/login", description = "Login endpoint", position = 1)
 @RestController
 public class RestLoginController {
 
