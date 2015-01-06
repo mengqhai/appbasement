@@ -83,7 +83,8 @@ public class SecurityConfiguration {
 					.antMatchers(RestConstants.REST_ROOT + "/login")
 					.permitAll().antMatchers("/logout").permitAll()
 					.antMatchers(RestConstants.REST_ROOT + "/api-docs/**")
-					.permitAll().anyRequest().authenticated().and();
+					.permitAll().antMatchers("/swagger/**").permitAll()
+					.anyRequest().authenticated().and();
 			http.httpBasic().authenticationEntryPoint(
 					cors403ForbiddenEntryPoint());
 			http.logout().logoutUrl("/logout")
