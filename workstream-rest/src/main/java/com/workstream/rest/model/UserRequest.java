@@ -1,9 +1,8 @@
 package com.workstream.rest.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-public class UserRequest {
+public class UserRequest extends MapPropObj {
 
 	public static final String PASSWORD = "password";
 
@@ -15,13 +14,7 @@ public class UserRequest {
 
 	public static final String ID = "id";
 
-	private Map<String, Object> props = new HashMap<String, Object>();
-
-	@SuppressWarnings("unchecked")
-	protected <T> T getProp(String key) {
-		return (T) props.get(key);
-	}
-
+	@ApiModelProperty(required = true)
 	public void setId(String userId) {
 		props.put(ID, userId);
 	}

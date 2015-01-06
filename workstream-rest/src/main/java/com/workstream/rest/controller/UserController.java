@@ -40,7 +40,13 @@ public class UserController {
 	@Autowired
 	private UserService uSer;
 
-	@ApiOperation(value = "Create a user, e.g. user registration")
+	@ApiOperation(value = "Create a user, e.g. user registration", notes = "In the request body, the following fields are required:<br/>"
+			+ "<ul><li>*id -- the user id for the created user, doesn't have to be the email.</li>"
+			+ "<li>*firstName -- the first name of the user, and will be used as the display label of the user</li>"
+			+ "<li>*email -- the email address of the user</li>"
+			+ "<li>*password -- the password of the accoutn</li>"
+			+ "</ul><br/>"
+			+ " And remember to access the captcha image before invoke this operation.")
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public UserResponse createUser(
@@ -65,8 +71,10 @@ public class UserController {
 		return resp;
 	}
 
-	@ApiOperation(value = "Get the user object for the given user id (base64 encoded)", notes = "test user id: <br/> mqhnow1@sina.com: <b>bXFobm93MUBzaW5hLmNvbQ==</b> "
-			+ "<br/>projectTester@sina.com:<b>cHJvamVjdFRlc3RlckBzaW5hLmNvbQ==</b>")
+	@ApiOperation(value = "Get the user object for the given user id (base64 encoded)", notes = "test user id: <br/> "
+			+ "<ul><li>mqhnow1@sina.com: <b>bXFobm93MUBzaW5hLmNvbQ==</b></li> "
+			+ "<li>projectTester@sina.com:<b>cHJvamVjdFRlc3RlckBzaW5hLmNvbQ==</b></li>"
+			+ "</ul>")
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
 	public UserResponse getUser(@PathVariable("id") String userIdBase64) {
 		log.info("Activiti user logged in: {}",

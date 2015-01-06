@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.activiti.engine.identity.Group;
+import org.activiti.engine.impl.identity.Authentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,6 +122,15 @@ public class CoreFacadeService {
 
 		// do users needs to leave the org? No, the relationship between org and
 		// user is deleted by cascading
+	}
+
+	public String getAuthUserId() {
+		return Authentication.getAuthenticatedUserId();
+	}
+
+	public UserX getAuthUserX() {
+		String userId = getAuthUserId();
+		return uSer.getUserX(userId);
 	}
 
 	public OrganizationService getOrgService() {

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
 public class RestErrorResponse {
-	private int code;
+	private int errorCode;
 	private String message;
 	private String developerMessage;
 	private String moreInfoUrl;
@@ -14,25 +14,25 @@ public class RestErrorResponse {
 	}
 
 	public RestErrorResponse(int code, String message) {
-		this.code = code;
+		this.errorCode = code;
 		this.message = message;
 	}
 
 	public RestErrorResponse(int code, String message, String developerMessage,
 			String moreInfoUrl) {
 		super();
-		this.code = code;
+		this.errorCode = code;
 		this.message = message;
 		this.developerMessage = developerMessage;
 		this.moreInfoUrl = moreInfoUrl;
 	}
 
-	public int getCode() {
-		return code;
+	public int getErrorCode() {
+		return errorCode;
 	}
 
-	public void setCode(int code) {
-		this.code = code;
+	public void setErrorCode(int code) {
+		this.errorCode = code;
 	}
 
 	public String getMessage() {

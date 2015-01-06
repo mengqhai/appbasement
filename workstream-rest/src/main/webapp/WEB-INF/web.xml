@@ -32,4 +32,10 @@
 		<filter-name>corsFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	
+	<!-- Shut down the ehcache manager -->
+	<!-- See http://ehcache.org/documentation/2.8/operations/shutdown -->
+	<listener>
+	  <listener-class>net.sf.ehcache.constructs.web.ShutdownListener</listener-class>
+	</listener>
 </web-app>
