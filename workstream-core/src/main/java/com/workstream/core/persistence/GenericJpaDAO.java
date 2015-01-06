@@ -192,6 +192,15 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 		return filterFor(attributes, first, max, "id");
 	}
 
+	/**
+	 * order by id desc
+	 * 
+	 * @param attributes
+	 * @param first
+	 * @param max
+	 * @param descBy
+	 * @return
+	 */
 	protected Collection<T> filterFor(
 			Map<String, ? extends Serializable> attributes, int first, int max,
 			String descBy) {
@@ -259,7 +268,7 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 
 	/**
 	 * Filter all the entities with a collection field that contains a given
-	 * value object
+	 * value object, order by id desc
 	 * 
 	 * @param collectionName
 	 * @param elementValue
@@ -278,10 +287,17 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 			Predicate isMember = cb.isMember(elementValue, collection);
 			c.where(isMember);
 		}
-		c.select(all);
+		c.select(all).orderBy(cb.desc(all.get("id")));
 		return em.createQuery(c).getResultList();
 	}
 
+	/**
+	 * order by id desc
+	 * 
+	 * @param attributeName
+	 * @param attributeValue
+	 * @return
+	 */
 	protected T findFor(String attributeName, Serializable attributeValue) {
 		Class<T> getClass = persistentClass;
 		CriteriaBuilder cb = getEm().getCriteriaBuilder();
@@ -292,7 +308,7 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 					attributeValue);
 			c.where(ex);
 		}
-		c.select(all);
+		c.select(all).orderBy(cb.desc(all.get("id")));
 		try {
 			return em.createQuery(c).getSingleResult();
 		} catch (NoResultException e) {

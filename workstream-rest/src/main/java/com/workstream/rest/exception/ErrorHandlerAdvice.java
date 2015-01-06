@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.exception.BadArgumentException;
 import com.workstream.rest.model.RestErrorResponse;
 
@@ -35,6 +36,16 @@ public class ErrorHandlerAdvice {
 	@ResponseBody
 	public RestErrorResponse handleBadState(BadStateException e) {
 		RestErrorResponse r = new RestErrorResponse(400, e.getMessage());
+		return r;
+	}
+
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ExceptionHandler(AuthenticationNotSetException.class)
+	@ResponseBody
+	public RestErrorResponse handleAuthenticateNotSet(
+			AuthenticationNotSetException e) {
+		RestErrorResponse r = new RestErrorResponse(403,
+				"You are not authenticated, please login first.");
 		return r;
 	}
 

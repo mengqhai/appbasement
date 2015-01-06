@@ -12,6 +12,10 @@ public class OrgResponse {
 		super();
 		this.org = org;
 	}
+	
+	public Long getId() {
+		return org.getId();
+	}
 
 	public String getName() {
 		return org.getName();

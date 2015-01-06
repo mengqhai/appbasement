@@ -22,7 +22,7 @@ import com.workstream.rest.model.LoginRequest;
 import com.workstream.rest.model.LoginResponse;
 import com.workstream.rest.model.UserResponse;
 
-@Api(value = "/login", description = "Login endpoint", position = 1)
+@Api(value = "login", description = "Login endpoint", position = 1)
 @RestController
 public class RestLoginController {
 
@@ -43,10 +43,10 @@ public class RestLoginController {
 		return token;
 	}
 
-	@ApiOperation(value = "A login operation, this operation will generate an api_token that the client can further use.", notes = "Try login the test user: <br/>"
-			+ "{ <br/>"
+	@ApiOperation(value = "A login operation, this operation will generate an api_token that the client can further use.", notes = "Try login the test user: <br/><br/>"
+			+ "<b>{ <br/>"
 			+ "\"password\": \"passw0rd\",<br/>"
-			+ "\"userId\": \"mqhnow1@sina.com\"<br/>" + "}")
+			+ "\"userId\": \"mqhnow1@sina.com\"<br/>" + "}</b>")
 	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public LoginResponse login(@RequestBody LoginRequest req,
 			HttpServletResponse httpResponse) {

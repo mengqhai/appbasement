@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
+import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.exception.DataBadStateException;
 import com.workstream.core.model.GroupX;
 import com.workstream.core.model.Organization;
@@ -124,11 +125,29 @@ public class CoreFacadeService {
 		// user is deleted by cascading
 	}
 
-	public String getAuthUserId() {
-		return Authentication.getAuthenticatedUserId();
+	/**
+	 * If the activiti authenticatedUserId is not set, throws the
+	 * AuthenticationNotSetException exception.
+	 * 
+	 * @return
+	 * @throws AuthenticationNotSetException
+	 */
+	public String getAuthUserId() throws AuthenticationNotSetException {
+		String userId = Authentication.getAuthenticatedUserId();
+		if (userId == null) {
+			throw new AuthenticationNotSetException();
+		}
+		return userId;
 	}
 
-	public UserX getAuthUserX() {
+	/**
+	 * If the activiti authenticatedUserId is not set, throws the
+	 * AuthenticationNotSetException exception.
+	 * 
+	 * @return
+	 * @throws AuthenticationNotSetException
+	 */
+	public UserX getAuthUserX() throws AuthenticationNotSetException {
 		String userId = getAuthUserId();
 		return uSer.getUserX(userId);
 	}
