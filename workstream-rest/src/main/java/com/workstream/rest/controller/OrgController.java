@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.identity.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.UserX;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.rest.model.GroupResponse;
 import com.workstream.rest.model.OrgRequest;
 import com.workstream.rest.model.OrgResponse;
 
@@ -99,6 +101,19 @@ public class OrgController {
 		}
 		core.getOrgService().updateOrg(orgId, props);
 		log.info("Updated org {} ", orgId);
+	}
+
+	@ApiOperation(value = "Get the group list(no description) of a give organization", notes = "Returns the non-detailed information of all the groups "
+			+ "that belong to the given organization.")
+	@RequestMapping(method = RequestMethod.GET, value = "/{id:\\d+}/groups")
+	public List<GroupResponse> getUserGroups(@PathVariable("id") Long orgId) {
+		List<Group> groups = core.getUserService().filterGroup(orgId);
+		List<GroupResponse> respList = new ArrayList<GroupResponse>(
+				groups.size());
+		for (Group group : groups) {
+			respList.add(new GroupResponse(group));
+		}
+		return respList;
 	}
 
 }

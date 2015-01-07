@@ -229,16 +229,20 @@ public class UserService {
 		groupDao.remove(groupX);
 	}
 
-	public List<Group> filterGroup(Organization org) {
-		// Collection<GroupX> groupXes = filterGroupX(org);
-		// GroupQuery q = idService.createGroupQuery();
+	public List<Group> filterGroup(Long orgId) {
 		NativeGroupQuery nq = idService.createNativeGroupQuery();
 		StringBuilder builder = new StringBuilder("select * from ").append(
 				mgmtService.getTableName(Group.class)).append(
 				" where ID_ like '");
-		builder.append(org.getId()).append("|%'");
+		builder.append(orgId).append("|%'");
 		log.debug("Filtering Activiti groups with where clause: {}", builder);
 		return nq.sql(builder.toString()).list();
+	}
+
+	public List<Group> filterGroup(Organization org) {
+		// Collection<GroupX> groupXes = filterGroupX(org);
+		// GroupQuery q = idService.createGroupQuery();
+		return filterGroup(org.getId());
 	}
 
 	public List<Group> filterGroupByUser(String userId) {
