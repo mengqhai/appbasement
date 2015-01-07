@@ -117,6 +117,9 @@ public class UserService {
 	public void updateUser(String userId, Map<String, ? extends Object> props)
 			throws BeanPropertyException {
 		User user = getUser(userId);
+		if (user == null) {
+			return;
+		}
 		try {
 			BeanUtils.populate(user, props);
 		} catch (Exception e) {
@@ -208,6 +211,37 @@ public class UserService {
 
 	public Collection<GroupX> filterGroupX(Organization org) {
 		return groupDao.filterFor(org);
+	}
+
+	public void updateGroup(String groupId, Map<String, Object> props)
+			throws BeanPropertyException {
+		Group group = getGroup(groupId);
+		if (group == null) {
+			return;
+		}
+		try {
+			BeanUtils.populate(group, props);
+		} catch (Exception e) {
+			log.error("Failed to populate the props to group: {}", props, e);
+			throw new BeanPropertyException(
+					"Failed to populate the props to group", e);
+		}
+		idService.saveGroup(group);
+	}
+
+	public void updateGroupX(String groupId, Map<String, Object> props) {
+		GroupX groupX = getGroupX(groupId);
+		if (groupX == null) {
+			return;
+		}
+		try {
+			BeanUtils.populate(groupX, props);
+		} catch (Exception e) {
+			log.error("Failed to populate the props to groupX: {}", props, e);
+			throw new BeanPropertyException(
+					"Failed to populate the props to groupX", e);
+		}
+		log.debug("Successfully update groupX: {}", groupX);
 	}
 
 	/**
