@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.activiti.engine.identity.Group;
+import org.activiti.engine.identity.User;
 import org.activiti.engine.impl.identity.Authentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,6 +134,14 @@ public class CoreFacadeService {
 
 		// do users needs to leave the org? No, the relationship between org and
 		// user is deleted by cascading
+	}
+
+	public List<User> filterUserByOrgId(Long orgId) {
+		Organization org = orgSer.findOrgById(orgId);
+		if (org == null) {
+			throw new ResourceNotFoundException("No such org.");
+		}
+		return uSer.filterUser(org);
 	}
 
 	/**

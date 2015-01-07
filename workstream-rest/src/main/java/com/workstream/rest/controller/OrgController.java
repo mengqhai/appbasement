@@ -1,11 +1,13 @@
 package com.workstream.rest.controller;
 
+import static com.workstream.rest.utils.RestUtils.decodeUserId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.identity.Group;
+import org.activiti.engine.identity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ import com.workstream.rest.model.GroupRequest;
 import com.workstream.rest.model.GroupResponse;
 import com.workstream.rest.model.OrgRequest;
 import com.workstream.rest.model.OrgResponse;
+import com.workstream.rest.model.UserResponse;
 
 @Api(value = "orgs", description = "Organization related operations")
 @RestController
@@ -132,6 +135,43 @@ public class OrgController {
 				groupReq.getDescription());
 		GroupResponse resp = new GroupResponse(group);
 		return resp;
+	}
+
+	@ApiOperation(value = "Get all the users in the given organization")
+	@RequestMapping(method = RequestMethod.GET, value = "/{id:\\d+}/users")
+	public List<UserResponse> getUsersInOrg(@PathVariable("id") Long orgId) {
+		List<User> users = core.filterUserByOrgId(orgId);
+		List<UserResponse> respList = new ArrayList<UserResponse>(users.size());
+		for (User user : users) {
+			respList.add(new UserResponse(user));
+		}
+		return respList;
+	}
+
+	@ApiOperation(value = "Get groups of the user in the given organization", notes = UserController.TEST_USER_ID_INFO)
+	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/users/{userIdBase64}")
+	public List<GroupResponse> getGroupsOfUserInOrg(
+			@PathVariable("orgId") Long orgId,
+			@PathVariable("userIdBase64") String userIdBase64) {
+		String userId = decodeUserId(userIdBase64);
+		List<Group> userGroups = core.getUserService()
+				.filterGroupByUser(userId);
+		List<Group> orgGroups = core.getUserService().filterGroup(orgId);
+		List<GroupResponse> respList = new ArrayList<GroupResponse>(
+				userGroups.size());
+		for (Group userGroup : userGroups) {
+			boolean inOrg = false;
+			for (Group orgGroup : orgGroups) {
+				if (userGroup.getId().equals(orgGroup.getId())) {
+					inOrg = true;
+					break;
+				}
+			}
+			if (inOrg) {
+				respList.add(new GroupResponse(userGroup));
+			}
+		}
+		return respList;
 	}
 
 }

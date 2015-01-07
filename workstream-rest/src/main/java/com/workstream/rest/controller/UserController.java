@@ -1,5 +1,7 @@
 package com.workstream.rest.controller;
 
+import static com.workstream.rest.utils.RestUtils.decodeUserId;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -79,17 +80,6 @@ public class UserController {
 		UserResponse resp = new UserResponse(user);
 		session.removeAttribute(RestConstants.CAPTCHA_TOKEN);
 		return resp;
-	}
-
-	protected String decodeUserId(String userIdBase64) {
-		byte[] decoded = null;
-		try {
-			decoded = Base64.decode(userIdBase64.getBytes());
-		} catch (Exception e) {
-			log.warn("Unable to parse user id from base64: {}", userIdBase64, e);
-			throw new BadArgumentException("Bad user id", e);
-		}
-		return new String(decoded);
 	}
 
 	@ApiOperation(value = "Get the user object for the given user id (base64 encoded)", notes = TEST_USER_ID_INFO)
