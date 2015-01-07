@@ -23,9 +23,11 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.AuthenticationNotSetException;
+import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.UserX;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.rest.model.GroupRequest;
 import com.workstream.rest.model.GroupResponse;
 import com.workstream.rest.model.OrgRequest;
 import com.workstream.rest.model.OrgResponse;
@@ -79,6 +81,9 @@ public class OrgController {
 	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.GET)
 	public OrgResponse getOrg(@PathVariable("id") Long orgId) {
 		Organization org = core.getOrgService().findOrgById(orgId);
+		if (org == null) {
+			throw new ResourceNotFoundException("No such org.");
+		}
 		return new OrgResponse(org);
 	}
 
@@ -86,6 +91,9 @@ public class OrgController {
 	@RequestMapping(value = "/byIdentifier", method = RequestMethod.GET)
 	public OrgResponse getOrg(@RequestParam("identifier") String identifier) {
 		Organization org = core.getOrgService().findOrgByIdentifier(identifier);
+		if (org == null) {
+			throw new ResourceNotFoundException("No such org.");
+		}
 		return new OrgResponse(org);
 	}
 
@@ -114,6 +122,16 @@ public class OrgController {
 			respList.add(new GroupResponse(group));
 		}
 		return respList;
+	}
+
+	@ApiOperation(value = "Create a group in the given organization", notes = "Name field is required")
+	@RequestMapping(method = RequestMethod.POST, value = "/{id:\\d+}/groups")
+	public GroupResponse createGroupInOrg(@PathVariable("id") Long orgId,
+			@ApiParam(required = true) @RequestBody GroupRequest groupReq) {
+		Group group = core.createGroupInOrg(orgId, groupReq.getName(),
+				groupReq.getDescription());
+		GroupResponse resp = new GroupResponse(group);
+		return resp;
 	}
 
 }

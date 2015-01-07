@@ -4,8 +4,11 @@ import java.util.Date;
 
 import org.activiti.engine.identity.Group;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.workstream.core.model.GroupX;
 
+@JsonInclude(Include.NON_NULL)
 public class GroupResponse {
 
 	private Group group;

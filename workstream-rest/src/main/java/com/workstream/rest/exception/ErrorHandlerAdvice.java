@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.exception.BadArgumentException;
+import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.rest.model.RestErrorResponse;
 
 @ControllerAdvice

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.workstream.core.CoreConstants;
 import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.exception.DataBadStateException;
+import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.GroupX;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.Project;
@@ -71,6 +72,15 @@ public class CoreFacadeService {
 				"Process Designers of the organization");
 		uSer.addUserToGroup(creator, group.getId());
 		return org;
+	}
+
+	public Group createGroupInOrg(Long orgId, String name, String description) {
+		Organization org = orgSer.findOrgById(orgId);
+		if (org == null) {
+			throw new ResourceNotFoundException("No such org.");
+		}
+		Group group = uSer.createGroup(org, name, description);
+		return group;
 	}
 
 	public Group getOrgAdminGroup(Organization org)

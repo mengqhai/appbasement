@@ -1,6 +1,7 @@
-package com.workstream.rest.exception;
+package com.workstream.core.exception;
 
-public class ResourceNotFoundException extends RestException {
+
+public class ResourceNotFoundException extends CoreException {
 
 	/**
 	 * 
