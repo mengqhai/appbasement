@@ -14,4 +14,8 @@ public class MapPropObj {
 		return (T) props.get(key);
 	}
 
+	public Map<String, Object> getPropMap() {
+		return props;
+	}
+
 }

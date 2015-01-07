@@ -3,20 +3,24 @@ package com.workstream.rest.controller;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.UserX;
@@ -81,6 +85,20 @@ public class OrgController {
 	public OrgResponse getOrg(@RequestParam("identifier") String identifier) {
 		Organization org = core.getOrgService().findOrgByIdentifier(identifier);
 		return new OrgResponse(org);
+	}
+
+	@ApiOperation(value = "Partially update the organization", notes = "The id field in the request doesn't matter.  And if needs to update"
+			+ " the identifier, system automatically guarantees its uniqueness.")
+	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.PATCH)
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void updateOrg(@PathVariable("id") Long orgId,
+			@ApiParam(required = true) @RequestBody OrgRequest orgReq) {
+		Map<String, Object> props = orgReq.getPropMap();
+		if (props.isEmpty()) {
+			return;
+		}
+		core.getOrgService().updateOrg(orgId, props);
+		log.info("Updated org {} ", orgId);
 	}
 
 }

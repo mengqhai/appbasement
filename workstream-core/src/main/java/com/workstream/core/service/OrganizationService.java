@@ -28,15 +28,25 @@ public class OrganizationService {
 	@Autowired
 	private IOrganizationDAO orgDao;
 
+	/**
+	 * Append random suffix if the given identifier is not unique.
+	 * 
+	 * @param originalIdentifier
+	 * @return
+	 */
+	private String uniqueIdentifier(String originalIdentifier) {
+		StringBuilder builder = new StringBuilder(originalIdentifier);
+		while (orgDao.isIdentifierExist(builder.toString())) {
+			builder.append("-").append(RandomStringUtils.randomAlphanumeric(4));
+		}
+		return builder.toString();
+	}
+
 	// @Transactional(propagation = Propagation.REQUIRED)
 	public Organization createOrg(String name, String identifier,
 			String description) {
 		Organization org = new Organization();
-		StringBuilder builder = new StringBuilder(identifier);
-		while (orgDao.isIdentifierExist(builder.toString())) {
-			builder.append("-").append(RandomStringUtils.randomAlphanumeric(4));
-		}
-		org.setIdentifier(builder.toString());
+		org.setIdentifier(uniqueIdentifier(identifier));
 		org.setName(name);
 		org.setDescription(description);
 		try {
@@ -49,12 +59,19 @@ public class OrganizationService {
 		return org;
 	}
 
-	public void updateOrg(Long id, Map<String, ? extends Object> props)
+	public void updateOrg(Long id, Map<String, Object> props)
 			throws BeanPropertyException {
 		Organization org = orgDao.findById(id);
 		if (org == null) {
 			log.warn("Tring to update non-existing org: id={}", id);
 		}
+		//
+		String newIdentifier = (String) props.get("identifier");
+		if (newIdentifier != null && !newIdentifier.equals(org.getIdentifier())) {
+			String uniqueIdentifier = uniqueIdentifier(newIdentifier);
+			props.put("identifier", uniqueIdentifier);
+		}
+
 		try {
 			BeanUtils.populate(org, props);
 		} catch (Exception e) {
