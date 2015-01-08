@@ -13,7 +13,7 @@ import org.springframework.security.config.annotation.web.servlet.configuration.
 
 import com.workstream.rest.RestConstants;
 import com.workstream.rest.security.BasicAuthenticationProvider;
-import com.workstream.rest.security.CORS403ForbiddenEntryPoint;
+import com.workstream.rest.security.CORS401UnauthorizedEntryPoint;
 import com.workstream.rest.security.NoRedirectLogoutSuccessHandler;
 import com.workstream.rest.security.RestTokenSecurityContextRepository;
 
@@ -58,8 +58,8 @@ public class SecurityConfiguration {
 		NoRedirectLogoutSuccessHandler noRedirectLogoutSuccessHandler;
 
 		@Bean
-		public CORS403ForbiddenEntryPoint cors403ForbiddenEntryPoint() {
-			return new CORS403ForbiddenEntryPoint();
+		public CORS401UnauthorizedEntryPoint cors403ForbiddenEntryPoint() {
+			return new CORS401UnauthorizedEntryPoint();
 		}
 
 		@Bean

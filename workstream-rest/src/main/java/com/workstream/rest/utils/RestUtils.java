@@ -10,12 +10,12 @@ public class RestUtils {
 
 	private final static Logger log = LoggerFactory.getLogger(RestUtils.class);
 
-	public static String decodeUserId(String userIdBase64) {
+	public static String decodeUserId(String base64Str) {
 		byte[] decoded = null;
 		try {
-			decoded = Base64.decode(userIdBase64.getBytes());
+			decoded = Base64.decode(base64Str.getBytes());
 		} catch (Exception e) {
-			log.warn("Unable to parse user id from base64: {}", userIdBase64, e);
+			log.warn("Unable to parse user id from base64: {}", base64Str, e);
 			throw new BadArgumentException("Bad user id", e);
 		}
 		return new String(decoded);

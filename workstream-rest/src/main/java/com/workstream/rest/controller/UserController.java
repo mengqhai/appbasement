@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.Api;
@@ -28,9 +29,10 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.ResourceNotFoundException;
-import com.workstream.core.service.UserService;
+import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.RestConstants;
 import com.workstream.rest.exception.BadStateException;
+import com.workstream.rest.exception.NotAuthorizedException;
 import com.workstream.rest.model.GroupResponse;
 import com.workstream.rest.model.UserRequest;
 import com.workstream.rest.model.UserResponse;
@@ -49,7 +51,7 @@ public class UserController {
 			+ "</ul>";
 
 	@Autowired
-	private UserService uSer;
+	private CoreFacadeService core;
 
 	@ApiOperation(value = "Create a user, e.g. user registration", notes = "In the request body, the following fields are required:<br/>"
 			+ "<ul><li>*id -- the user id for the created user, doesn't have to be the email.</li>"
@@ -75,8 +77,8 @@ public class UserController {
 			throw new BadArgumentException("Wrong captcha");
 		}
 		// the user id must be globally unique
-		User user = uSer.createUser(uReq.getId(), uReq.getEmail(),
-				uReq.getFirstName(), uReq.getPassword());
+		User user = core.getUserService().createUser(uReq.getId(),
+				uReq.getEmail(), uReq.getFirstName(), uReq.getPassword());
 		UserResponse resp = new UserResponse(user);
 		session.removeAttribute(RestConstants.CAPTCHA_TOKEN);
 		return resp;
@@ -92,7 +94,7 @@ public class UserController {
 		// browsers can natively encode/decode the id string btoa(idString)
 		// atob(stringToDecode)
 		String userId = decodeUserId(userIdBase64);
-		User user = uSer.getUser(userId);
+		User user = core.getUserService().getUser(userId);
 		if (user == null) {
 			throw new ResourceNotFoundException("No such user.");
 		}
@@ -110,7 +112,7 @@ public class UserController {
 		// if (user == null) {
 		// throw new ResourceNotFoundException("No such user.");
 		// }
-		List<Group> groups = uSer.filterGroupByUser(userId);
+		List<Group> groups = core.getUserService().filterGroupByUser(userId);
 		List<GroupResponse> respList = new ArrayList<GroupResponse>(
 				groups.size());
 		for (Group group : groups) {
@@ -120,4 +122,16 @@ public class UserController {
 		return respList;
 	}
 
+	@RequestMapping(value = "/{id}/picture", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public void setUserPicture(@PathVariable("id") String userIdBase64,
+			@ApiParam(required = true) @RequestBody MultipartFile file) {
+		String userId = decodeUserId(userIdBase64);
+		if (!userId.equals(core.getAuthUserId())) {
+			throw new NotAuthorizedException(
+					"You are not allowed to modify others' picture");
+		}
+		if (!file.isEmpty()) {
+			log.info("File recieved {} {}", file.getName(), file.getSize());
+		}
+	}
 }

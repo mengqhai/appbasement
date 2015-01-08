@@ -32,6 +32,7 @@ public class ErrorHandlerAdvice {
 		return r;
 	}
 
+	// 400
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(BadStateException.class)
 	@ResponseBody
@@ -40,7 +41,8 @@ public class ErrorHandlerAdvice {
 		return r;
 	}
 
-	@ResponseStatus(HttpStatus.FORBIDDEN)
+	// 401 user need to authenticate
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	@ExceptionHandler(AuthenticationNotSetException.class)
 	@ResponseBody
 	public RestErrorResponse handleAuthenticateNotSet(

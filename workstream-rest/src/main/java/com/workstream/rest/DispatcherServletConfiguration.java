@@ -1,8 +1,11 @@
 package com.workstream.rest;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
@@ -19,5 +22,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 @EnableAsync
 @EnableWebMvc
 public class DispatcherServletConfiguration extends WebMvcConfigurationSupport {
+
+	@Bean
+	public MultipartResolver multipartResolver() {
+		// for upload file support
+		CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+		resolver.setMaxUploadSize(2048 * 1024L); // 2MB
+		return resolver;
+	}
 
 }
