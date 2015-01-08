@@ -23,6 +23,14 @@ public class ErrorHandlerAdvice {
 		return r;
 	}
 
+	// 404
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ExceptionHandler(BytesNotFoundException.class)
+	@ResponseBody
+	public byte[] handleBytesNotFound(BytesNotFoundException e) {
+		return new byte[0];
+	}
+
 	// 400
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(BadArgumentException.class)

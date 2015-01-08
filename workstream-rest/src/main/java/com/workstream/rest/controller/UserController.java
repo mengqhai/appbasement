@@ -2,12 +2,14 @@ package com.workstream.rest.controller;
 
 import static com.workstream.rest.utils.RestUtils.decodeUserId;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
 import org.activiti.engine.identity.Group;
+import org.activiti.engine.identity.Picture;
 import org.activiti.engine.identity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +30,12 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.BadArgumentException;
+import com.workstream.core.exception.DataPersistException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.RestConstants;
 import com.workstream.rest.exception.BadStateException;
+import com.workstream.rest.exception.BytesNotFoundException;
 import com.workstream.rest.exception.NotAuthorizedException;
 import com.workstream.rest.model.GroupResponse;
 import com.workstream.rest.model.UserRequest;
@@ -122,6 +126,7 @@ public class UserController {
 		return respList;
 	}
 
+	@ApiOperation(value = "Upload the picture for the current user.", notes = "The user id must be the current users.")
 	@RequestMapping(value = "/{id}/picture", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public void setUserPicture(@PathVariable("id") String userIdBase64,
 			@ApiParam(required = true) @RequestBody MultipartFile file) {
@@ -131,7 +136,29 @@ public class UserController {
 					"You are not allowed to modify others' picture");
 		}
 		if (!file.isEmpty()) {
-			log.info("File recieved {} {}", file.getName(), file.getSize());
+			log.info("File recieved name={} size={} content-type={}",
+					file.getName(), file.getSize(), file.getContentType());
+		}
+
+		try {
+			core.getUserService().setUserPicture(userId, file.getContentType(),
+					file.getBytes());
+		} catch (IOException e) {
+			throw new DataPersistException(e.getMessage(), e);
 		}
 	}
+
+	@ApiOperation(value = "Load picture for the current user.")
+	@RequestMapping(value = "/{id}/picture", method = RequestMethod.GET, produces = {
+			MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE,
+			MediaType.APPLICATION_JSON_VALUE })
+	public byte[] getUserPicture(@PathVariable("id") String userIdBase64) {
+		String userId = decodeUserId(userIdBase64);
+		Picture pic = core.getUserService().getUserPicture(userId);
+		if (pic == null || pic.getBytes() == null) {
+			throw new BytesNotFoundException("User picture not set");
+		}
+		return pic.getBytes();
+	}
+
 }
