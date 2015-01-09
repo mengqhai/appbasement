@@ -6,6 +6,7 @@ import static com.workstream.rest.utils.RestUtils.decodeUserId;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -157,13 +158,35 @@ public class UserController {
 	@RequestMapping(value = "/{id}/picture", method = RequestMethod.GET, produces = {
 			MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE,
 			MediaType.APPLICATION_JSON_VALUE })
-	public byte[] getUserPicture(@PathVariable("id") String userIdBase64) {
+	public byte[] getUserPicture(@PathVariable("id") String userIdBase64)
+			throws BadArgumentException {
 		String userId = decodeUserId(userIdBase64);
 		Picture pic = core.getUserService().getUserPicture(userId);
 		if (pic == null || pic.getBytes() == null) {
 			throw new BytesNotFoundException("User picture not set");
 		}
 		return pic.getBytes();
+	}
+
+	@ApiOperation(value = "Set user info for a user", notes = "To delete an info entry, just set the value to null.  "
+			+ TEST_USER_ID_INFO)
+	@RequestMapping(value = "/{id}/info", method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void setUserInfo(@PathVariable("id") String userIdBase64,
+			@ApiParam(required = true) @RequestBody Map<String, String> userInfo) {
+		String userId = decodeUserId(userIdBase64);
+		for (String key : userInfo.keySet()) {
+			core.getUserService().setUserInfo(userId, key, userInfo.get(key));
+		}
+	}
+
+	@ApiOperation(value = "Load all user info for a user", notes = TEST_USER_ID_INFO)
+	@RequestMapping(value = "/{id}/info", method = RequestMethod.GET)
+	public Map<String, String> getUserInfo(
+			@PathVariable("id") String userIdBase64)
+			throws BadArgumentException {
+		String userId = decodeUserId(userIdBase64);
+		Map<String, String> info = core.getUserService().getUserInfo(userId);
+		return info;
 	}
 
 }

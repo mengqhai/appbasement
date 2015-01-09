@@ -1,6 +1,7 @@
 package com.workstream.core.service;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -373,12 +374,26 @@ public class UserService {
 		idService.setUserPicture(userId, null);
 	}
 
+	public Map<String, String> getUserInfo(String userId) {
+		Map<String, String> result = new HashMap<String, String>();
+		List<String> keys = getUserInfoKeys(userId);
+		for (String key : keys) {
+			result.put(key, getUserInfo(userId, key));
+		}
+		return result;
+	}
+
 	public String getUserInfo(String userId, String key) {
 		return idService.getUserInfo(userId, key);
 	}
 
 	public void setUserInfo(String userId, String key, String value) {
-		idService.setUserInfo(userId, key, value);
+		if (value != null) {
+			idService.setUserInfo(userId, key, value);
+		} else {
+			idService.deleteUserInfo(userId, key);
+		}
+
 	}
 
 	public boolean checkPassword(String userId, String password) {
