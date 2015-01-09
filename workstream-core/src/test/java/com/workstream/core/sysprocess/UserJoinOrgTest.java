@@ -117,7 +117,7 @@ public class UserJoinOrgTest {
 		Assert.assertTrue(userInOrg);
 	}
 
-	@Test
+	//@Test
 	@Transactional(value = CoreConstants.TX_MANAGER, propagation = Propagation.REQUIRED)
 	public void testUserJoinOrgProcess() {
 		// repoSer.createDeployment()

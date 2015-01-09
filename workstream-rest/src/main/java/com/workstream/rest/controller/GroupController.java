@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
+import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,6 +29,7 @@ import com.workstream.core.model.GroupX;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.model.GroupRequest;
 import com.workstream.rest.model.GroupResponse;
+import com.workstream.rest.model.TaskResponse;
 import com.workstream.rest.model.UserResponse;
 import com.workstream.rest.utils.RestUtils;
 
@@ -122,6 +124,16 @@ public class GroupController {
 			throws BadArgumentException {
 		String userId = RestUtils.decodeUserId(userIdBase64);
 		core.getUserService().removeUserFromGroup(userId, groupId);
+	}
+
+	@ApiOperation(value = "Get candidate tasks for the group", notes = "In other words, get the task(unassigned/claimed) list whose candidate group is "
+			+ "the speicified one.")
+	@RequestMapping(value = "/{groupId}/candidateTasks", method = RequestMethod.GET)
+	public List<TaskResponse> getTasks(@PathVariable("groupId") String groupId) {
+		List<Task> tasks = core.getProcessService().filterTaskByCandidateGroup(
+				groupId);
+		List<TaskResponse> respList = TaskResponse.toRespondList(tasks);
+		return respList;
 	}
 
 }

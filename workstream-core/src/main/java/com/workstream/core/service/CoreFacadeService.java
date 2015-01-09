@@ -210,4 +210,12 @@ public class CoreFacadeService {
 		}
 	}
 
+	public ProjectService getProjectService() {
+		return projSer;
+	}
+
+	public ProcessService getProcessService() {
+		return procSer;
+	}
+
 }

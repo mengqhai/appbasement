@@ -1,5 +1,6 @@
 package com.workstream.core.service;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -19,7 +20,10 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.workstream.core.CoreConstants;
 import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.exception.BeanPropertyException;
 
@@ -59,6 +63,12 @@ public class TaskCapable {
 	 */
 	public List<Task> filterTaskByCreator(String creatorId) {
 		TaskQuery q = taskSer.createTaskQuery().taskOwner(creatorId);
+		return q.list();
+	}
+
+	public List<Task> filterTaskByCandidateGroup(String... groupIds) {
+		TaskQuery q = taskSer.createTaskQuery()
+				.taskCandidateGroupIn(Arrays.asList(groupIds)).taskUnassigned();
 		return q.list();
 	}
 
@@ -106,15 +116,23 @@ public class TaskCapable {
 	 * 
 	 * @param task
 	 */
+	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
 	public void deleteTask(Task task) {
 		taskSer.deleteTask(task.getId());
 		log.info("Deleted task {}", task);
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
 	public void completeTask(String taskId) {
 		taskSer.complete(taskId);
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
+	public void completeTask(String taskId, Map<String, Object> variables) {
+		taskSer.complete(taskId, variables);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
 	public Comment addTaskComment(String taskId, String message) {
 		if (Authentication.getAuthenticatedUserId() == null) {
 			throw new AuthenticationNotSetException(
