@@ -1,5 +1,7 @@
 package com.workstream.rest.controller;
 
+import static com.workstream.rest.RestConstants.TEST_USER_ID_INFO;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -7,22 +9,27 @@ import java.util.Map;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import com.workstream.core.exception.BadArgumentException;
+import com.workstream.core.exception.DataBadStateException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.GroupX;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.model.GroupRequest;
 import com.workstream.rest.model.GroupResponse;
 import com.workstream.rest.model.UserResponse;
+import com.workstream.rest.utils.RestUtils;
 
 @Api(value = "groups", description = "Group related operations")
 @RestController
@@ -73,6 +80,48 @@ public class GroupController {
 		if (groupReq.isGroupPropSet()) {
 			core.getUserService().updateGroup(groupId, props);
 		}
+	}
+
+	/**
+	 * 
+	 * @param groupId
+	 * @param userIdBase64
+	 * @throws ResourceNotFoundException
+	 *             if user or group doesn't exist
+	 * @throws DataBadStateException
+	 *             if user and group are not in the same org, or user already in
+	 *             the group
+	 * 
+	 * @throws BadArgumentException
+	 *             if the userIdBase64 is not correct
+	 */
+	@ApiOperation(value = "Add a user to a group", notes = TEST_USER_ID_INFO)
+	@ResponseStatus(value = HttpStatus.CREATED)
+	@RequestMapping(value = "/{groupId}/users/{userIdBase64}", method = RequestMethod.PUT)
+	public void addUserToGroup(@PathVariable("groupId") String groupId,
+			@PathVariable("userIdBase64") String userIdBase64)
+			throws ResourceNotFoundException, DataBadStateException,
+			BadArgumentException {
+		String userId = RestUtils.decodeUserId(userIdBase64);
+		core.getUserService().addUserToGroup(userId, groupId);
+	}
+
+	/**
+	 * 
+	 * @param groupId
+	 * @param userIdBase64
+	 * 
+	 * @throws BadArgumentException
+	 *             if the userIdBase64 is not correct
+	 */
+	@ApiOperation(value = "Remove a user from a group", notes = TEST_USER_ID_INFO)
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
+	@RequestMapping(value = "/{groupId}/users/{userIdBase64}", method = RequestMethod.DELETE)
+	public void removeUserFromGroup(@PathVariable("groupId") String groupId,
+			@PathVariable("userIdBase64") String userIdBase64)
+			throws BadArgumentException {
+		String userId = RestUtils.decodeUserId(userIdBase64);
+		core.getUserService().removeUserFromGroup(userId, groupId);
 	}
 
 }

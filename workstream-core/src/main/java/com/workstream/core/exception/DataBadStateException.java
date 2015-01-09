@@ -1,5 +1,12 @@
 package com.workstream.core.exception;
 
+/**
+ * Indicating that the system is already in a bad data state, somehow like an
+ * assertion error. So ones it occurs there must be a bug.
+ * 
+ * @author qinghai
+ * 
+ */
 public class DataBadStateException extends CoreException {
 
 	/**

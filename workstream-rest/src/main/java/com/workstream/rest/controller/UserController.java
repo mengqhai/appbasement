@@ -1,5 +1,6 @@
 package com.workstream.rest.controller;
 
+import static com.workstream.rest.RestConstants.TEST_USER_ID_INFO;
 import static com.workstream.rest.utils.RestUtils.decodeUserId;
 
 import java.io.IOException;
@@ -29,12 +30,12 @@ import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.DataPersistException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.RestConstants;
-import com.workstream.rest.exception.BadStateException;
 import com.workstream.rest.exception.BytesNotFoundException;
 import com.workstream.rest.exception.NotAuthorizedException;
 import com.workstream.rest.model.GroupResponse;
@@ -48,11 +49,6 @@ public class UserController {
 
 	private final static Logger log = LoggerFactory
 			.getLogger(UserController.class);
-
-	public static final String TEST_USER_ID_INFO = "test user id: <br/> "
-			+ "<ul><li>mqhnow1@sina.com: <b>bXFobm93MUBzaW5hLmNvbQ==</b></li> "
-			+ "<li>projectTester@sina.com:<b>cHJvamVjdFRlc3RlckBzaW5hLmNvbQ==</b></li>"
-			+ "</ul>";
 
 	@Autowired
 	private CoreFacadeService core;
@@ -75,7 +71,7 @@ public class UserController {
 		String token = (String) session
 				.getAttribute(RestConstants.CAPTCHA_TOKEN);
 		if (token == null) {
-			throw new BadStateException("Captcha not ready");
+			throw new AttempBadStateException("Captcha not ready");
 		}
 		if (!captcha.equalsIgnoreCase(token)) {
 			throw new BadArgumentException("Wrong captcha");
@@ -126,7 +122,8 @@ public class UserController {
 		return respList;
 	}
 
-	@ApiOperation(value = "Upload the picture for the current user.", notes = "The user id must be the current users.")
+	@ApiOperation(value = "Upload the picture for the current user.", notes = "The user id must be the current users."
+			+ TEST_USER_ID_INFO)
 	@RequestMapping(value = "/{id}/picture", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public void setUserPicture(@PathVariable("id") String userIdBase64,
 			@ApiParam(required = true) @RequestBody MultipartFile file) {
@@ -136,19 +133,27 @@ public class UserController {
 					"You are not allowed to modify others' picture");
 		}
 		if (!file.isEmpty()) {
+			String contentType = file.getContentType();
 			log.info("File recieved name={} size={} content-type={}",
-					file.getName(), file.getSize(), file.getContentType());
+					file.getName(), file.getSize(), contentType);
+			if (!MediaType.IMAGE_JPEG_VALUE.equalsIgnoreCase(contentType)
+					&& !MediaType.IMAGE_PNG_VALUE.equalsIgnoreCase(contentType)) {
+				log.warn("wrong content type {}", contentType);
+				throw new BadArgumentException(
+						"Only jpg/png pictures are supported");
+			}
+
+			try {
+				core.getUserService().setUserPicture(userId,
+						file.getContentType(), file.getBytes());
+			} catch (IOException e) {
+				throw new DataPersistException(e.getMessage(), e);
+			}
 		}
 
-		try {
-			core.getUserService().setUserPicture(userId, file.getContentType(),
-					file.getBytes());
-		} catch (IOException e) {
-			throw new DataPersistException(e.getMessage(), e);
-		}
 	}
 
-	@ApiOperation(value = "Load picture for the current user.")
+	@ApiOperation(value = "Load picture for the current user.", notes = TEST_USER_ID_INFO)
 	@RequestMapping(value = "/{id}/picture", method = RequestMethod.GET, produces = {
 			MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE,
 			MediaType.APPLICATION_JSON_VALUE })

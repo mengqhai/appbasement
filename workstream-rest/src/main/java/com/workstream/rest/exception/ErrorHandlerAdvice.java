@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.ResourceNotFoundException;
@@ -42,9 +43,9 @@ public class ErrorHandlerAdvice {
 
 	// 400
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ExceptionHandler(BadStateException.class)
+	@ExceptionHandler(AttempBadStateException.class)
 	@ResponseBody
-	public RestErrorResponse handleBadState(BadStateException e) {
+	public RestErrorResponse handleBadState(AttempBadStateException e) {
 		RestErrorResponse r = new RestErrorResponse(400, e.getMessage());
 		return r;
 	}

@@ -22,8 +22,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
+import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.BeanPropertyException;
 import com.workstream.core.exception.DataBadStateException;
+import com.workstream.core.exception.DataPersistException;
+import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.GroupX;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.UserX;
@@ -289,8 +292,16 @@ public class UserService {
 		return (groupMatching > 0);
 	}
 
-	public void addUserToGroup(UserX userX, GroupX groupX) {
+	public void addUserToGroup(UserX userX, GroupX groupX)
+			throws DataBadStateException, DataPersistException {
 		groupX = groupDao.reattachIfNeeded(groupX, groupX.getId());
+		// check if user already in the group
+		if (isUserInGroup(userX.getUserId(), groupX.getGroupId())) {
+			throw new AttempBadStateException(
+					"Unable to add user to group.  User already in the group.");
+		}
+
+		// check if the user and group is in the same org
 		Collection<Organization> orgs = orgDao.filterByUserX(userX);
 		boolean belongsToGroupOrg = false;
 		for (Organization org : orgs) {
@@ -302,14 +313,24 @@ public class UserService {
 		if (!belongsToGroupOrg) {
 			log.error("User {} doesn't belong to group's org. {}", userX,
 					groupX.getId());
-			throw new DataBadStateException(
+			throw new AttempBadStateException(
 					"Unable to add user to group.  User doesn't belong to group's org");
 		}
-		idService.createMembership(userX.getUserId(), groupX.getGroupId());
+		try {
+			idService.createMembership(userX.getUserId(), groupX.getGroupId());
+		} catch (Exception e) {
+			log.error("Failed the persist the group({})-user({}) relationship",
+					groupX.getGroupId(), userX.getUserId(), e);
+			throw new DataPersistException(
+					"Failed the persist the group-user relationship", e);
+		}
 	}
 
 	public void addUserToGroup(String userId, GroupX groupX) {
 		UserX userX = userDao.findByUserId(userId);
+		if (userX == null) {
+			throw new ResourceNotFoundException("No such user");
+		}
 		addUserToGroup(userX, groupX);
 	}
 
@@ -320,6 +341,9 @@ public class UserService {
 
 	public void addUserToGroup(String userId, String groupId) {
 		GroupX groupX = groupDao.findByGroupId(groupId);
+		if (groupX == null) {
+			throw new ResourceNotFoundException("No such group");
+		}
 		addUserToGroup(userId, groupX);
 	}
 

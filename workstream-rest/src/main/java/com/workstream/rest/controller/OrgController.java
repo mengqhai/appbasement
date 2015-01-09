@@ -1,6 +1,8 @@
 package com.workstream.rest.controller;
 
+import static com.workstream.rest.RestConstants.TEST_USER_ID_INFO;
 import static com.workstream.rest.utils.RestUtils.decodeUserId;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -148,7 +150,7 @@ public class OrgController {
 		return respList;
 	}
 
-	@ApiOperation(value = "Get groups of the user in the given organization", notes = UserController.TEST_USER_ID_INFO)
+	@ApiOperation(value = "Get groups of the user in the given organization", notes = TEST_USER_ID_INFO)
 	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/users/{userIdBase64}")
 	public List<GroupResponse> getGroupsOfUserInOrg(
 			@PathVariable("orgId") Long orgId,
