@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Organization;
@@ -148,6 +149,13 @@ public class OrgController {
 			respList.add(new UserResponse(user));
 		}
 		return respList;
+	}
+
+	@ApiOperation(value = "Request to join a group")
+	@RequestMapping(method = RequestMethod.PUT, value = "/{id:\\d+}/users")
+	public void requestUserJoinOrg(@PathVariable("id") Long orgId)
+			throws AuthenticationNotSetException, AttempBadStateException {
+		core.requestUserJoinOrg(orgId);
 	}
 
 	@ApiOperation(value = "Get groups of the user in the given organization", notes = TEST_USER_ID_INFO)

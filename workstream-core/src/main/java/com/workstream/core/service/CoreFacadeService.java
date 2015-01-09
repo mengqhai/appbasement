@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
+import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.exception.DataBadStateException;
 import com.workstream.core.exception.ResourceNotFoundException;
@@ -177,6 +178,16 @@ public class CoreFacadeService {
 
 	public UserService getUserService() {
 		return uSer;
+	}
+
+	public void requestUserJoinOrg(Long orgId) {
+		UserX userX = getAuthUserX();
+		Organization org = orgSer.findOrgById(orgId);
+		if (!orgSer.isUserInOrg(userX, org)) {
+			orgSer.userJoinOrg(userX, org);
+		} else {
+			throw new AttempBadStateException("User already in the org");
+		}
 	}
 
 }
