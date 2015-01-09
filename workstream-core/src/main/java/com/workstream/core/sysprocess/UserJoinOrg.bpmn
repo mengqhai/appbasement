@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/bpmn20" id="review-definitions">
-  <process id="UserJoinOrg" name="User Join Org Process" isExecutable="true">
+  <process id="com.workstream.UserJoinOrg" name="User Join Org Process" isExecutable="true">
     <documentation>The system level process that is triggered when a user applies to join an organization.</documentation>
     <startEvent id="startevent1" name="Start"></startEvent>
     <endEvent id="endevent1" name="End"></endEvent>
@@ -31,14 +31,10 @@
       </extensionElements>
     </dataObject>
     <dataObject id="adminGroupId" name="adminGroupId" itemSubjectRef="xsd:string"></dataObject>
-    <dataObject id="orgName" name="orgName" itemSubjectRef="xsd:string">
-      <extensionElements>
-        <activiti:value></activiti:value>
-      </extensionElements>
-    </dataObject>
+    <dataObject id="orgName" name="orgName" itemSubjectRef="xsd:string"></dataObject>
   </process>
-  <bpmndi:BPMNDiagram id="BPMNDiagram_UserJoinOrg">
-    <bpmndi:BPMNPlane bpmnElement="UserJoinOrg" id="BPMNPlane_UserJoinOrg">
+  <bpmndi:BPMNDiagram id="BPMNDiagram_com.workstream.UserJoinOrg">
+    <bpmndi:BPMNPlane bpmnElement="com.workstream.UserJoinOrg" id="BPMNPlane_com.workstream.UserJoinOrg">
       <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
         <omgdc:Bounds height="35.0" width="35.0" x="120.0" y="117.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>

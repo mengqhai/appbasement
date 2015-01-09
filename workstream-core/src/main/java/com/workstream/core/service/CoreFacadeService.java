@@ -1,12 +1,15 @@
 package com.workstream.core.service;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.impl.identity.Authentication;
+import org.activiti.engine.runtime.ProcessInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +42,13 @@ public class CoreFacadeService {
 	private UserService uSer;
 
 	@Autowired
-	private ProjectService pSer;
+	private ProjectService projSer;
+
+	@Autowired
+	private ProcessService procSer;
+
+	@Autowired
+	private TemplateService tempSer;
 
 	private static AtomicReference<CoreFacadeService> INSTANCE = new AtomicReference<CoreFacadeService>();
 
@@ -124,9 +133,9 @@ public class CoreFacadeService {
 		}
 
 		// delete projects of the org
-		Collection<Project> projects = pSer.filterProject(org);
+		Collection<Project> projects = projSer.filterProject(org);
 		for (Project pro : projects) {
-			pSer.deleteProject(pro);
+			projSer.deleteProject(pro);
 		}
 
 		orgSer.removeOrg(org); // cascade removes org & groupXes
@@ -180,11 +189,22 @@ public class CoreFacadeService {
 		return uSer;
 	}
 
-	public void requestUserJoinOrg(Long orgId) {
+	public ProcessInstance requestUserJoinOrg(Long orgId) {
 		UserX userX = getAuthUserX();
 		Organization org = orgSer.findOrgById(orgId);
 		if (!orgSer.isUserInOrg(userX, org)) {
-			orgSer.userJoinOrg(userX, org);
+			Group adminGroup = getOrgAdminGroup(org);
+			Map<String, Object> variableMap = new HashMap<String, Object>();
+			variableMap.put("orgId", org.getId());
+			variableMap.put("orgName", org.getName());
+			variableMap.put("userId", userX.getUserId());
+			variableMap.put("adminGroupId", adminGroup.getId());
+			ProcessInstance pi = procSer.startProcessByKey(
+					CoreConstants.PRO_KEY_USER_JOIN_ORG, variableMap);
+			log.info(
+					"System process {} started to handle user({}) join org({}) request.",
+					pi.getId(), userX.getId(), orgId);
+			return pi;
 		} else {
 			throw new AttempBadStateException("User already in the org");
 		}

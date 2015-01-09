@@ -57,6 +57,20 @@ public class ProcessService extends TaskCapable {
 		return p;
 	}
 
+	public ProcessInstance startProcessByKey(String processDefinitionKey,
+			Map<String, Object> vars) throws AuthenticationNotSetException {
+		if (Authentication.getAuthenticatedUserId() == null) {
+			throw new AuthenticationNotSetException(
+					"No authenticated user, no process can be started.");
+		}
+		ProcessInstance p = ruSer.startProcessInstanceByKey(
+				processDefinitionKey, vars);
+		log.debug(
+				"Process instance created id={} for template key={}, with vars: {}",
+				p.getId(), vars, processDefinitionKey);
+		return p;
+	}
+
 	public ProcessInstance startProcess(String processDefinitionId,
 			Map<String, Object> vars) throws AuthenticationNotSetException {
 		if (Authentication.getAuthenticatedUserId() == null) {
