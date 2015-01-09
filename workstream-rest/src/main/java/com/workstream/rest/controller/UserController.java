@@ -85,6 +85,28 @@ public class UserController {
 		return resp;
 	}
 
+	@ApiOperation(value = "Update the current user", notes = "The following properties can be updated: "
+			+ "<ul><li>firstName</li>"
+			+ "<li>lastName</li>"
+			+ "<li>password</li>"
+			+ "<li>email</li>"
+			+ "</ul>"
+			+ "Note: id is not not updatable and will be ignored")
+	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
+	public void updateUser(@PathVariable("id") String userIdBase64,
+			@ApiParam(required = true) @RequestBody UserRequest uReq)
+			throws ResourceNotFoundException {
+		String userId = decodeUserId(userIdBase64);
+		if (!userId.equals(core.getAuthUserId())) {
+			throw new NotAuthorizedException(
+					"You are not allowed to modify other users");
+		}
+		if (uReq.getPropMap().containsKey(UserRequest.ID)) {
+			uReq.getPropMap().remove(UserRequest.ID); // ignore the id
+		}
+		core.getUserService().updateUser(userId, uReq.getPropMap());
+	}
+
 	@ApiOperation(value = "Get the user object for the given user id (base64 encoded)", notes = TEST_USER_ID_INFO)
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
 	public UserResponse getUser(@PathVariable("id") String userIdBase64) {
@@ -174,6 +196,10 @@ public class UserController {
 	public void setUserInfo(@PathVariable("id") String userIdBase64,
 			@ApiParam(required = true) @RequestBody Map<String, String> userInfo) {
 		String userId = decodeUserId(userIdBase64);
+		if (!userId.equals(core.getAuthUserId())) {
+			throw new NotAuthorizedException(
+					"You are not allowed to modify others' info");
+		}
 		for (String key : userInfo.keySet()) {
 			core.getUserService().setUserInfo(userId, key, userInfo.get(key));
 		}

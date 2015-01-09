@@ -122,7 +122,7 @@ public class UserService {
 			throws BeanPropertyException {
 		User user = getUser(userId);
 		if (user == null) {
-			return;
+			throw new ResourceNotFoundException("No such user");
 		}
 		try {
 			BeanUtils.populate(user, props);
