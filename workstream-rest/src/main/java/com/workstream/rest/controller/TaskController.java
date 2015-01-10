@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.task.Task;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,14 +18,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.rest.model.TaskRequest;
 import com.workstream.rest.model.TaskResponse;
 
 @Api(value = "tasks", description = "Task related operations")
 @RestController
 @RequestMapping(value = "/tasks", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TaskController {
+	private final static Logger log = LoggerFactory
+			.getLogger(TaskController.class);
 
 	@Autowired
 	private CoreFacadeService core;
@@ -58,4 +64,20 @@ public class TaskController {
 		core.getProcessService().completeTask(taskId, vars);
 	}
 
+	@ApiOperation(value = "Partially update the task for id")
+	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void updateTask(@PathVariable("id") String taskId,
+			@ApiParam(required = true) @RequestBody TaskRequest taskReq) {
+		core.updateTask(taskId, taskReq.getPropMap());
+		log.debug("Updated task {}", taskId);
+	}
+
+	@ApiOperation(value = "Delete(cancel) the task for id")
+	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.DELETE)
+	public void deleteTask(@PathVariable("id") String taskId) {
+		// TODO if it's a task of a running process, trying to delete it will
+		// cause activiti exception, so an exception mapping is required
+		core.getProjectService().deleteTask(taskId);
+		log.debug("Deleted task {}", taskId);
+	}
 }

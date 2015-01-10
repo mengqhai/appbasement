@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.workstream.core.CoreConstants;
 import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.exception.BeanPropertyException;
+import com.workstream.core.exception.ResourceNotFoundException;
 
 public class TaskCapable {
 
@@ -80,12 +81,10 @@ public class TaskCapable {
 		return taskSer.getSubTasks(parentTaskId);
 	}
 
-	public Task updateTask(String id, Map<String, ? extends Object> props) {
-		Task task = taskSer.createTaskQuery().taskId(id).singleResult();
-		if (task == null) {
-			log.warn("Trying to update non-existing task id={} with {} ", id,
-					props);
-		}
+	public Task updateTask(Task task, Map<String, ? extends Object> props) {
+		String id = task.getId();
+		String oldAssignee = task.getAssignee();
+		String oldOwner = task.getOwner();
 		try {
 			BeanUtils.populate(task, props);
 		} catch (Exception e) {
@@ -93,19 +92,61 @@ public class TaskCapable {
 			throw new BeanPropertyException(e);
 		}
 		taskSer.saveTask(task);
+
+		// code blow will create comments for the task
 		// see org.activiti.engine.task.Event
 		if (props.containsKey("owner")) {
 			String owner = (String) props.get("owner");
-			taskSer.addUserIdentityLink(id, owner, IdentityLinkType.OWNER);
+			if (owner != null) {
+				taskSer.addUserIdentityLink(id, owner, IdentityLinkType.OWNER);
+			} else if (oldOwner != null) {
+				// have to delete the link
+				taskSer.deleteUserIdentityLink(id, oldOwner,
+						IdentityLinkType.OWNER);
+			}
 		}
 		if (props.containsKey("assignee")) {
-			String owner = (String) props.get("assignee");
-			taskSer.addUserIdentityLink(id, owner, IdentityLinkType.ASSIGNEE);
+			String assignee = (String) props.get("assignee");
+			if (assignee != null) {
+				taskSer.addUserIdentityLink(id, assignee,
+						IdentityLinkType.ASSIGNEE);
+			} else if (oldAssignee != null) {
+				// have to delete the link
+				taskSer.deleteUserIdentityLink(id, oldAssignee,
+						IdentityLinkType.ASSIGNEE);
+			}
+
 		}
 
 		// create the event if needed
 		eventHelper.createEventCommentIfNeeded(id, props);
 		return task;
+	}
+
+	public Task updateTask(String id, Map<String, ? extends Object> props) {
+		Task task = getTask(id);
+		if (task == null) {
+			log.warn("Trying to update non-existing task id={} with {} ", id,
+					props);
+			throw new ResourceNotFoundException("No such task");
+		}
+		return updateTask(task, props);
+	}
+
+	/**
+	 * Deletes the given task, not deleting historic information that is related
+	 * to this task(the task is still in the archive table). If the task belongs
+	 * to a running process instance, then an ActivitiException will be thrown:<br/>
+	 * The task cannot be deleted because is part of a running process.
+	 * 
+	 * @param taskId
+	 */
+	public void deleteTask(String taskId) throws ResourceNotFoundException {
+		Task task = getTask(taskId);
+		if (task == null) {
+			throw new ResourceNotFoundException("No such task");
+		}
+		deleteTask(task);
 	}
 
 	/**

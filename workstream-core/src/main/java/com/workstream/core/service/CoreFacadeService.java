@@ -11,6 +11,7 @@ import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,20 @@ public class CoreFacadeService {
 		return INSTANCE.get();
 	}
 
+	/**
+	 * With existence check.
+	 * 
+	 * @param orgId
+	 * @return
+	 */
+	public Organization getOrg(Long orgId) throws ResourceNotFoundException {
+		Organization org = orgSer.findOrgById(orgId);
+		if (org == null) {
+			throw new ResourceNotFoundException("No such org.");
+		}
+		return org;
+	}
+
 	public Organization createInitOrg(UserX creator, String name,
 			String identifier, String description) {
 		Organization org = orgSer.createOrg(name, identifier, description);
@@ -87,22 +102,51 @@ public class CoreFacadeService {
 	}
 
 	public Group createGroupInOrg(Long orgId, String name, String description) {
-		Organization org = orgSer.findOrgById(orgId);
-		if (org == null) {
-			throw new ResourceNotFoundException("No such org.");
-		}
+		Organization org = getOrg(orgId);
 		Group group = uSer.createGroup(org, name, description);
 		return group;
 	}
 
 	public Project createProjectInOrg(Long orgId, String name, Date startTime,
 			Date dueTime, String description) {
-		Organization org = orgSer.findOrgById(orgId);
-		if (org == null) {
-			throw new ResourceNotFoundException("No such org.");
-		}
+		Organization org = getOrg(orgId);
+		;
 		return projSer
 				.createProject(org, name, startTime, dueTime, description);
+	}
+
+	public void checkTaskAssigneeOrg(String assigneeId, Organization org)
+			throws AttempBadStateException {
+		// check the existence of the assignee user
+		if (assigneeId != null) {
+			UserX userX = uSer.getUserX(assigneeId);
+			if (userX == null) {
+				throw new ResourceNotFoundException("No such user for assignee");
+			}
+			// check if the assignee is in the organization of the project
+			if (!orgSer.isUserInOrg(userX, org)) {
+				throw new AttempBadStateException(
+						"Assignee is not in the task's org");
+			}
+		}
+	}
+
+	public Task createTaskInProject(Long projectId, String name,
+			String description, Date dueDate, String assigneeId,
+			Integer priority) {
+		String creator = this.getAuthUserId();
+
+		Project proj = projSer.getProject(projectId);
+		if (proj == null) {
+			throw new ResourceNotFoundException("No such project");
+		}
+
+		// check the existence of the assignee user
+		checkTaskAssigneeOrg(assigneeId, proj.getOrg());
+
+		Task task = projSer.createTask(proj, creator, name, description,
+				dueDate, assigneeId, priority);
+		return task;
 	}
 
 	public Group getOrgAdminGroup(Organization org)
@@ -165,19 +209,39 @@ public class CoreFacadeService {
 		projSer.deleteProject(proj);
 	}
 
-	public List<User> filterUserByOrgId(Long orgId) {
-		Organization org = orgSer.findOrgById(orgId);
-		if (org == null) {
-			throw new ResourceNotFoundException("No such org.");
+	/**
+	 * With additional logic the check the new assignee
+	 * 
+	 * @param taskId
+	 * @param props
+	 * 
+	 * @throws AttempBadStateException
+	 *             if the assignee is not in the task's org
+	 * @throws ResourceNotFoundException
+	 *             if the assignee is not found
+	 */
+	public void updateTask(String taskId, Map<String, ? extends Object> props)
+			throws ResourceNotFoundException, AttempBadStateException {
+		Task task = projSer.getTask(taskId);
+		if (task == null) {
+			throw new ResourceNotFoundException("No such task");
 		}
+		String assigneeId = (String) props.get("assignee");
+		if (assigneeId != null && task.getTenantId() != null) {
+			Long orgId = Long.valueOf(task.getTenantId());
+			Organization org = getOrg(orgId);
+			checkTaskAssigneeOrg(assigneeId, org);
+		}
+		projSer.updateTask(task, props);
+	}
+
+	public List<User> filterUserByOrgId(Long orgId) {
+		Organization org = getOrg(orgId);
 		return uSer.filterUser(org);
 	}
 
 	public Collection<Project> filterProjectByOrgId(Long orgId) {
-		Organization org = orgSer.findOrgById(orgId);
-		if (org == null) {
-			throw new ResourceNotFoundException("No such org.");
-		}
+		Organization org = getOrg(orgId);
 		return projSer.filterProject(org);
 	}
 
@@ -218,7 +282,7 @@ public class CoreFacadeService {
 
 	public ProcessInstance requestUserJoinOrg(Long orgId) {
 		UserX userX = getAuthUserX();
-		Organization org = orgSer.findOrgById(orgId);
+		Organization org = getOrg(orgId);
 		if (!orgSer.isUserInOrg(userX, org)) {
 			Group adminGroup = getOrgAdminGroup(org);
 			Map<String, Object> variableMap = new HashMap<String, Object>();

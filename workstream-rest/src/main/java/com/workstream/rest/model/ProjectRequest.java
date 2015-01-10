@@ -8,6 +8,9 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel
 public class ProjectRequest extends MapPropObj {
 
+	public static final String DUE_TIME = "dueTime";
+	public static final String START_TIME = "startTime";
+
 	@ApiModelProperty(required = true)
 	public void setName(String name) {
 		props.put(NAME, name);
@@ -25,22 +28,20 @@ public class ProjectRequest extends MapPropObj {
 		return getProp(DESCRIPTION);
 	}
 
-	@ApiModelProperty(dataType = "date")
 	public void setStartTime(Date startTime) {
-		props.put("startTime", startTime);
+		props.put(START_TIME, startTime);
 	}
 
 	public Date getStartTime() {
-		return getProp("startTime");
+		return getProp(START_TIME);
 	}
 
-	@ApiModelProperty(dataType = "date")
 	public void setDueTime(Date dueTime) {
-		props.put("dueTime", dueTime);
+		props.put(DUE_TIME, dueTime);
 	}
 
 	public Date getDueTime() {
-		return getProp("dueTime");
+		return getProp(DUE_TIME);
 	}
 
 }

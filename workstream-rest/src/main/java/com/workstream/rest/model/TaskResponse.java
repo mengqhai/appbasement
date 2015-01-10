@@ -66,6 +66,10 @@ public class TaskResponse {
 		return task.getCategory();
 	}
 
+	public String getAssignee() {
+		return task.getAssignee();
+	}
+
 	public static List<TaskResponse> toRespondList(List<Task> tasks) {
 		List<TaskResponse> respList = new ArrayList<TaskResponse>();
 		for (Task task : tasks) {

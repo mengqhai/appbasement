@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
 import com.workstream.core.exception.BeanPropertyException;
+import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.Project;
 import com.workstream.core.persistence.IOrganizationDAO;
@@ -171,6 +172,14 @@ public class ProjectService extends TaskCapable {
 		q.taskTenantId(String.valueOf(orgId))
 				.taskCategory(String.valueOf(proId)).taskAssignee(assignee);
 		return q;
+	}
+
+	public List<Task> filterTask(Long projectId) {
+		Project proj = getProject(projectId);
+		if (proj == null) {
+			throw new ResourceNotFoundException("No such project");
+		}
+		return filterTask(proj);
 	}
 
 	@SuppressWarnings("unchecked")

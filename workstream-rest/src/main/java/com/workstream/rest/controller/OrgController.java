@@ -89,10 +89,7 @@ public class OrgController {
 	@ApiOperation(value = "Get an organization by id")
 	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.GET)
 	public OrgResponse getOrg(@PathVariable("id") Long orgId) {
-		Organization org = core.getOrgService().findOrgById(orgId);
-		if (org == null) {
-			throw new ResourceNotFoundException("No such org.");
-		}
+		Organization org = core.getOrg(orgId);
 		return new OrgResponse(org);
 	}
 
