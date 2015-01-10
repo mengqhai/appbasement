@@ -157,6 +157,14 @@ public class CoreFacadeService {
 		// user is deleted by cascading
 	}
 
+	public void deleteProject(Long projectId) {
+		Project proj = projSer.getProject(projectId);
+		if (proj == null) {
+			throw new ResourceNotFoundException("No such project");
+		}
+		projSer.deleteProject(proj);
+	}
+
 	public List<User> filterUserByOrgId(Long orgId) {
 		Organization org = orgSer.findOrgById(orgId);
 		if (org == null) {
