@@ -1,6 +1,7 @@
 package com.workstream.core.service;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +95,16 @@ public class CoreFacadeService {
 		return group;
 	}
 
+	public Project createProjectInOrg(Long orgId, String name, Date startTime,
+			Date dueTime, String description) {
+		Organization org = orgSer.findOrgById(orgId);
+		if (org == null) {
+			throw new ResourceNotFoundException("No such org.");
+		}
+		return projSer
+				.createProject(org, name, startTime, dueTime, description);
+	}
+
 	public Group getOrgAdminGroup(Organization org)
 			throws DataBadStateException {
 		List<Group> groups = uSer.filterGroup(org);
@@ -152,6 +163,14 @@ public class CoreFacadeService {
 			throw new ResourceNotFoundException("No such org.");
 		}
 		return uSer.filterUser(org);
+	}
+
+	public Collection<Project> filterProjectByOrgId(Long orgId) {
+		Organization org = orgSer.findOrgById(orgId);
+		if (org == null) {
+			throw new ResourceNotFoundException("No such org.");
+		}
+		return projSer.filterProject(org);
 	}
 
 	/**

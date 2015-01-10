@@ -5,11 +5,13 @@ import java.util.Map;
 
 import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wordnik.swagger.annotations.Api;
@@ -50,6 +52,7 @@ public class TaskController {
 
 	@ApiOperation(value = "Complete the task")
 	@RequestMapping(value = "/{id:\\d+}/_complete", method = RequestMethod.PUT)
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void completeTask(@PathVariable("id") String taskId,
 			@RequestBody Map<String, Object> vars) {
 		core.getProcessService().completeTask(taskId, vars);

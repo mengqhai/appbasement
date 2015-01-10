@@ -62,6 +62,10 @@ public class TaskResponse {
 		return task.getTenantId();
 	}
 
+	public String getProjectId() {
+		return task.getCategory();
+	}
+
 	public static List<TaskResponse> toRespondList(List<Task> tasks) {
 		List<TaskResponse> respList = new ArrayList<TaskResponse>();
 		for (Task task : tasks) {

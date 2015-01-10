@@ -30,12 +30,15 @@ import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Organization;
+import com.workstream.core.model.Project;
 import com.workstream.core.model.UserX;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.model.GroupRequest;
 import com.workstream.rest.model.GroupResponse;
 import com.workstream.rest.model.OrgRequest;
 import com.workstream.rest.model.OrgResponse;
+import com.workstream.rest.model.ProjectRequest;
+import com.workstream.rest.model.ProjectResponse;
 import com.workstream.rest.model.UserResponse;
 
 @Api(value = "orgs", description = "Organization related operations")
@@ -151,7 +154,7 @@ public class OrgController {
 		return respList;
 	}
 
-	@ApiOperation(value = "Request to join a group")
+	@ApiOperation(value = "Request to join an organization", notes = "A approval task will be created for the admin group of the target org")
 	@RequestMapping(method = RequestMethod.PUT, value = "/{id:\\d+}/users")
 	public void requestUserJoinOrg(@PathVariable("id") Long orgId)
 			throws AuthenticationNotSetException, AttempBadStateException {
@@ -159,7 +162,7 @@ public class OrgController {
 	}
 
 	@ApiOperation(value = "Get groups of the user in the given organization", notes = TEST_USER_ID_INFO)
-	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/users/{userIdBase64}")
+	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/users/{userIdBase64}/groups")
 	public List<GroupResponse> getGroupsOfUserInOrg(
 			@PathVariable("orgId") Long orgId,
 			@PathVariable("userIdBase64") String userIdBase64) {
@@ -182,6 +185,30 @@ public class OrgController {
 			}
 		}
 		return respList;
+	}
+
+	@ApiOperation(value = "Get project list of in the given organization")
+	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/projects")
+	public List<ProjectResponse> getProjectsInOrg(
+			@PathVariable("orgId") Long orgId) {
+		Collection<Project> projects = core.filterProjectByOrgId(orgId);
+		List<ProjectResponse> respList = new ArrayList<ProjectResponse>(
+				projects.size());
+		for (Project pro : projects) {
+			respList.add(new ProjectResponse(pro));
+		}
+		return respList;
+	}
+
+	@ApiOperation(value = "Create a project in the organization")
+	@RequestMapping(method = RequestMethod.POST, value = "/{orgId:\\d+}/projects", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ProjectResponse createProjectInOrg(
+			@PathVariable("orgId") Long orgId,
+			@ApiParam(required = true) @RequestBody ProjectRequest projectReq) {
+		Project proj = core.createProjectInOrg(orgId, projectReq.getName(),
+				projectReq.getStartTime(), projectReq.getDueTime(),
+				projectReq.getDescription());
+		return new ProjectResponse(proj);
 	}
 
 }

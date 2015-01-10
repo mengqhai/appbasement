@@ -49,4 +49,11 @@ public class GroupResponse {
 		return groupX.getCreatedAt();
 	}
 
+	public Long getOrgId() {
+		if (groupX == null) {
+			return null;
+		}
+		return groupX.getOrg().getId();
+	}
+
 }

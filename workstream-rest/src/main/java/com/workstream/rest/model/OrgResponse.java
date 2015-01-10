@@ -2,8 +2,11 @@ package com.workstream.rest.model;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.workstream.core.model.Organization;
 
+@JsonInclude(Include.NON_NULL)
 public class OrgResponse {
 
 	private Organization org;
