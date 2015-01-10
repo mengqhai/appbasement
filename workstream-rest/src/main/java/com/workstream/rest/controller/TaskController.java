@@ -44,6 +44,15 @@ public class TaskController {
 		return respList;
 	}
 
+	@ApiOperation(value = "Query the tasks created current user")
+	@RequestMapping(value = "/_createdByMe", method = RequestMethod.GET)
+	public List<TaskResponse> getMyCreatorTasks() {
+		String userId = core.getAuthUserId();
+		List<Task> tasks = core.getProjectService().filterTaskByCreator(userId);
+		List<TaskResponse> respList = TaskResponse.toRespondList(tasks);
+		return respList;
+	}
+
 	@ApiOperation(value = "Get the task for id")
 	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.GET)
 	public TaskResponse getTask(@PathVariable("id") String taskId) {
