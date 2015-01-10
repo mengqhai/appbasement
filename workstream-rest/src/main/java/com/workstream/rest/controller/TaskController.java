@@ -1,8 +1,10 @@
 package com.workstream.rest.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.identity.Group;
 import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +53,22 @@ public class TaskController {
 		List<Task> tasks = core.getProjectService().filterTaskByCreator(userId);
 		List<TaskResponse> respList = TaskResponse.toRespondList(tasks);
 		return respList;
+	}
+
+	@ApiOperation(value = "Query the candidate tasks of the current user")
+	@RequestMapping(value = "/_myCandidate", method = RequestMethod.GET)
+	public Map<String, List<TaskResponse>> getMyCandidateTask() {
+		String userId = core.getAuthUserId();
+		List<Group> groups = core.getUserService().filterGroupByUser(userId);
+		Map<String, List<TaskResponse>> respMap = new HashMap<String, List<TaskResponse>>(
+				groups.size());
+		for (Group g : groups) {
+			List<Task> tasks = core.getProcessService()
+					.filterTaskByCandidateGroup(g.getId());
+			List<TaskResponse> respList = TaskResponse.toRespondList(tasks);
+			respMap.put(g.getId(), respList);
+		}
+		return respMap;
 	}
 
 	@ApiOperation(value = "Get the task for id")
