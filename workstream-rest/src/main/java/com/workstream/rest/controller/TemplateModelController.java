@@ -1,6 +1,7 @@
 package com.workstream.rest.controller;
 
 import org.activiti.engine.repository.Model;
+import org.activiti.workflow.simple.definition.WorkflowDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,7 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.rest.exception.BytesNotFoundException;
 import com.workstream.rest.model.ModelResponse;
 
 @Api(value = "template models", description = "Process template model related operations")
@@ -40,6 +42,24 @@ public class TemplateModelController {
 			throw new ResourceNotFoundException("No such model");
 		}
 		core.getTemplateService().removeModel(modelId);
+	}
+
+	@ApiOperation("Get the workflow definition of a process template model")
+	@RequestMapping(value = "/{id}/workflow", method = RequestMethod.GET)
+	public WorkflowDefinition getModelWorkflowDefinition(
+			@PathVariable("id") String modelId) {
+		return core.getTemplateService().getModelWorkflowDef(modelId);
+	}
+
+	@ApiOperation("Get the workflow definition of a process template model")
+	@RequestMapping(value = "/{id}/diagram", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+	public byte[] getModelWorkflowDiagram(@PathVariable("id") String modelId)
+			throws BytesNotFoundException {
+		byte[] bytes = core.getTemplateService().getModelDiagram(modelId);
+		if (bytes == null) {
+			throw new BytesNotFoundException("No such diagram");
+		}
+		return bytes;
 	}
 
 }

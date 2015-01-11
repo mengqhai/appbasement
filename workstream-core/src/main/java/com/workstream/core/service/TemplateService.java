@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
 import com.workstream.core.exception.DataPersistException;
+import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Revision;
 import com.workstream.core.persistence.IRevisionDAO;
 import com.workstream.core.service.cmd.DeleteEditorSourceWithExtraForModelCmd;
@@ -129,7 +130,12 @@ public class TemplateService {
 		Model model = repoSer.newModel();
 		model.setName(name);
 		model.setTenantId(String.valueOf(orgId));
+		model.setCategory("table-editor"); // for explorer table editing
 		repoSer.saveModel(model);
+		WorkflowDefinition empty = new WorkflowDefinition();
+		empty.setName(name);
+		this.updateModel(orgId, model.getId(), empty); // place holder json for
+														// explore table editing
 		addRevision(model.getId(), null, Revision.TYPE_CREATE);
 		return model;
 	}
@@ -171,7 +177,7 @@ public class TemplateService {
 		Model model = repoSer.newModel();
 		model.setName(flow.getName());
 		model.setTenantId(String.valueOf(orgId));
-		model.setCategory("table-editor");
+		model.setCategory("table-editor"); // for explorer table editing
 		repoSer.saveModel(model);
 
 		try {
@@ -313,8 +319,12 @@ public class TemplateService {
 	}
 
 	public WorkflowDefinition getModelWorkflowDef(String modelId) {
-		WorkflowDefinition def = jsonCon
-				.readWorkflowDefinition(getModelJsonBytes(modelId));
+		byte[] bytes = getModelJsonBytes(modelId);
+		if (bytes == null) {
+			throw new ResourceNotFoundException(
+					"No workflow definition for the model");
+		}
+		WorkflowDefinition def = jsonCon.readWorkflowDefinition(bytes);
 		return def;
 	}
 
