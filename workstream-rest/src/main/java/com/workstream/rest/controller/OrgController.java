@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
+import org.activiti.engine.repository.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,8 @@ import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.model.GroupRequest;
 import com.workstream.rest.model.GroupResponse;
 import com.workstream.rest.model.InnerWrapperObj;
+import com.workstream.rest.model.ModelRequest;
+import com.workstream.rest.model.ModelResponse;
 import com.workstream.rest.model.OrgRequest;
 import com.workstream.rest.model.OrgResponse;
 import com.workstream.rest.model.ProjectRequest;
@@ -193,6 +196,22 @@ public class OrgController {
 				projectReq.getStartTime(), projectReq.getDueTime(),
 				projectReq.getDescription());
 		return new ProjectResponse(proj);
+	}
+
+	@ApiOperation(value = "Get process template model list of in the given organization")
+	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/templatemodels")
+	public List<ModelResponse> getModelsInOrg(@PathVariable("orgId") Long orgId) {
+		List<Model> models = core.getTemplateService().filterModel(orgId);
+		return InnerWrapperObj.valueOf(models, ModelResponse.class);
+	}
+
+	@ApiOperation(value = "Create an empty model in the organization", notes = "name field is required")
+	@RequestMapping(method = RequestMethod.POST, value = "/{orgId:\\d+}/templatemodels")
+	public ModelResponse createModelInOrg(@PathVariable("orgId") Long orgId,
+			@ApiParam(required = true) @RequestBody ModelRequest modelReq) {
+		Model model = core.getTemplateService().createModel(orgId,
+				modelReq.getName());
+		return new ModelResponse(model);
 	}
 
 }

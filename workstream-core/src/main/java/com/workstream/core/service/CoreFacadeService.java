@@ -309,4 +309,8 @@ public class CoreFacadeService {
 		return procSer;
 	}
 
+	public TemplateService getTemplateService() {
+		return tempSer;
+	}
+
 }
