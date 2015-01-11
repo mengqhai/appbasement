@@ -1,0 +1,99 @@
+{
+  "id": null,
+  "steps": [
+    {
+      "type": "human-step",
+      "id": null,
+      "name": "Do you agree?",
+      "description": null,
+      "startsWithPrevious": false,
+      "form": {
+        "description": "Do you agree to do so?",
+        "formKey": null,
+        "formGroups": [],
+        "formProperties": [
+          {
+            "type": null,
+            "name": "agree",
+            "displayName": "Agree?",
+            "mandatory": true,
+            "writable": true,
+            "value": null
+          }
+        ]
+      },
+      "assignment": {
+        "assignee": "mqhnow1@sina.com",
+        "type": "user"
+      },
+      "assignee": "mqhnow1@sina.com",
+      "candidateUsers": null,
+      "candidateGroups": null
+    },
+    {
+      "type": "choice-step",
+      "id": null,
+      "stepList": [
+        {
+          "type": "list",
+          "id": null,
+          "steps": [
+            {
+              "type": "human-step",
+              "id": null,
+              "name": "Agreed task",
+              "description": null,
+              "startsWithPrevious": false,
+              "form": null,
+              "assignment": {
+                "assignee": "mqhnow1@sina.com",
+                "type": "user"
+              },
+              "assignee": "mqhnow1@sina.com",
+              "candidateUsers": null,
+              "candidateGroups": null
+            }
+          ],
+          "conditions": [
+            {
+              "leftOperand": "agree",
+              "operator": "==",
+              "rightOperand": "true"
+            }
+          ],
+          "name": "Agreed",
+          "description": null
+        },
+        {
+          "type": "list",
+          "id": null,
+          "steps": [
+            {
+              "type": "human-step",
+              "id": null,
+              "name": "Not agreed task",
+              "description": null,
+              "startsWithPrevious": false,
+              "form": null,
+              "assignment": {
+                "assignee": "mqhnow1@sina.com",
+                "type": "user"
+              },
+              "assignee": "mqhnow1@sina.com",
+              "candidateUsers": null,
+              "candidateGroups": null
+            }
+          ],
+          "conditions": [],
+          "name": "Else",
+          "description": null
+        }
+      ]
+    }
+  ],
+  "key": null,
+  "name": "Process with choice from empty",
+  "description": null,
+  "category": null,
+  "startFormDefinition": null
+}

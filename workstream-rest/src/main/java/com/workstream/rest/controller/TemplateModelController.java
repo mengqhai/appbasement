@@ -60,7 +60,9 @@ public class TemplateModelController {
 		return core.getTemplateService().getModelWorkflowDef(modelId);
 	}
 
-	@ApiOperation("Update the workflow definition of a process template model")
+	@ApiOperation(value = "Update the workflow definition of a process template model", notes = "You may need a json editor: <br/>"
+			+ "<a target='_blank' href='http://www.jsoneditoronline.org/'>Editor1</a><br/>"
+			+ "<a target='_blank' href='http://codebeautify.org/online-json-editor'>Editor2</a><br/>")
 	@RequestMapping(value = "/{id}/workflow", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void updateWorkflowDefinition(
 			@PathVariable("id") String modelId,
