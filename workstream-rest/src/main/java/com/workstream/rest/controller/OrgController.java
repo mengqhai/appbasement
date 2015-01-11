@@ -11,6 +11,7 @@ import java.util.Map;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.repository.Model;
+import org.activiti.engine.repository.ProcessDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ import com.workstream.rest.model.OrgRequest;
 import com.workstream.rest.model.OrgResponse;
 import com.workstream.rest.model.ProjectRequest;
 import com.workstream.rest.model.ProjectResponse;
+import com.workstream.rest.model.TemplateResponse;
 import com.workstream.rest.model.UserResponse;
 
 @Api(value = "orgs", description = "Organization related operations")
@@ -201,6 +203,7 @@ public class OrgController {
 	@ApiOperation(value = "Get process template model list of in the given organization")
 	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/templatemodels")
 	public List<ModelResponse> getModelsInOrg(@PathVariable("orgId") Long orgId) {
+		core.getOrg(orgId); // check org existence
 		List<Model> models = core.getTemplateService().filterModel(orgId);
 		return InnerWrapperObj.valueOf(models, ModelResponse.class);
 	}
@@ -209,9 +212,22 @@ public class OrgController {
 	@RequestMapping(method = RequestMethod.POST, value = "/{orgId:\\d+}/templatemodels")
 	public ModelResponse createModelInOrg(@PathVariable("orgId") Long orgId,
 			@ApiParam(required = true) @RequestBody ModelRequest modelReq) {
+		core.getOrg(orgId); // check org existence
 		Model model = core.getTemplateService().createModel(orgId,
 				modelReq.getName());
 		return new ModelResponse(model);
+	}
+
+	@ApiOperation(value = "Retrieve the process template list in the organization")
+	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/templates")
+	public List<TemplateResponse> getProcessTemplatesInOrg(
+			@PathVariable("orgId") Long orgId) {
+		core.getOrg(orgId); // check org existence
+		List<ProcessDefinition> pd = core.getTemplateService()
+				.filterProcessTemplate(orgId);
+		List<TemplateResponse> respList = InnerWrapperObj.valueOf(pd,
+				TemplateResponse.class);
+		return respList;
 	}
 
 }

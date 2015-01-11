@@ -3,6 +3,7 @@ package com.workstream.core.service;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.zip.ZipInputStream;
@@ -94,6 +95,16 @@ public class TemplateService {
 				.deploymentTenantId(String.valueOf(orgId)).list();
 	}
 
+	public Deployment getDeploymentByModelId(String modelId) {
+		Model model = getModel(modelId);
+		String deploymentId = model.getDeploymentId();
+		if (deploymentId == null) {
+			return null;
+		} else {
+			return getDeployment(deploymentId);
+		}
+	}
+
 	/**
 	 * non-cascading deletion
 	 * 
@@ -101,6 +112,11 @@ public class TemplateService {
 	 */
 	public void removeDeployment(String deploymentId) {
 		repoSer.deleteDeployment(deploymentId);
+	}
+
+	public ProcessDefinition getProcessTemplate(String processDefinitionId) {
+		return repoSer.createProcessDefinitionQuery()
+				.processDefinitionId(processDefinitionId).singleResult();
 	}
 
 	public List<ProcessDefinition> filterProcessTemplate(Long orgId) {
@@ -111,6 +127,21 @@ public class TemplateService {
 	public List<ProcessDefinition> filterProcessTemplate(String deploymentId) {
 		return repoSer.createProcessDefinitionQuery()
 				.deploymentId(deploymentId).list();
+	}
+
+	public List<ProcessDefinition> filterProcessTemplateByModelId(String modelId) {
+		List<Deployment> deployments = repoSer.createDeploymentQuery()
+				.deploymentCategory(modelId).list();
+		// the deployments' category id field is set to be the its model id
+		// method deployModel()
+		List<ProcessDefinition> result = new ArrayList<ProcessDefinition>();
+		for (Deployment deploy : deployments) {
+			List<ProcessDefinition> defList = repoSer
+					.createProcessDefinitionQuery()
+					.deploymentId(deploy.getId()).list();
+			result.addAll(defList);
+		}
+		return result;
 	}
 
 	/**
@@ -135,7 +166,7 @@ public class TemplateService {
 		WorkflowDefinition empty = new WorkflowDefinition();
 		empty.setName(name);
 		this.updateModel(model.getId(), empty); // place holder json for
-														// explore table editing
+												// explore table editing
 		addRevision(model.getId(), null, Revision.TYPE_CREATE);
 		return model;
 	}
@@ -247,9 +278,8 @@ public class TemplateService {
 	 * @param flow
 	 * @return
 	 */
-	public Model updateModel(String modelId,
-			WorkflowDefinition flow, String comment)
-			throws DataPersistException {
+	public Model updateModel(String modelId, WorkflowDefinition flow,
+			String comment) throws DataPersistException {
 		WorkflowDefinitionConversion con = conFactory
 				.createWorkflowDefinitionConversion(flow);
 		con.convert();
@@ -341,8 +371,14 @@ public class TemplateService {
 		Model model = getModel(modelId);
 		Deployment deploy = repoSer.createDeployment()
 				.addBpmnModel(def.getName() + ".bpmn", bpmn)
-				.name(def.getName()).tenantId(model.getTenantId()).deploy();
-
+				.name(def.getName()).tenantId(model.getTenantId())
+				.category(model.getId()).deploy();
+		// Has to set deployment category to model id
+		// because although a model can have multiple deployments
+		// model obj can only save the latest model id
+		// so it's hard to find out all the deployments that
+		// belongs to the same model.
+		// Here we set the category field as the model id
 		model.setDeploymentId(deploy.getId());
 		repoSer.saveModel(model);
 		// must update the deployment Id

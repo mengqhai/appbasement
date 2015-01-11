@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.activiti.engine.repository.Model;
+import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.workflow.simple.definition.WorkflowDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.ModelResponse;
 import com.workstream.rest.model.ModelWorkflowDefRequest;
 import com.workstream.rest.model.RevisionResponse;
+import com.workstream.rest.model.TemplateResponse;
 
 @Api(value = "template models", description = "Process template model related operations")
 @RestController
@@ -57,6 +59,26 @@ public class TemplateModelController {
 			throw new ResourceNotFoundException("No such model");
 		}
 		core.getTemplateService().removeModel(modelId);
+	}
+
+	@ApiOperation("Deploy a process template model")
+	@RequestMapping(value = "/{id}/_deploy", method = RequestMethod.PUT)
+	public void deployModel(@PathVariable("id") String modelId) {
+		// TODO user authority check
+		core.getTemplateService().deployModel(modelId);
+	}
+
+	@ApiOperation("Retrieve the deployed process template list of a model")
+	@RequestMapping(value = "/{id}/templates", method = RequestMethod.GET)
+	public List<TemplateResponse> getDeployedTemplatesByModel(
+			@PathVariable("id") String modelId) {
+		// Model model = core.getTemplateService().getModel(modelId);
+		// if (model == null) {
+		// throw new ResourceNotFoundException("No such model");
+		// }
+		List<ProcessDefinition> pdList = core.getTemplateService()
+				.filterProcessTemplateByModelId(modelId);
+		return InnerWrapperObj.valueOf(pdList, TemplateResponse.class);
 	}
 
 	@ApiOperation("Get the workflow definition of a process template model")
