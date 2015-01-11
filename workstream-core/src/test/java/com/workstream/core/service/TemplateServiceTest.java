@@ -255,8 +255,7 @@ public class TemplateServiceTest {
 
 		// test update workflow
 		defSaved.addHumanStep("AddedTask", userId);
-		temSer.updateModel(org.getId(), model.getId(), defSaved,
-				"Added an Action 哦");
+		temSer.updateModel(model.getId(), defSaved, "Added an Action 哦");
 		temSer.getModel(model.getId());
 		WorkflowDefinition defUpdated = temSer.getModelWorkflowDef(model
 				.getId());

@@ -134,7 +134,7 @@ public class TemplateService {
 		repoSer.saveModel(model);
 		WorkflowDefinition empty = new WorkflowDefinition();
 		empty.setName(name);
-		this.updateModel(orgId, model.getId(), empty); // place holder json for
+		this.updateModel(model.getId(), empty); // place holder json for
 														// explore table editing
 		addRevision(model.getId(), null, Revision.TYPE_CREATE);
 		return model;
@@ -234,8 +234,8 @@ public class TemplateService {
 	 * @param flow
 	 * @return
 	 */
-	public Model updateModel(Long orgId, String modelId, WorkflowDefinition flow) {
-		return updateModel(orgId, modelId, flow, null);
+	public Model updateModel(String modelId, WorkflowDefinition flow) {
+		return updateModel(modelId, flow, null);
 	}
 
 	/**
@@ -247,7 +247,7 @@ public class TemplateService {
 	 * @param flow
 	 * @return
 	 */
-	public Model updateModel(Long orgId, String modelId,
+	public Model updateModel(String modelId,
 			WorkflowDefinition flow, String comment)
 			throws DataPersistException {
 		WorkflowDefinitionConversion con = conFactory
@@ -255,7 +255,6 @@ public class TemplateService {
 		con.convert();
 		Model model = repoSer.getModel(modelId);
 		model.setName(flow.getName());
-		model.setTenantId(String.valueOf(orgId));
 		model.setCategory("table-editor");
 		repoSer.saveModel(model);
 		try {
