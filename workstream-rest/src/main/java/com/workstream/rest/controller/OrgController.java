@@ -35,6 +35,7 @@ import com.workstream.core.model.UserX;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.model.GroupRequest;
 import com.workstream.rest.model.GroupResponse;
+import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.OrgRequest;
 import com.workstream.rest.model.OrgResponse;
 import com.workstream.rest.model.ProjectRequest;
@@ -79,10 +80,8 @@ public class OrgController {
 		UserX userX = core.getAuthUserX();
 		Collection<Organization> orgList = core.getOrgService()
 				.filterOrg(userX);
-		List<OrgResponse> resultList = new ArrayList<OrgResponse>();
-		for (Organization org : orgList) {
-			resultList.add(new OrgResponse(org));
-		}
+		List<OrgResponse> resultList = InnerWrapperObj.valueOf(orgList,
+				OrgResponse.class);
 		return resultList;
 	}
 
@@ -122,11 +121,8 @@ public class OrgController {
 	@RequestMapping(method = RequestMethod.GET, value = "/{id:\\d+}/groups")
 	public List<GroupResponse> getUserGroups(@PathVariable("id") Long orgId) {
 		List<Group> groups = core.getUserService().filterGroup(orgId);
-		List<GroupResponse> respList = new ArrayList<GroupResponse>(
-				groups.size());
-		for (Group group : groups) {
-			respList.add(new GroupResponse(group));
-		}
+		List<GroupResponse> respList = InnerWrapperObj.valueOf(groups,
+				GroupResponse.class);
 		return respList;
 	}
 
@@ -144,10 +140,8 @@ public class OrgController {
 	@RequestMapping(method = RequestMethod.GET, value = "/{id:\\d+}/users")
 	public List<UserResponse> getUsersInOrg(@PathVariable("id") Long orgId) {
 		List<User> users = core.filterUserByOrgId(orgId);
-		List<UserResponse> respList = new ArrayList<UserResponse>(users.size());
-		for (User user : users) {
-			respList.add(new UserResponse(user));
-		}
+		List<UserResponse> respList = InnerWrapperObj.valueOf(users,
+				UserResponse.class);
 		return respList;
 	}
 
@@ -170,15 +164,11 @@ public class OrgController {
 		List<GroupResponse> respList = new ArrayList<GroupResponse>(
 				userGroups.size());
 		for (Group userGroup : userGroups) {
-			boolean inOrg = false;
 			for (Group orgGroup : orgGroups) {
 				if (userGroup.getId().equals(orgGroup.getId())) {
-					inOrg = true;
+					respList.add(new GroupResponse(userGroup));
 					break;
 				}
-			}
-			if (inOrg) {
-				respList.add(new GroupResponse(userGroup));
 			}
 		}
 		return respList;
@@ -189,11 +179,8 @@ public class OrgController {
 	public List<ProjectResponse> getProjectsInOrg(
 			@PathVariable("orgId") Long orgId) {
 		Collection<Project> projects = core.filterProjectByOrgId(orgId);
-		List<ProjectResponse> respList = new ArrayList<ProjectResponse>(
-				projects.size());
-		for (Project pro : projects) {
-			respList.add(new ProjectResponse(pro));
-		}
+		List<ProjectResponse> respList = InnerWrapperObj.valueOf(projects,
+				ProjectResponse.class);
 		return respList;
 	}
 

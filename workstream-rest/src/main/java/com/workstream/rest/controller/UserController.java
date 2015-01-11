@@ -4,7 +4,6 @@ import static com.workstream.rest.RestConstants.TEST_USER_ID_INFO;
 import static com.workstream.rest.utils.RestUtils.decodeUserId;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +39,7 @@ import com.workstream.rest.RestConstants;
 import com.workstream.rest.exception.BytesNotFoundException;
 import com.workstream.rest.exception.NotAuthorizedException;
 import com.workstream.rest.model.GroupResponse;
+import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.UserRequest;
 import com.workstream.rest.model.UserResponse;
 
@@ -136,12 +136,8 @@ public class UserController {
 		// throw new ResourceNotFoundException("No such user.");
 		// }
 		List<Group> groups = core.getUserService().filterGroupByUser(userId);
-		List<GroupResponse> respList = new ArrayList<GroupResponse>(
-				groups.size());
-		for (Group group : groups) {
-			GroupResponse resp = new GroupResponse(group);
-			respList.add(resp);
-		}
+		List<GroupResponse> respList = InnerWrapperObj.valueOf(groups,
+				GroupResponse.class);
 		return respList;
 	}
 

@@ -23,6 +23,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.TaskRequest;
 import com.workstream.rest.model.TaskResponse;
 
@@ -42,7 +43,8 @@ public class TaskController {
 		String userId = core.getAuthUserId();
 		List<Task> tasks = core.getProjectService()
 				.filterTaskByAssignee(userId);
-		List<TaskResponse> respList = TaskResponse.toRespondList(tasks);
+		List<TaskResponse> respList = InnerWrapperObj.valueOf(tasks,
+				TaskResponse.class);
 		return respList;
 	}
 
@@ -51,7 +53,8 @@ public class TaskController {
 	public List<TaskResponse> getMyCreatorTasks() {
 		String userId = core.getAuthUserId();
 		List<Task> tasks = core.getProjectService().filterTaskByCreator(userId);
-		List<TaskResponse> respList = TaskResponse.toRespondList(tasks);
+		List<TaskResponse> respList = InnerWrapperObj.valueOf(tasks,
+				TaskResponse.class);
 		return respList;
 	}
 
@@ -65,7 +68,8 @@ public class TaskController {
 		for (Group g : groups) {
 			List<Task> tasks = core.getProcessService()
 					.filterTaskByCandidateGroup(g.getId());
-			List<TaskResponse> respList = TaskResponse.toRespondList(tasks);
+			List<TaskResponse> respList = InnerWrapperObj.valueOf(tasks,
+					TaskResponse.class);
 			respMap.put(g.getId(), respList);
 		}
 		return respMap;
@@ -78,8 +82,7 @@ public class TaskController {
 		if (task == null) {
 			throw new ResourceNotFoundException("No such task, archived?");
 		}
-		TaskResponse resp = new TaskResponse(core.getProjectService().getTask(
-				taskId));
+		TaskResponse resp = InnerWrapperObj.valueOf(task, TaskResponse.class);
 		return resp;
 	}
 

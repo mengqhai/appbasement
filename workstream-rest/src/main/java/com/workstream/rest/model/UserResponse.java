@@ -9,18 +9,20 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.workstream.core.model.UserX;
 
 @JsonInclude(Include.NON_NULL)
-public class UserResponse {
+public class UserResponse extends InnerWrapperObj<User> {
 
 	private User user;
 	private UserX userX;
 
 	public UserResponse(User user) {
-		this.user = user;
+		super(user);
+		this.user = inner;
 	}
 
 	public UserResponse(User user, UserX userX) {
 		this(user);
 		this.userX = userX;
+		this.user = inner;
 	}
 
 	public String getId() {

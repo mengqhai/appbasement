@@ -2,7 +2,6 @@ package com.workstream.rest.controller;
 
 import static com.workstream.rest.RestConstants.TEST_USER_ID_INFO;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +28,7 @@ import com.workstream.core.model.GroupX;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.model.GroupRequest;
 import com.workstream.rest.model.GroupResponse;
+import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.TaskResponse;
 import com.workstream.rest.model.UserResponse;
 import com.workstream.rest.utils.RestUtils;
@@ -57,11 +57,7 @@ public class GroupController {
 	public List<UserResponse> getGroupUsers(
 			@PathVariable("groupId") String groupId) {
 		List<User> users = core.getUserService().filterUserByGroupId(groupId);
-		List<UserResponse> respList = new ArrayList<UserResponse>(users.size());
-		for (User user : users) {
-			respList.add(new UserResponse(user));
-		}
-		return respList;
+		return InnerWrapperObj.valueOf(users, UserResponse.class);
 	}
 
 	@ApiOperation(value = "Partially update a group", notes = "Doesn't care whether the proper is in Group or GroupX")
@@ -132,8 +128,7 @@ public class GroupController {
 	public List<TaskResponse> getTasks(@PathVariable("groupId") String groupId) {
 		List<Task> tasks = core.getProcessService().filterTaskByCandidateGroup(
 				groupId);
-		List<TaskResponse> respList = TaskResponse.toRespondList(tasks);
-		return respList;
+		return InnerWrapperObj.valueOf(tasks, TaskResponse.class);
 	}
 
 }

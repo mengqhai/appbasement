@@ -7,33 +7,30 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.workstream.core.model.Organization;
 
 @JsonInclude(Include.NON_NULL)
-public class OrgResponse {
-
-	private Organization org;
+public class OrgResponse extends InnerWrapperObj<Organization> {
 
 	public OrgResponse(Organization org) {
-		super();
-		this.org = org;
+		super(org);
 	}
-	
+
 	public Long getId() {
-		return org.getId();
+		return inner.getId();
 	}
 
 	public String getName() {
-		return org.getName();
+		return inner.getName();
 	}
 
 	public String getIdentifier() {
-		return org.getIdentifier();
+		return inner.getIdentifier();
 	}
 
 	public String getDescription() {
-		return org.getDescription();
+		return inner.getDescription();
 	}
 
 	public Date getCreatedAt() {
-		return org.getCreatedAt();
+		return inner.getCreatedAt();
 	}
 
 }

@@ -19,6 +19,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Project;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.ProjectRequest;
 import com.workstream.rest.model.ProjectResponse;
 import com.workstream.rest.model.TaskRequest;
@@ -75,7 +76,8 @@ public class ProjectController {
 			@PathVariable("id") Long projectId)
 			throws ResourceNotFoundException {
 		List<Task> tasks = core.getProjectService().filterTask(projectId);
-		List<TaskResponse> respList = TaskResponse.toRespondList(tasks);
+		List<TaskResponse> respList = InnerWrapperObj.valueOf(tasks,
+				TaskResponse.class);
 		return respList;
 	}
 

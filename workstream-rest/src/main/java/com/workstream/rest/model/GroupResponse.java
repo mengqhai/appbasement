@@ -9,18 +9,20 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.workstream.core.model.GroupX;
 
 @JsonInclude(Include.NON_NULL)
-public class GroupResponse {
+public class GroupResponse extends InnerWrapperObj<Group> {
 
 	private Group group;
 	private GroupX groupX;
 
 	public GroupResponse(Group group, GroupX groupX) {
-		this.group = group;
+		super(group);
+		this.group = inner;
 		this.groupX = groupX;
 	}
 
 	public GroupResponse(Group group) {
-		this.group = group;
+		super(group);
+		this.group = inner;
 	}
 
 	public String getGroupId() {

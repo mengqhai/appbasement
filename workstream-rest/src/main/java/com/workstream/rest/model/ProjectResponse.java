@@ -7,12 +7,13 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.workstream.core.model.Project;
 
 @JsonInclude(Include.NON_NULL)
-public class ProjectResponse {
+public class ProjectResponse extends InnerWrapperObj<Project> {
 
 	private Project project;
 
 	public ProjectResponse(Project project) {
-		this.project = project;
+		super(project);
+		this.project = inner;
 	}
 
 	public Long getId() {
