@@ -1,5 +1,8 @@
 package com.workstream.rest.controller;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.activiti.engine.repository.Model;
 import org.activiti.workflow.simple.definition.WorkflowDefinition;
 import org.slf4j.Logger;
@@ -17,10 +20,13 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.ResourceNotFoundException;
+import com.workstream.core.model.Revision;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.exception.BytesNotFoundException;
+import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.ModelResponse;
 import com.workstream.rest.model.ModelWorkflowDefRequest;
+import com.workstream.rest.model.RevisionResponse;
 
 @Api(value = "template models", description = "Process template model related operations")
 @RestController
@@ -86,6 +92,15 @@ public class TemplateModelController {
 			throw new BytesNotFoundException("No such diagram");
 		}
 		return bytes;
+	}
+
+	@ApiOperation("Get the revision list of a process template model")
+	@RequestMapping(value = "/{id}/revisions", method = RequestMethod.GET)
+	public List<RevisionResponse> getRevisions(
+			@PathVariable("id") String modelId) {
+		Collection<Revision> revisions = core.getTemplateService()
+				.filterModelRevision(modelId);
+		return InnerWrapperObj.valueOf(revisions, RevisionResponse.class);
 	}
 
 }
