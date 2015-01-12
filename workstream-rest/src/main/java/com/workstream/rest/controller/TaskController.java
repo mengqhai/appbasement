@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.activiti.engine.ActivitiObjectNotFoundException;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Event;
@@ -14,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import com.workstream.core.CoreConstants;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.model.CommentResponse;
@@ -96,13 +98,15 @@ public class TaskController {
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void completeTask(@PathVariable("id") String taskId,
 			@RequestBody(required = false) Map<String, Object> vars) {
-		try {
-			core.getProcessService().completeTask(taskId, vars);
-		} catch (ActivitiObjectNotFoundException e) {
-			log.warn("No such task? {}", taskId, e);
-			throw new ResourceNotFoundException("No such task, archived?", e);
-		}
+		core.getProcessService().completeTask(taskId, vars);
+	}
 
+	@ApiOperation(value = "Claim the task")
+	@RequestMapping(value = "/{id:\\d+}/_claim", method = RequestMethod.PUT)
+	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
+	public void claimTask(@PathVariable("id") String taskId) {
+		String userId = core.getAuthUserId();
+		core.getProcessService().claimTask(taskId, userId);
 	}
 
 	@ApiOperation(value = "Partially update the task for id")

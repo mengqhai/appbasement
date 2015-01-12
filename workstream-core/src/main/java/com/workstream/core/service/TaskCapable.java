@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.ActivitiObjectNotFoundException;
 import org.activiti.engine.FormService;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.TaskService;
@@ -159,18 +160,39 @@ public class TaskCapable {
 	 */
 	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
 	public void deleteTask(Task task) {
-		taskSer.deleteTask(task.getId());
-		log.info("Deleted task {}", task);
+		try {
+			taskSer.deleteTask(task.getId());
+			log.info("Deleted task {}", task);
+		} catch (ActivitiObjectNotFoundException e) {
+			throw new ResourceNotFoundException("No such task", e);
+		}
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
 	public void completeTask(String taskId) {
-		taskSer.complete(taskId);
+		try {
+			taskSer.complete(taskId);
+		} catch (ActivitiObjectNotFoundException e) {
+			throw new ResourceNotFoundException("No such task", e);
+		}
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
 	public void completeTask(String taskId, Map<String, Object> variables) {
-		taskSer.complete(taskId, variables);
+		try {
+			taskSer.complete(taskId, variables);
+		} catch (ActivitiObjectNotFoundException e) {
+			throw new ResourceNotFoundException("No such task", e);
+		}
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
+	public void claimTask(String taskId, String userId) {
+		try {
+			taskSer.claim(taskId, userId);
+		} catch (ActivitiObjectNotFoundException e) {
+			throw new ResourceNotFoundException("No such task", e);
+		}
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
