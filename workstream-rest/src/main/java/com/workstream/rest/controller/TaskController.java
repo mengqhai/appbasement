@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.activiti.engine.ActivitiObjectNotFoundException;
 import org.activiti.engine.identity.Group;
+import org.activiti.engine.task.Comment;
+import org.activiti.engine.task.Event;
 import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,8 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.rest.model.CommentResponse;
+import com.workstream.rest.model.EventResponse;
 import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.TaskRequest;
 import com.workstream.rest.model.TaskResponse;
@@ -116,5 +120,30 @@ public class TaskController {
 		// cause activiti exception, so an exception mapping is required
 		core.getProjectService().deleteTask(taskId);
 		log.debug("Deleted task {}", taskId);
+	}
+
+	@ApiOperation(value = "Retrieve all the events for a task")
+	@RequestMapping(value = "/{id:\\d+}/events", method = RequestMethod.GET)
+	public List<EventResponse> getTaskEvents(@PathVariable("id") String taskId) {
+		List<Event> events = core.getProjectService().filterTaskEvent(taskId);
+		return InnerWrapperObj.valueOf(events, EventResponse.class);
+	}
+
+	@ApiOperation(value = "Retrieve all the comments for a task")
+	@RequestMapping(value = "/{id:\\d+}/comments", method = RequestMethod.GET)
+	public List<CommentResponse> getTaskComments(
+			@PathVariable("id") String taskId) {
+		List<Comment> events = core.getProjectService().filterTaskComment(
+				taskId);
+		return InnerWrapperObj.valueOf(events, CommentResponse.class);
+	}
+
+	@ApiOperation(value = "Post a comment for a task")
+	@RequestMapping(value = "/{id:\\d+}/comments", method = RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE)
+	public CommentResponse addTaskComment(@PathVariable("id") String taskId,
+			@RequestBody(required = true) String message) {
+		Comment comment = core.getProjectService().addTaskComment(taskId,
+				message);
+		return new CommentResponse(comment);
 	}
 }
