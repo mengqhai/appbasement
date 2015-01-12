@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.ActivitiObjectNotFoundException;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
@@ -90,8 +91,14 @@ public class TaskController {
 	@RequestMapping(value = "/{id:\\d+}/_complete", method = RequestMethod.PUT)
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void completeTask(@PathVariable("id") String taskId,
-			@RequestBody Map<String, Object> vars) {
-		core.getProcessService().completeTask(taskId, vars);
+			@RequestBody(required = false) Map<String, Object> vars) {
+		try {
+			core.getProcessService().completeTask(taskId, vars);
+		} catch (ActivitiObjectNotFoundException e) {
+			log.warn("No such task? {}", taskId, e);
+			throw new ResourceNotFoundException("No such task, archived?", e);
+		}
+
 	}
 
 	@ApiOperation(value = "Partially update the task for id")

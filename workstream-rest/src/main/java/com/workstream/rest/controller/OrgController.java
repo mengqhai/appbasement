@@ -12,6 +12,7 @@ import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.runtime.ProcessInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,7 @@ import com.workstream.rest.model.ModelRequest;
 import com.workstream.rest.model.ModelResponse;
 import com.workstream.rest.model.OrgRequest;
 import com.workstream.rest.model.OrgResponse;
+import com.workstream.rest.model.ProcessResponse;
 import com.workstream.rest.model.ProjectRequest;
 import com.workstream.rest.model.ProjectResponse;
 import com.workstream.rest.model.TemplateResponse;
@@ -229,5 +231,12 @@ public class OrgController {
 		List<TemplateResponse> respList = InnerWrapperObj.valueOf(pd,
 				TemplateResponse.class);
 		return respList;
+	}
+	
+	@ApiOperation(value = "Retrieve the running process list in the organization")
+	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/processes")
+	public List<ProcessResponse> getProcessesInOrg(@PathVariable("orgId") Long orgId) {
+		List<ProcessInstance> piList = core.getProcessService().filterProcess(orgId);
+		return InnerWrapperObj.valueOf(piList, ProcessResponse.class);
 	}
 }

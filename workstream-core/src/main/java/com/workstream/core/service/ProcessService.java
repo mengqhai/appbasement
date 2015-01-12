@@ -90,6 +90,11 @@ public class ProcessService extends TaskCapable {
 				.processInstanceTenantId(String.valueOf(orgId)).list();
 	}
 
+	public List<ProcessInstance> filterProcessByTemplateId(String templateId) {
+		return ruSer.createProcessInstanceQuery()
+				.processDefinitionId(templateId).list();
+	}
+
 	public ProcessInstance getProcess(String id) {
 		return ruSer.createProcessInstanceQuery().processInstanceId(id)
 				.singleResult();

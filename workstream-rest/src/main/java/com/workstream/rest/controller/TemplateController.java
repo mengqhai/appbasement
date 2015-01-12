@@ -1,8 +1,10 @@
 package com.workstream.rest.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.runtime.ProcessInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.model.InnerWrapperObj;
+import com.workstream.rest.model.ProcessResponse;
 import com.workstream.rest.model.TemplateResponse;
 
 /**
@@ -67,6 +70,23 @@ public class TemplateController {
 			throw new ResourceNotFoundException("No such template");
 		}
 		return InnerWrapperObj.valueOf(pd, TemplateResponse.class);
+	}
+
+	@ApiOperation(value = "Retrieve the running process list of the process template")
+	@RequestMapping(method = RequestMethod.GET, value = "/{templateId}/processes")
+	public List<ProcessResponse> getProcessesForTemplate(
+			@PathVariable("templateId") String templateId) {
+		List<ProcessInstance> piList = core.getProcessService()
+				.filterProcessByTemplateId(templateId);
+		return InnerWrapperObj.valueOf(piList, ProcessResponse.class);
+	}
+
+	@ApiOperation(value = "Start a process instance for the template")
+	@RequestMapping(method = RequestMethod.POST, value = "/{templateId}/processes")
+	public ProcessResponse startProcess(
+			@PathVariable("templateId") String templateId) {
+		ProcessInstance pi = core.getProcessService().startProcess(templateId);
+		return InnerWrapperObj.valueOf(pi, ProcessResponse.class);
 	}
 
 }
