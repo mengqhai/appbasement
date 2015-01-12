@@ -19,6 +19,7 @@ import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.DeploymentBuilder;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.activiti.image.ProcessDiagramGenerator;
 import org.activiti.workflow.simple.converter.WorkflowDefinitionConversion;
 import org.activiti.workflow.simple.converter.WorkflowDefinitionConversionFactory;
@@ -123,9 +124,15 @@ public class TemplateService {
 				.processDefinitionId(processDefinitionId).singleResult();
 	}
 
-	public List<ProcessDefinition> filterProcessTemplate(Long orgId) {
-		return repoSer.createProcessDefinitionQuery()
-				.processDefinitionTenantId(String.valueOf(orgId)).list();
+	public List<ProcessDefinition> filterProcessTemplate(Long orgId,
+			boolean onlyLatest) {
+		ProcessDefinitionQuery q = repoSer.createProcessDefinitionQuery()
+				.processDefinitionTenantId(String.valueOf(orgId));
+		if (onlyLatest) {
+			q.latestVersion(); // it's OK to combine with the
+								// processDefinitionTenantId()
+		}
+		return q.orderByProcessDefinitionId().asc().list();
 	}
 
 	public List<ProcessDefinition> filterProcessTemplate(String deploymentId) {
@@ -200,8 +207,8 @@ public class TemplateService {
 		repoSer.saveModel(model);
 		WorkflowDefinition empty = new WorkflowDefinition();
 		empty.setName(name);
-		this.updateModel(model.getId(), empty); // place holder json for
-												// explore table editing
+		saveWorkflowToModel(model.getId(), empty); // place holder json for
+													// explore table editing
 		addRevision(model.getId(), null, Revision.TYPE_CREATE);
 		return model;
 	}
@@ -230,29 +237,34 @@ public class TemplateService {
 	}
 
 	/**
-	 * Convert a simple WorkflowDefinition to a Model and save it.
+	 * After deployment, this id will be the key of the process definition. So
+	 * in this way, we can make all the process definitions that deployed from
+	 * the same model share the same key, so the version increment will be based
+	 * on the model id, which is the expected behavior.
 	 * 
-	 * @return
+	 * @param modelId
+	 * @param flow
 	 */
-	public Model saveToModel(Long orgId, WorkflowDefinition flow)
-			throws DataPersistException {
-		WorkflowDefinitionConversion con = conFactory
-				.createWorkflowDefinitionConversion(flow);
-		con.convert();
+	private void setWorkflowId(String modelId, WorkflowDefinition flow) {
+		// https://www.java.net/node/660184
+		// NCName must starts with letter or _
+		flow.setId("model_" + modelId);
+	}
 
-		Model model = repoSer.newModel();
-		model.setName(flow.getName());
-		model.setTenantId(String.valueOf(orgId));
-		model.setCategory("table-editor"); // for explorer table editing
-		repoSer.saveModel(model);
-
+	private void saveWorkflowToModel(String modelId, WorkflowDefinition flow) {
+		setWorkflowId(modelId, flow);
 		try {
+			WorkflowDefinitionConversion con = conFactory
+					.createWorkflowDefinitionConversion(flow);
+			con.convert();
 			// See SimpleTableEditor.save()
 			// Write JSON to byte-array and set as editor-source
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			jsonCon.writeWorkflowDefinition(flow, new OutputStreamWriter(baos));
-			// source saved in byte array and linked to the model entity
-			repoSer.addModelEditorSource(model.getId(), baos.toByteArray());
+			jsonCon.writeWorkflowDefinition(flow, new OutputStreamWriter(baos,
+					"utf-8")); // must explicitly specify utf-8, here
+			// otherwise, the default(like GBK) will be used,
+			// and jackson will report error(Invalid UTF-8 middle byte 0xd0)
+			// when deserializing the byte[] back to object
 
 			// create and save the process diagram
 			InputStream diaIn = diagramGenerator.generateDiagram(
@@ -262,15 +274,36 @@ public class TemplateService {
 			// con.getBpmnModel(), "png", "sansserif", "sansserif",
 			// peCfg.getClassLoader());
 			// to support chinese
+			// after this the ModelEntity's sourceId and sourceExtraId are set
+			// to null
 
-			repoSer.addModelEditorSourceExtra(model.getId(),
+			// source saved in byte array and linked to the model entity
+			repoSer.addModelEditorSource(modelId, baos.toByteArray());
+			repoSer.addModelEditorSourceExtra(modelId,
 					IOUtils.toByteArray(diaIn));
-			addRevision(model.getId(), null, Revision.TYPE_CREATE);
+
 		} catch (Exception e) {
 			log.error("Failed to save model source and extra.", e);
 			throw new DataPersistException(
 					"Failed to save model source and extra.", e);
 		}
+	}
+
+	/**
+	 * Convert a simple WorkflowDefinition to a Model and save it.
+	 * 
+	 * @return
+	 */
+	public Model saveToModel(Long orgId, WorkflowDefinition flow)
+			throws DataPersistException {
+		Model model = repoSer.newModel();
+		model.setName(flow.getName());
+		model.setTenantId(String.valueOf(orgId));
+		model.setCategory("table-editor"); // for explorer table editing
+		repoSer.saveModel(model);
+
+		saveWorkflowToModel(model.getId(), flow);
+		addRevision(model.getId(), null, Revision.TYPE_CREATE);
 
 		return model;
 	}
@@ -334,42 +367,11 @@ public class TemplateService {
 		model.setName(flow.getName());
 		model.setCategory("table-editor");
 		repoSer.saveModel(model);
-		try {
-			// See SimpleTableEditor.save()
-			// Write JSON to byte-array and set as editor-source
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			jsonCon.writeWorkflowDefinition(flow, new OutputStreamWriter(baos,
-					"utf-8")); // must explicitly specify utf-8, here
-			// otherwise, the default(like GBK) will be used,
-			// and jackson will report error(Invalid UTF-8 middle byte 0xd0)
-			// when deserializing the byte[] back to object
+		// must delete the old source and extra first
+		mgmtService.executeCommand(new DeleteEditorSourceWithExtraForModelCmd(
+				model));
+		saveWorkflowToModel(modelId, flow);
 
-			// create and save the process diagram
-			InputStream diaIn = diagramGenerator.generateDiagram(
-					con.getBpmnModel(), "png", peCfg.getActivityFontName(),
-					peCfg.getLabelFontName(), peCfg.getClassLoader());
-			// InputStream diaIn = diagramGenerator.generateDiagram(
-			// con.getBpmnModel(), "png", "sansserif", "sansserif",
-			// peCfg.getClassLoader());
-			// to support chinese
-
-			// must delete the old source and extra first
-			mgmtService
-					.executeCommand(new DeleteEditorSourceWithExtraForModelCmd(
-							model));
-			// after this the ModelEntity's sourceId and sourceExtraId are set
-			// to null
-
-			// source saved in byte array and linked to the model entity
-			repoSer.addModelEditorSource(model.getId(), baos.toByteArray());
-			repoSer.addModelEditorSourceExtra(model.getId(),
-					IOUtils.toByteArray(diaIn));
-
-		} catch (Exception e) {
-			log.error("Failed to save model source and extra.", e);
-			throw new DataPersistException(
-					"Failed to save model source and extra.", e);
-		}
 		addRevision(model.getId(), comment, Revision.ACTION_EDIT);
 		return model;
 	}

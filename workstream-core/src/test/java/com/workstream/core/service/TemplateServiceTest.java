@@ -118,15 +118,15 @@ public class TemplateServiceTest {
 		List<ProcessDefinition> pdList = temSer.filterProcessTemplate(deploy
 				.getId());
 		Assert.assertEquals(1, pdList.size());
-		List<ProcessDefinition> pdList1 = temSer.filterProcessTemplate(org
-				.getId());
+		List<ProcessDefinition> pdList1 = temSer.filterProcessTemplate(
+				org.getId(), false);
 		Assert.assertEquals(1, pdList1.size());
 
 		// test delete
 		temSer.removeDeployment(deploy.getId());
 		deployList = temSer.filterDeployment(org.getId());
 		Assert.assertEquals(0, deployList.size());
-		pdList1 = temSer.filterProcessTemplate(org.getId());
+		pdList1 = temSer.filterProcessTemplate(org.getId(), false);
 		Assert.assertEquals(0, pdList1.size());
 	}
 

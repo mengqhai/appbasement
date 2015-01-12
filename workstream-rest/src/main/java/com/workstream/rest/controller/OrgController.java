@@ -221,13 +221,13 @@ public class OrgController {
 	@ApiOperation(value = "Retrieve the process template list in the organization")
 	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/templates")
 	public List<TemplateResponse> getProcessTemplatesInOrg(
-			@PathVariable("orgId") Long orgId) {
+			@PathVariable("orgId") Long orgId,
+			@RequestParam(required = false) boolean onlyLatest) {
 		core.getOrg(orgId); // check org existence
 		List<ProcessDefinition> pd = core.getTemplateService()
-				.filterProcessTemplate(orgId);
+				.filterProcessTemplate(orgId, onlyLatest);
 		List<TemplateResponse> respList = InnerWrapperObj.valueOf(pd,
 				TemplateResponse.class);
 		return respList;
 	}
-
 }

@@ -109,17 +109,23 @@ public class TemplateModelController {
 
 	@ApiOperation(value = "Update the workflow definition of a process template model", notes = "You may need a json editor: <br/>"
 			+ "<a target='_blank' href='http://www.jsoneditoronline.org/'>Editor1</a><br/>"
-			+ "<a target='_blank' href='http://codebeautify.org/online-json-editor'>Editor2</a><br/>")
+			+ "<a target='_blank' href='http://codebeautify.org/online-json-editor'>Editor2</a><br/>"
+			+ "Some typical structure for step:<br/>"
+			+ "{\"type\":\"human-step\",<br/>"
+			+ "\"name\":\"a human step\",<br/>"
+			+ "\"assignee\":\"mqhnow1@sina.com\"}")
 	@RequestMapping(value = "/{id}/workflow", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void updateWorkflowDefinition(
 			@PathVariable("id") String modelId,
 			@ApiParam(required = true) @RequestBody ModelWorkflowDefRequest workflow) {
-		if (workflow.getWorkflow() == null) {
+		WorkflowDefinition def = workflow.getWorkflow();
+		if (def == null) {
 			throw new BadArgumentException("No workflow definition provided");
 		}
 		String userId = core.getAuthUserId();
 		// TODO may need to check the user's org
-		core.getTemplateService().updateModel(modelId, workflow.getWorkflow(),
+
+		core.getTemplateService().updateModel(modelId, def,
 				workflow.getComment());
 		log.info("Model workflow updated by {}", userId);
 	}
