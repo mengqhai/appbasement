@@ -3,6 +3,7 @@ package com.workstream.rest.controller;
 import java.util.Collection;
 import java.util.List;
 
+import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.workflow.simple.definition.WorkflowDefinition;
@@ -20,6 +21,7 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.BadArgumentException;
+import com.workstream.core.exception.DataBadStateException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Revision;
 import com.workstream.core.service.CoreFacadeService;
@@ -61,13 +63,6 @@ public class TemplateModelController {
 		core.getTemplateService().removeModel(modelId);
 	}
 
-	@ApiOperation("Deploy a process template model")
-	@RequestMapping(value = "/{id}/_deploy", method = RequestMethod.PUT)
-	public void deployModel(@PathVariable("id") String modelId) {
-		// TODO user authority check
-		core.getTemplateService().deployModel(modelId);
-	}
-
 	@ApiOperation("Retrieve the deployed process template list of a model")
 	@RequestMapping(value = "/{id}/templates", method = RequestMethod.GET)
 	public List<TemplateResponse> getDeployedTemplatesByModel(
@@ -79,6 +74,22 @@ public class TemplateModelController {
 		List<ProcessDefinition> pdList = core.getTemplateService()
 				.filterProcessTemplateByModelId(modelId);
 		return InnerWrapperObj.valueOf(pdList, TemplateResponse.class);
+	}
+
+	@ApiOperation("Deploy a process template model")
+	@RequestMapping(value = "/{id}/templates", method = RequestMethod.POST)
+	public TemplateResponse deployModel(@PathVariable("id") String modelId) {
+		// TODO user authority check
+		Deployment deploy = core.getTemplateService().deployModel(modelId);
+		ProcessDefinition template = core.getTemplateService()
+				.getProcessTemplateByDeployment(deploy.getId());
+		if (template == null) {
+			log.error(
+					"No template after deployment: deploymentId={} modelId={}",
+					deploy.getId(), modelId);
+			throw new DataBadStateException("No template after deployment");
+		}
+		return InnerWrapperObj.valueOf(template, TemplateResponse.class);
 	}
 
 	@ApiOperation("Get the workflow definition of a process template model")

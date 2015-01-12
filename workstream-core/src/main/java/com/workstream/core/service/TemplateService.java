@@ -291,7 +291,11 @@ public class TemplateService {
 			// See SimpleTableEditor.save()
 			// Write JSON to byte-array and set as editor-source
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			jsonCon.writeWorkflowDefinition(flow, new OutputStreamWriter(baos));
+			jsonCon.writeWorkflowDefinition(flow, new OutputStreamWriter(baos,
+					"utf-8")); // must explicitly specify utf-8, here
+			// otherwise, the default(like GBK) will be used,
+			// and jackson will report error(Invalid UTF-8 middle byte 0xd0)
+			// when deserializing the byte[] back to object
 
 			// create and save the process diagram
 			InputStream diaIn = diagramGenerator.generateDiagram(

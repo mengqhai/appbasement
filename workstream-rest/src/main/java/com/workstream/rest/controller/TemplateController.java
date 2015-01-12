@@ -53,16 +53,16 @@ public class TemplateController {
 	@ApiOperation("Get a process template model")
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public TemplateResponse getTemplate(@PathVariable("id") String templateId) {
+		String decode = templateId;
 		try {
-			String decode = new String(templateId.getBytes("ISO-8859-1"),
-					"utf-8");
+			decode = new String(templateId.getBytes("ISO-8859-1"), "utf-8");
 			log.info("Decoded templateId {}", decode);
 		} catch (UnsupportedEncodingException e) {
 			log.error("Failed to decode templateId: {}", templateId);
 		}
 
 		ProcessDefinition pd = core.getTemplateService().getProcessTemplate(
-				templateId);
+				decode);
 		if (pd == null) {
 			throw new ResourceNotFoundException("No such template");
 		}
