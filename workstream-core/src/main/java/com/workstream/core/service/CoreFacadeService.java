@@ -10,6 +10,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.impl.identity.Authentication;
+import org.activiti.engine.repository.Deployment;
+import org.activiti.engine.repository.Model;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
@@ -24,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.workstream.core.CoreConstants;
 import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.AuthenticationNotSetException;
+import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.DataBadStateException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.GroupX;
@@ -85,6 +88,77 @@ public class CoreFacadeService {
 			throw new ResourceNotFoundException("No such org.");
 		}
 		return org;
+	}
+
+	/**
+	 * Get template model with existence check
+	 * 
+	 * @param model
+	 * @return
+	 */
+	public Model getModel(String modelId) {
+		Model model = tempSer.getModel(modelId);
+		if (model == null) {
+			throw new ResourceNotFoundException("No such model");
+		}
+		return model;
+	}
+
+	/**
+	 * Delete all the deployments for a given model
+	 * 
+	 * @param modelId
+	 */
+	public void undeployModelAll(String modelId) {
+		List<Deployment> deployments = tempSer
+				.filterDeploymentByModelId(modelId);
+		if (deployments.isEmpty()) {
+			throw new BadArgumentException("The model has not deployed yet.");
+		}
+
+		for (Deployment d : deployments) {
+			String deploymentId = d.getId();
+			tempSer.removeDeployment(deploymentId);
+			log.debug("Deployment deleted: {}", deploymentId);
+		}
+	}
+
+	public void undeployModelOnlyLast(String modelId) {
+		Model model = getModel(modelId);
+		String lastDeployId = model.getDeploymentId();
+		if (lastDeployId == null) {
+			throw new BadArgumentException("The model has not deployed yet.");
+		}
+		tempSer.removeDeployment(lastDeployId);
+		log.debug("Deployment deleted: {}", lastDeployId);
+		// need to set the model's deploymentId field the the next last
+		// deployment
+		List<Deployment> remainings = tempSer
+				.filterDeploymentByModelId(modelId);
+
+		if (!remainings.isEmpty()) {
+			// the model still has other deployments
+			Deployment lastDeploy = remainings.get(0);
+			// filterDeploymentByModelId already guarantees the last deployment
+			// is on the head of the list
+			model = getModel(modelId);
+			Map<String, Object> props = new HashMap<String, Object>(1);
+			props.put("deploymentId", lastDeploy.getId());
+			tempSer.updateModel(modelId, props);
+			log.debug("Updated the model's last deployment to {}", lastDeployId);
+		}
+		// lastDeployId = null;
+		// Date lastDeploymentTime = null;
+		// for (Deployment remaining : remainings) {
+		// if (lastDeploymentTime == null
+		// || lastDeploymentTime.before(remaining.getDeploymentTime())) {
+		// lastDeploymentTime = remaining.getDeploymentTime();
+		// lastDeployId = remaining.getId();
+		// }
+		// }
+		// if (lastDeployId != null) {
+		//
+		// }
 	}
 
 	public Organization createInitOrg(UserX creator, String name,

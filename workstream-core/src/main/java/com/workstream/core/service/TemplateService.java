@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipInputStream;
 
 import org.activiti.bpmn.model.BpmnModel;
@@ -22,6 +24,7 @@ import org.activiti.workflow.simple.converter.WorkflowDefinitionConversion;
 import org.activiti.workflow.simple.converter.WorkflowDefinitionConversionFactory;
 import org.activiti.workflow.simple.converter.json.SimpleWorkflowJsonConverter;
 import org.activiti.workflow.simple.definition.WorkflowDefinition;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +34,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
+import com.workstream.core.exception.BeanPropertyException;
 import com.workstream.core.exception.DataPersistException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Revision;
@@ -125,23 +129,54 @@ public class TemplateService {
 	}
 
 	public List<ProcessDefinition> filterProcessTemplate(String deploymentId) {
+		// q.latestVersion() is not be able to used with .deploymentId()
 		return repoSer.createProcessDefinitionQuery()
 				.deploymentId(deploymentId).list();
 	}
 
-	public List<ProcessDefinition> filterProcessTemplateByModelId(String modelId) {
-		List<Deployment> deployments = repoSer.createDeploymentQuery()
-				.deploymentCategory(modelId).list();
+	/**
+	 * The last deployment is on the list head
+	 * 
+	 * @param modelId
+	 * @return
+	 */
+	public List<Deployment> filterDeploymentByModelId(String modelId) {
 		// the deployments' category id field is set to be the its model id
 		// method deployModel()
-		List<ProcessDefinition> result = new ArrayList<ProcessDefinition>();
-		for (Deployment deploy : deployments) {
-			List<ProcessDefinition> defList = repoSer
-					.createProcessDefinitionQuery()
-					.deploymentId(deploy.getId()).list();
-			result.addAll(defList);
+		List<Deployment> deployments = repoSer.createDeploymentQuery()
+				.deploymentCategory(modelId).orderByDeploymenTime().desc()
+				.list();
+		return deployments;
+	}
+
+	/**
+	 * 
+	 * @param modelId
+	 * @param onlyLatest
+	 *            only list latest version?
+	 * @return
+	 */
+	public List<ProcessDefinition> filterProcessTemplateByModelId(
+			String modelId, boolean onlyLatest) {
+		List<Deployment> deployments = filterDeploymentByModelId(modelId);
+		// the deployments' category id field is set to be the its model id
+		// method deployModel()
+		if (onlyLatest) {
+			if (!deployments.isEmpty()) {
+				Deployment lastDeployment = deployments.get(0);
+				return filterProcessTemplate(lastDeployment.getId());
+			} else {
+				return Collections.emptyList();
+			}
+		} else {
+			List<ProcessDefinition> result = new ArrayList<ProcessDefinition>();
+			for (Deployment deploy : deployments) {
+				List<ProcessDefinition> defList = this
+						.filterProcessTemplate(deploy.getId());
+				result.addAll(defList);
+			}
+			return result;
 		}
-		return result;
 	}
 
 	/**
@@ -254,6 +289,18 @@ public class TemplateService {
 
 	public Collection<Revision> filterModelRevision(String modelId) {
 		return revDao.filterFor(Model.class.getSimpleName(), modelId);
+	}
+
+	public Model updateModel(String modelId, Map<String, Object> props) {
+		Model model = getModel(modelId);
+		try {
+			BeanUtils.populate(model, props);
+		} catch (Exception e) {
+			log.error("Failed to populate the props to model: {}", props, e);
+			throw new BeanPropertyException(e);
+		}
+		repoSer.saveModel(model);
+		return model;
 	}
 
 	/**

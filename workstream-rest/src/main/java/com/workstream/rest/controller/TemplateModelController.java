@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wordnik.swagger.annotations.Api;
@@ -22,7 +23,6 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.DataBadStateException;
-import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Revision;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.exception.BytesNotFoundException;
@@ -46,33 +46,29 @@ public class TemplateModelController {
 	@ApiOperation("Get a process template model")
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ModelResponse getModel(@PathVariable("id") String modelId) {
-		Model model = core.getTemplateService().getModel(modelId);
-		if (model == null) {
-			throw new ResourceNotFoundException("No such model");
-		}
+		Model model = core.getModel(modelId);
 		return new ModelResponse(model);
 	}
 
+	@SuppressWarnings("unused")
 	@ApiOperation("Delete a process template model")
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public void deleteModel(@PathVariable("id") String modelId) {
-		Model model = core.getTemplateService().getModel(modelId);
-		if (model == null) {
-			throw new ResourceNotFoundException("No such model");
-		}
+		Model model = core.getModel(modelId);// existence check
 		core.getTemplateService().removeModel(modelId);
 	}
 
 	@ApiOperation("Retrieve the deployed process template list of a model")
 	@RequestMapping(value = "/{id}/templates", method = RequestMethod.GET)
 	public List<TemplateResponse> getDeployedTemplatesByModel(
-			@PathVariable("id") String modelId) {
+			@PathVariable("id") String modelId,
+			@RequestParam(required = false) boolean onlyLatest) {
 		// Model model = core.getTemplateService().getModel(modelId);
 		// if (model == null) {
 		// throw new ResourceNotFoundException("No such model");
 		// }
 		List<ProcessDefinition> pdList = core.getTemplateService()
-				.filterProcessTemplateByModelId(modelId);
+				.filterProcessTemplateByModelId(modelId, onlyLatest);
 		return InnerWrapperObj.valueOf(pdList, TemplateResponse.class);
 	}
 
@@ -90,6 +86,18 @@ public class TemplateModelController {
 			throw new DataBadStateException("No template after deployment");
 		}
 		return InnerWrapperObj.valueOf(template, TemplateResponse.class);
+	}
+
+	@ApiOperation(value = "Undeploy a process template model", notes = "If only undeploy the last deployment of the model, "
+			+ "specify <b>onlyLast=true</b>")
+	@RequestMapping(value = "/{id}/templates", method = RequestMethod.DELETE)
+	public void undeployModel(@PathVariable("id") String modelId,
+			@RequestParam(required = false, value = "onlyLast") boolean onlyLast) {
+		if (onlyLast) {
+			core.undeployModelOnlyLast(modelId);
+		} else {
+			core.undeployModelAll(modelId);
+		}
 	}
 
 	@ApiOperation("Get the workflow definition of a process template model")
