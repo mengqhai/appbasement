@@ -1,6 +1,5 @@
 package com.workstream.rest.controller;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.activiti.engine.repository.ProcessDefinition;
@@ -21,6 +20,7 @@ import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.ProcessResponse;
 import com.workstream.rest.model.TemplateResponse;
+import com.workstream.rest.utils.RestUtils;
 
 /**
  * Templates -- deployed process definitions
@@ -33,6 +33,7 @@ import com.workstream.rest.model.TemplateResponse;
 @RequestMapping(value = "/templates", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TemplateController {
 
+	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory
 			.getLogger(TemplateController.class);
 
@@ -57,12 +58,7 @@ public class TemplateController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public TemplateResponse getTemplate(@PathVariable("id") String templateId) {
 		String decode = templateId;
-		try {
-			decode = new String(templateId.getBytes("ISO-8859-1"), "utf-8");
-			log.info("Decoded templateId {}", decode);
-		} catch (UnsupportedEncodingException e) {
-			log.error("Failed to decode templateId: {}", templateId);
-		}
+		decode = RestUtils.decodeIsoToUtf8(templateId);
 
 		ProcessDefinition pd = core.getTemplateService().getProcessTemplate(
 				decode);

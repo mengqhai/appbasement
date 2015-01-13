@@ -41,6 +41,7 @@ import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.TaskFormDataResponse;
 import com.workstream.rest.model.TaskRequest;
 import com.workstream.rest.model.TaskResponse;
+import com.workstream.rest.utils.RestUtils;
 
 @Api(value = "tasks", description = "Task related operations")
 @RestController
@@ -192,19 +193,24 @@ public class TaskController {
 			@ApiParam(required = true) @RequestBody MultipartFile file) {
 		if (!file.isEmpty()) {
 			String contentType = file.getContentType();
-			log.info("File recieved name={} size={} content-type={}",
-					file.getOriginalFilename(), file.getSize(), contentType);
-			// here is OK for large file, as commons-fileupload temporarily
-			// saves the file on disk
 
 			try {
+
+				String decoded = RestUtils.decodeIsoToUtf8(file
+						.getOriginalFilename());
+				log.info("File recieved name={} size={} content-type={}",
+						decoded, file.getSize(), contentType);
+				// here is OK for large file, as commons-fileupload temporarily
+				// saves the file on disk
+
 				// problem occurs here for large file, because Activiti reads
 				// the stream into an byte[] in memory!
 				// I'll replace the attachment with my own implementation in the
 				// future.
+
 				Attachment attachment = core.getProjectService()
 						.createTaskAttachment(taskId, file.getContentType(),
-								file.getOriginalFilename(),
+								decoded,
 								"size: " + file.getSize() / 1024L + "KB",
 								file.getInputStream());
 				return new AttachmentResponse(attachment);
