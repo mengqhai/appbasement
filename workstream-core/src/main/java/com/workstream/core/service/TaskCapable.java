@@ -12,6 +12,7 @@ import org.activiti.engine.HistoryService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.impl.identity.Authentication;
+import org.activiti.engine.task.Attachment;
 import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Event;
 import org.activiti.engine.task.IdentityLinkType;
@@ -65,13 +66,15 @@ public class TaskCapable {
 	 * @return
 	 */
 	public List<Task> filterTaskByCreator(String creatorId) {
-		TaskQuery q = taskSer.createTaskQuery().taskOwner(creatorId).orderByTaskCreateTime().desc();
+		TaskQuery q = taskSer.createTaskQuery().taskOwner(creatorId)
+				.orderByTaskCreateTime().desc();
 		return q.list();
 	}
 
 	public List<Task> filterTaskByCandidateGroup(String... groupIds) {
 		TaskQuery q = taskSer.createTaskQuery()
-				.taskCandidateGroupIn(Arrays.asList(groupIds)).taskUnassigned().orderByTaskCreateTime().desc();
+				.taskCandidateGroupIn(Arrays.asList(groupIds)).taskUnassigned()
+				.orderByTaskCreateTime().desc();
 		return q.list();
 	}
 
@@ -224,6 +227,10 @@ public class TaskCapable {
 		});
 
 		return result;
+	}
+
+	public List<Attachment> filterTaskAttachment(String taskId) {
+		return taskSer.getTaskAttachments(taskId);
 	}
 
 	/**

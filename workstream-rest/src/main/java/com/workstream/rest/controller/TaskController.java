@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.activiti.engine.form.TaskFormData;
 import org.activiti.engine.identity.Group;
+import org.activiti.engine.task.Attachment;
 import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Event;
 import org.activiti.engine.task.Task;
@@ -29,6 +30,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.CoreConstants;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.rest.model.AttachmentResponse;
 import com.workstream.rest.model.CommentResponse;
 import com.workstream.rest.model.EventResponse;
 import com.workstream.rest.model.InnerWrapperObj;
@@ -168,5 +170,14 @@ public class TaskController {
 	public void completeTaskByForm(@PathVariable("id") String taskId,
 			@RequestBody(required = true) Map<String, String> formProps) {
 		core.completeTaskByForm(taskId, formProps);
+	}
+
+	@ApiOperation(value = "Retrieve the attachment list for a task")
+	@RequestMapping(value = "/{id:\\d+}/attachments", method = RequestMethod.GET)
+	public List<AttachmentResponse> getTaskAttachments(
+			@PathVariable("id") String taskId) {
+		List<Attachment> attachments = core.getProjectService()
+				.filterTaskAttachment(taskId);
+		return InnerWrapperObj.valueOf(attachments, AttachmentResponse.class);
 	}
 }
