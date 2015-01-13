@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.form.TaskFormData;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Event;
@@ -31,6 +32,7 @@ import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.model.CommentResponse;
 import com.workstream.rest.model.EventResponse;
 import com.workstream.rest.model.InnerWrapperObj;
+import com.workstream.rest.model.TaskFormDataResponse;
 import com.workstream.rest.model.TaskRequest;
 import com.workstream.rest.model.TaskResponse;
 
@@ -93,7 +95,8 @@ public class TaskController {
 		return resp;
 	}
 
-	@ApiOperation(value = "Complete the task")
+	@ApiOperation(value = "Complete the task", notes = "There's a security hole here: user is able to set any process "
+			+ "instance variables by submitting the vars object.")
 	@RequestMapping(value = "/{id:\\d+}/_complete", method = RequestMethod.PUT)
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void completeTask(@PathVariable("id") String taskId,
@@ -149,5 +152,21 @@ public class TaskController {
 		Comment comment = core.getProjectService().addTaskComment(taskId,
 				message);
 		return new CommentResponse(comment);
+	}
+
+	@ApiOperation(value = "Retrieve the form property definitions for a task")
+	@RequestMapping(value = "/{id:\\d+}/form", method = RequestMethod.GET)
+	public TaskFormDataResponse getTaskFormProps(
+			@PathVariable("id") String taskId) {
+		TaskFormData formData = core.getProcessService()
+				.getTaskFormData(taskId);
+		return InnerWrapperObj.valueOf(formData, TaskFormDataResponse.class);
+	}
+
+	@ApiOperation(value = "Complete the task by submitting the form for a task")
+	@RequestMapping(value = "/{id:\\d+}/form", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void completeTaskByForm(@PathVariable("id") String taskId,
+			@RequestBody(required = true) Map<String, String> formProps) {
+		core.getProcessService().submitTaskFormData(taskId, formProps);
 	}
 }

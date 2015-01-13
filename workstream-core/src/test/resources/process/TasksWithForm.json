@@ -1,0 +1,72 @@
+{
+  "id": "model_665008",
+  "steps": [
+    {
+      "type": "human-step",
+      "id": null,
+      "name": "form task1",
+      "description": null,
+      "startsWithPrevious": false,
+      "form": {
+        "description": null,
+        "formKey": null,
+        "formGroups": [],
+        "formProperties": [
+          {
+            "type": "text",
+            "name": "textProp",
+            "displayName": "Text Property",
+            "mandatory": true,
+            "writable": true,
+            "value": null,
+            "multiline": false
+          },
+          {
+            "type": "number",
+            "name": "numProp",
+            "displayName": "Number Property",
+            "mandatory": true,
+            "writable": true,
+            "value": null
+          },
+          {
+            "type": "date",
+            "name": "dateProp",
+            "displayName": "Date Property",
+            "mandatory": true,
+            "writable": true,
+            "value": null,
+            "showTime": true
+          }
+        ]
+      },
+      "assignment": {
+        "assignee": "mqhnow1@sina.com",
+        "type": "user"
+      },
+      "candidateUsers": null,
+      "candidateGroups": null,
+      "assignee": "mqhnow1@sina.com"
+    },
+    {
+      "type": "human-step",
+      "id": null,
+      "name": "task2",
+      "description": "textProp=${textProp}\nnumProp=${numProp}\ndateProp=${dateProp}",
+      "startsWithPrevious": false,
+      "form": null,
+      "assignment": {
+        "assignee": "mqhnow1@sina.com",
+        "type": "user"
+      },
+      "candidateUsers": null,
+      "candidateGroups": null,
+      "assignee": "mqhnow1@sina.com"
+    }
+  ],
+  "key": null,
+  "name": "Tasks with forms",
+  "description": null,
+  "category": null,
+  "startFormDefinition": null
+}

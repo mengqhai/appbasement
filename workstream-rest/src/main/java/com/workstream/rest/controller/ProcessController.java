@@ -1,6 +1,7 @@
 package com.workstream.rest.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.runtime.ProcessInstance;
@@ -44,6 +45,18 @@ public class ProcessController {
 		List<HistoricProcessInstance> hiList = core.getProcessService()
 				.filterHiProcessByStarter(userId, false);
 		return InnerWrapperObj.valueOf(hiList, HiProcessResponse.class);
+	}
+
+	@ApiOperation(value = "Retrieve all the variables for the process instance", notes = "This is a security hole to be fixed.")
+	@RequestMapping(value = "/{id}/vars", method = RequestMethod.GET)
+	public Map<String, Object> getProcessVariables(
+			@PathVariable("id") String processId) {
+		ProcessInstance pi = core.getProcessService().getProcessWithVars(
+				processId);
+		if (pi == null) {
+			throw new ResourceNotFoundException("No such process, archived?");
+		}
+		return pi.getProcessVariables();
 	}
 
 }

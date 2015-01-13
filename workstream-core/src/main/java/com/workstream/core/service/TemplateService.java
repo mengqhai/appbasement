@@ -23,7 +23,6 @@ import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.activiti.image.ProcessDiagramGenerator;
 import org.activiti.workflow.simple.converter.WorkflowDefinitionConversion;
 import org.activiti.workflow.simple.converter.WorkflowDefinitionConversionFactory;
-import org.activiti.workflow.simple.converter.json.SimpleWorkflowJsonConverter;
 import org.activiti.workflow.simple.definition.WorkflowDefinition;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.IOUtils;
@@ -41,6 +40,7 @@ import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Revision;
 import com.workstream.core.persistence.IRevisionDAO;
 import com.workstream.core.service.cmd.DeleteEditorSourceWithExtraForModelCmd;
+import com.workstream.core.service.components.WsSimpleWorkflowJsonConverter;
 import com.workstream.core.worflow.simple.CoreWorkflowDefinitionConversionFactory;
 
 /**
@@ -61,7 +61,8 @@ public class TemplateService {
 
 	private WorkflowDefinitionConversionFactory conFactory = new CoreWorkflowDefinitionConversionFactory();
 
-	private SimpleWorkflowJsonConverter jsonCon = new SimpleWorkflowJsonConverter();
+	@Autowired
+	private WsSimpleWorkflowJsonConverter jsonCon;
 
 	@Autowired
 	private ProcessDiagramGenerator diagramGenerator;

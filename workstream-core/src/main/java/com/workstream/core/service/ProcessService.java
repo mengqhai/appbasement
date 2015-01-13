@@ -6,7 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.activiti.engine.ActivitiException;
+import org.activiti.engine.ActivitiIllegalArgumentException;
+import org.activiti.engine.ActivitiObjectNotFoundException;
+import org.activiti.engine.FormService;
 import org.activiti.engine.RuntimeService;
+import org.activiti.engine.form.StartFormData;
+import org.activiti.engine.form.TaskFormData;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricProcessInstanceQuery;
 import org.activiti.engine.history.HistoricTaskInstance;
@@ -22,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
 import com.workstream.core.exception.AuthenticationNotSetException;
+import com.workstream.core.exception.BadArgumentException;
+import com.workstream.core.exception.ResourceNotFoundException;
 
 /**
  * A service related with process instances.
@@ -37,6 +45,9 @@ public class ProcessService extends TaskCapable {
 
 	@Autowired
 	private RuntimeService ruSer;
+
+	@Autowired
+	private FormService forSer;
 
 	/**
 	 * 
@@ -63,12 +74,16 @@ public class ProcessService extends TaskCapable {
 			throw new AuthenticationNotSetException(
 					"No authenticated user, no process can be started.");
 		}
-		ProcessInstance p = ruSer.startProcessInstanceByKey(
-				processDefinitionKey, vars);
-		log.debug(
-				"Process instance created id={} for template key={}, with vars: {}",
-				p.getId(), vars, processDefinitionKey);
-		return p;
+		try {
+			ProcessInstance p = ruSer.startProcessInstanceByKey(
+					processDefinitionKey, vars);
+			log.debug(
+					"Process instance created id={} for template key={}, with vars: {}",
+					p.getId(), vars, processDefinitionKey);
+			return p;
+		} catch (ActivitiObjectNotFoundException e) {
+			throw new ResourceNotFoundException("No such process", e);
+		}
 	}
 
 	public ProcessInstance startProcess(String processDefinitionId,
@@ -77,12 +92,16 @@ public class ProcessService extends TaskCapable {
 			throw new AuthenticationNotSetException(
 					"No authenticated user, no process can be started.");
 		}
-		ProcessInstance p = ruSer.startProcessInstanceById(processDefinitionId,
-				vars);
-		log.debug(
-				"Process instance created id={} for template {}, with vars: {}",
-				p.getId(), processDefinitionId, vars);
-		return p;
+		try {
+			ProcessInstance p = ruSer.startProcessInstanceById(
+					processDefinitionId, vars);
+			log.debug(
+					"Process instance created id={} for template {}, with vars: {}",
+					p.getId(), processDefinitionId, vars);
+			return p;
+		} catch (ActivitiObjectNotFoundException e) {
+			throw new ResourceNotFoundException("No such process", e);
+		}
 	}
 
 	public List<ProcessInstance> filterProcess(Long orgId) {
@@ -98,6 +117,11 @@ public class ProcessService extends TaskCapable {
 	public ProcessInstance getProcess(String id) {
 		return ruSer.createProcessInstanceQuery().processInstanceId(id)
 				.singleResult();
+	}
+
+	public ProcessInstance getProcessWithVars(String id) {
+		return ruSer.createProcessInstanceQuery().processInstanceId(id)
+				.includeProcessVariables().singleResult();
 	}
 
 	public HistoricProcessInstance getHiProcess(String processInstanceId) {
@@ -234,6 +258,43 @@ public class ProcessService extends TaskCapable {
 			String processInstanceId) {
 		return hiSer.createHistoricTaskInstanceQuery()
 				.processInstanceId(processInstanceId).list();
+	}
+
+	public StartFormData getStartFormData(String processDefinitionId) {
+		try {
+			return forSer.getStartFormData(processDefinitionId);
+		} catch (ActivitiObjectNotFoundException e) {
+			throw new ResourceNotFoundException("No such task", e);
+		}
+	}
+
+	public ProcessInstance submitStartFormData(String processDefinitionId,
+			Map<String, String> properties) {
+		try {
+			return forSer.submitStartFormData(processDefinitionId, properties);
+		} catch (ActivitiObjectNotFoundException e) {
+			throw new ResourceNotFoundException("No such task", e);
+		}
+	}
+
+	public TaskFormData getTaskFormData(String taskId) {
+		try {
+			return forSer.getTaskFormData(taskId);
+		} catch (ActivitiObjectNotFoundException e) {
+			throw new ResourceNotFoundException("No such task", e);
+		}
+	}
+
+	public void submitTaskFormData(String taskId, Map<String, String> properties) {
+		try {
+			forSer.submitTaskFormData(taskId, properties);
+		} catch (ActivitiObjectNotFoundException e) {
+			throw new ResourceNotFoundException("No such task", e);
+		} catch (ActivitiIllegalArgumentException ie) {
+			throw new BadArgumentException(ie.getMessage());
+		} catch (ActivitiException ae) {
+			throw new BadArgumentException(ae.getMessage());
+		}
 	}
 
 }

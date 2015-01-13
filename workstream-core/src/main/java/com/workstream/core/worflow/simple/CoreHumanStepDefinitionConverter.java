@@ -35,6 +35,16 @@ public class CoreHumanStepDefinitionConverter extends
 				type = "long";
 			} else if (propertyDefinition instanceof DatePropertyDefinition) {
 				type = "date";
+				DatePropertyDefinition datePropDef = (DatePropertyDefinition) propertyDefinition;
+				if (datePropDef.isShowTime()) {
+					formProperty.setDatePattern("yyyy-MM-dd HH:mm:ss");
+				} else {
+					formProperty.setDatePattern("yyyy-MM-dd");
+					// by default Activiti uses dd/MM/yyyy
+					// here we customize the date pattern
+					// How the pattern if finally used by activiti?
+					// See activiti FormTypes.parseFormPropertyType()
+				}
 			} else if (propertyDefinition instanceof ListPropertyDefinition) {
 
 				type = "enum";
