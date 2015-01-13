@@ -52,7 +52,8 @@ public class TaskCapable {
 	 * @return
 	 */
 	public List<Task> filterTaskByAssignee(String assigneeId) {
-		TaskQuery q = taskSer.createTaskQuery().taskAssignee(assigneeId);
+		TaskQuery q = taskSer.createTaskQuery().taskAssignee(assigneeId)
+				.orderByTaskCreateTime().desc();
 		return q.list();
 	}
 
@@ -64,13 +65,13 @@ public class TaskCapable {
 	 * @return
 	 */
 	public List<Task> filterTaskByCreator(String creatorId) {
-		TaskQuery q = taskSer.createTaskQuery().taskOwner(creatorId);
+		TaskQuery q = taskSer.createTaskQuery().taskOwner(creatorId).orderByTaskCreateTime().desc();
 		return q.list();
 	}
 
 	public List<Task> filterTaskByCandidateGroup(String... groupIds) {
 		TaskQuery q = taskSer.createTaskQuery()
-				.taskCandidateGroupIn(Arrays.asList(groupIds)).taskUnassigned();
+				.taskCandidateGroupIn(Arrays.asList(groupIds)).taskUnassigned().orderByTaskCreateTime().desc();
 		return q.list();
 	}
 

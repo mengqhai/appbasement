@@ -292,6 +292,8 @@ public class ProcessService extends TaskCapable {
 			throw new ResourceNotFoundException("No such task", e);
 		} catch (ActivitiIllegalArgumentException ie) {
 			throw new BadArgumentException(ie.getMessage());
+		} catch (NumberFormatException nfe) {
+			throw new BadArgumentException(nfe.getMessage());
 		} catch (ActivitiException ae) {
 			throw new BadArgumentException(ae.getMessage());
 		}

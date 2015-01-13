@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.activiti.engine.form.FormProperty;
+import org.activiti.engine.form.TaskFormData;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.impl.identity.Authentication;
@@ -373,6 +375,30 @@ public class CoreFacadeService {
 		} else {
 			throw new AttempBadStateException("User already in the org");
 		}
+	}
+
+	/**
+	 * out the properties that are not supposed to be set in this form
+	 * 
+	 * @param taskId
+	 * @param formProps
+	 */
+	public void completeTaskByForm(String taskId, Map<String, String> formProps) {
+		// must filter out the properties that are not supposed to be set in
+		// this form, otherwise they'll become/modify the process instance
+		// variables with the same name.
+		// This will also filter out the null values.
+		TaskFormData formData = procSer.getTaskFormData(taskId);
+		List<FormProperty> propDefs = formData.getFormProperties();
+		Map<String, String> filteredFormProps = new HashMap<String, String>();
+		for (FormProperty propDef : propDefs) {
+			String key = propDef.getId();
+			String value = formProps.get(key);
+			if (value != null) {
+				filteredFormProps.put(key, value);
+			}
+		}
+		procSer.submitTaskFormData(taskId, filteredFormProps);
 	}
 
 	public ProjectService getProjectService() {

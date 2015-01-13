@@ -167,6 +167,6 @@ public class TaskController {
 	@RequestMapping(value = "/{id:\\d+}/form", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void completeTaskByForm(@PathVariable("id") String taskId,
 			@RequestBody(required = true) Map<String, String> formProps) {
-		core.getProcessService().submitTaskFormData(taskId, formProps);
+		core.completeTaskByForm(taskId, formProps);
 	}
 }
