@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.AuthenticationNotSetException;
@@ -46,6 +47,16 @@ public class ErrorHandlerAdvice {
 	@ExceptionHandler(AttempBadStateException.class)
 	@ResponseBody
 	public RestErrorResponse handleBadState(AttempBadStateException e) {
+		RestErrorResponse r = new RestErrorResponse(400, e.getMessage());
+		return r;
+	}
+
+	// 400
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(MaxUploadSizeExceededException.class)
+	@ResponseBody
+	public RestErrorResponse handleUploadFileSizeTooBig(
+			MaxUploadSizeExceededException e) {
 		RestErrorResponse r = new RestErrorResponse(400, e.getMessage());
 		return r;
 	}

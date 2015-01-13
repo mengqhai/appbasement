@@ -1,5 +1,6 @@
 package com.workstream.core.service;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -231,6 +232,21 @@ public class TaskCapable {
 
 	public List<Attachment> filterTaskAttachment(String taskId) {
 		return taskSer.getTaskAttachments(taskId);
+	}
+
+	public Attachment createTaskAttachment(String taskId, String type,
+			String attachmentName, String attachmentDescription,
+			InputStream content) {
+		return taskSer.createAttachment(type, taskId, null, attachmentName,
+				attachmentDescription, content);
+	}
+
+	public Attachment getTaskAttachment(String attachmentId) {
+		return taskSer.getAttachment(attachmentId);
+	}
+
+	public InputStream getTaskAttachmentContent(String taskId) {
+		return taskSer.getAttachmentContent(taskId);
 	}
 
 	/**
