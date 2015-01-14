@@ -1,5 +1,7 @@
 package com.workstream.core.conf;
 
+import java.sql.Driver;
+
 import javax.sql.DataSource;
 
 import org.hibernate.dialect.H2Dialect;
@@ -10,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
@@ -45,6 +48,28 @@ public class PersistenceConfiguration {
 		mgmt.setEntityManagerFactory(emf().getObject());
 		log.info("JPA Transaction Manager created.");
 		return mgmt;
+	}
+	
+	@Bean
+	public DataSource dataSource() {
+		SimpleDriverDataSource ds = new SimpleDriverDataSource();
+
+		try {
+			@SuppressWarnings("unchecked")
+			Class<? extends Driver> driverClass = (Class<? extends Driver>) Class
+					.forName(environment.getProperty("jdbc.driver",
+							"org.h2.Driver"));
+			ds.setDriverClass(driverClass);
+		} catch (Exception e) {
+			log.error("Failed to load driver class", e);
+		}
+
+		// Connection settings
+		ds.setUrl(environment.getProperty("jdbc.url",
+				"jdbc:h2:mem:activiti;DB_CLOSE_DELAY=1000"));
+		ds.setUsername(environment.getProperty("jdbc.username", "sa"));
+		ds.setPassword(environment.getProperty("jdbc.password", ""));
+		return ds;
 	}
 
 	@Bean

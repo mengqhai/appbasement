@@ -1,7 +1,5 @@
 package com.workstream.core.conf;
 
-import java.sql.Driver;
-
 import javax.sql.DataSource;
 
 import org.activiti.engine.FormService;
@@ -24,10 +22,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.workstream.core.event.CoreProcessEventListener;
+import com.workstream.core.event.CoreTaskCommentEventListener;
+import com.workstream.core.event.CoreTaskEventListener;
 import com.workstream.core.exception.ConfigurationException;
 
 @Configuration
@@ -39,42 +38,27 @@ public class ActivitiEngineConfiguration {
 	@Autowired
 	private Environment environment;
 
-	@Bean
-	public DataSource dataSource() {
-		SimpleDriverDataSource ds = new SimpleDriverDataSource();
+	@Autowired
+	private PlatformTransactionManager wsTxManager;
 
-		try {
-			@SuppressWarnings("unchecked")
-			Class<? extends Driver> driverClass = (Class<? extends Driver>) Class
-					.forName(environment.getProperty("jdbc.driver",
-							"org.h2.Driver"));
-			ds.setDriverClass(driverClass);
-		} catch (Exception e) {
-			log.error("Failed to load driver class", e);
-		}
+	@Autowired
+	private DataSource dataSource;
 
-		// Connection settings
-		ds.setUrl(environment.getProperty("jdbc.url",
-				"jdbc:h2:mem:activiti;DB_CLOSE_DELAY=1000"));
-		ds.setUsername(environment.getProperty("jdbc.username", "sa"));
-		ds.setPassword(environment.getProperty("jdbc.password", ""));
-		return ds;
-	}
-
-	@Bean
-	public PlatformTransactionManager actTransactionManager() {
-		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
-		transactionManager.setDataSource(dataSource());
-		return transactionManager;
-	}
+	// @Bean
+	// public PlatformTransactionManager actTransactionManager() {
+	// DataSourceTransactionManager transactionManager = new
+	// DataSourceTransactionManager();
+	// transactionManager.setDataSource(dataSource());
+	// return transactionManager;
+	// }
 
 	@Bean
 	public ProcessEngineConfigurationImpl processEngineConfiguration() {
 		SpringProcessEngineConfiguration cfg = new SpringProcessEngineConfiguration();
-		cfg.setDataSource(dataSource());
+		cfg.setDataSource(dataSource);
 		cfg.setDatabaseSchemaUpdate(environment.getProperty(
 				"engine.schema.update", "true"));
-		cfg.setTransactionManager(actTransactionManager());
+		cfg.setTransactionManager(wsTxManager);
 		cfg.setJobExecutorActivate(Boolean.valueOf(environment.getProperty(
 				"engine.activate.jobexecutor", "false")));
 		cfg.setHistory(environment.getProperty("engine.history.level", "full"));
@@ -119,8 +103,30 @@ public class ActivitiEngineConfiguration {
 	}
 
 	@Bean
+	public CoreTaskEventListener taskEventListener() {
+		return new CoreTaskEventListener();
+	}
+
+	@Bean
+	public CoreTaskCommentEventListener commentEventListener() {
+		return new CoreTaskCommentEventListener();
+	}
+
+	@Bean
+	public CoreProcessEventListener processEventListener() {
+		return new CoreProcessEventListener();
+	}
+
+	@Bean
 	public RuntimeService runtimeService() {
-		return processEngine().getRuntimeService();
+		RuntimeService ru = processEngine().getRuntimeService();
+		ru.addEventListener(taskEventListener(),
+				CoreTaskEventListener.EVENT_TYPES);
+		ru.addEventListener(commentEventListener(),
+				CoreTaskCommentEventListener.EVENT_TYPES);
+		ru.addEventListener(processEventListener(),
+				CoreProcessEventListener.EVENT_TYPES);
+		return ru;
 	}
 
 	@Bean
