@@ -14,6 +14,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.workstream.core.model.CoreEvent.TargetType;
+
 @Entity
 @Table(name = "WS_SUB")
 @Access(AccessType.FIELD)
@@ -32,10 +34,10 @@ public class Subscription {
 	/**
 	 * Could be TASK, PROJECT or PROCESS
 	 */
-	private String targetType;
+	private TargetType targetType;
 
 	private String targetId;
-	
+
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
@@ -48,11 +50,11 @@ public class Subscription {
 		this.userId = userId;
 	}
 
-	public String getTargetType() {
+	public TargetType getTargetType() {
 		return targetType;
 	}
 
-	public void setTargetType(String targetType) {
+	public void setTargetType(TargetType targetType) {
 		this.targetType = targetType;
 	}
 
@@ -63,7 +65,7 @@ public class Subscription {
 	public void setTargetId(String targetId) {
 		this.targetId = targetId;
 	}
-	
+
 	public long getId() {
 		return id;
 	}

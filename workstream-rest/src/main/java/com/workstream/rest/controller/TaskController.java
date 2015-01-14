@@ -35,6 +35,7 @@ import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.DataPersistException;
 import com.workstream.core.exception.ResourceNotFoundException;
+import com.workstream.core.model.CoreEvent.TargetType;
 import com.workstream.core.model.Subscription;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.model.AttachmentResponse;
@@ -234,7 +235,7 @@ public class TaskController {
 	public Collection<SubscriptionResponse> getTaskSubscriptions(
 			@PathVariable("id") String taskId) {
 		Collection<Subscription> subs = core.getEventService()
-				.filterSubscription("TASK", taskId);
+				.filterSubscription(TargetType.TASK, taskId);
 		return InnerWrapperObj.valueOf(subs, SubscriptionResponse.class);
 	}
 
@@ -250,8 +251,8 @@ public class TaskController {
 	public SubscriptionResponse subscribeTask(@PathVariable("id") String taskId)
 			throws AttempBadStateException {
 		String userId = core.getAuthUserId();
-		Subscription sub = core.getEventService().subscribe(userId, "TASK",
-				taskId);
+		Subscription sub = core.getEventService().subscribe(userId,
+				TargetType.TASK, taskId);
 		return new SubscriptionResponse(sub);
 	}
 

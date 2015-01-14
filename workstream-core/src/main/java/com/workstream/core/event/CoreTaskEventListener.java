@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.workstream.core.model.CoreEvent;
+import com.workstream.core.model.CoreEvent.TargetType;
 
 public class CoreTaskEventListener extends AbstractCoreActivitiEventListener {
 
@@ -26,15 +27,22 @@ public class CoreTaskEventListener extends AbstractCoreActivitiEventListener {
 		}
 		Task task = (Task) entityObj;
 		CoreEvent cEvent = new CoreEvent();
-		cEvent.setEventType(event.getType().toString());
+		if (event.getType() == ActivitiEventType.TASK_CREATED) {
+			cEvent.setEventType("CREATED");
+		} else if (event.getType() == ActivitiEventType.TASK_COMPLETED) {
+			cEvent.setEventType("COMPLETED");
+		} else {
+			cEvent.setEventType("ASSIGNED");
+		}
+
 		cEvent.setTargetId(task.getId());
-		cEvent.setTargetType("TASK");
+		cEvent.setTargetType(TargetType.TASK);
 		cEvent.setUserId(Authentication.getAuthenticatedUserId());
 		if (task.getProcessInstanceId() != null) {
-			cEvent.setParentType("PROCESS");
+			cEvent.setParentType(TargetType.PROCESS);
 			cEvent.setParentId(task.getProcessInstanceId());
 		} else if (task.getCategory() != null) {
-			cEvent.setParentType("PROJECT");
+			cEvent.setParentType(TargetType.PROJECT);
 			cEvent.setParentId(task.getCategory());
 		}
 		logger.info("Event dispatched: {}", cEvent);

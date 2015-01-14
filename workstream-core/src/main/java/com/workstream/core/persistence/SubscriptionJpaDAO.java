@@ -1,5 +1,6 @@
 package com.workstream.core.persistence;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
+import com.workstream.core.model.CoreEvent.TargetType;
 import com.workstream.core.model.Subscription;
 
 @Repository
@@ -17,9 +19,9 @@ public class SubscriptionJpaDAO extends GenericJpaDAO<Subscription, Long>
 		implements ISubscriptionDAO {
 
 	@Override
-	public Collection<Subscription> filterSubscription(String targetType,
+	public Collection<Subscription> filterSubscription(TargetType targetType,
 			String targetId) {
-		Map<String, String> attributes = new HashMap<String, String>();
+		Map<String, Serializable> attributes = new HashMap<String, Serializable>();
 		attributes.put("targetId", targetId);
 		attributes.put("targetType", targetType);
 		return this.filterFor(attributes, 0, Integer.MAX_VALUE);
@@ -32,8 +34,8 @@ public class SubscriptionJpaDAO extends GenericJpaDAO<Subscription, Long>
 
 	@Override
 	public Collection<Subscription> filterSubscription(String userId,
-			String targetType, String targetId) {
-		Map<String, String> attributes = new HashMap<String, String>();
+			TargetType targetType, String targetId) {
+		Map<String, Serializable> attributes = new HashMap<String, Serializable>();
 		attributes.put("targetId", targetId);
 		attributes.put("targetType", targetType);
 		attributes.put("userId", userId);

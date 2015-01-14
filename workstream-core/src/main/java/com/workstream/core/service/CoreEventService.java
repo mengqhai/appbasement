@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.workstream.core.CoreConstants;
 import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.model.CoreEvent;
+import com.workstream.core.model.CoreEvent.TargetType;
 import com.workstream.core.model.Notification;
 import com.workstream.core.model.Subscription;
 import com.workstream.core.persistence.ICoreEventDAO;
@@ -43,7 +44,7 @@ public class CoreEventService {
 		coreEventDao.persist(cEvent);
 	}
 
-	public Subscription subscribe(String subscriber, String targetType,
+	public Subscription subscribe(String subscriber, TargetType targetType,
 			String targetId) throws AttempBadStateException {
 		Collection<Subscription> existings = subDao.filterSubscription(
 				subscriber, targetType, targetId);
@@ -91,7 +92,7 @@ public class CoreEventService {
 		return notification;
 	}
 
-	public Collection<Subscription> filterSubscription(String targetType,
+	public Collection<Subscription> filterSubscription(TargetType targetType,
 			String targetId) {
 		return subDao.filterSubscription(targetType, targetId);
 	}

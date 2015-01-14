@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.workstream.core.model.CoreEvent;
+import com.workstream.core.model.CoreEvent.TargetType;
 
 public class CoreTaskCommentEventListener extends
 		AbstractCoreActivitiEventListener {
@@ -23,14 +24,14 @@ public class CoreTaskCommentEventListener extends
 		}
 		Comment comment = (Comment) entity;
 		CoreEvent cEvent = new CoreEvent();
-		cEvent.setEventType("COMMENT_CREATED");
-		cEvent.setTargetType("COMMENT");
+		cEvent.setEventType("CREATED");
+		cEvent.setTargetType(TargetType.COMMENT);
 		cEvent.setTargetId(comment.getId());
-		cEvent.setParentType("TASK");
+		cEvent.setParentType(TargetType.TASK);
 		cEvent.setParentId(comment.getTaskId());
 		cEvent.setUserId(comment.getUserId());
 		logger.info("Event dispached: {}", cEvent);
-		
+
 		return cEvent;
 	}
 }

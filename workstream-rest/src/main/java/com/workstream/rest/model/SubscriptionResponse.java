@@ -2,11 +2,16 @@ package com.workstream.rest.model;
 
 import java.util.Date;
 
+import com.workstream.core.model.CoreEvent.TargetType;
 import com.workstream.core.model.Subscription;
 
 public class SubscriptionResponse extends InnerWrapperObj<Subscription> {
 
 	private Subscription subscription;
+
+	public long getId() {
+		return subscription.getId();
+	}
 
 	public SubscriptionResponse(Subscription subscription) {
 		super(subscription);
@@ -17,7 +22,7 @@ public class SubscriptionResponse extends InnerWrapperObj<Subscription> {
 		return subscription.getUserId();
 	}
 
-	public String getTargetType() {
+	public TargetType getTargetType() {
 		return subscription.getTargetType();
 	}
 

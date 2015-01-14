@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.workstream.core.model.CoreEvent;
+import com.workstream.core.model.CoreEvent.TargetType;
 
 public class CoreProcessEventListener extends AbstractCoreActivitiEventListener {
 	private static Logger log = LoggerFactory
@@ -27,28 +28,27 @@ public class CoreProcessEventListener extends AbstractCoreActivitiEventListener 
 		ProcessInstance pi = (ProcessInstance) entity;
 		CoreEvent cEvent = new CoreEvent();
 		cEvent.setTargetId(pi.getId());
-		cEvent.setTargetType("PROCESS");
-		cEvent.setParentType("ORG");
+		cEvent.setTargetType(TargetType.PROCESS);
+		cEvent.setParentType(TargetType.ORG);
 		cEvent.setParentId(pi.getTenantId());
 		switch (event.getType()) {
 		case ENTITY_CREATED:
-			cEvent.setEventType("PROCESS_CREATED");
+			cEvent.setEventType("CREATED");
 			break;
 		case ENTITY_ACTIVATED:
-			cEvent.setEventType("PROCESS_ARCHIVED");
+			cEvent.setEventType("ARCHIVED");
 			break;
 		case ENTITY_DELETED:
 			if (pi.isEnded()) {
-				cEvent.setEventType("PROCESS_COMPLETED");
+				cEvent.setEventType("COMPLETED");
 			} else {
-				cEvent.setEventType("PROCESS_DELETED");
+				cEvent.setEventType("DELETED");
 			}
 			break;
 		default:
 			return null;
 		}
-		
-		
+
 		cEvent.setUserId(Authentication.getAuthenticatedUserId());
 
 		log.info("Event dispatched: {}", cEvent);

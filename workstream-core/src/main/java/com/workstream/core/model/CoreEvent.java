@@ -7,6 +7,8 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,6 +25,10 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @Access(AccessType.FIELD)
 public class CoreEvent implements Serializable {
 
+	public enum TargetType {
+		COMMENT, TASK, PROJECT, PROCESS, ORG
+	}
+
 	/**
 	 * 
 	 */
@@ -33,11 +39,14 @@ public class CoreEvent implements Serializable {
 	@Access(AccessType.PROPERTY)
 	private long id;
 
-	private String targetType;
+	@Enumerated(EnumType.ORDINAL)
+	@Column(nullable = false, updatable = false)
+	private TargetType targetType;
 
 	private String targetId;
 
-	private String parentType;
+	@Enumerated(EnumType.ORDINAL)
+	private TargetType parentType;
 
 	private String parentId;
 
@@ -52,11 +61,11 @@ public class CoreEvent implements Serializable {
 	 */
 	private String userId;
 
-	public String getTargetType() {
+	public TargetType getTargetType() {
 		return targetType;
 	}
 
-	public void setTargetType(String targetType) {
+	public void setTargetType(TargetType targetType) {
 		this.targetType = targetType;
 	}
 
@@ -76,11 +85,11 @@ public class CoreEvent implements Serializable {
 		this.eventType = eventType;
 	}
 
-	public String getParentType() {
+	public TargetType getParentType() {
 		return parentType;
 	}
 
-	public void setParentType(String parentType) {
+	public void setParentType(TargetType parentType) {
 		this.parentType = parentType;
 	}
 
