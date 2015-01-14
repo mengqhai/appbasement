@@ -1,5 +1,6 @@
 package com.workstream.rest.controller;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -14,11 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.ResourceNotFoundException;
+import com.workstream.core.model.Subscription;
+import com.workstream.core.model.CoreEvent.TargetType;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.model.HiProcessResponse;
 import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.ProcessResponse;
+import com.workstream.rest.model.SubscriptionResponse;
 
 @Api(value = "processes", description = "Process related operations")
 @RestController
@@ -57,6 +62,33 @@ public class ProcessController {
 			throw new ResourceNotFoundException("No such process, archived?");
 		}
 		return pi.getProcessVariables();
+	}
+
+	@ApiOperation(value = "Retrieve subscription list for a process")
+	@RequestMapping(value = "/{id}/subscriptions", method = RequestMethod.GET)
+	public Collection<SubscriptionResponse> getProcessSubscriptions(
+			@PathVariable("id") String processId) {
+		Collection<Subscription> subs = core.getEventService()
+				.filterSubscription(TargetType.PROCESS, processId);
+		return InnerWrapperObj.valueOf(subs, SubscriptionResponse.class);
+	}
+
+	/**
+	 * 
+	 * @param processId
+	 * @return
+	 * @throws AttempBadStateException
+	 *             if user already subscribed it
+	 */
+	@ApiOperation(value = "Subscribe a process for the current user")
+	@RequestMapping(value = "/{id}/subscriptions", method = RequestMethod.POST)
+	public SubscriptionResponse subscribeTask(
+			@PathVariable("id") String processId)
+			throws AttempBadStateException {
+		String userId = core.getAuthUserId();
+		Subscription sub = core.getEventService().subscribe(userId,
+				TargetType.PROCESS, processId);
+		return new SubscriptionResponse(sub);
 	}
 
 }

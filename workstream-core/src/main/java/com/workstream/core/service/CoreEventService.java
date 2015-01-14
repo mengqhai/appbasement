@@ -1,6 +1,8 @@
 package com.workstream.core.service;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,8 +69,12 @@ public class CoreEventService {
 	public void notifySubscribers(CoreEvent event) {
 		Collection<Subscription> mySubscriptions = filterSubscription(
 				event.getTargetType(), event.getTargetId());
+		Set<String> notifiedUsers = new HashSet<String>();
 		for (Subscription sub : mySubscriptions) {
 			createNotifcation(sub, event);
+			// to prevent the user got notified again by the
+			// parent target
+			notifiedUsers.add(sub.getUserId());
 		}
 
 		/**
@@ -78,6 +84,10 @@ public class CoreEventService {
 			Collection<Subscription> parentSubscriptions = filterSubscription(
 					event.getParentType(), event.getParentId());
 			for (Subscription sub : parentSubscriptions) {
+				if (notifiedUsers.contains(sub.getUserId())) {
+					// the event has already notified the user
+					continue;
+				}
 				createNotifcation(sub, event);
 			}
 		}
