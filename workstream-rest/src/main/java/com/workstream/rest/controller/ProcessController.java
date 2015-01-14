@@ -82,7 +82,7 @@ public class ProcessController {
 	 */
 	@ApiOperation(value = "Subscribe a process for the current user")
 	@RequestMapping(value = "/{id}/subscriptions", method = RequestMethod.POST)
-	public SubscriptionResponse subscribeTask(
+	public SubscriptionResponse subscribeProcess(
 			@PathVariable("id") String processId)
 			throws AttempBadStateException {
 		String userId = core.getAuthUserId();

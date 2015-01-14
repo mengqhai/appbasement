@@ -395,6 +395,11 @@ public class CoreFacadeService {
 		// variables with the same name.
 		// This will also filter out the null values.
 		TaskFormData formData = procSer.getTaskFormData(taskId);
+		if (formData == null) {
+			// the task has no form defs
+			procSer.completeTask(taskId);
+			return;
+		}
 		List<FormProperty> propDefs = formData.getFormProperties();
 		Map<String, String> filteredFormProps = new HashMap<String, String>();
 		for (FormProperty propDef : propDefs) {

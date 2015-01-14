@@ -1,5 +1,6 @@
 package com.workstream.rest.controller;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.activiti.engine.task.Task;
@@ -16,12 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Project;
+import com.workstream.core.model.Subscription;
+import com.workstream.core.model.CoreEvent.TargetType;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.ProjectRequest;
 import com.workstream.rest.model.ProjectResponse;
+import com.workstream.rest.model.SubscriptionResponse;
 import com.workstream.rest.model.TaskRequest;
 import com.workstream.rest.model.TaskResponse;
 
@@ -79,6 +84,33 @@ public class ProjectController {
 		List<TaskResponse> respList = InnerWrapperObj.valueOf(tasks,
 				TaskResponse.class);
 		return respList;
+	}
+
+	@ApiOperation(value = "Retrieve subscription list for a project")
+	@RequestMapping(value = "/{id}/subscriptions", method = RequestMethod.GET)
+	public Collection<SubscriptionResponse> getProjectSubscriptions(
+			@PathVariable("id") String project) {
+		Collection<Subscription> subs = core.getEventService()
+				.filterSubscription(TargetType.PROJECT, project);
+		return InnerWrapperObj.valueOf(subs, SubscriptionResponse.class);
+	}
+
+	/**
+	 * 
+	 * @param projectId
+	 * @return
+	 * @throws AttempBadStateException
+	 *             if user already subscribed it
+	 */
+	@ApiOperation(value = "Subscribe a project for the current user")
+	@RequestMapping(value = "/{id}/subscriptions", method = RequestMethod.POST)
+	public SubscriptionResponse subscribeProject(
+			@PathVariable("id") String projectId)
+			throws AttempBadStateException {
+		String userId = core.getAuthUserId();
+		Subscription sub = core.getEventService().subscribe(userId,
+				TargetType.PROJECT, projectId);
+		return new SubscriptionResponse(sub);
 	}
 
 }
