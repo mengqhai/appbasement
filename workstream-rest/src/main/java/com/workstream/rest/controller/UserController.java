@@ -4,6 +4,7 @@ import static com.workstream.rest.RestConstants.TEST_USER_ID_INFO;
 import static com.workstream.rest.utils.RestUtils.decodeUserId;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -34,12 +35,14 @@ import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.DataPersistException;
 import com.workstream.core.exception.ResourceNotFoundException;
+import com.workstream.core.model.Subscription;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.RestConstants;
 import com.workstream.rest.exception.BytesNotFoundException;
 import com.workstream.rest.exception.NotAuthorizedException;
 import com.workstream.rest.model.GroupResponse;
 import com.workstream.rest.model.InnerWrapperObj;
+import com.workstream.rest.model.SubscriptionResponse;
 import com.workstream.rest.model.UserRequest;
 import com.workstream.rest.model.UserResponse;
 
@@ -172,7 +175,7 @@ public class UserController {
 
 	}
 
-	@ApiOperation(value = "Load picture for the current user.", notes = TEST_USER_ID_INFO)
+	@ApiOperation(value = "Load picture for a user.", notes = TEST_USER_ID_INFO)
 	@RequestMapping(value = "/{id}/picture", method = RequestMethod.GET, produces = {
 			MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE,
 			MediaType.APPLICATION_JSON_VALUE })
@@ -209,6 +212,17 @@ public class UserController {
 		String userId = decodeUserId(userIdBase64);
 		Map<String, String> info = core.getUserService().getUserInfo(userId);
 		return info;
+	}
+
+	@ApiOperation(value = "Retrieve subscription list for the a user.", notes = TEST_USER_ID_INFO)
+	@RequestMapping(value = "/{id}/subscriptions", method = RequestMethod.GET)
+	public Collection<SubscriptionResponse> getUserSubscriptions(
+			@PathVariable("id") String userIdBase64)
+			throws BadArgumentException {
+		String userId = decodeUserId(userIdBase64);
+		Collection<Subscription> subs = core.getEventService()
+				.filterSubscriptionByUser(userId);
+		return InnerWrapperObj.valueOf(subs, SubscriptionResponse.class);
 	}
 
 }

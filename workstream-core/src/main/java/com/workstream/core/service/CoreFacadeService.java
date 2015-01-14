@@ -57,6 +57,9 @@ public class CoreFacadeService {
 	@Autowired
 	private TemplateService tempSer;
 
+	@Autowired
+	private CoreEventService eventSer;
+
 	private static AtomicReference<CoreFacadeService> INSTANCE = new AtomicReference<CoreFacadeService>();
 
 	protected CoreFacadeService() {
@@ -384,6 +387,9 @@ public class CoreFacadeService {
 	 * @param formProps
 	 */
 	public void completeTaskByForm(String taskId, Map<String, String> formProps) {
+		if (formProps == null) {
+			throw new BadArgumentException("No form obj");
+		}
 		// must filter out the properties that are not supposed to be set in
 		// this form, otherwise they'll become/modify the process instance
 		// variables with the same name.
@@ -411,6 +417,10 @@ public class CoreFacadeService {
 
 	public TemplateService getTemplateService() {
 		return tempSer;
+	}
+
+	public CoreEventService getEventService() {
+		return eventSer;
 	}
 
 }

@@ -30,6 +30,7 @@ public abstract class AbstractCoreActivitiEventListener implements
 				return;
 			}
 			coreEventService.saveCoreEvent(cEvent);
+			coreEventService.notifySubscribers(cEvent); // Asynchronous call
 		} catch (Exception e) {
 			logger.error("Failed on processing activiti event: {}", event, e);
 		}

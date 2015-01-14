@@ -1,6 +1,7 @@
 package com.workstream.rest.controller;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,14 +31,17 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.CoreConstants;
+import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.DataPersistException;
 import com.workstream.core.exception.ResourceNotFoundException;
+import com.workstream.core.model.Subscription;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.model.AttachmentResponse;
 import com.workstream.rest.model.CommentResponse;
 import com.workstream.rest.model.EventResponse;
 import com.workstream.rest.model.InnerWrapperObj;
+import com.workstream.rest.model.SubscriptionResponse;
 import com.workstream.rest.model.TaskFormDataResponse;
 import com.workstream.rest.model.TaskRequest;
 import com.workstream.rest.model.TaskResponse;
@@ -167,6 +171,9 @@ public class TaskController {
 			@PathVariable("id") String taskId) {
 		TaskFormData formData = core.getProcessService()
 				.getTaskFormData(taskId);
+		if (formData == null) {
+			throw new ResourceNotFoundException();
+		}
 		return InnerWrapperObj.valueOf(formData, TaskFormDataResponse.class);
 	}
 
@@ -221,4 +228,31 @@ public class TaskController {
 			throw new BadArgumentException("Empty file");
 		}
 	}
+
+	@ApiOperation(value = "Retrieve subscription list for a task")
+	@RequestMapping(value = "/{id}/subscriptions", method = RequestMethod.GET)
+	public Collection<SubscriptionResponse> getTaskSubscriptions(
+			@PathVariable("id") String taskId) {
+		Collection<Subscription> subs = core.getEventService()
+				.filterSubscription("TASK", taskId);
+		return InnerWrapperObj.valueOf(subs, SubscriptionResponse.class);
+	}
+
+	/**
+	 * 
+	 * @param taskId
+	 * @return
+	 * @throws AttempBadStateException
+	 *             if user already subscribed it
+	 */
+	@ApiOperation(value = "Subscribe a task for the current user")
+	@RequestMapping(value = "/{id}/subscriptions", method = RequestMethod.POST)
+	public SubscriptionResponse subscribeTask(@PathVariable("id") String taskId)
+			throws AttempBadStateException {
+		String userId = core.getAuthUserId();
+		Subscription sub = core.getEventService().subscribe(userId, "TASK",
+				taskId);
+		return new SubscriptionResponse(sub);
+	}
+
 }
