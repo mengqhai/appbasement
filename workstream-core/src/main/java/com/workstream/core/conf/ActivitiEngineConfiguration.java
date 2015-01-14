@@ -28,6 +28,7 @@ import com.workstream.core.event.CoreProcessEventListener;
 import com.workstream.core.event.CoreTaskCommentEventListener;
 import com.workstream.core.event.CoreTaskEventListener;
 import com.workstream.core.exception.ConfigurationException;
+import com.workstream.core.service.components.CoreFormTypes;
 
 @Configuration
 public class ActivitiEngineConfiguration {
@@ -68,6 +69,7 @@ public class ActivitiEngineConfiguration {
 				"com/workstream/core/sysprocess/UserJoinOrg.bpmn") });
 		cfg.setActivityFontName("sansserif");
 		cfg.setLabelFontName("sansserif"); // to support Chinese in diagram
+		cfg.setFormTypes(new CoreFormTypes(cfg.getCustomFormTypes()));
 		return cfg;
 	}
 

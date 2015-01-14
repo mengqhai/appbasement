@@ -38,11 +38,17 @@ public class CoreProcessEventListener extends AbstractCoreActivitiEventListener 
 			cEvent.setEventType("PROCESS_ARCHIVED");
 			break;
 		case ENTITY_DELETED:
-			cEvent.setEventType("PROCESS_DELETED");
+			if (pi.isEnded()) {
+				cEvent.setEventType("PROCESS_COMPLETED");
+			} else {
+				cEvent.setEventType("PROCESS_DELETED");
+			}
 			break;
 		default:
 			return null;
 		}
+		
+		
 		cEvent.setUserId(Authentication.getAuthenticatedUserId());
 
 		log.info("Event dispatched: {}", cEvent);
