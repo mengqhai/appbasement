@@ -2,6 +2,7 @@ package com.workstream.core.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.EnumSet;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -29,10 +30,17 @@ public class CoreEvent implements Serializable {
 		COMMENT, TASK, PROJECT, PROCESS, ORG
 	}
 
+	public enum EventType {
+		CREATED, DELETED, COMPLETED, ASSIGNED, ARCHIVED
+	}
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -1023038030037542431L;
+
+	public static final EnumSet<EventType> END_EVENT_TYPE = EnumSet.of(
+			EventType.COMPLETED, EventType.DELETED, EventType.ARCHIVED);
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -50,7 +58,8 @@ public class CoreEvent implements Serializable {
 
 	private String parentId;
 
-	private String eventType;
+	@Enumerated(EnumType.ORDINAL)
+	private EventType eventType;
 
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -77,11 +86,11 @@ public class CoreEvent implements Serializable {
 		this.targetId = targetId;
 	}
 
-	public String getEventType() {
+	public EventType getEventType() {
 		return eventType;
 	}
 
-	public void setEventType(String eventType) {
+	public void setEventType(EventType eventType) {
 		this.eventType = eventType;
 	}
 
@@ -126,9 +135,7 @@ public class CoreEvent implements Serializable {
 	}
 
 	public boolean isEndEvent() {
-		if ("COMPLETED".equals(getEventType())
-				|| "DELETED".equals(getEventType())
-				|| "ARCHIVED".equals(getEventType())) {
+		if (END_EVENT_TYPE.contains(getEventType())) {
 			return true;
 		} else {
 			return false;

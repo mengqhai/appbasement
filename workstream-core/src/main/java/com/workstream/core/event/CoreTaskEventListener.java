@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.workstream.core.model.CoreEvent;
+import com.workstream.core.model.CoreEvent.EventType;
 import com.workstream.core.model.CoreEvent.TargetType;
 
 public class CoreTaskEventListener extends AbstractCoreActivitiEventListener {
@@ -28,11 +29,11 @@ public class CoreTaskEventListener extends AbstractCoreActivitiEventListener {
 		Task task = (Task) entityObj;
 		CoreEvent cEvent = new CoreEvent();
 		if (event.getType() == ActivitiEventType.TASK_CREATED) {
-			cEvent.setEventType("CREATED");
+			cEvent.setEventType(EventType.CREATED);
 		} else if (event.getType() == ActivitiEventType.TASK_COMPLETED) {
-			cEvent.setEventType("COMPLETED");
+			cEvent.setEventType(EventType.COMPLETED);
 		} else {
-			cEvent.setEventType("ASSIGNED");
+			cEvent.setEventType(EventType.ASSIGNED);
 		}
 
 		cEvent.setTargetId(task.getId());

@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.workstream.core.model.CoreEvent;
+import com.workstream.core.model.CoreEvent.EventType;
 import com.workstream.core.model.CoreEvent.TargetType;
 
 public class CoreProcessEventListener extends AbstractCoreActivitiEventListener {
@@ -33,16 +34,16 @@ public class CoreProcessEventListener extends AbstractCoreActivitiEventListener 
 		cEvent.setParentId(pi.getTenantId());
 		switch (event.getType()) {
 		case ENTITY_CREATED:
-			cEvent.setEventType("CREATED");
+			cEvent.setEventType(EventType.CREATED);
 			break;
 		case ENTITY_ACTIVATED:
-			cEvent.setEventType("ARCHIVED");
+			cEvent.setEventType(EventType.ARCHIVED);
 			break;
 		case ENTITY_DELETED:
 			if (pi.isEnded()) {
-				cEvent.setEventType("COMPLETED");
+				cEvent.setEventType(EventType.COMPLETED);
 			} else {
-				cEvent.setEventType("DELETED");
+				cEvent.setEventType(EventType.DELETED);
 			}
 			break;
 		default:
