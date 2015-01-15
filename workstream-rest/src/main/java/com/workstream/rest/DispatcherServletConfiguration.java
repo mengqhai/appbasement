@@ -39,7 +39,7 @@ public class DispatcherServletConfiguration extends WebMvcConfigurationSupport {
 	public MultipartResolver multipartResolver() {
 		// for upload file support
 		CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-		resolver.setMaxUploadSize(2048 * 1024L); // 2MB
+		//resolver.setMaxUploadSize(2048 * 1024L); // 2MB
 		return resolver;
 	}
 

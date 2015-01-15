@@ -21,6 +21,10 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.workstream.core.model.BinaryObj.BinaryReposType;
+import com.workstream.core.persistence.binary.BinaryRepositoryManager;
+import com.workstream.core.persistence.binary.FileSystemBinaryRepository;
+
 @Configuration
 @EnableTransactionManagement
 public class PersistenceConfiguration {
@@ -49,7 +53,7 @@ public class PersistenceConfiguration {
 		log.info("JPA Transaction Manager created.");
 		return mgmt;
 	}
-	
+
 	@Bean
 	public DataSource dataSource() {
 		SimpleDriverDataSource ds = new SimpleDriverDataSource();
@@ -77,7 +81,7 @@ public class PersistenceConfiguration {
 		HibernateJpaVendorAdapter adpater = new HibernateJpaVendorAdapter();
 		adpater.setDatabase(Database.H2);
 		adpater.setShowSql(true);
-		//adpater.setGenerateDdl(true);
+		// adpater.setGenerateDdl(true);
 		adpater.setDatabasePlatform(H2Dialect.class.getName());
 		adpater.getJpaPropertyMap()
 				.put("hibernate.hbm2ddl.auto", "create-drop");
@@ -94,6 +98,15 @@ public class PersistenceConfiguration {
 		bean.setJpaVendorAdapter(jpaVendorAdapter());
 		log.info("EntityManager factory created.");
 		return bean;
+	}
+
+	@Bean
+	public BinaryRepositoryManager binaryRepositoryManager() {
+		BinaryRepositoryManager mgr = new BinaryRepositoryManager();
+		FileSystemBinaryRepository fileRepo = new FileSystemBinaryRepository();
+		fileRepo.setRepositoryRootPath("E:/workspaces/workspace_activiti/BinaryRepository");
+		mgr.addRepository(BinaryReposType.FILE_SYSTEM_REPOSITORY, fileRepo);
+		return mgr;
 	}
 
 }

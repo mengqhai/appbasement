@@ -1,6 +1,7 @@
 package com.workstream.core.service;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,6 +33,7 @@ import com.workstream.core.exception.BeanPropertyException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.BinaryObj;
 import com.workstream.core.model.BinaryObj.BinaryObjType;
+import com.workstream.core.model.BinaryObj.BinaryReposType;
 import com.workstream.core.persistence.IBinaryObjDAO;
 
 public class TaskCapable {
@@ -252,7 +254,7 @@ public class TaskCapable {
 		binary.setName(attachmentName);
 		binary.setContentType(type);
 		binary.setType(BinaryObjType.ATTACHMENT_CONTENT);
-
+		binary.setReposType(BinaryReposType.FILE_SYSTEM_REPOSITORY);
 		binaryDao.persistOutputStreamToContent(content, binary, size);
 		Attachment attachment = taskSer.createAttachment(type, taskId, null,
 				attachmentName, attachmentDescription, (String) null);
@@ -264,16 +266,15 @@ public class TaskCapable {
 		return taskSer.getAttachment(attachmentId);
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
-	public InputStream getTaskAttachmentContent(String attachmentId) {
+	public BinaryObj getAttachmentBinaryObj(String attachmentId) {
 		BinaryObj binary = binaryDao.getBinaryObjByTarget(
 				BinaryObjType.ATTACHMENT_CONTENT, attachmentId);
-		if (binary == null) {
-			throw new ResourceNotFoundException(
-					"No such content for the attachment");
-		} else {
-			return binary.getContentInputStream();
-		}
+		return binary;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
+	public long outputTaskAttachmentContent(OutputStream os, BinaryObj binary) {
+		return binaryDao.outputContent(os, binary);
 	}
 
 	/**

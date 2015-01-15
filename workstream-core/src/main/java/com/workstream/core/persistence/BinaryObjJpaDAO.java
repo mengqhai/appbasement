@@ -1,9 +1,8 @@
 package com.workstream.core.persistence;
 
-import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
-import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -13,10 +12,9 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
-import org.hibernate.engine.jdbc.LobCreator;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,11 +23,15 @@ import com.workstream.core.CoreConstants;
 import com.workstream.core.exception.DataPersistException;
 import com.workstream.core.model.BinaryObj;
 import com.workstream.core.model.BinaryObj.BinaryObjType;
+import com.workstream.core.persistence.binary.BinaryRepositoryManager;
 
 @Repository
 @Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
 public class BinaryObjJpaDAO extends GenericJpaDAO<BinaryObj, Long> implements
 		IBinaryObjDAO {
+
+	@Autowired
+	protected BinaryRepositoryManager rMgr;
 
 	public static Connection getConnection(EntityManager em) {
 		// Hibernate 4 specific code
@@ -46,26 +48,21 @@ public class BinaryObjJpaDAO extends GenericJpaDAO<BinaryObj, Long> implements
 	public void persistOutputStreamToContent(InputStream is, BinaryObj toObj,
 			long size) {
 		try {
-			if (!is.markSupported()) {
-				is = new BufferedInputStream(is);
-				is.mark(Integer.MAX_VALUE);
-			}
+			// if (is instanceof FileInputStream) {
+			// is = new BufferedInputStream((FileInputStream) is);
+			// is.mark(10000);
+			// }
 
 			// Unable to write to existing Blob, always need to create new one
 			// Connection conn = getConnection(getEm());
 			// Blob blob = conn.createBlob();
 			// http://stackoverflow.com/questions/19908279/hibernate-4-2-2-create-blob-from-unknown-length-input-stream
-			LobCreator creator = Hibernate.getLobCreator(getEm().unwrap(
-					Session.class));
-			Blob blob = creator.createBlob(is, size);
 
-			// int size = IOUtils.copy(is, blob.setBinaryStream(1));
-			toObj.setContent(blob);
 			this.persist(toObj);
-			// blob.length is always -1 :(
-			toObj.setSize(size);
+			rMgr.getRepository(toObj.getReposType()).writeBinaryObjectContent(
+					is, toObj);
 		} catch (Exception e) {
-			throw new DataPersistException("Unable to write to blob", e);
+			throw new DataPersistException("Unable to write binary", e);
 		}
 	}
 
@@ -81,6 +78,12 @@ public class BinaryObjJpaDAO extends GenericJpaDAO<BinaryObj, Long> implements
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public long outputContent(OutputStream os, BinaryObj bo) {
+		rMgr.getRepository(bo.getReposType()).readBinaryContent(os, bo);
+		return bo.getSize();
 	}
 
 }

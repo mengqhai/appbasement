@@ -1,29 +1,20 @@
 package com.workstream.core.model;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
-import java.sql.Blob;
-import java.sql.SQLException;
 import java.util.Date;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import com.workstream.core.exception.DataPersistException;
 
 @SuppressWarnings("serial")
 @Entity
@@ -33,6 +24,10 @@ public class BinaryObj implements Serializable {
 
 	public enum BinaryObjType {
 		ATTACHMENT_THUMB, ATTACHMENT_CONTENT
+	}
+
+	public enum BinaryReposType {
+		FILE_SYSTEM_REPOSITORY
 	}
 
 	@Id
@@ -48,15 +43,14 @@ public class BinaryObj implements Serializable {
 
 	private String contentType;
 
+	private BinaryReposType reposType;
+
+	private String repositoryKey;
+
 	/**
 	 * In byte
 	 */
 	private long size;
-
-	@Lob
-	@Basic(fetch = FetchType.LAZY)
-	@Column(nullable = false)
-	private Blob content;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)
@@ -110,36 +104,28 @@ public class BinaryObj implements Serializable {
 		this.lastUpdate = lastUpdate;
 	}
 
-	public Blob getContent() {
-		return content;
-	}
-
-	public InputStream getContentInputStream() {
-		try {
-			return getContent().getBinaryStream();
-		} catch (SQLException e) {
-			throw new DataPersistException("Unable to load stream", e);
-		}
-	}
-
-	public OutputStream getContentOutputStream() {
-		try {
-			return getContent().setBinaryStream(1);
-		} catch (SQLException e) {
-			throw new DataPersistException("Unable to load stream", e);
-		}
-	}
-
-	public void setContent(Blob content) {
-		this.content = content;
-	}
-
 	public long getSize() {
 		return size;
 	}
 
 	public void setSize(long size) {
 		this.size = size;
+	}
+
+	public BinaryReposType getReposType() {
+		return reposType;
+	}
+
+	public void setReposType(BinaryReposType reposType) {
+		this.reposType = reposType;
+	}
+
+	public String getRepositoryKey() {
+		return repositoryKey;
+	}
+
+	public void setRepositoryKey(String repositoryKey) {
+		this.repositoryKey = repositoryKey;
 	}
 
 	@PrePersist
