@@ -24,12 +24,18 @@ public class SubscriptionJpaDAO extends GenericJpaDAO<Subscription, Long>
 		Map<String, Serializable> attributes = new HashMap<String, Serializable>();
 		attributes.put("targetId", targetId);
 		attributes.put("targetType", targetType);
+		attributes.put("archived", false); // only interested in non-archived
+											// data
 		return this.filterFor(attributes, 0, Integer.MAX_VALUE);
 	}
 
 	@Override
 	public Collection<Subscription> filterSubscriptionByUser(String userId) {
-		return this.filterFor("userId", userId, 0, Integer.MAX_VALUE);
+		Map<String, Serializable> attributes = new HashMap<String, Serializable>();
+		attributes.put("userId", userId);
+		attributes.put("archived", false); // only interested in non-archived
+		// data
+		return this.filterFor(attributes, 0, Integer.MAX_VALUE);
 	}
 
 	@Override
@@ -39,6 +45,8 @@ public class SubscriptionJpaDAO extends GenericJpaDAO<Subscription, Long>
 		attributes.put("targetId", targetId);
 		attributes.put("targetType", targetType);
 		attributes.put("userId", userId);
+		attributes.put("archived", false); // only interested in non-archived
+		// data
 		return this.filterFor(attributes, 0, Integer.MAX_VALUE);
 	}
 }

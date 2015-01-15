@@ -7,9 +7,11 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -18,10 +20,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.ForeignKey;
-
 @Entity
-@Table(name = "WS_NOTIFICATION")
+@Table(name = "WS_NOTIFICATION", indexes = @Index(name = "userId_idx", unique = false, columnList = "userId"))
 @Access(AccessType.FIELD)
 public class Notification {
 
@@ -36,13 +36,11 @@ public class Notification {
 	private String userId;
 
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "SUB_ID", nullable = false, updatable = false)
-	@ForeignKey(name = "FK_NOTIFICATION_SUB")
+	@JoinColumn(name = "SUB_ID", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_NOTIFICATION_SUB"))
 	private Subscription sub;
 
 	@OneToOne(optional = true, fetch = FetchType.LAZY)
-	@JoinColumn(name = "EVENT_ID", nullable = false, updatable = false)
-	@ForeignKey(name = "FK_NOTIFICATION_EVENT")
+	@JoinColumn(name = "EVENT_ID", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_NOTIFICATION_EVENT"))
 	private CoreEvent event;
 
 	private String type = "EVENT"; // currently the only type
@@ -52,6 +50,8 @@ public class Notification {
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
+
+	private boolean read;
 
 	public String getUserId() {
 		return userId;
@@ -107,6 +107,14 @@ public class Notification {
 
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
+	}
+
+	public boolean isRead() {
+		return read;
+	}
+
+	public void setRead(boolean read) {
+		this.read = read;
 	}
 
 	@PrePersist

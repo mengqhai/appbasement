@@ -125,6 +125,16 @@ public class CoreEvent implements Serializable {
 		this.createdAt = createdAt;
 	}
 
+	public boolean isEndEvent() {
+		if ("COMPLETED".equals(getEventType())
+				|| "DELETED".equals(getEventType())
+				|| "ARCHIVED".equals(getEventType())) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	@PrePersist
 	protected void setCreatedAt() {
 		if (getCreatedAt() == null) {

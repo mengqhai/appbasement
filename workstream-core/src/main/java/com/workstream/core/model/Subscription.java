@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -17,7 +18,9 @@ import javax.persistence.TemporalType;
 import com.workstream.core.model.CoreEvent.TargetType;
 
 @Entity
-@Table(name = "WS_SUB")
+@Table(name = "WS_SUB", indexes = {
+		@Index(name = "target_idx", unique = false, columnList = "targetType,targetId"),
+		@Index(name = "user_idx", unique = false, columnList = "userId") })
 @Access(AccessType.FIELD)
 public class Subscription {
 
@@ -29,18 +32,23 @@ public class Subscription {
 	/**
 	 * Subscriber
 	 */
+	@Column(updatable = false)
 	private String userId;
 
 	/**
 	 * Could be TASK, PROJECT or PROCESS
 	 */
+	@Column(updatable = false)
 	private TargetType targetType;
 
+	@Column(updatable = false)
 	private String targetId;
 
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
+
+	private boolean archived;
 
 	public String getUserId() {
 		return userId;
@@ -80,6 +88,14 @@ public class Subscription {
 
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
+	}
+
+	public boolean isArchived() {
+		return archived;
+	}
+
+	public void setArchived(boolean archived) {
+		this.archived = archived;
 	}
 
 	@PrePersist

@@ -62,7 +62,9 @@ public class CoreEventService {
 	}
 
 	/**
-	 * Do this in a background thread.
+	 * Do this in a background thread. If the event is an end event, this method
+	 * will also mark the Subscription(the one matches the target type and id,
+	 * not the parent ones) as archived.
 	 */
 	@Async
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -72,6 +74,9 @@ public class CoreEventService {
 		Set<String> notifiedUsers = new HashSet<String>();
 		for (Subscription sub : mySubscriptions) {
 			createNotifcation(sub, event);
+			if (event.isEndEvent()) {
+				sub.setArchived(true);
+			}
 			// to prevent the user got notified again by the
 			// parent target
 			notifiedUsers.add(sub.getUserId());
@@ -93,6 +98,13 @@ public class CoreEventService {
 		}
 	}
 
+	/**
+	 * 
+	 * 
+	 * @param sub
+	 * @param event
+	 * @return
+	 */
 	public Notification createNotifcation(Subscription sub, CoreEvent event) {
 		Notification notification = new Notification();
 		notification.setEvent(event);

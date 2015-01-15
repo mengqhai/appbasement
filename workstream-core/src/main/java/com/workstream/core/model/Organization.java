@@ -11,9 +11,11 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -25,10 +27,9 @@ import javax.persistence.TemporalType;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.hibernate.annotations.ForeignKey;
 
 @Entity
-@Table(name = "WS_ORG")
+@Table(name = "WS_ORG", indexes = @Index(name = "identifier_idx", unique = true, columnList = "identifier"))
 @Access(AccessType.FIELD)
 public class Organization implements Serializable {
 
@@ -56,8 +57,7 @@ public class Organization implements Serializable {
 	private Date createdAt;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "WS_ORG_USER", joinColumns = { @JoinColumn(name = "ORG_ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID") })
-	@ForeignKey(name = "FK_ORG_USER_ORG", inverseName = "FK_ORG_USER_USER")
+	@JoinTable(name = "WS_ORG_USER", joinColumns = { @JoinColumn(name = "ORG_ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID") }, foreignKey = @ForeignKey(name = "FK_ORG_USER_ORG"), inverseForeignKey = @ForeignKey(name = "FK_ORG_USER_USER"))
 	private Set<UserX> users = new HashSet<UserX>();
 
 	@OneToMany(mappedBy = "org", cascade = { CascadeType.ALL }, orphanRemoval = true)

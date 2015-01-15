@@ -7,6 +7,7 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,7 +20,6 @@ import javax.persistence.TemporalType;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.hibernate.annotations.ForeignKey;
 
 @Entity
 @Table(name = "WS_PROJECT")
@@ -48,8 +48,7 @@ public class Project {
 	private Date createdAt;
 
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "ORG_ID", nullable = false, updatable = false)
-	@ForeignKey(name = "FK_PROJECT_ORG")
+	@JoinColumn(name = "ORG_ID", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_PROJECT_ORG"))
 	private Organization org;
 
 	public Long getId() {

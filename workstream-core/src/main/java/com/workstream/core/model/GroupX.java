@@ -8,9 +8,11 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
@@ -20,10 +22,9 @@ import javax.persistence.TemporalType;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.hibernate.annotations.ForeignKey;
 
 @Entity
-@Table(name = "WS_GROUP")
+@Table(name = "WS_GROUP", indexes = @Index(name = "groupId_idx", unique = true, columnList = "groupId"))
 @Access(AccessType.FIELD)
 public class GroupX implements Serializable {
 
@@ -44,8 +45,7 @@ public class GroupX implements Serializable {
 	private String description;
 
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)
-	@JoinColumn(name = "ORG_ID")
-	@ForeignKey(name = "FK_GROUP_ORG")
+	@JoinColumn(name = "ORG_ID", foreignKey = @ForeignKey(name = "FK_GROUP_ORG"))
 	private Organization org;
 
 	@Column(nullable = false, updatable = false)
@@ -94,8 +94,8 @@ public class GroupX implements Serializable {
 				+ ((getDescription() == null) ? 0 : getDescription().hashCode());
 		result = prime * result
 				+ ((getGroupId() == null) ? 0 : getGroupId().hashCode());
-//		result = prime * result
-//				+ ((getCreatedAt() == null) ? 0 : getCreatedAt().hashCode());
+		// result = prime * result
+		// + ((getCreatedAt() == null) ? 0 : getCreatedAt().hashCode());
 		// comment the createdAt field, as before and after persistence, the
 		// hashcode changes, which should never happen
 		return result;
