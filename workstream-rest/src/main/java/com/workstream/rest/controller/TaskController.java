@@ -220,7 +220,7 @@ public class TaskController {
 						.createTaskAttachment(taskId, file.getContentType(),
 								decoded,
 								"size: " + file.getSize() / 1024L + "KB",
-								file.getInputStream());
+								file.getInputStream(), file.getSize());
 				return new AttachmentResponse(attachment);
 			} catch (IOException e) {
 				throw new DataPersistException(e);

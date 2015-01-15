@@ -30,6 +30,9 @@ import com.workstream.core.CoreConstants;
 import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.exception.BeanPropertyException;
 import com.workstream.core.exception.ResourceNotFoundException;
+import com.workstream.core.model.BinaryObj;
+import com.workstream.core.model.BinaryObj.BinaryObjType;
+import com.workstream.core.persistence.IBinaryObjDAO;
 
 public class TaskCapable {
 
@@ -45,6 +48,12 @@ public class TaskCapable {
 
 	@Autowired
 	protected FormService formService;
+
+	/**
+	 * My own binary DAO to store attachment content
+	 */
+	@Autowired
+	protected IBinaryObjDAO binaryDao;
 
 	/**
 	 * Doesn't care about org or project. (Process related tasks will also be
@@ -234,19 +243,38 @@ public class TaskCapable {
 		return taskSer.getTaskAttachments(taskId);
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
 	public Attachment createTaskAttachment(String taskId, String type,
 			String attachmentName, String attachmentDescription,
-			InputStream content) {
-		return taskSer.createAttachment(type, taskId, null, attachmentName,
-				attachmentDescription, content);
+			InputStream content, long size) {
+
+		BinaryObj binary = new BinaryObj();
+		binary.setName(attachmentName);
+		binary.setContentType(type);
+		binary.setType(BinaryObjType.ATTACHMENT_CONTENT);
+
+		binaryDao.persistOutputStreamToContent(content, binary, size);
+		String url = "/attachment/aId/binary/" + binary.getId();
+		Attachment attachment = taskSer.createAttachment(type, taskId, null,
+				attachmentName, attachmentDescription, url);
+		binary.setTargetId(attachment.getId());
+		return attachment;
 	}
 
 	public Attachment getTaskAttachment(String attachmentId) {
 		return taskSer.getAttachment(attachmentId);
 	}
 
-	public InputStream getTaskAttachmentContent(String taskId) {
-		return taskSer.getAttachmentContent(taskId);
+	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
+	public InputStream getTaskAttachmentContent(String attachmentId) {
+		BinaryObj binary = binaryDao.getBinaryObjByTarget(
+				BinaryObjType.ATTACHMENT_CONTENT, attachmentId);
+		if (binary == null) {
+			throw new ResourceNotFoundException(
+					"No such content for the attachment");
+		} else {
+			return binary.getContentInputStream();
+		}
 	}
 
 	/**

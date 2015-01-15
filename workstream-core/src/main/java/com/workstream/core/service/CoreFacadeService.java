@@ -1,5 +1,7 @@
 package com.workstream.core.service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,6 +18,7 @@ import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +33,7 @@ import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.DataBadStateException;
+import com.workstream.core.exception.DataPersistException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.GroupX;
 import com.workstream.core.model.Organization;
@@ -426,6 +430,16 @@ public class CoreFacadeService {
 
 	public CoreEventService getEventService() {
 		return eventSer;
+	}
+
+	public byte[] readAttachmentContent(String attachmentId) {
+		// the stream must be read in a transation
+		InputStream content = projSer.getTaskAttachmentContent(attachmentId);
+		try {
+			return IOUtils.toByteArray(content);
+		} catch (IOException e) {
+			throw new DataPersistException(e);
+		}
 	}
 
 }
