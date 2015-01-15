@@ -2,6 +2,7 @@ package com.workstream.core.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -430,6 +431,15 @@ public class CoreFacadeService {
 
 	public CoreEventService getEventService() {
 		return eventSer;
+	}
+	
+	public void readAttachmentContentToStream(String attachmentId, OutputStream os) {
+		InputStream content = projSer.getTaskAttachmentContent(attachmentId);
+		try {
+			IOUtils.copy(content, os);
+		} catch (IOException e) {
+			throw new DataPersistException(e);
+		}
 	}
 
 	public byte[] readAttachmentContent(String attachmentId) {

@@ -254,9 +254,8 @@ public class TaskCapable {
 		binary.setType(BinaryObjType.ATTACHMENT_CONTENT);
 
 		binaryDao.persistOutputStreamToContent(content, binary, size);
-		String url = "/attachment/aId/binary/" + binary.getId();
 		Attachment attachment = taskSer.createAttachment(type, taskId, null,
-				attachmentName, attachmentDescription, url);
+				attachmentName, attachmentDescription, (String) null);
 		binary.setTargetId(attachment.getId());
 		return attachment;
 	}

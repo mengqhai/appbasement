@@ -1,5 +1,6 @@
 package com.workstream.core.persistence;
 
+import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.sql.Blob;
@@ -45,7 +46,12 @@ public class BinaryObjJpaDAO extends GenericJpaDAO<BinaryObj, Long> implements
 	public void persistOutputStreamToContent(InputStream is, BinaryObj toObj,
 			long size) {
 		try {
-			// Unable to write to existing Clob, always need to create new one
+			if (!is.markSupported()) {
+				is = new BufferedInputStream(is);
+				is.mark(Integer.MAX_VALUE);
+			}
+
+			// Unable to write to existing Blob, always need to create new one
 			// Connection conn = getConnection(getEm());
 			// Blob blob = conn.createBlob();
 			// http://stackoverflow.com/questions/19908279/hibernate-4-2-2-create-blob-from-unknown-length-input-stream
