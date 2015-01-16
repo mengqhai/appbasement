@@ -128,6 +128,18 @@ public class BinaryObj implements Serializable {
 		this.repositoryKey = repositoryKey;
 	}
 
+	public static BinaryObj newBinaryObj(BinaryObjType objType,
+			String targetId, BinaryReposType reposType, String contentType,
+			String name) {
+		BinaryObj binary = new BinaryObj();
+		binary.setName(name);
+		binary.setContentType(contentType);
+		binary.setType(objType);
+		binary.setReposType(reposType);
+		binary.setTargetId(targetId);
+		return binary;
+	}
+
 	@PrePersist
 	protected void onCreate() {
 		setLastUpdate(new Date());

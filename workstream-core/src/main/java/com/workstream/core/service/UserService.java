@@ -384,11 +384,8 @@ public class UserService {
 	}
 
 	public void setUserPicture(String userId, String mimeType, InputStream is) {
-		BinaryObj binary = new BinaryObj();
-		binary.setContentType(mimeType);
-		binary.setTargetId(userId);
-		binary.setReposType(BinaryReposType.FILE_SYSTEM_REPOSITORY);
-		binary.setType(BinaryObjType.USER_PICTURE);
+		BinaryObj binary = BinaryObj.newBinaryObj(BinaryObjType.USER_PICTURE,
+				userId, BinaryReposType.FILE_SYSTEM_REPOSITORY, mimeType, null);
 		binaryDao.persistInputStreamToContent(is, binary);
 
 		Long bId = binary.getId();
