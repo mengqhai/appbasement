@@ -8,11 +8,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.activiti.engine.identity.Group;
-import org.activiti.engine.identity.Picture;
 import org.activiti.engine.identity.User;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,6 +39,7 @@ import com.workstream.core.exception.BytesNotFoundException;
 import com.workstream.core.exception.DataPersistException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Subscription;
+import com.workstream.core.persistence.binary.BinaryPicture;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.RestConstants;
 import com.workstream.rest.exception.NotAuthorizedException;
@@ -179,14 +182,22 @@ public class UserController {
 	@RequestMapping(value = "/{id}/picture", method = RequestMethod.GET, produces = {
 			MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE,
 			MediaType.APPLICATION_JSON_VALUE })
-	public byte[] getUserPicture(@PathVariable("id") String userIdBase64)
+	@ResponseBody
+	public void getUserPicture(@PathVariable("id") String userIdBase64,
+			@ApiIgnore HttpServletResponse response)
 			throws BadArgumentException {
 		String userId = decodeUserId(userIdBase64);
-		Picture pic = core.getUserService().getUserPicture(userId);
-		if (pic == null || pic.getBytes() == null) {
+		BinaryPicture pic = core.getUserService().getUserPicture(userId);
+		if (pic == null) {
 			throw new BytesNotFoundException("User picture not set");
 		}
-		return pic.getBytes();
+
+		response.setContentType(pic.getMimeType());
+		try {
+			IOUtils.copy(pic.getInputStream(), response.getOutputStream());
+		} catch (IOException e) {
+			throw new BytesNotFoundException(e.getMessage(), e);
+		}
 	}
 
 	@ApiOperation(value = "Set user info for a user", notes = "To delete an info entry, just set the value to null.  "

@@ -370,7 +370,7 @@ public class UserService {
 		idService.setAuthenticatedUserId(null);
 	}
 
-	public Picture getUserPicture(String userId) {
+	public BinaryPicture getUserPicture(String userId) {
 		Picture pic = idService.getUserPicture(userId);
 		if (pic == null) {
 			throw new BytesNotFoundException("No such picture");
