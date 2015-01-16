@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.Api;
+import com.workstream.core.exception.BytesNotFoundException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.BinaryObj;
 import com.workstream.core.service.CoreFacadeService;
@@ -28,6 +29,36 @@ public class AttachmentController {
 	@Autowired
 	private CoreFacadeService core;
 
+	@RequestMapping(value = "/{attachmentId}/thumb", method = RequestMethod.GET)
+	@ResponseBody
+	public void getAttachmentThumbnail(
+			@PathVariable("attachmentId") String attachmentId,
+			@ApiIgnore HttpServletResponse response) {
+		Attachment attachment = core.getProcessService().getTaskAttachment(
+				attachmentId);
+		if (attachment == null) {
+			throw new ResourceNotFoundException("No such attachment");
+		}
+
+		if (attachment.getType() == null
+				|| !attachment.getType().startsWith("image")) {
+			throw new BytesNotFoundException("No such thumbnail");
+		}
+
+		response.setContentType(attachment.getType());
+		BinaryObj binary = core.getProjectService()
+				.getAttachmentThumbBinaryObj(attachment.getId());
+		if (binary == null) {
+			throw new BytesNotFoundException("No such thumbnail");
+		}
+		try {
+			core.getProcessService().outputBinaryObjContent(
+					response.getOutputStream(), binary);
+		} catch (IOException e) {
+			throw new DataMappingException(e.getMessage(), e);
+		}
+	}
+
 	@RequestMapping(value = "/{attachmentId}/content", method = RequestMethod.GET)
 	@ResponseBody
 	public void getAttachmentContent(
@@ -36,7 +67,7 @@ public class AttachmentController {
 		Attachment attachment = core.getProcessService().getTaskAttachment(
 				attachmentId);
 		if (attachment == null) {
-			throw new ResourceNotFoundException("No such attachment");
+			throw new BytesNotFoundException("No such attachment");
 		}
 
 		// encountered the header not set issue
@@ -58,14 +89,14 @@ public class AttachmentController {
 			BinaryObj binary = core.getProjectService().getAttachmentBinaryObj(
 					attachmentId);
 			if (binary == null) {
-				throw new ResourceNotFoundException(
+				throw new BytesNotFoundException(
 						"No such content for the attachment");
 			}
 			response.setContentLength((int) binary.getSize());
-			core.getProjectService().outputTaskAttachmentContent(
+			core.getProjectService().outputBinaryObjContent(
 					response.getOutputStream(), binary);
 		} catch (IOException e) {
-			throw new DataMappingException();
+			throw new DataMappingException(e.getMessage(), e);
 		}
 		// byte[] bytes = new byte[0];
 		// return new HttpEntity<byte[]>(bytes, headers);

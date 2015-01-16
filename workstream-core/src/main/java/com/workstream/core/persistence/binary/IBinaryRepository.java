@@ -15,4 +15,13 @@ public interface IBinaryRepository {
 
 	public abstract void deleteBinaryContent(BinaryObj bo);
 
+//	/**
+//	 * Useful when need to work with other APIs that requires an OutputStream to
+//	 * write to.
+//	 * 
+//	 * @param bo
+//	 * @return
+//	 */
+//	public abstract OutputStream getOutputStreamToWrite(BinaryObj bo);
+
 }

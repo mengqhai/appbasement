@@ -35,6 +35,7 @@ import com.workstream.core.model.BinaryObj;
 import com.workstream.core.model.BinaryObj.BinaryObjType;
 import com.workstream.core.model.BinaryObj.BinaryReposType;
 import com.workstream.core.persistence.IBinaryObjDAO;
+import com.workstream.core.utils.ThumbnailCreator;
 
 public class TaskCapable {
 
@@ -50,6 +51,8 @@ public class TaskCapable {
 
 	@Autowired
 	protected FormService formService;
+
+	private ThumbnailCreator thumbCreator = new ThumbnailCreator();
 
 	/**
 	 * My own binary DAO to store attachment content
@@ -257,7 +260,26 @@ public class TaskCapable {
 		Attachment attachment = taskSer.createAttachment(type, taskId, null,
 				attachmentName, attachmentDescription, (String) null);
 		binary.setTargetId(attachment.getId());
+
+		if (type.startsWith("image")) {
+			// create a thumbnail
+			BinaryObj thumbnail = BinaryObj.newBinaryObj(
+					BinaryObjType.ATTACHMENT_THUMB, attachment.getId(),
+					BinaryReposType.FILE_SYSTEM_REPOSITORY, type, "thumbnail_"
+							+ attachmentName);
+
+			// have to read the original image
+			InputStream originalImage = binaryDao.getContentStream(binary);
+			InputStream thumb = thumbCreator.createThumbnail(originalImage);
+			binaryDao.persistInputStreamToContent(thumb, thumbnail);
+		}
 		return attachment;
+	}
+
+	public BinaryObj getAttachmentThumbBinaryObj(String attachmentId) {
+		BinaryObj binary = binaryDao.getBinaryObjByTarget(
+				BinaryObjType.ATTACHMENT_THUMB, attachmentId);
+		return binary;
 	}
 
 	public Attachment getTaskAttachment(String attachmentId) {
@@ -271,7 +293,7 @@ public class TaskCapable {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
-	public long outputTaskAttachmentContent(OutputStream os, BinaryObj binary) {
+	public long outputBinaryObjContent(OutputStream os, BinaryObj binary) {
 		return binaryDao.outputContent(os, binary);
 	}
 

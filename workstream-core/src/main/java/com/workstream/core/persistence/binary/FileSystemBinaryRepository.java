@@ -79,6 +79,18 @@ public class FileSystemBinaryRepository implements IBinaryRepository {
 		}
 	}
 
+//	@Override
+//	public OutputStream getOutputStreamToWrite(BinaryObj bo) {
+//		File dir = initDir();
+//		File biFile = new File(dir, String.valueOf(bo.getId()));
+//		try {
+//			FileOutputStream os = FileUtils.openOutputStream(biFile);
+//			return os;
+//		} catch (IOException e) {
+//			throw new DataPersistException("Failed to open file");
+//		}
+//	}
+
 	/**
 	 * Read the binary to the OutputStream.
 	 * 
