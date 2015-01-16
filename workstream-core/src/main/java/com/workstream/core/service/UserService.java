@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
 import com.workstream.core.exception.AttempBadStateException;
+import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.BeanPropertyException;
 import com.workstream.core.exception.BytesNotFoundException;
 import com.workstream.core.exception.DataBadStateException;
@@ -41,6 +42,7 @@ import com.workstream.core.persistence.IGroupXDAO;
 import com.workstream.core.persistence.IOrganizationDAO;
 import com.workstream.core.persistence.IUserXDAO;
 import com.workstream.core.persistence.binary.BinaryPicture;
+import com.workstream.core.utils.ThumbnailCreator;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
@@ -66,6 +68,8 @@ public class UserService {
 
 	@Autowired
 	private IBinaryObjDAO binaryDao;
+
+	private ThumbnailCreator thumbCreator = new ThumbnailCreator();
 
 	protected void deleteUserX(String userId) {
 		UserX userX = userDao.findByUserId(userId);
@@ -383,10 +387,24 @@ public class UserService {
 		return bPic;
 	}
 
-	public void setUserPicture(String userId, String mimeType, InputStream is) {
+	public void setUserPicture(String userId, String mimeType, InputStream is,
+			boolean onlySaveThumb) {
+		if (!mimeType.startsWith("image")) {
+			throw new BadArgumentException("Wrong mine type: " + mimeType);
+		}
+
 		BinaryObj binary = BinaryObj.newBinaryObj(BinaryObjType.USER_PICTURE,
 				userId, BinaryReposType.FILE_SYSTEM_REPOSITORY, mimeType, null);
-		binaryDao.persistInputStreamToContent(is, binary);
+		if (onlySaveThumb) {
+			// optional step
+			thumbCreator.setMaxHeight(160);
+			thumbCreator.setMaxWidth(160);
+			InputStream thumbIs = thumbCreator.createSquareThumbnail(is);
+			binaryDao.persistInputStreamToContent(thumbIs, binary);
+			mimeType = "image/png";
+		} else {
+			binaryDao.persistInputStreamToContent(is, binary);
+		}
 
 		Long bId = binary.getId();
 		byte[] bytes = { bId.byteValue() };

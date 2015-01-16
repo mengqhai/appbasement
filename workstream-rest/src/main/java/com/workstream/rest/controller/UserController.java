@@ -170,7 +170,7 @@ public class UserController {
 
 			try {
 				core.getUserService().setUserPicture(userId,
-						file.getContentType(), file.getInputStream());
+						file.getContentType(), file.getInputStream(), true);
 			} catch (IOException e) {
 				throw new DataPersistException(e.getMessage(), e);
 			}
