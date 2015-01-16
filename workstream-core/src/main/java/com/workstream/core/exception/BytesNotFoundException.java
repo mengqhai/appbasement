@@ -1,4 +1,4 @@
-package com.workstream.rest.exception;
+package com.workstream.core.exception;
 
 import com.workstream.core.exception.ResourceNotFoundException;
 

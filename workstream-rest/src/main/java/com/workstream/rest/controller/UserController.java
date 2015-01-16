@@ -33,12 +33,12 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.BadArgumentException;
+import com.workstream.core.exception.BytesNotFoundException;
 import com.workstream.core.exception.DataPersistException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Subscription;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.RestConstants;
-import com.workstream.rest.exception.BytesNotFoundException;
 import com.workstream.rest.exception.NotAuthorizedException;
 import com.workstream.rest.model.GroupResponse;
 import com.workstream.rest.model.InnerWrapperObj;
@@ -167,7 +167,7 @@ public class UserController {
 
 			try {
 				core.getUserService().setUserPicture(userId,
-						file.getContentType(), file.getBytes());
+						file.getContentType(), file.getInputStream());
 			} catch (IOException e) {
 				throw new DataPersistException(e.getMessage(), e);
 			}

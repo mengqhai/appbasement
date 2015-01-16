@@ -255,7 +255,7 @@ public class TaskCapable {
 		binary.setContentType(type);
 		binary.setType(BinaryObjType.ATTACHMENT_CONTENT);
 		binary.setReposType(BinaryReposType.FILE_SYSTEM_REPOSITORY);
-		binaryDao.persistOutputStreamToContent(content, binary, size);
+		binaryDao.persistInputStreamToContent(content, binary);
 		Attachment attachment = taskSer.createAttachment(type, taskId, null,
 				attachmentName, attachmentDescription, (String) null);
 		binary.setTargetId(attachment.getId());

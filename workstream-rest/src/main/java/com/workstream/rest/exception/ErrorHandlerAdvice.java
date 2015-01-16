@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.exception.BadArgumentException;
+import com.workstream.core.exception.BytesNotFoundException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.rest.model.RestErrorResponse;
 

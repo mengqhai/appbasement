@@ -1,5 +1,6 @@
 package com.workstream.core.service;
 
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -25,15 +26,21 @@ import org.springframework.transaction.annotation.Transactional;
 import com.workstream.core.CoreConstants;
 import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.BeanPropertyException;
+import com.workstream.core.exception.BytesNotFoundException;
 import com.workstream.core.exception.DataBadStateException;
 import com.workstream.core.exception.DataPersistException;
 import com.workstream.core.exception.ResourceNotFoundException;
+import com.workstream.core.model.BinaryObj;
+import com.workstream.core.model.BinaryObj.BinaryObjType;
+import com.workstream.core.model.BinaryObj.BinaryReposType;
 import com.workstream.core.model.GroupX;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.UserX;
+import com.workstream.core.persistence.IBinaryObjDAO;
 import com.workstream.core.persistence.IGroupXDAO;
 import com.workstream.core.persistence.IOrganizationDAO;
 import com.workstream.core.persistence.IUserXDAO;
+import com.workstream.core.persistence.binary.BinaryPicture;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
@@ -56,6 +63,9 @@ public class UserService {
 
 	@Autowired
 	private ManagementService mgmtService;
+
+	@Autowired
+	private IBinaryObjDAO binaryDao;
 
 	protected void deleteUserX(String userId) {
 		UserX userX = userDao.findByUserId(userId);
@@ -362,16 +372,35 @@ public class UserService {
 
 	public Picture getUserPicture(String userId) {
 		Picture pic = idService.getUserPicture(userId);
-		return pic;
+		if (pic == null) {
+			throw new BytesNotFoundException("No such picture");
+		}
+		BinaryObj binary = binaryDao.getBinaryObjByTarget(
+				BinaryObjType.USER_PICTURE, userId);
+		InputStream binaryContent = binaryDao.getContentStream(binary);
+		BinaryPicture bPic = new BinaryPicture(pic, binaryContent);
+		// decorated Picture with input stream
+		return bPic;
 	}
 
-	public void setUserPicture(String userId, String mimeType, byte[] bytes) {
+	public void setUserPicture(String userId, String mimeType, InputStream is) {
+		BinaryObj binary = new BinaryObj();
+		binary.setContentType(mimeType);
+		binary.setTargetId(userId);
+		binary.setReposType(BinaryReposType.FILE_SYSTEM_REPOSITORY);
+		binary.setType(BinaryObjType.USER_PICTURE);
+		binaryDao.persistInputStreamToContent(is, binary);
+
+		Long bId = binary.getId();
+		byte[] bytes = { bId.byteValue() };
 		Picture pic = new Picture(bytes, mimeType);
 		idService.setUserPicture(userId, pic);
+		// need to do so, to make user.isPictureSet()
 	}
 
 	public void deleteUserPicture(String userId) {
 		idService.setUserPicture(userId, null);
+		binaryDao.deleteBinaryObjByTarget(BinaryObjType.USER_PICTURE, userId);
 	}
 
 	public Map<String, String> getUserInfo(String userId) {

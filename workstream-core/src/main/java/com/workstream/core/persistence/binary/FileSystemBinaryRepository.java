@@ -87,16 +87,35 @@ public class FileSystemBinaryRepository implements IBinaryRepository {
 	 */
 	@Override
 	public void readBinaryContent(OutputStream os, BinaryObj bo) {
-		String path = bo.getRepositoryKey();
-		File biFile = new File(root, path);
 		try {
-			FileInputStream is = FileUtils.openInputStream(biFile);
+			InputStream is = this.getBinaryContent(bo);
 			IOUtils.copy(is, os);
 			is.close();
 			os.close();
 		} catch (IOException e) {
+			throw new DataPersistException("Failed to read to file");
+		}
+	}
+
+	@Override
+	public InputStream getBinaryContent(BinaryObj bo) {
+		String path = bo.getRepositoryKey();
+		File biFile = new File(root, path);
+		try {
+			FileInputStream is = FileUtils.openInputStream(biFile);
+			return is;
+		} catch (IOException e) {
 			throw new DataPersistException("Failed to read to file: "
 					+ biFile.getPath());
+		}
+	}
+
+	@Override
+	public void deleteBinaryContent(BinaryObj bo) {
+		String path = bo.getRepositoryKey();
+		File biFile = new File(root, path);
+		if (biFile.exists() && biFile.isDirectory()) {
+			biFile.delete();
 		}
 	}
 

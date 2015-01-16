@@ -23,7 +23,7 @@ import javax.persistence.TemporalType;
 public class BinaryObj implements Serializable {
 
 	public enum BinaryObjType {
-		ATTACHMENT_THUMB, ATTACHMENT_CONTENT
+		ATTACHMENT_THUMB, ATTACHMENT_CONTENT, USER_PICTURE
 	}
 
 	public enum BinaryReposType {

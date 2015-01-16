@@ -45,8 +45,7 @@ public class BinaryObjJpaDAO extends GenericJpaDAO<BinaryObj, Long> implements
 	}
 
 	@Override
-	public void persistOutputStreamToContent(InputStream is, BinaryObj toObj,
-			long size) {
+	public void persistInputStreamToContent(InputStream is, BinaryObj toObj) {
 		try {
 			// if (is instanceof FileInputStream) {
 			// is = new BufferedInputStream((FileInputStream) is);
@@ -81,9 +80,27 @@ public class BinaryObjJpaDAO extends GenericJpaDAO<BinaryObj, Long> implements
 	}
 
 	@Override
+	public void deleteBinaryObjByTarget(BinaryObjType type, String targetId) {
+		BinaryObj bo = getBinaryObjByTarget(type, targetId);
+		if (bo != null) {
+			deleteBinaryObj(bo);
+		}
+	}
+
+	@Override
+	public void deleteBinaryObj(BinaryObj binary) {
+		rMgr.getRepository(binary.getReposType()).deleteBinaryContent(binary);
+	}
+
+	@Override
 	public long outputContent(OutputStream os, BinaryObj bo) {
 		rMgr.getRepository(bo.getReposType()).readBinaryContent(os, bo);
 		return bo.getSize();
+	}
+
+	@Override
+	public InputStream getContentStream(BinaryObj bo) {
+		return rMgr.getRepository(bo.getReposType()).getBinaryContent(bo);
 	}
 
 }

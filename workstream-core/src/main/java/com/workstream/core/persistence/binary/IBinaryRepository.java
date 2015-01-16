@@ -11,4 +11,8 @@ public interface IBinaryRepository {
 
 	public abstract void writeBinaryObjectContent(InputStream is, BinaryObj bo);
 
+	public abstract InputStream getBinaryContent(BinaryObj bo);
+
+	public abstract void deleteBinaryContent(BinaryObj bo);
+
 }
