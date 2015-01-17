@@ -194,7 +194,7 @@ public class TaskController {
 		return InnerWrapperObj.valueOf(attachments, AttachmentResponse.class);
 	}
 
-	@ApiOperation(value = "Retrieve the attachment list for a task")
+	@ApiOperation(value = "Create an attachment for a task")
 	@RequestMapping(value = "/{id:\\d+}/attachments", method = RequestMethod.POST)
 	public AttachmentResponse createTaskAttachment(
 			@PathVariable("id") String taskId,

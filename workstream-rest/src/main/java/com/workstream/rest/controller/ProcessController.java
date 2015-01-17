@@ -1,34 +1,48 @@
 package com.workstream.rest.controller;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Attachment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.AttempBadStateException;
+import com.workstream.core.exception.BadArgumentException;
+import com.workstream.core.exception.DataPersistException;
 import com.workstream.core.exception.ResourceNotFoundException;
-import com.workstream.core.model.Subscription;
 import com.workstream.core.model.CoreEvent.TargetType;
+import com.workstream.core.model.Subscription;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.rest.model.AttachmentResponse;
 import com.workstream.rest.model.HiProcessResponse;
 import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.ProcessResponse;
 import com.workstream.rest.model.SubscriptionResponse;
+import com.workstream.rest.utils.RestUtils;
 
 @Api(value = "processes", description = "Process related operations")
 @RestController
 @RequestMapping(value = "/processes", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProcessController {
+
+	private final static Logger log = LoggerFactory
+			.getLogger(ProcessController.class);
 
 	@Autowired
 	private CoreFacadeService core;
@@ -89,6 +103,51 @@ public class ProcessController {
 		Subscription sub = core.getEventService().subscribe(userId,
 				TargetType.PROCESS, processId);
 		return new SubscriptionResponse(sub);
+	}
+
+	@ApiOperation(value = "Retrieve the attachment list for a process")
+	@RequestMapping(value = "/{id}/attachments", method = RequestMethod.GET)
+	public List<AttachmentResponse> getProcesssAttachments(
+			@PathVariable("id") String processId) {
+		List<Attachment> attachments = core.getAttachmentService()
+				.filterProcessAttachment(processId);
+		return InnerWrapperObj.valueOf(attachments, AttachmentResponse.class);
+	}
+
+	@ApiOperation(value = "Create an attachment for a process")
+	@RequestMapping(value = "/{id}/attachments", method = RequestMethod.POST)
+	public AttachmentResponse createProcessAttachment(
+			@PathVariable("id") String processId,
+			@ApiParam(required = true) @RequestBody MultipartFile file) {
+		if (!file.isEmpty()) {
+			String contentType = file.getContentType();
+
+			try {
+
+				String decoded = RestUtils.decodeIsoToUtf8(file
+						.getOriginalFilename());
+				log.info("File recieved name={} size={} content-type={}",
+						decoded, file.getSize(), contentType);
+				// here is OK for large file, as commons-fileupload temporarily
+				// saves the file on disk
+
+				// problem occurs here for large file, because Activiti reads
+				// the stream into an byte[] in memory!
+				// I'll replace the attachment with my own implementation in the
+				// future.
+
+				Attachment attachment = core.getAttachmentService()
+						.createProcessAttachment(processId,
+								file.getContentType(), decoded,
+								"size: " + file.getSize() / 1024L + "KB",
+								file.getInputStream(), file.getSize());
+				return new AttachmentResponse(attachment);
+			} catch (IOException e) {
+				throw new DataPersistException(e);
+			}
+		} else {
+			throw new BadArgumentException("Empty file");
+		}
 	}
 
 }

@@ -71,6 +71,14 @@ public class AttachmentService {
 				attachmentDescription, content, size);
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
+	public Attachment createProcessAttachment(String processId, String type,
+			String attachmentName, String attachmentDescription,
+			InputStream content, long size) {
+		return createProcessAttachment(processId, type, attachmentName,
+				attachmentDescription, content, size, null);
+	}
+
 	/**
 	 * Task id is optional
 	 * 
