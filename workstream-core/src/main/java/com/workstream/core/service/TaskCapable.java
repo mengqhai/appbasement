@@ -11,6 +11,7 @@ import org.activiti.engine.FormService;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.history.HistoricTaskInstanceQuery;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Event;
@@ -267,4 +268,8 @@ public class TaskCapable {
 		taskSer.setVariablesLocal(taskId, vars);
 	}
 
+	public HistoricTaskInstance getArchTask(String taskId) {
+		HistoricTaskInstanceQuery q = hiSer.createHistoricTaskInstanceQuery();
+		return q.taskId(taskId).finished().singleResult();
+	}
 }

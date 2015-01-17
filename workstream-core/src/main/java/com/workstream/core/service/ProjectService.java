@@ -213,7 +213,7 @@ public class ProjectService extends TaskCapable {
 	@SuppressWarnings("unchecked")
 	public List<HistoricTaskInstance> filterArchTask(Project pro) {
 		HistoricTaskInstanceQuery q = (HistoricTaskInstanceQuery) prepairTaskInfoQuery(
-				pro, taskSer.createTaskQuery());
+				pro, hiSer.createHistoricTaskInstanceQuery());
 		if (q == null) {
 			return Collections.EMPTY_LIST;
 		} else {
