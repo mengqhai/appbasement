@@ -256,4 +256,17 @@ public class TaskController {
 		return new SubscriptionResponse(sub);
 	}
 
+	@ApiOperation(value = "Retrieve the local variables of a task")
+	@RequestMapping(value = "/{id}/vars", method = RequestMethod.GET)
+	public Map<String, Object> getTaskVars(@PathVariable("id") String taskId) {
+		return core.getProcessService().getTaskLocalVariables(taskId);
+	}
+
+	@ApiOperation(value = "Set the local variables of a task")
+	@RequestMapping(value = "/{id}/vars", method = RequestMethod.PUT)
+	public void setTaskVars(@PathVariable("id") String taskId,
+			@RequestBody(required = true) Map<String, Object> vars) {
+		core.getProcessService().setTaskLocalVariables(taskId, vars);
+	}
+
 }

@@ -254,4 +254,17 @@ public class TaskCapable {
 		return formService;
 	}
 
+	public Map<String, Object> getTaskLocalVariables(String taskId) {
+		Map<String, Object> vars = taskSer.getVariablesLocal(taskId);
+		return vars;
+	}
+
+	public void setTaskLocalVariable(String taskId, String key, Object value) {
+		taskSer.setVariableLocal(taskId, key, value);
+	}
+
+	public void setTaskLocalVariables(String taskId, Map<String, Object> vars) {
+		taskSer.setVariablesLocal(taskId, vars);
+	}
+
 }
