@@ -84,6 +84,7 @@ public class BinaryObjJpaDAO extends GenericJpaDAO<BinaryObj, Long> implements
 		BinaryObj bo = getBinaryObjByTarget(type, targetId);
 		if (bo != null) {
 			deleteBinaryObj(bo);
+			remove(bo);
 		}
 	}
 

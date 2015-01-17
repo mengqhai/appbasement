@@ -392,7 +392,13 @@ public class UserService {
 		if (!mimeType.startsWith("image")) {
 			throw new BadArgumentException("Wrong mine type: " + mimeType);
 		}
-
+		Picture oldPicture = idService.getUserPicture(userId);
+		if (oldPicture != null) {
+			binaryDao.deleteBinaryObjByTarget(BinaryObjType.USER_PICTURE,
+					userId);
+			// unable to delete the activiti Picture
+			// https://github.com/Activiti/Activiti/issues/497
+		}
 		BinaryObj binary = BinaryObj.newBinaryObj(BinaryObjType.USER_PICTURE,
 				userId, BinaryReposType.FILE_SYSTEM_REPOSITORY, mimeType, null);
 		if (onlySaveThumb) {
@@ -411,11 +417,6 @@ public class UserService {
 		Picture pic = new Picture(bytes, mimeType);
 		idService.setUserPicture(userId, pic);
 		// need to do so, to make user.isPictureSet()
-	}
-
-	public void deleteUserPicture(String userId) {
-		idService.setUserPicture(userId, null);
-		binaryDao.deleteBinaryObjByTarget(BinaryObjType.USER_PICTURE, userId);
 	}
 
 	public Map<String, String> getUserInfo(String userId) {

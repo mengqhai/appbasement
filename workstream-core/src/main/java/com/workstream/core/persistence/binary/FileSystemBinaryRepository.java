@@ -79,17 +79,17 @@ public class FileSystemBinaryRepository implements IBinaryRepository {
 		}
 	}
 
-//	@Override
-//	public OutputStream getOutputStreamToWrite(BinaryObj bo) {
-//		File dir = initDir();
-//		File biFile = new File(dir, String.valueOf(bo.getId()));
-//		try {
-//			FileOutputStream os = FileUtils.openOutputStream(biFile);
-//			return os;
-//		} catch (IOException e) {
-//			throw new DataPersistException("Failed to open file");
-//		}
-//	}
+	// @Override
+	// public OutputStream getOutputStreamToWrite(BinaryObj bo) {
+	// File dir = initDir();
+	// File biFile = new File(dir, String.valueOf(bo.getId()));
+	// try {
+	// FileOutputStream os = FileUtils.openOutputStream(biFile);
+	// return os;
+	// } catch (IOException e) {
+	// throw new DataPersistException("Failed to open file");
+	// }
+	// }
 
 	/**
 	 * Read the binary to the OutputStream.
@@ -126,7 +126,7 @@ public class FileSystemBinaryRepository implements IBinaryRepository {
 	public void deleteBinaryContent(BinaryObj bo) {
 		String path = bo.getRepositoryKey();
 		File biFile = new File(root, path);
-		if (biFile.exists() && biFile.isDirectory()) {
+		if (biFile.exists() && !biFile.isDirectory()) {
 			biFile.delete();
 		}
 	}
