@@ -34,7 +34,7 @@ public class AttachmentController {
 	public void getAttachmentThumbnail(
 			@PathVariable("attachmentId") String attachmentId,
 			@ApiIgnore HttpServletResponse response) {
-		Attachment attachment = core.getAttachmentService().getTaskAttachment(
+		Attachment attachment = core.getAttachmentService().getAttachment(
 				attachmentId);
 		if (attachment == null) {
 			throw new ResourceNotFoundException("No such attachment");
@@ -64,7 +64,7 @@ public class AttachmentController {
 	public void getAttachmentContent(
 			@PathVariable("attachmentId") String attachmentId,
 			@ApiIgnore HttpServletResponse response) {
-		Attachment attachment = core.getAttachmentService().getTaskAttachment(
+		Attachment attachment = core.getAttachmentService().getAttachment(
 				attachmentId);
 		if (attachment == null) {
 			throw new BytesNotFoundException("No such attachment");

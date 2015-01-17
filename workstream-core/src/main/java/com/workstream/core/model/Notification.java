@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -28,7 +28,7 @@ public class Notification {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Access(AccessType.PROPERTY)
-	private long id;
+	private Long id;
 
 	/**
 	 * Receiver
@@ -39,7 +39,7 @@ public class Notification {
 	@JoinColumn(name = "SUB_ID", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_NOTIFICATION_SUB"))
 	private Subscription sub;
 
-	@OneToOne(optional = true, fetch = FetchType.LAZY)
+	@ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "EVENT_ID", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_NOTIFICATION_EVENT"))
 	private CoreEvent event;
 
@@ -52,6 +52,8 @@ public class Notification {
 	private Date createdAt;
 
 	private boolean read;
+
+	private Long orgId;
 
 	public String getUserId() {
 		return userId;
@@ -93,11 +95,11 @@ public class Notification {
 		this.message = message;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -115,6 +117,14 @@ public class Notification {
 
 	public void setRead(boolean read) {
 		this.read = read;
+	}
+
+	public Long getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(Long orgId) {
+		this.orgId = orgId;
 	}
 
 	@PrePersist

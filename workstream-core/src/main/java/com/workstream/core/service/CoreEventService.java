@@ -22,6 +22,7 @@ import com.workstream.core.model.Notification;
 import com.workstream.core.model.Subscription;
 import com.workstream.core.persistence.ICoreEventDAO;
 import com.workstream.core.persistence.INotificationDAO;
+import com.workstream.core.persistence.IOrganizationDAO;
 import com.workstream.core.persistence.ISubscriptionDAO;
 
 @Service
@@ -41,7 +42,10 @@ public class CoreEventService {
 	@Autowired
 	protected INotificationDAO notDao;
 
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Autowired
+	public IOrganizationDAO orgDao;
+
+	@Transactional(propagation = Propagation.REQUIRED)
 	public void saveCoreEvent(CoreEvent cEvent) {
 		coreEventDao.persist(cEvent);
 	}
@@ -105,9 +109,13 @@ public class CoreEventService {
 	 * @param event
 	 * @return
 	 */
-	public Notification createNotifcation(Subscription sub, CoreEvent event) {
+	public synchronized Notification createNotifcation(Subscription sub,
+			CoreEvent event) {
+		// has to be synchronized
+		// http://stackoverflow.com/questions/10266750/hibernate-unknownserviceexception-unknown-service-requested-as-transaction-comp
 		Notification notification = new Notification();
 		notification.setEvent(event);
+		notification.setOrgId(event.getOrgId());
 		notification.setSub(sub);
 		notification.setUserId(sub.getUserId());
 		notDao.persist(notification);

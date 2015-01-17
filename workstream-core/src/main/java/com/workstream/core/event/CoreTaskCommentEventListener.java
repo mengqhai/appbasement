@@ -1,10 +1,13 @@
 package com.workstream.core.event;
 
+import org.activiti.engine.TaskService;
 import org.activiti.engine.delegate.event.ActivitiEntityEvent;
 import org.activiti.engine.delegate.event.ActivitiEventType;
 import org.activiti.engine.task.Comment;
+import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.workstream.core.model.CoreEvent;
 import com.workstream.core.model.CoreEvent.EventType;
@@ -16,6 +19,9 @@ public class CoreTaskCommentEventListener extends
 			.getLogger(CoreTaskCommentEventListener.class);
 
 	public static ActivitiEventType[] EVENT_TYPES = { ActivitiEventType.ENTITY_CREATED };
+
+	@Autowired
+	public TaskService taskSer;
 
 	@Override
 	public CoreEvent onActivitiEntityEvent(ActivitiEntityEvent event) {
@@ -32,6 +38,17 @@ public class CoreTaskCommentEventListener extends
 		cEvent.setParentId(comment.getTaskId());
 		cEvent.setUserId(comment.getUserId());
 		logger.info("Event dispached: {}", cEvent);
+
+		// to set the org id
+		Task task = taskSer.createTaskQuery().taskId(comment.getTaskId())
+				.singleResult();
+		if (task != null && task.getTenantId() != null
+				&& !task.getTenantId().isEmpty()) {
+			try {
+				cEvent.setOrgId(Long.valueOf(task.getTenantId()));
+			} catch (NumberFormatException e) {
+			}
+		}
 
 		return cEvent;
 	}

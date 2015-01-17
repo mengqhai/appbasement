@@ -47,6 +47,13 @@ public class CoreTaskEventListener extends AbstractCoreActivitiEventListener {
 			cEvent.setParentId(task.getCategory());
 		}
 		logger.info("Event dispatched: {}", cEvent);
+
+		if (task.getTenantId() != null && !task.getTenantId().isEmpty()) {
+			try {
+				cEvent.setOrgId(Long.valueOf(task.getTenantId()));
+			} catch (NumberFormatException e) {
+			}
+		}
 		return cEvent;
 	}
 

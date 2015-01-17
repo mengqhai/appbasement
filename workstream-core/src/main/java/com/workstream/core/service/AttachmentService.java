@@ -36,17 +36,16 @@ public class AttachmentService {
 
 	private ThumbnailCreator thumbCreator = new ThumbnailCreator();
 
-	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
-	public Attachment createTaskAttachment(String taskId, String type,
-			String attachmentName, String attachmentDescription,
-			InputStream content, long size) {
-
+	private Attachment createAttachment(String taskId,
+			String processInstanceId, String type, String attachmentName,
+			String attachmentDescription, InputStream content, long size) {
 		BinaryObj binary = BinaryObj.newBinaryObj(
 				BinaryObjType.ATTACHMENT_CONTENT, null,
 				BinaryReposType.FILE_SYSTEM_REPOSITORY, type, attachmentName);
 		binaryDao.persistInputStreamToContent(content, binary);
-		Attachment attachment = taskSer.createAttachment(type, taskId, null,
-				attachmentName, attachmentDescription, (String) null);
+		Attachment attachment = taskSer.createAttachment(type, taskId,
+				processInstanceId, attachmentName, attachmentDescription,
+				(String) null);
 		binary.setTargetId(attachment.getId());
 
 		if (type.startsWith("image")) {
@@ -62,6 +61,34 @@ public class AttachmentService {
 			binaryDao.persistInputStreamToContent(thumb, thumbnail);
 		}
 		return attachment;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
+	public Attachment createTaskAttachment(String taskId, String type,
+			String attachmentName, String attachmentDescription,
+			InputStream content, long size) {
+		return createAttachment(taskId, null, type, attachmentName,
+				attachmentDescription, content, size);
+	}
+
+	/**
+	 * Task id is optional
+	 * 
+	 * @param processId
+	 * @param type
+	 * @param attachmentName
+	 * @param attachmentDescription
+	 * @param content
+	 * @param size
+	 * @param taskId
+	 * @return
+	 */
+	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
+	public Attachment createProcessAttachment(String processId, String type,
+			String attachmentName, String attachmentDescription,
+			InputStream content, long size, String taskId) {
+		return createAttachment(taskId, processId, type, attachmentName,
+				attachmentDescription, content, size);
 	}
 
 	public BinaryObj getAttachmentThumbBinaryObj(String attachmentId) {
@@ -80,7 +107,11 @@ public class AttachmentService {
 		return taskSer.getTaskAttachments(taskId);
 	}
 
-	public Attachment getTaskAttachment(String attachmentId) {
+	public List<Attachment> filterProcessAttachment(String processId) {
+		return taskSer.getProcessInstanceAttachments(processId);
+	}
+
+	public Attachment getAttachment(String attachmentId) {
 		return taskSer.getAttachment(attachmentId);
 	}
 

@@ -79,7 +79,7 @@ public class TemplateServiceTest {
 	private FormService formSer;
 
 	@Before
-	@Transactional(value = CoreConstants.TX_MANAGER, propagation = Propagation.REQUIRED)
+	@Transactional(value = CoreConstants.TX_MANAGER, propagation = Propagation.REQUIRES_NEW)
 	public void before() {
 		TestUtils
 				.clearUser(userId, core.getUserService(), core.getOrgService());

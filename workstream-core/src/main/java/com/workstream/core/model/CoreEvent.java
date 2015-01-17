@@ -45,7 +45,7 @@ public class CoreEvent implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Access(AccessType.PROPERTY)
-	private long id;
+	private Long id;
 
 	@Enumerated(EnumType.ORDINAL)
 	@Column(nullable = false, updatable = false)
@@ -64,6 +64,22 @@ public class CoreEvent implements Serializable {
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
+
+	/**
+	 * Have to make an non-Foreign-Key reference here. Because problem happens
+	 * when deleting org: delete org -> delete process -> insert process deleted
+	 * event -> breaks org Id foreign key
+	 * 
+	 */
+	private Long orgId;
+
+	/**
+	 * Let JPA delete the notifications when the event is removed(caused by
+	 * organization removal).
+	 */
+	// @OneToMany(mappedBy = "event", cascade = CascadeType.REMOVE)
+	// private Collection<Notification> notifications = new
+	// ArrayList<Notification>();
 
 	/**
 	 * The one who triggered the event
@@ -118,11 +134,11 @@ public class CoreEvent implements Serializable {
 		this.userId = userId;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -140,6 +156,14 @@ public class CoreEvent implements Serializable {
 		} else {
 			return false;
 		}
+	}
+
+	public Long getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(Long orgId) {
+		this.orgId = orgId;
 	}
 
 	@PrePersist

@@ -50,9 +50,14 @@ public class CoreProcessEventListener extends AbstractCoreActivitiEventListener 
 			return null;
 		}
 
-		cEvent.setUserId(Authentication.getAuthenticatedUserId());
-
 		log.info("Event dispatched: {}", cEvent);
+		cEvent.setUserId(Authentication.getAuthenticatedUserId());
+		if (pi.getTenantId() != null && !pi.getTenantId().isEmpty()) {
+			try {
+				cEvent.setOrgId(Long.valueOf(pi.getTenantId()));
+			} catch (NumberFormatException e) {
+			}
+		}
 		return cEvent;
 	}
 }
