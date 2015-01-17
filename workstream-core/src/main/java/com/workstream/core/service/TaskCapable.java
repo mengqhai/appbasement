@@ -1,7 +1,5 @@
 package com.workstream.core.service;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,7 +12,6 @@ import org.activiti.engine.HistoryService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.impl.identity.Authentication;
-import org.activiti.engine.task.Attachment;
 import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Event;
 import org.activiti.engine.task.IdentityLinkType;
@@ -31,11 +28,6 @@ import com.workstream.core.CoreConstants;
 import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.exception.BeanPropertyException;
 import com.workstream.core.exception.ResourceNotFoundException;
-import com.workstream.core.model.BinaryObj;
-import com.workstream.core.model.BinaryObj.BinaryObjType;
-import com.workstream.core.model.BinaryObj.BinaryReposType;
-import com.workstream.core.persistence.IBinaryObjDAO;
-import com.workstream.core.utils.ThumbnailCreator;
 
 public class TaskCapable {
 
@@ -51,14 +43,6 @@ public class TaskCapable {
 
 	@Autowired
 	protected FormService formService;
-
-	private ThumbnailCreator thumbCreator = new ThumbnailCreator();
-
-	/**
-	 * My own binary DAO to store attachment content
-	 */
-	@Autowired
-	protected IBinaryObjDAO binaryDao;
 
 	/**
 	 * Doesn't care about org or project. (Process related tasks will also be
@@ -242,59 +226,6 @@ public class TaskCapable {
 		});
 
 		return result;
-	}
-
-	public List<Attachment> filterTaskAttachment(String taskId) {
-		return taskSer.getTaskAttachments(taskId);
-	}
-
-	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
-	public Attachment createTaskAttachment(String taskId, String type,
-			String attachmentName, String attachmentDescription,
-			InputStream content, long size) {
-
-		BinaryObj binary = BinaryObj.newBinaryObj(
-				BinaryObjType.ATTACHMENT_CONTENT, null,
-				BinaryReposType.FILE_SYSTEM_REPOSITORY, type, attachmentName);
-		binaryDao.persistInputStreamToContent(content, binary);
-		Attachment attachment = taskSer.createAttachment(type, taskId, null,
-				attachmentName, attachmentDescription, (String) null);
-		binary.setTargetId(attachment.getId());
-
-		if (type.startsWith("image")) {
-			// create a thumbnail
-			BinaryObj thumbnail = BinaryObj.newBinaryObj(
-					BinaryObjType.ATTACHMENT_THUMB, attachment.getId(),
-					BinaryReposType.FILE_SYSTEM_REPOSITORY, type, "thumbnail_"
-							+ attachmentName);
-
-			// have to read the original image
-			InputStream originalImage = binaryDao.getContentStream(binary);
-			InputStream thumb = thumbCreator.createThumbnail(originalImage);
-			binaryDao.persistInputStreamToContent(thumb, thumbnail);
-		}
-		return attachment;
-	}
-
-	public BinaryObj getAttachmentThumbBinaryObj(String attachmentId) {
-		BinaryObj binary = binaryDao.getBinaryObjByTarget(
-				BinaryObjType.ATTACHMENT_THUMB, attachmentId);
-		return binary;
-	}
-
-	public Attachment getTaskAttachment(String attachmentId) {
-		return taskSer.getAttachment(attachmentId);
-	}
-
-	public BinaryObj getAttachmentBinaryObj(String attachmentId) {
-		BinaryObj binary = binaryDao.getBinaryObjByTarget(
-				BinaryObjType.ATTACHMENT_CONTENT, attachmentId);
-		return binary;
-	}
-
-	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
-	public long outputBinaryObjContent(OutputStream os, BinaryObj binary) {
-		return binaryDao.outputContent(os, binary);
 	}
 
 	/**

@@ -189,7 +189,7 @@ public class TaskController {
 	@RequestMapping(value = "/{id:\\d+}/attachments", method = RequestMethod.GET)
 	public List<AttachmentResponse> getTaskAttachments(
 			@PathVariable("id") String taskId) {
-		List<Attachment> attachments = core.getProjectService()
+		List<Attachment> attachments = core.getAttachmentService()
 				.filterTaskAttachment(taskId);
 		return InnerWrapperObj.valueOf(attachments, AttachmentResponse.class);
 	}
@@ -216,7 +216,7 @@ public class TaskController {
 				// I'll replace the attachment with my own implementation in the
 				// future.
 
-				Attachment attachment = core.getProjectService()
+				Attachment attachment = core.getAttachmentService()
 						.createTaskAttachment(taskId, file.getContentType(),
 								decoded,
 								"size: " + file.getSize() / 1024L + "KB",

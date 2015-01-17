@@ -60,6 +60,9 @@ public class CoreFacadeService {
 	@Autowired
 	private CoreEventService eventSer;
 
+	@Autowired
+	private AttachmentService attSer;
+
 	private static AtomicReference<CoreFacadeService> INSTANCE = new AtomicReference<CoreFacadeService>();
 
 	protected CoreFacadeService() {
@@ -426,6 +429,10 @@ public class CoreFacadeService {
 
 	public CoreEventService getEventService() {
 		return eventSer;
+	}
+
+	public AttachmentService getAttachmentService() {
+		return attSer;
 	}
 
 	// public byte[] readAttachmentContent(String attachmentId) {

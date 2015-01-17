@@ -34,7 +34,7 @@ public class AttachmentController {
 	public void getAttachmentThumbnail(
 			@PathVariable("attachmentId") String attachmentId,
 			@ApiIgnore HttpServletResponse response) {
-		Attachment attachment = core.getProcessService().getTaskAttachment(
+		Attachment attachment = core.getAttachmentService().getTaskAttachment(
 				attachmentId);
 		if (attachment == null) {
 			throw new ResourceNotFoundException("No such attachment");
@@ -46,13 +46,13 @@ public class AttachmentController {
 		}
 
 		response.setContentType(attachment.getType());
-		BinaryObj binary = core.getProjectService()
+		BinaryObj binary = core.getAttachmentService()
 				.getAttachmentThumbBinaryObj(attachment.getId());
 		if (binary == null) {
 			throw new BytesNotFoundException("No such thumbnail");
 		}
 		try {
-			core.getProcessService().outputBinaryObjContent(
+			core.getAttachmentService().outputBinaryObjContent(
 					response.getOutputStream(), binary);
 		} catch (IOException e) {
 			throw new DataMappingException(e.getMessage(), e);
@@ -64,7 +64,7 @@ public class AttachmentController {
 	public void getAttachmentContent(
 			@PathVariable("attachmentId") String attachmentId,
 			@ApiIgnore HttpServletResponse response) {
-		Attachment attachment = core.getProcessService().getTaskAttachment(
+		Attachment attachment = core.getAttachmentService().getTaskAttachment(
 				attachmentId);
 		if (attachment == null) {
 			throw new BytesNotFoundException("No such attachment");
@@ -86,14 +86,14 @@ public class AttachmentController {
 			response.setContentType(attachment.getType());
 			response.setHeader("Content-Disposition", "attachment; filename="
 					+ RestUtils.decodeUtf8ToIso(attachment.getName()));
-			BinaryObj binary = core.getProjectService().getAttachmentBinaryObj(
-					attachmentId);
+			BinaryObj binary = core.getAttachmentService()
+					.getAttachmentBinaryObj(attachmentId);
 			if (binary == null) {
 				throw new BytesNotFoundException(
 						"No such content for the attachment");
 			}
 			response.setContentLength((int) binary.getSize());
-			core.getProjectService().outputBinaryObjContent(
+			core.getAttachmentService().outputBinaryObjContent(
 					response.getOutputStream(), binary);
 		} catch (IOException e) {
 			throw new DataMappingException(e.getMessage(), e);
@@ -101,5 +101,4 @@ public class AttachmentController {
 		// byte[] bytes = new byte[0];
 		// return new HttpEntity<byte[]>(bytes, headers);
 	}
-
 }
