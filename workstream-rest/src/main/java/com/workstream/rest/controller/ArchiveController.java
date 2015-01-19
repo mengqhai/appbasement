@@ -37,6 +37,9 @@ public class ArchiveController {
 	@Autowired
 	private TaskController taskCtrl;
 
+	@Autowired
+	private ProcessController processCtrl;
+
 	@ApiOperation(value = "Retrieves the archived task for a given id")
 	@RequestMapping(value = "/tasks/{id}", method = RequestMethod.GET)
 	public ArchTaskResponse getArchivedTask(@PathVariable("id") String taskId) {
@@ -105,6 +108,13 @@ public class ArchiveController {
 		HistoricProcessInstance hiPi = core.getProcessService()
 				.getHiProcessWithVars(processId);
 		return hiPi.getProcessVariables();
+	}
+
+	@ApiOperation(value = "Retrieve the attachment list for a task")
+	@RequestMapping(value = "/processes/{id:\\d+}/attachments", method = RequestMethod.GET)
+	public List<AttachmentResponse> getProcessAttachments(
+			@PathVariable("id") String processId) {
+		return processCtrl.getProcesssAttachments(processId);
 	}
 
 	@ApiOperation(value = "Retrieves the archived processes for a given org id")
