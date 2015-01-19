@@ -206,8 +206,12 @@ public class TaskCapable {
 					"No authenticated user, no comments can be made.");
 		}
 
-		Comment com = taskSer.addComment(taskId, null, message);
-		return com;
+		try {
+			Comment com = taskSer.addComment(taskId, null, message);
+			return com;
+		} catch (ActivitiObjectNotFoundException e) {
+			throw new ResourceNotFoundException("No such task.", e);
+		}
 	}
 
 	public List<Comment> filterTaskComment(String taskId) {
@@ -256,8 +260,12 @@ public class TaskCapable {
 	}
 
 	public Map<String, Object> getTaskLocalVariables(String taskId) {
-		Map<String, Object> vars = taskSer.getVariablesLocal(taskId);
-		return vars;
+		try {
+			Map<String, Object> vars = taskSer.getVariablesLocal(taskId);
+			return vars;
+		} catch (ActivitiObjectNotFoundException e) {
+			throw new ResourceNotFoundException("No such task.", e);
+		}
 	}
 
 	public void setTaskLocalVariable(String taskId, String key, Object value) {
@@ -271,5 +279,11 @@ public class TaskCapable {
 	public HistoricTaskInstance getArchTask(String taskId) {
 		HistoricTaskInstanceQuery q = hiSer.createHistoricTaskInstanceQuery();
 		return q.taskId(taskId).finished().singleResult();
+	}
+
+	public HistoricTaskInstance getArchTaskWithVars(String taskId) {
+		HistoricTaskInstanceQuery q = hiSer.createHistoricTaskInstanceQuery();
+		return q.taskId(taskId).finished().includeTaskLocalVariables()
+				.singleResult();
 	}
 }

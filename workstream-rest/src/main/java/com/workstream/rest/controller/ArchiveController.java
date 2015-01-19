@@ -1,6 +1,9 @@
 package com.workstream.rest.controller;
 
+import static com.workstream.rest.utils.RestUtils.decodeUserId;
+
 import java.util.List;
+import java.util.Map;
 
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
@@ -19,9 +22,9 @@ import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.RestConstants;
 import com.workstream.rest.model.ArchProcessResponse;
 import com.workstream.rest.model.ArchTaskResponse;
+import com.workstream.rest.model.AttachmentResponse;
+import com.workstream.rest.model.EventResponse;
 import com.workstream.rest.model.InnerWrapperObj;
-
-import static com.workstream.rest.utils.RestUtils.*;
 
 @Api(value = "archives")
 @RestController
@@ -30,6 +33,9 @@ public class ArchiveController {
 
 	@Autowired
 	private CoreFacadeService core;
+
+	@Autowired
+	private TaskController taskCtrl;
 
 	@ApiOperation(value = "Retrieves the archived task for a given id")
 	@RequestMapping(value = "/tasks/{id}", method = RequestMethod.GET)
@@ -42,6 +48,31 @@ public class ArchiveController {
 
 		ArchTaskResponse resp = new ArchTaskResponse(hiTask);
 		return resp;
+	}
+
+	@ApiOperation(value = "Retrieves the archived task for a given id")
+	@RequestMapping(value = "/tasks/{id}/events", method = RequestMethod.GET)
+	public List<EventResponse> getArchivedTaskEvents(
+			@PathVariable("id") String taskId) {
+		return taskCtrl.getTaskEvents(taskId);
+	}
+
+	@ApiOperation(value = "Retrieve the attachment list for a task")
+	@RequestMapping(value = "/tasks/{id:\\d+}/attachments", method = RequestMethod.GET)
+	public List<AttachmentResponse> getTaskAttachments(
+			@PathVariable("id") String taskId) {
+		return taskCtrl.getTaskAttachments(taskId);
+	}
+
+	@ApiOperation(value = "Retrieve the local variables for a task")
+	@RequestMapping(value = "/tasks/{id:\\d+}/vars", method = RequestMethod.GET)
+	public Map<String, Object> getArchTaskVars(@PathVariable("id") String taskId) {
+		HistoricTaskInstance hiTask = core.getProjectService()
+				.getArchTaskWithVars(taskId);
+		if (hiTask == null) {
+			throw new ResourceNotFoundException("No such archived task");
+		}
+		return hiTask.getTaskLocalVariables();
 	}
 
 	@ApiOperation(value = "Retrieves the archived task list in project")
@@ -67,12 +98,21 @@ public class ArchiveController {
 		return InnerWrapperObj.valueOf(hiTasks, ArchTaskResponse.class);
 	}
 
+	@ApiOperation(value = "Retrieves the variables for a process")
+	@RequestMapping(value = "/processes/{processId}/vars", method = RequestMethod.GET)
+	public Map<String, Object> getArchProcessVars(
+			@PathVariable("processId") String processId) {
+		HistoricProcessInstance hiPi = core.getProcessService()
+				.getHiProcessWithVars(processId);
+		return hiPi.getProcessVariables();
+	}
+
 	@ApiOperation(value = "Retrieves the archived processes for a given org id")
 	@RequestMapping(value = "/orgs/{orgId}/processes", method = RequestMethod.GET)
 	public List<ArchProcessResponse> getArchProcessesInOrg(
 			@PathVariable("orgId") Long orgId) {
 		List<HistoricProcessInstance> hiPiList = core.getProcessService()
-				.filterHiProcessByOrg(orgId);
+				.filterHiProcessByOrg(orgId, true);
 		return InnerWrapperObj.valueOf(hiPiList, ArchProcessResponse.class);
 	}
 

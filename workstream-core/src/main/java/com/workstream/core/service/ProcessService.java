@@ -129,10 +129,17 @@ public class ProcessService extends TaskCapable {
 				.processInstanceId(processInstanceId).singleResult();
 	}
 
+	public HistoricProcessInstance getHiProcessWithVars(String processInstanceId) {
+		return hiSer.createHistoricProcessInstanceQuery()
+				.processInstanceId(processInstanceId).includeProcessVariables()
+				.singleResult();
+	}
+
 	public List<HistoricProcessInstance> filterHiProcessByOrgStarter(
 			Long orgId, String starterUserId, boolean finished) {
 		HistoricProcessInstanceQuery q = hiSer
-				.createHistoricProcessInstanceQuery().startedBy(starterUserId);
+				.createHistoricProcessInstanceQuery().startedBy(starterUserId)
+				.orderByProcessInstanceEndTime().desc();
 		if (finished) {
 			// has to directly touch the history table
 			q.processInstanceTenantId(String.valueOf(orgId));
@@ -168,8 +175,9 @@ public class ProcessService extends TaskCapable {
 	public List<HistoricProcessInstance> filterHiProcessByOrg(Long orgId,
 			boolean finished) {
 		HistoricProcessInstanceQuery q = hiSer
-				.createHistoricProcessInstanceQuery().processInstanceTenantId(
-						String.valueOf(orgId));
+				.createHistoricProcessInstanceQuery()
+				.processInstanceTenantId(String.valueOf(orgId))
+				.orderByProcessInstanceEndTime().desc();
 		if (finished) {
 			// has to directly touch the history table
 			q.finished();
@@ -197,7 +205,8 @@ public class ProcessService extends TaskCapable {
 	public List<HistoricProcessInstance> filterHiProcessByStarter(
 			String starterUserId, boolean finished) {
 		HistoricProcessInstanceQuery q = hiSer
-				.createHistoricProcessInstanceQuery().startedBy(starterUserId);
+				.createHistoricProcessInstanceQuery().startedBy(starterUserId)
+				.orderByProcessInstanceEndTime().desc();
 		if (finished) {
 			// has to directly touch the history table
 			q.finished();
