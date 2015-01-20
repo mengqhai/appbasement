@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -87,8 +88,76 @@ public class TaskCapable {
 		return taskSer.createTaskQuery().taskId(taskId).singleResult();
 	}
 
+	protected Task createTask(String creator, String name, String description,
+			Date dueDate, String assigneeId, Integer priority, String parentId,
+			Long orgId, Long projectId) {
+		Task task = taskSer.newTask();
+		if (orgId != null) {
+			task.setTenantId(String.valueOf(orgId));
+		}
+		task.setOwner(creator);
+		task.setName(name);
+		if (projectId != null) {
+			task.setCategory(String.valueOf(projectId));
+		}
+		if (description != null) {
+			task.setDescription(description);
+		}
+		if (dueDate != null) {
+			task.setDueDate(dueDate);
+		}
+		if (priority != null) {
+			task.setPriority(priority);
+		}
+		if (parentId != null) {
+			task.setParentTaskId(parentId);
+		}
+		taskSer.saveTask(task);
+
+		// for owner and assignee, must invoke addUserIdentityLink
+		// because AddIdentityLinkCmd adds event comment to the comments table
+		taskSer.addUserIdentityLink(task.getId(), creator,
+				IdentityLinkType.OWNER);
+		if (assigneeId != null) {
+			// task.setAssignee(assigneeId);
+			taskSer.addUserIdentityLink(task.getId(), assigneeId,
+					IdentityLinkType.ASSIGNEE);
+			task.setAssignee(assigneeId);
+		}
+		return task;
+	}
+
+	public Task createSubTask(String creator, Task parentTask, String name,
+			String description, Date dueDate, String assigneeId,
+			Integer priority) {
+		Long orgId = null;
+		if (parentTask.getTenantId() != null) {
+			orgId = Long.valueOf(parentTask.getTenantId());
+		}
+		Long projectId = null;
+		if (parentTask.getCategory() != null) {
+			projectId = Long.valueOf(parentTask.getCategory());
+		}
+
+		Task task = createTask(creator, name, description, dueDate, assigneeId,
+				priority, parentTask.getId(), orgId, projectId);
+		return task;
+	}
+
 	public List<Task> getSubTasks(String parentTaskId) {
-		return taskSer.getSubTasks(parentTaskId);
+		List<Task> tasks = taskSer.getSubTasks(parentTaskId);
+		Collections.sort(tasks, new Comparator<Task>() {
+			@Override
+			public int compare(Task o1, Task o2) {
+				if (o1.getCreateTime() != null && o2.getCreateTime() != null) {
+					return o2.getCreateTime().compareTo(o1.getCreateTime());
+				} else {
+					return 0;
+				}
+			}
+		});
+
+		return tasks;
 	}
 
 	public Task updateTask(Task task, Map<String, ? extends Object> props) {
@@ -276,6 +345,17 @@ public class TaskCapable {
 			formProperties.add((HistoricFormProperty) d);
 		}
 		return formProperties;
+	}
+
+	/**
+	 * @param parentTaskId
+	 * @return
+	 */
+	public List<HistoricTaskInstance> filterArchSubTasks(String parentTaskId) {
+		HistoricTaskInstanceQuery q = hiSer.createHistoricTaskInstanceQuery();
+		q.taskParentTaskId(parentTaskId).finished()
+				.orderByHistoricTaskInstanceEndTime().desc();
+		return q.list();
 	}
 
 	public FormService getFormService() {

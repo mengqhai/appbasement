@@ -80,6 +80,15 @@ public class ArchiveController {
 		return hiTask.getTaskLocalVariables();
 	}
 
+	@ApiOperation(value = "Retrieve the sub tasks for a task")
+	@RequestMapping(value = "/tasks/{id:\\d+}/tasks", method = RequestMethod.GET)
+	public List<ArchTaskResponse> getArchSubTasks(
+			@PathVariable("id") String taskId) {
+		List<HistoricTaskInstance> hiTasks = core.getProjectService()
+				.filterArchSubTasks(taskId);
+		return InnerWrapperObj.valueOf(hiTasks, ArchTaskResponse.class);
+	}
+
 	@ApiOperation(value = "Retrieve the local variables for a task")
 	@RequestMapping(value = "/tasks/{id:\\d+}/form", method = RequestMethod.GET)
 	public List<ArchFormPropertyResponse> getArchTaskFormProperties(

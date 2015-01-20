@@ -231,6 +231,20 @@ public class CoreFacadeService {
 		return task;
 	}
 
+	public Task createSubTask(String taskId, String name, String description,
+			Date dueDate, String assigneeId, Integer priority) {
+		String creator = this.getAuthUserId();
+		Task parent = projSer.getTask(taskId);
+		if (parent.getTenantId() != null && assigneeId != null) {
+			Organization org = orgSer.findOrgById(Long.valueOf(parent
+					.getTenantId()));
+			// check the existence of the assignee user
+			checkTaskAssigneeOrg(assigneeId, org);
+		}
+		return projSer.createSubTask(creator, parent, name, description,
+				dueDate, assigneeId, priority);
+	}
+
 	public Group getOrgAdminGroup(Organization org)
 			throws DataBadStateException {
 		List<Group> groups = uSer.filterGroup(org);

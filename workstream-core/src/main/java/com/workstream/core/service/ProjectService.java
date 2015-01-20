@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.history.HistoricTaskInstanceQuery;
-import org.activiti.engine.task.IdentityLinkType;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskInfo;
 import org.activiti.engine.task.TaskInfoQuery;
@@ -104,35 +103,38 @@ public class ProjectService extends TaskCapable {
 			String description, Date dueDate, String assigneeId,
 			Integer priority, String parentId) {
 		pro = proDao.reattachIfNeeded(pro, pro.getId());
-		Task task = taskSer.newTask();
-		task.setTenantId(String.valueOf(pro.getOrg().getId()));
-		task.setOwner(creator);
-		task.setName(name);
-		task.setCategory(String.valueOf(pro.getId()));
-		if (description != null) {
-			task.setDescription(description);
-		}
-		if (dueDate != null) {
-			task.setDueDate(dueDate);
-		}
-		if (priority != null) {
-			task.setPriority(priority);
-		}
-		if (parentId != null) {
-			task.setParentTaskId(parentId);
-		}
-		taskSer.saveTask(task);
-
-		// for owner and assignee, must invoke addUserIdentityLink
-		// because AddIdentityLinkCmd adds event comment to the comments table
-		taskSer.addUserIdentityLink(task.getId(), creator,
-				IdentityLinkType.OWNER);
-		if (assigneeId != null) {
-			// task.setAssignee(assigneeId);
-			taskSer.addUserIdentityLink(task.getId(), assigneeId,
-					IdentityLinkType.ASSIGNEE);
-		}
-		return task;
+		// Task task = taskSer.newTask();
+		// task.setTenantId(String.valueOf(pro.getOrg().getId()));
+		// task.setOwner(creator);
+		// task.setName(name);
+		// task.setCategory(String.valueOf(pro.getId()));
+		// if (description != null) {
+		// task.setDescription(description);
+		// }
+		// if (dueDate != null) {
+		// task.setDueDate(dueDate);
+		// }
+		// if (priority != null) {
+		// task.setPriority(priority);
+		// }
+		// if (parentId != null) {
+		// task.setParentTaskId(parentId);
+		// }
+		// taskSer.saveTask(task);
+		//
+		// // for owner and assignee, must invoke addUserIdentityLink
+		// // because AddIdentityLinkCmd adds event comment to the comments
+		// table
+		// taskSer.addUserIdentityLink(task.getId(), creator,
+		// IdentityLinkType.OWNER);
+		// if (assigneeId != null) {
+		// // task.setAssignee(assigneeId);
+		// taskSer.addUserIdentityLink(task.getId(), assigneeId,
+		// IdentityLinkType.ASSIGNEE);
+		// }
+		// return task;
+		return createTask(creator, name, description, dueDate, assigneeId,
+				priority, parentId, pro.getOrg().getId(), pro.getId());
 	}
 
 	public Task createTask(Project pro, String creator, String name,

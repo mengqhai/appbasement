@@ -107,6 +107,23 @@ public class TaskController {
 		return resp;
 	}
 
+	@ApiOperation(value = "Create a task for a given task")
+	@RequestMapping(value = "/{id:\\d+}/tasks", method = RequestMethod.POST)
+	public TaskResponse createSubTask(@PathVariable("id") String taskId,
+			@RequestBody(required = true) TaskRequest taskReq) {
+		Task task = core.createSubTask(taskId, taskReq.getName(),
+				taskReq.getDescription(), taskReq.getDueDate(),
+				taskReq.getAssignee(), taskReq.getPriority());
+		return new TaskResponse(task);
+	}
+
+	@ApiOperation(value = "Retrieve the sub tasks for a given task")
+	@RequestMapping(value = "/{id:\\d+}/tasks", method = RequestMethod.GET)
+	public List<TaskResponse> getSubTasks(@PathVariable("id") String taskId) {
+		List<Task> tasks = core.getProjectService().getSubTasks(taskId);
+		return InnerWrapperObj.valueOf(tasks, TaskResponse.class);
+	}
+
 	@ApiOperation(value = "Complete the task", notes = "There's a security hole here: user is able to set any process "
 			+ "instance variables by submitting the vars object.")
 	@RequestMapping(value = "/{id:\\d+}/_complete", method = RequestMethod.PUT)
