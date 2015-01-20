@@ -29,8 +29,8 @@ import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.CoreEvent.TargetType;
 import com.workstream.core.model.Subscription;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.rest.model.ArchProcessResponse;
 import com.workstream.rest.model.AttachmentResponse;
-import com.workstream.rest.model.HiProcessResponse;
 import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.ProcessResponse;
 import com.workstream.rest.model.SubscriptionResponse;
@@ -59,11 +59,11 @@ public class ProcessController {
 
 	@ApiOperation(value = "Retrieve running processes started by the current user", notes = "Note: The returned result is a list of <b>history process objects</b>")
 	@RequestMapping(value = "/_startedByMe", method = RequestMethod.GET)
-	public List<HiProcessResponse> getProcessesStartedByMe() {
+	public List<ArchProcessResponse> getProcessesStartedByMe() {
 		String userId = core.getAuthUserId();
 		List<HistoricProcessInstance> hiList = core.getProcessService()
 				.filterHiProcessByStarter(userId, false);
-		return InnerWrapperObj.valueOf(hiList, HiProcessResponse.class);
+		return InnerWrapperObj.valueOf(hiList, ArchProcessResponse.class);
 	}
 
 	@ApiOperation(value = "Retrieve all the variables for the process instance", notes = "This is a security hole to be fixed.")

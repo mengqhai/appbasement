@@ -10,6 +10,7 @@ import org.activiti.engine.ActivitiException;
 import org.activiti.engine.ActivitiIllegalArgumentException;
 import org.activiti.engine.ActivitiObjectNotFoundException;
 import org.activiti.engine.FormService;
+import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.form.StartFormData;
 import org.activiti.engine.form.TaskFormData;
@@ -17,6 +18,7 @@ import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricProcessInstanceQuery;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.impl.identity.Authentication;
+import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
@@ -49,6 +51,9 @@ public class ProcessService extends TaskCapable {
 	@Autowired
 	private FormService forSer;
 
+	@Autowired
+	private RepositoryService repoSer;
+
 	/**
 	 * 
 	 * @param processDefinitionId
@@ -62,7 +67,10 @@ public class ProcessService extends TaskCapable {
 			throw new AuthenticationNotSetException(
 					"No authenticated user, no process can be started.");
 		}
+		ProcessDefinition def = repoSer
+				.getProcessDefinition(processDefinitionId);
 		ProcessInstance p = ruSer.startProcessInstanceById(processDefinitionId);
+		ruSer.setProcessInstanceName(p.getProcessInstanceId(), def.getName());
 		log.debug("Process instance created id={} for template {}", p.getId(),
 				processDefinitionId);
 		return p;
@@ -111,7 +119,8 @@ public class ProcessService extends TaskCapable {
 
 	public List<ProcessInstance> filterProcessByTemplateId(String templateId) {
 		return ruSer.createProcessInstanceQuery()
-				.processDefinitionId(templateId).list();
+				.processDefinitionId(templateId).orderByProcessInstanceId()
+				.desc().list();
 	}
 
 	public ProcessInstance getProcess(String id) {
@@ -167,8 +176,9 @@ public class ProcessService extends TaskCapable {
 
 	public List<HistoricProcessInstance> filterHiProcessByOrg(Long orgId) {
 		HistoricProcessInstanceQuery q = hiSer
-				.createHistoricProcessInstanceQuery().processInstanceTenantId(
-						String.valueOf(orgId));
+				.createHistoricProcessInstanceQuery()
+				.processInstanceTenantId(String.valueOf(orgId))
+				.orderByProcessInstanceEndTime().desc();
 		return q.list();
 	}
 
@@ -205,11 +215,11 @@ public class ProcessService extends TaskCapable {
 	public List<HistoricProcessInstance> filterHiProcessByStarter(
 			String starterUserId, boolean finished) {
 		HistoricProcessInstanceQuery q = hiSer
-				.createHistoricProcessInstanceQuery().startedBy(starterUserId)
-				.orderByProcessInstanceEndTime().desc();
+				.createHistoricProcessInstanceQuery().startedBy(starterUserId);
 		if (finished) {
 			// has to directly touch the history table
 			q.finished();
+			q.orderByProcessInstanceEndTime().desc();
 		} else {
 			// The historic process instance table can easily get extremely
 			// large.
@@ -227,6 +237,7 @@ public class ProcessService extends TaskCapable {
 			}
 			q.processInstanceIds(ids);
 			q.unfinished();
+			q.orderByProcessInstanceStartTime().desc();
 		}
 		return q.list();
 	}
