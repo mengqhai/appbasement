@@ -1,5 +1,6 @@
 package com.workstream.core.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,6 +11,8 @@ import org.activiti.engine.ActivitiObjectNotFoundException;
 import org.activiti.engine.FormService;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.history.HistoricDetail;
+import org.activiti.engine.history.HistoricFormProperty;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.history.HistoricTaskInstanceQuery;
 import org.activiti.engine.impl.identity.Authentication;
@@ -253,6 +256,17 @@ public class TaskCapable {
 	public List<HistoricTaskInstance> filterArchTaskByCreator(String creator) {
 		return hiSer.createHistoricTaskInstanceQuery().taskOwner(creator)
 				.finished().list();
+	}
+
+	public List<HistoricFormProperty> filterArchTaskFormProperties(String taskId) {
+		List<HistoricDetail> details = hiSer.createHistoricDetailQuery()
+				.formProperties().taskId(taskId).list();
+		List<HistoricFormProperty> formProperties = new ArrayList<HistoricFormProperty>(
+				details.size());
+		for (HistoricDetail d : details) {
+			formProperties.add((HistoricFormProperty) d);
+		}
+		return formProperties;
 	}
 
 	public FormService getFormService() {

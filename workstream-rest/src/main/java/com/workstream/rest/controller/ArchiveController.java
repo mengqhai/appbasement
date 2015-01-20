@@ -5,6 +5,7 @@ import static com.workstream.rest.utils.RestUtils.decodeUserId;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.history.HistoricFormProperty;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Project;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.RestConstants;
+import com.workstream.rest.model.ArchFormPropertyResponse;
 import com.workstream.rest.model.ArchProcessResponse;
 import com.workstream.rest.model.ArchTaskResponse;
 import com.workstream.rest.model.AttachmentResponse;
@@ -76,6 +78,16 @@ public class ArchiveController {
 			throw new ResourceNotFoundException("No such archived task");
 		}
 		return hiTask.getTaskLocalVariables();
+	}
+
+	@ApiOperation(value = "Retrieve the local variables for a task")
+	@RequestMapping(value = "/tasks/{id:\\d+}/form", method = RequestMethod.GET)
+	public List<ArchFormPropertyResponse> getArchTaskFormProperties(
+			@PathVariable("id") String taskId) {
+		List<HistoricFormProperty> formProperties = core.getProcessService()
+				.filterArchTaskFormProperties(taskId);
+		return InnerWrapperObj.valueOf(formProperties,
+				ArchFormPropertyResponse.class);
 	}
 
 	@ApiOperation(value = "Retrieves the archived task list in project")
