@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.ActivitiException;
 import org.activiti.engine.ActivitiObjectNotFoundException;
 import org.activiti.engine.FormService;
 import org.activiti.engine.HistoryService;
@@ -29,6 +30,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
+import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.exception.BeanPropertyException;
 import com.workstream.core.exception.ResourceNotFoundException;
@@ -172,6 +174,13 @@ public class TaskCapable {
 			log.info("Deleted task {}", task);
 		} catch (ActivitiObjectNotFoundException e) {
 			throw new ResourceNotFoundException("No such task", e);
+		} catch (ActivitiException ae) {
+			if (ae.getMessage() != null
+					&& ae.getMessage().endsWith("part of a running process")) {
+				throw new AttempBadStateException(ae.getMessage());
+			} else {
+				throw ae;
+			}
 		}
 	}
 

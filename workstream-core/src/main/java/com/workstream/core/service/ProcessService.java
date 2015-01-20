@@ -67,13 +67,21 @@ public class ProcessService extends TaskCapable {
 			throw new AuthenticationNotSetException(
 					"No authenticated user, no process can be started.");
 		}
-		ProcessDefinition def = repoSer
-				.getProcessDefinition(processDefinitionId);
-		ProcessInstance p = ruSer.startProcessInstanceById(processDefinitionId);
-		ruSer.setProcessInstanceName(p.getProcessInstanceId(), def.getName());
-		log.debug("Process instance created id={} for template {}", p.getId(),
-				processDefinitionId);
-		return p;
+		try {
+			ProcessDefinition def = repoSer
+					.getProcessDefinition(processDefinitionId);
+			ProcessInstance p = ruSer
+					.startProcessInstanceById(processDefinitionId);
+			ruSer.setProcessInstanceName(p.getProcessInstanceId(),
+					def.getName());
+			log.debug("Process instance created id={} for template {}",
+					p.getId(), processDefinitionId);
+			// information not complete, so refetch it again
+			p = this.getProcess(p.getProcessInstanceId());
+			return p;
+		} catch (ActivitiObjectNotFoundException e) {
+			throw new ResourceNotFoundException("No such template", e);
+		}
 	}
 
 	public ProcessInstance startProcessByKey(String processDefinitionKey,

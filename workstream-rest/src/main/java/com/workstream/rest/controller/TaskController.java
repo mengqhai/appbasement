@@ -178,7 +178,11 @@ public class TaskController {
 		return InnerWrapperObj.valueOf(formData, TaskFormDataResponse.class);
 	}
 
-	@ApiOperation(value = "Complete the task by submitting the form for a task")
+	@ApiOperation(value = "Complete the task by submitting the form for a task", notes = "The test form variables:<br/>"
+			+ "<b>{"
+			+ "\"textProp\":\"text value\",<br/>"
+			+ "\"numProp\":1235,<br/>"
+			+ "\"dateProp\":\"2014-11-16 23:30:15\"<br/>" + "}</b>")
 	@RequestMapping(value = "/{id:\\d+}/form", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void completeTaskByForm(@PathVariable("id") String taskId,
 			@RequestBody(required = true) Map<String, String> formProps) {

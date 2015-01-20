@@ -11,6 +11,7 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.activiti.engine.impl.history.HistoryLevel;
 import org.activiti.image.ProcessDiagramGenerator;
 import org.activiti.spring.ProcessEngineFactoryBean;
 import org.activiti.spring.SpringProcessEngineConfiguration;
@@ -70,6 +71,7 @@ public class ActivitiEngineConfiguration {
 		cfg.setActivityFontName("sansserif");
 		cfg.setLabelFontName("sansserif"); // to support Chinese in diagram
 		cfg.setFormTypes(new CoreFormTypes(cfg.getCustomFormTypes()));
+		cfg.setHistoryLevel(HistoryLevel.AUDIT);
 		return cfg;
 	}
 

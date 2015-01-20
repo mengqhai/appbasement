@@ -8,6 +8,7 @@ import java.util.Map;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Attachment;
+import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ import com.workstream.rest.model.AttachmentResponse;
 import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.ProcessResponse;
 import com.workstream.rest.model.SubscriptionResponse;
+import com.workstream.rest.model.TaskResponse;
 import com.workstream.rest.utils.RestUtils;
 
 @Api(value = "processes", description = "Process related operations")
@@ -76,6 +78,15 @@ public class ProcessController {
 			throw new ResourceNotFoundException("No such process, archived?");
 		}
 		return pi.getProcessVariables();
+	}
+
+	@ApiOperation(value = "Retrieve the unfinished tasks for a process instance")
+	@RequestMapping(value = "/{id}/tasks", method = RequestMethod.GET)
+	public List<TaskResponse> getProcessTasks(
+			@PathVariable("id") String processId) {
+		List<Task> tasks = core.getProcessService().filterTaskByProcess(
+				processId);
+		return InnerWrapperObj.valueOf(tasks, TaskResponse.class);
 	}
 
 	@ApiOperation(value = "Retrieve subscription list for a process")
