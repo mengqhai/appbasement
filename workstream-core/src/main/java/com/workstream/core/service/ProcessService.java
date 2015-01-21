@@ -299,9 +299,26 @@ public class ProcessService extends TaskCapable {
 	public ProcessInstance submitStartFormData(String processDefinitionId,
 			Map<String, String> properties) {
 		try {
-			return forSer.submitStartFormData(processDefinitionId, properties);
+			ProcessDefinition def = repoSer
+					.getProcessDefinition(processDefinitionId);
+			ProcessInstance p = forSer.submitStartFormData(processDefinitionId,
+					properties);
+
+			ruSer.setProcessInstanceName(p.getProcessInstanceId(),
+					def.getName());
+			log.debug("Process instance created id={} for template {}",
+					p.getId(), processDefinitionId);
+			// information not complete, so refetch it again
+			p = this.getProcess(p.getProcessInstanceId());
+			return p;
 		} catch (ActivitiObjectNotFoundException e) {
-			throw new ResourceNotFoundException("No such task", e);
+			throw new ResourceNotFoundException("No such template", e);
+		} catch (ActivitiIllegalArgumentException ie) {
+			throw new BadArgumentException(ie.getMessage());
+		} catch (NumberFormatException nfe) {
+			throw new BadArgumentException(nfe.getMessage());
+		} catch (ActivitiException ae) {
+			throw new BadArgumentException(ae.getMessage());
 		}
 	}
 

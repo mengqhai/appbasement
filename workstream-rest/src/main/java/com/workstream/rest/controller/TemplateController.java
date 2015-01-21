@@ -1,7 +1,9 @@
 package com.workstream.rest.controller;
 
 import java.util.List;
+import java.util.Map;
 
+import org.activiti.engine.form.StartFormData;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.slf4j.Logger;
@@ -9,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +22,7 @@ import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.ProcessResponse;
+import com.workstream.rest.model.StartFormDataResponse;
 import com.workstream.rest.model.TemplateResponse;
 import com.workstream.rest.utils.RestUtils;
 
@@ -75,6 +79,24 @@ public class TemplateController {
 		List<ProcessInstance> piList = core.getProcessService()
 				.filterProcessByTemplateId(templateId);
 		return InnerWrapperObj.valueOf(piList, ProcessResponse.class);
+	}
+
+	@ApiOperation(value = "Retrieve the start form data for a template")
+	@RequestMapping(method = RequestMethod.GET, value = "/{templateId}/form")
+	public StartFormDataResponse getStartFormDataForTemplate(
+			@PathVariable("templateId") String templateId) {
+		StartFormData formData = core.getProcessService().getStartFormData(
+				templateId);
+		return new StartFormDataResponse(formData);
+	}
+
+	@ApiOperation(value = "Start a process by submitting the form")
+	@RequestMapping(method = RequestMethod.POST, value = "/{templateId}/form")
+	public ProcessResponse startProcessByForm(
+			@PathVariable("templateId") String templateId,
+			@RequestBody(required = true) Map<String, String> formProps) {
+		ProcessInstance pi = core.startProcessByForm(templateId, formProps);
+		return InnerWrapperObj.valueOf(pi, ProcessResponse.class);
 	}
 
 	@ApiOperation(value = "Start a process instance for the template")

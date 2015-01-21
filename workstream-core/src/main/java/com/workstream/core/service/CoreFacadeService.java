@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.activiti.engine.form.FormProperty;
+import org.activiti.engine.form.StartFormData;
 import org.activiti.engine.form.TaskFormData;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
@@ -395,6 +396,30 @@ public class CoreFacadeService {
 		} else {
 			throw new AttempBadStateException("User already in the org");
 		}
+	}
+
+	/**
+	 * out the properties that are not supposed to be set in this form
+	 * 
+	 * @param taskId
+	 * @param formProps
+	 */
+	public ProcessInstance startProcessByForm(String templateId,
+			Map<String, String> formProps) {
+		if (formProps == null) {
+			throw new BadArgumentException("No form obj");
+		}
+		StartFormData formData = procSer.getStartFormData(templateId);
+		List<FormProperty> propDefs = formData.getFormProperties();
+		Map<String, String> filteredFormProps = new HashMap<String, String>();
+		for (FormProperty propDef : propDefs) {
+			String key = propDef.getId();
+			String value = formProps.get(key);
+			if (value != null) {
+				filteredFormProps.put(key, value);
+			}
+		}
+		return procSer.submitStartFormData(templateId, filteredFormProps);
 	}
 
 	/**

@@ -17,8 +17,8 @@ import org.activiti.workflow.simple.definition.form.NumberPropertyDefinition;
 public class CoreHumanStepDefinitionConverter extends
 		HumanStepDefinitionConverter {
 
-	@Override
-	protected List<FormProperty> convertProperties(FormDefinition formDefinition) {
+	public static List<FormProperty> convertFormProperties(
+			FormDefinition formDefinition) {
 		List<FormProperty> formProperties = new ArrayList<FormProperty>();
 
 		for (FormPropertyDefinition propertyDefinition : formDefinition
@@ -72,6 +72,11 @@ public class CoreHumanStepDefinitionConverter extends
 		}
 
 		return formProperties;
+	}
+
+	@Override
+	public List<FormProperty> convertProperties(FormDefinition formDefinition) {
+		return convertFormProperties(formDefinition);
 	}
 
 }

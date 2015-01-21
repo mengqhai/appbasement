@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.activiti.workflow.simple.converter.WorkflowDefinitionConversionFactory;
+import org.activiti.workflow.simple.converter.listener.WorkflowDefinitionConversionListener;
 import org.activiti.workflow.simple.converter.step.ChoiceStepsDefinitionConverter;
 import org.activiti.workflow.simple.converter.step.DelayStepDefinitionConverter;
 import org.activiti.workflow.simple.converter.step.FeedbackStepDefinitionConverter;
@@ -25,6 +26,14 @@ public class CoreWorkflowDefinitionConversionFactory extends
 		converters.add(new ScriptStepDefinitionConverter());
 		converters.add(new DelayStepDefinitionConverter());
 		setDefaultStepDefinitionConverters(converters);
+	}
+
+	@Override
+	protected void initDefaultWorkflowDefinitionConversionListeners() {
+		List<WorkflowDefinitionConversionListener> listeners = new ArrayList<WorkflowDefinitionConversionListener>();
+		CoreWorkflowDefinitionConversionListener listener = new CoreWorkflowDefinitionConversionListener();
+		listeners.add(listener);
+		setDefaultWorkflowDefinitionConversionListeners(listeners);
 	}
 
 }

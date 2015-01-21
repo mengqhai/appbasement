@@ -1,5 +1,5 @@
 {
-  "id": "model_665008",
+  "id": "model_175007",
   "steps": [
     {
       "type": "human-step",
@@ -44,9 +44,9 @@
         "assignee": "mqhnow1@sina.com",
         "type": "user"
       },
+      "assignee": "mqhnow1@sina.com",
       "candidateUsers": null,
-      "candidateGroups": null,
-      "assignee": "mqhnow1@sina.com"
+      "candidateGroups": null
     },
     {
       "type": "human-step",
@@ -59,14 +59,29 @@
         "assignee": "mqhnow1@sina.com",
         "type": "user"
       },
+      "assignee": "mqhnow1@sina.com",
       "candidateUsers": null,
-      "candidateGroups": null,
-      "assignee": "mqhnow1@sina.com"
+      "candidateGroups": null
     }
   ],
   "key": null,
   "name": "Tasks with forms",
   "description": null,
   "category": null,
-  "startFormDefinition": null
+  "startFormDefinition": {
+    "description": null,
+    "formKey": null,
+    "formGroups": [],
+    "formProperties": [
+      {
+        "type": "text",
+        "name": "textProp",
+        "displayName": "Text Property",
+        "mandatory": true,
+        "writable": true,
+        "value": null,
+        "multiline": false
+      }
+    ]
+  }
 }
