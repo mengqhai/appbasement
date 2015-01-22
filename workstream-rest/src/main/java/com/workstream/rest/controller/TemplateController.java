@@ -1,11 +1,16 @@
 package com.workstream.rest.controller;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.engine.form.StartFormData;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +19,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.workstream.core.exception.BytesNotFoundException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.model.InnerWrapperObj;
@@ -70,6 +78,23 @@ public class TemplateController {
 			throw new ResourceNotFoundException("No such template");
 		}
 		return InnerWrapperObj.valueOf(pd, TemplateResponse.class);
+	}
+
+	@ApiOperation(value = "Get the diagram image of a template", produces = MediaType.IMAGE_PNG_VALUE)
+	@RequestMapping(value = "/{id}/diagram", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+	@ResponseBody
+	public void getTemplateDiagram(@PathVariable("id") String templateId,
+			@ApiIgnore HttpServletResponse response) {
+		String decode = templateId;
+		decode = RestUtils.decodeIsoToUtf8(templateId);
+		InputStream is = core.getTemplateService().getProcessTemplateDiagram(
+				decode);
+		try {
+			IOUtils.copy(is, response.getOutputStream());
+			response.setContentType(MediaType.IMAGE_PNG_VALUE);
+		} catch (IOException e) {
+			throw new BytesNotFoundException(e.getMessage(), e);
+		}
 	}
 
 	@ApiOperation(value = "Retrieve the running process list of the process template")

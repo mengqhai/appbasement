@@ -200,6 +200,10 @@ public class TemplateService {
 				.deploymentId(deploymentId).singleResult();
 	}
 
+	public InputStream getProcessTemplateDiagram(String templateId) {
+		return repoSer.getProcessDiagram(templateId);
+	}
+
 	public Model createModel(Long orgId, String name) {
 		Model model = repoSer.newModel();
 		model.setName(name);
