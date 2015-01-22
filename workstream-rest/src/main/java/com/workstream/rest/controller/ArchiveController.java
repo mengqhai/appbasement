@@ -89,7 +89,7 @@ public class ArchiveController {
 		return InnerWrapperObj.valueOf(hiTasks, ArchTaskResponse.class);
 	}
 
-	@ApiOperation(value = "Retrieve the local variables for a task")
+	@ApiOperation(value = "Retrieve the for properties for a task")
 	@RequestMapping(value = "/tasks/{id:\\d+}/form", method = RequestMethod.GET)
 	public List<ArchFormPropertyResponse> getArchTaskFormProperties(
 			@PathVariable("id") String taskId) {
@@ -129,6 +129,16 @@ public class ArchiveController {
 		HistoricProcessInstance hiPi = core.getProcessService()
 				.getHiProcessWithVars(processId);
 		return hiPi.getProcessVariables();
+	}
+
+	@ApiOperation(value = "Retrieve the form properties for a process", notes = "Including the start form properties and the task form properties")
+	@RequestMapping(value = "/processes/{id:\\d+}/form", method = RequestMethod.GET)
+	public List<ArchFormPropertyResponse> getArchProcessFormProperties(
+			@PathVariable("id") String processId) {
+		List<HistoricFormProperty> formProperties = core.getProcessService()
+				.filterHiProcessFormProperties(processId);
+		return InnerWrapperObj.valueOf(formProperties,
+				ArchFormPropertyResponse.class);
 	}
 
 	@ApiOperation(value = "Retrieve the attachment list for a task")

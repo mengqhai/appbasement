@@ -1,5 +1,6 @@
 package com.workstream.core.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -14,6 +15,8 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.form.StartFormData;
 import org.activiti.engine.form.TaskFormData;
+import org.activiti.engine.history.HistoricDetail;
+import org.activiti.engine.history.HistoricFormProperty;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricProcessInstanceQuery;
 import org.activiti.engine.history.HistoricTaskInstance;
@@ -248,6 +251,18 @@ public class ProcessService extends TaskCapable {
 			q.orderByProcessInstanceStartTime().desc();
 		}
 		return q.list();
+	}
+
+	public List<HistoricFormProperty> filterHiProcessFormProperties(
+			String processId) {
+		List<HistoricDetail> details = hiSer.createHistoricDetailQuery()
+				.formProperties().processInstanceId(processId).list();
+		List<HistoricFormProperty> formProperties = new ArrayList<HistoricFormProperty>(
+				details.size());
+		for (HistoricDetail d : details) {
+			formProperties.add((HistoricFormProperty) d);
+		}
+		return formProperties;
 	}
 
 	/**
