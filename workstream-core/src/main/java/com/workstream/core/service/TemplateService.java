@@ -204,6 +204,10 @@ public class TemplateService {
 		return repoSer.getProcessDiagram(templateId);
 	}
 
+	public InputStream getProcessTemplateBpmn(String templateId) {
+		return repoSer.getProcessModel(templateId);
+	}
+
 	public Model createModel(Long orgId, String name) {
 		Model model = repoSer.newModel();
 		model.setName(name);

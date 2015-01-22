@@ -97,6 +97,23 @@ public class TemplateController {
 		}
 	}
 
+	@ApiOperation(value = "Get the BPMN xml of a template", produces = MediaType.APPLICATION_XML_VALUE)
+	@RequestMapping(value = "/{id}/bpmn", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
+	@ResponseBody
+	public void getTemplateBpmn(@PathVariable("id") String templateId,
+			@ApiIgnore HttpServletResponse response) {
+		String decode = templateId;
+		decode = RestUtils.decodeIsoToUtf8(templateId);
+		InputStream is = core.getTemplateService().getProcessTemplateBpmn(
+				decode);
+		try {
+			IOUtils.copy(is, response.getOutputStream());
+			response.setContentType(MediaType.APPLICATION_XML_VALUE);
+		} catch (IOException e) {
+			throw new BytesNotFoundException(e.getMessage(), e);
+		}
+	}
+
 	@ApiOperation(value = "Retrieve the running process list of the process template")
 	@RequestMapping(method = RequestMethod.GET, value = "/{templateId}/processes")
 	public List<ProcessResponse> getProcessesForTemplate(
