@@ -1,8 +1,11 @@
 package com.workstream.core.event;
 
+import java.util.List;
+
 import org.activiti.engine.TaskService;
 import org.activiti.engine.delegate.event.ActivitiEntityEvent;
 import org.activiti.engine.delegate.event.ActivitiEventType;
+import org.activiti.engine.impl.persistence.entity.CommentEntity;
 import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
@@ -29,7 +32,14 @@ public class CoreTaskCommentEventListener extends
 		if (!(entity instanceof Comment)) {
 			return null;
 		}
-		Comment comment = (Comment) entity;
+		CommentEntity comment = (CommentEntity) entity;
+		List<String> messageParts = comment.getMessageParts();
+		if (messageParts.size() == 2 && messageParts.get(1).equals("assignee")) {
+			// ignore comments about assignment
+			// because we already have assignment task events dispatched
+			return null;
+		}
+
 		CoreEvent cEvent = new CoreEvent();
 		cEvent.setEventType(EventType.CREATED);
 		cEvent.setTargetType(TargetType.COMMENT);

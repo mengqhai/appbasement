@@ -32,9 +32,11 @@ public class CoreTaskEventListener extends AbstractCoreActivitiEventListener {
 			cEvent.setEventType(EventType.CREATED);
 		} else if (event.getType() == ActivitiEventType.TASK_COMPLETED) {
 			cEvent.setEventType(EventType.COMPLETED);
-		} else {
+		} else if (event.getType() == ActivitiEventType.TASK_ASSIGNED) {
 			cEvent.setEventType(EventType.ASSIGNED);
 			cEvent.setAdditionalInfo(task.getAssignee());
+		} else {
+			return null;
 		}
 
 		cEvent.setTargetId(task.getId());
@@ -57,5 +59,33 @@ public class CoreTaskEventListener extends AbstractCoreActivitiEventListener {
 		}
 		return cEvent;
 	}
+
+	// Doesn't work, so have to directly modify TaskEntity.update():
+	//
+	// public void update() {
+	// // Needed to make history work: the setter will also update the historic
+	// task
+	// setOwner(this.getOwner());
+	// setAssignee(this.getAssignee(), !StringUtils.equals(assignee,
+	// initialAssignee), false);
+
+	// public boolean ignoreForWorkaroundBug500(Task task) {
+	// // workaround the Activiti bug #500:
+	// // https://github.com/Activiti/Activiti/issues/500
+	// try {
+	// Field assigneeField = ReflectionUtils.findField(TaskEntity.class,
+	// "assignee");
+	// Field initialAssigneeField = ReflectionUtils.findField(
+	// TaskEntity.class, "initialAssignee");
+	// assigneeField.setAccessible(true);
+	// initialAssigneeField.setAccessible(true);
+	// String assignee = (String) assigneeField.get(task);
+	// String initialAssignee = (String) initialAssigneeField.get(task);
+	// return StringUtils.equals(assignee, initialAssignee);
+	// } catch (Exception e) {
+	// logger.error("Failed to work around bug 500", e);
+	// return false;
+	// }
+	// }
 
 }

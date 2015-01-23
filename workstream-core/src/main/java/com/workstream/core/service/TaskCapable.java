@@ -164,6 +164,11 @@ public class TaskCapable {
 		String id = task.getId();
 		String oldAssignee = task.getAssignee();
 		String oldOwner = task.getOwner();
+		
+		boolean setAssignee = props.containsKey("assignee");
+		String newAssignee = (String)props.remove("assignee");
+		// must not trigger task.setAssignee, because it will
+		// dispatch the TASK_ASSIGNED event
 		try {
 			BeanUtils.populate(task, props);
 		} catch (Exception e) {
@@ -171,6 +176,21 @@ public class TaskCapable {
 			throw new BeanPropertyException(e);
 		}
 		taskSer.saveTask(task);
+		
+		
+		
+		if (setAssignee) {
+			String assignee = newAssignee;
+			if (assignee != null) {
+				taskSer.addUserIdentityLink(id, assignee,
+						IdentityLinkType.ASSIGNEE);
+			} else if (oldAssignee != null) {
+				// have to delete the link
+				taskSer.deleteUserIdentityLink(id, oldAssignee,
+						IdentityLinkType.ASSIGNEE);
+			}
+
+		}
 
 		// code blow will create comments for the task
 		// see org.activiti.engine.task.Event
@@ -184,18 +204,7 @@ public class TaskCapable {
 						IdentityLinkType.OWNER);
 			}
 		}
-		if (props.containsKey("assignee")) {
-			String assignee = (String) props.get("assignee");
-			if (assignee != null) {
-				taskSer.addUserIdentityLink(id, assignee,
-						IdentityLinkType.ASSIGNEE);
-			} else if (oldAssignee != null) {
-				// have to delete the link
-				taskSer.deleteUserIdentityLink(id, oldAssignee,
-						IdentityLinkType.ASSIGNEE);
-			}
 
-		}
 
 		// create the event if needed
 		eventHelper.createEventCommentIfNeeded(id, props);
