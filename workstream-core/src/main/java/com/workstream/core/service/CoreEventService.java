@@ -131,4 +131,8 @@ public class CoreEventService {
 		return subDao.filterSubscriptionByUser(userId);
 	}
 
+	public Collection<Notification> filterNotificationByUser(String userId) {
+		return notDao.filterNotificationByUserId(userId);
+	}
+
 }

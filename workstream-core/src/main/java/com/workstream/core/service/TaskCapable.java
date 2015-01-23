@@ -299,6 +299,14 @@ public class TaskCapable {
 		return taskSer.getTaskComments(taskId);
 	}
 
+	public Comment getTaskComment(String commentId) {
+		return taskSer.getComment(commentId);
+	}
+
+	public Event getTaskEvent(String eventId) {
+		return taskSer.getEvent(eventId);
+	}
+
 	public List<Event> filterTaskEvent(String taskId) {
 		List<Event> result = taskSer.getTaskEvents(taskId);
 		// the order is not correct when a task has both comments and events, so
@@ -381,12 +389,14 @@ public class TaskCapable {
 
 	public HistoricTaskInstance getArchTask(String taskId) {
 		HistoricTaskInstanceQuery q = hiSer.createHistoricTaskInstanceQuery();
-		return q.taskId(taskId).finished().singleResult();
+		// return q.taskId(taskId).finished().singleResult();
+		return q.taskId(taskId).singleResult();
 	}
 
 	public HistoricTaskInstance getArchTaskWithVars(String taskId) {
 		HistoricTaskInstanceQuery q = hiSer.createHistoricTaskInstanceQuery();
-		return q.taskId(taskId).finished().includeTaskLocalVariables()
-				.singleResult();
+		// return q.taskId(taskId).finished().includeTaskLocalVariables()
+		// .singleResult();
+		return q.taskId(taskId).includeTaskLocalVariables().singleResult();
 	}
 }

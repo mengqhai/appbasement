@@ -32,6 +32,7 @@ import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.DataBadStateException;
 import com.workstream.core.exception.ResourceNotFoundException;
+import com.workstream.core.model.CoreEvent;
 import com.workstream.core.model.GroupX;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.Project;
@@ -472,6 +473,29 @@ public class CoreFacadeService {
 
 	public AttachmentService getAttachmentService() {
 		return attSer;
+	}
+
+	public Object getTargetObj(CoreEvent e) {
+		Object result = null;
+		String targetId = e.getTargetId();
+		// TODO what if the target is archived?
+		// So always return the archived instances for
+		// Process, Task
+		switch (e.getTargetType()) {
+		case COMMENT:
+			result = projSer.getTaskEvent(targetId);
+			break;
+		case TASK:
+			result = projSer.getArchTask(targetId);
+			break;
+		case PROCESS:
+			result = procSer.getHiProcess(targetId);
+			break;
+		default:
+			throw new DataBadStateException("Unable to handle the target type:"
+					+ e.getTargetType().toString());
+		}
+		return result;
 	}
 
 	// public byte[] readAttachmentContent(String attachmentId) {

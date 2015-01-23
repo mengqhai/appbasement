@@ -31,7 +31,7 @@ public class RestUtils {
 			throw new BadArgumentException("Bad string: " + iso8895, e);
 		}
 	}
-	
+
 	public static String decodeUtf8ToIso(String utf8) {
 		try {
 			return new String(utf8.getBytes("utf-8"), "ISO-8859-1");

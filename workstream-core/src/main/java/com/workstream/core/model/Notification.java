@@ -39,7 +39,7 @@ public class Notification {
 	@JoinColumn(name = "SUB_ID", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_NOTIFICATION_SUB"))
 	private Subscription sub;
 
-	@ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+	@ManyToOne(optional = true, fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "EVENT_ID", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_NOTIFICATION_EVENT"))
 	private CoreEvent event;
 
