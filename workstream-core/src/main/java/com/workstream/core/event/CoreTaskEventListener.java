@@ -34,6 +34,7 @@ public class CoreTaskEventListener extends AbstractCoreActivitiEventListener {
 			cEvent.setEventType(EventType.COMPLETED);
 		} else {
 			cEvent.setEventType(EventType.ASSIGNED);
+			cEvent.setAdditionalInfo(task.getAssignee());
 		}
 
 		cEvent.setTargetId(task.getId());

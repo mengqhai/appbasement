@@ -14,7 +14,7 @@ public abstract class AbstractCoreActivitiEventListener implements
 		ActivitiEventListener {
 
 	private Logger logger = LoggerFactory
-			.getLogger(CoreTaskCommentEventListener.class);
+			.getLogger(AbstractCoreActivitiEventListener.class);
 
 	@Autowired
 	protected CoreEventService coreEventService;
@@ -30,6 +30,7 @@ public abstract class AbstractCoreActivitiEventListener implements
 				return;
 			}
 			coreEventService.saveCoreEvent(cEvent);
+			coreEventService.processAutoSubscribe(cEvent);
 			coreEventService.notifySubscribers(cEvent); // Asynchronous call
 		} catch (Exception e) {
 			logger.error("Failed on processing activiti event: {}", event, e);

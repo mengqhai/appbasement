@@ -1,6 +1,7 @@
 package com.workstream.core.service;
 
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.workstream.core.CoreConstants;
 import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.model.CoreEvent;
+import com.workstream.core.model.CoreEvent.EventType;
 import com.workstream.core.model.CoreEvent.TargetType;
 import com.workstream.core.model.Notification;
 import com.workstream.core.model.Subscription;
@@ -30,7 +32,6 @@ import com.workstream.core.persistence.ISubscriptionDAO;
 @Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
 public class CoreEventService {
 
-	@SuppressWarnings("unused")
 	private Logger logger = LoggerFactory.getLogger(CoreEventService.class);
 
 	@Autowired
@@ -45,9 +46,30 @@ public class CoreEventService {
 	@Autowired
 	public IOrganizationDAO orgDao;
 
+	private EnumSet<TargetType> subscribableTypes = EnumSet.of(TargetType.TASK,
+			TargetType.PROCESS, TargetType.PROJECT);
+
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void saveCoreEvent(CoreEvent cEvent) {
 		coreEventDao.persist(cEvent);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	public void processAutoSubscribe(CoreEvent cEvent) {
+		TargetType tType = cEvent.getTargetType();
+		if (!subscribableTypes.contains(tType)) {
+			return;
+		}
+		EventType eType = cEvent.getEventType();
+		if (eType == EventType.CREATED) {
+			// creator is auto subscribed
+			String creator = cEvent.getUserId();
+			subscribe(creator, tType, cEvent.getTargetId());
+		} else if (tType == TargetType.TASK && eType == EventType.ASSIGNED) {
+			// assignee is auto subscribed
+			String assignee = cEvent.getAdditionalInfo();
+			subscribe(assignee, tType, cEvent.getTargetId());
+		}
 	}
 
 	public Subscription subscribe(String subscriber, TargetType targetType,
@@ -55,7 +77,9 @@ public class CoreEventService {
 		Collection<Subscription> existings = subDao.filterSubscription(
 				subscriber, targetType, targetId);
 		if (!existings.isEmpty()) {
-			throw new AttempBadStateException("User already subscribed it");
+			Subscription sub = existings.iterator().next();
+			logger.debug("User already subscribed it {}", sub);
+			return sub;
 		}
 		Subscription sub = new Subscription();
 		sub.setUserId(subscriber);

@@ -64,6 +64,9 @@ public class CoreEvent implements Serializable {
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
+	
+	@Column(name="ADDITIONAL", updatable = false)
+	private String additionalInfo;
 
 	/**
 	 * Have to make an non-Foreign-Key reference here. Because problem happens
@@ -178,4 +181,14 @@ public class CoreEvent implements Serializable {
 		return ToStringBuilder.reflectionToString(this,
 				ToStringStyle.SHORT_PREFIX_STYLE);
 	}
+
+	public String getAdditionalInfo() {
+		return additionalInfo;
+	}
+
+	public void setAdditionalInfo(String additionalInfo) {
+		this.additionalInfo = additionalInfo;
+	}
+	
+	
 }
