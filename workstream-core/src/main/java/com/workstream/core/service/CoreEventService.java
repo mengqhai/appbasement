@@ -1,6 +1,7 @@
 package com.workstream.core.service;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
@@ -171,9 +172,13 @@ public class CoreEventService {
 			throw new ResourceNotFoundException("No such notification");
 		}
 	}
-	
+
 	public int markAllNotificationReadForUser(String userId) {
 		return notDao.markAllNotificationReadForUser(userId);
+	}
+
+	public Date getLastNotificationTimeForUser(String userId) {
+		return notDao.getLastNotificationTimeForUser(userId);
 	}
 
 }

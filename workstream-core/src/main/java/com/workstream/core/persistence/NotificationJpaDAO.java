@@ -2,9 +2,11 @@ package com.workstream.core.persistence;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
@@ -29,6 +31,20 @@ public class NotificationJpaDAO extends GenericJpaDAO<Notification, Long>
 		}
 		// else get all
 		return this.filterFor(attri, 0, Integer.MAX_VALUE);
+	}
+
+	@Override
+	public Date getLastNotificationTimeForUser(String userId) {
+		Query q = getEm()
+				.createQuery(
+						"select n.createdAt from Notification n where n.userId = :userId and n.read = false order by n.id desc");
+		q.setMaxResults(1);
+		q.setParameter("userId", userId);
+		try {
+			return (Date) q.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 
 	@Override

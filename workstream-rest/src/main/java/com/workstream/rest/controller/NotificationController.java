@@ -2,6 +2,7 @@ package com.workstream.rest.controller;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import com.workstream.rest.model.ArchTaskResponse;
 import com.workstream.rest.model.EventResponse;
 import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.NotificationResponse;
+import com.workstream.rest.model.SingleValueResponse;
 
 @Api(value = "notifications")
 @RestController
@@ -65,6 +67,15 @@ public class NotificationController {
 		int count = core.getEventService().markAllNotificationReadForUser(
 				userId);
 		logger.debug("Marked {} notifications as read.", count);
+	}
+
+	@ApiOperation("Mark all the notifications of the current user as read")
+	@RequestMapping(value = "/_latestTime", method = RequestMethod.GET)
+	public SingleValueResponse getMyLatestUnreadNotificationTime() {
+		String userId = core.getAuthUserId();
+		Date latestTime = core.getEventService()
+				.getLastNotificationTimeForUser(userId);
+		return new SingleValueResponse(latestTime);
 	}
 
 	@ApiOperation("Retrieve the notifications for the current user")
