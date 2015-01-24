@@ -5,6 +5,8 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
 import com.workstream.core.exception.AttempBadStateException;
+import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.CoreEvent;
 import com.workstream.core.model.CoreEvent.EventType;
 import com.workstream.core.model.CoreEvent.TargetType;
@@ -155,8 +158,22 @@ public class CoreEventService {
 		return subDao.filterSubscriptionByUser(userId);
 	}
 
-	public Collection<Notification> filterNotificationByUser(String userId) {
-		return notDao.filterNotificationByUserId(userId);
+	public Collection<Notification> filterNotificationByUser(String userId,
+			boolean onlyUnread) {
+		return notDao.filterNotificationByUserId(userId, onlyUnread);
+	}
+
+	public void markNotificationRead(Long notificationId) {
+		try {
+			Notification not = notDao.getReference(notificationId);
+			not.setRead(true);
+		} catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException("No such notification");
+		}
+	}
+	
+	public int markAllNotificationReadForUser(String userId) {
+		return notDao.markAllNotificationReadForUser(userId);
 	}
 
 }

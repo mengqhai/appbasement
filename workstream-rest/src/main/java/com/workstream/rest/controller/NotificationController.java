@@ -13,8 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wordnik.swagger.annotations.Api;
@@ -50,12 +52,28 @@ public class NotificationController {
 	@Autowired
 	private CoreFacadeService core;
 
+	@ApiOperation("Mark the notification as read")
+	@RequestMapping(value = "/{notificationId}", method = RequestMethod.PUT)
+	public void markRead(@PathVariable Long notificationId) {
+		core.getEventService().markNotificationRead(notificationId);
+	}
+
+	@ApiOperation("Mark all the notifications of the current user as read")
+	@RequestMapping(method = RequestMethod.PUT)
+	public void markAllRead() {
+		String userId = core.getAuthUserId();
+		int count = core.getEventService().markAllNotificationReadForUser(
+				userId);
+		logger.debug("Marked {} notifications as read.", count);
+	}
+
 	@ApiOperation("Retrieve the notifications for the current user")
 	@RequestMapping(method = RequestMethod.GET)
-	public Collection<NotificationResponse> getMyNotifications() {
+	public Collection<NotificationResponse> getMyNotifications(
+			@RequestParam(required = false, defaultValue = "true") Boolean onlyUnread) {
 		String userId = core.getAuthUserId();
 		Collection<Notification> notifications = core.getEventService()
-				.filterNotificationByUser(userId);
+				.filterNotificationByUser(userId, onlyUnread);
 		Collection<NotificationResponse> respList = InnerWrapperObj.valueOf(
 				notifications, NotificationResponse.class);
 		for (NotificationResponse resp : respList) {
