@@ -123,6 +123,14 @@ public class AttachmentService {
 		return taskSer.getAttachment(attachmentId);
 	}
 
+	public void deleteAttachment(String attachmentId) {
+		taskSer.deleteAttachment(attachmentId);
+		binaryDao.deleteBinaryObjByTarget(BinaryObjType.ATTACHMENT_CONTENT,
+				attachmentId);
+		binaryDao.deleteBinaryObjByTarget(BinaryObjType.ATTACHMENT_THUMB,
+				attachmentId);
+	}
+
 	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
 	public long outputBinaryObjContent(OutputStream os, BinaryObj binary) {
 		return binaryDao.outputContent(os, binary);

@@ -14,11 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 import com.workstream.core.exception.BytesNotFoundException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.BinaryObj;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.exception.DataMappingException;
+import com.workstream.rest.model.AttachmentResponse;
+import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.utils.RestUtils;
 
 @Api(value = "attachments")
@@ -28,6 +31,21 @@ public class AttachmentController {
 
 	@Autowired
 	private CoreFacadeService core;
+
+	@ApiOperation(value = "Retrieve the attachment obj")
+	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.GET)
+	public AttachmentResponse getAttachment(
+			@PathVariable("id") String attachmentId) {
+		Attachment attachment = core.getAttachmentService().getAttachment(
+				attachmentId);
+		return InnerWrapperObj.valueOf(attachment, AttachmentResponse.class);
+	}
+
+	@ApiOperation(value = "Delete the attachment")
+	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.DELETE)
+	public void deleteAttachment(@PathVariable("id") String attachmentId) {
+		core.getAttachmentService().deleteAttachment(attachmentId);
+	}
 
 	@RequestMapping(value = "/{attachmentId}/thumb", method = RequestMethod.GET)
 	@ResponseBody
