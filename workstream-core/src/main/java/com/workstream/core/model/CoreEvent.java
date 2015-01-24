@@ -24,6 +24,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @Entity
 @Table(name = "WS_EVENT")
 @Access(AccessType.FIELD)
+@org.hibernate.annotations.BatchSize(size = 10)
 public class CoreEvent implements Serializable {
 
 	public enum TargetType {
@@ -64,8 +65,8 @@ public class CoreEvent implements Serializable {
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
-	
-	@Column(name="ADDITIONAL", updatable = false)
+
+	@Column(name = "ADDITIONAL", updatable = false)
 	private String additionalInfo;
 
 	/**
@@ -189,6 +190,5 @@ public class CoreEvent implements Serializable {
 	public void setAdditionalInfo(String additionalInfo) {
 		this.additionalInfo = additionalInfo;
 	}
-	
-	
+
 }
