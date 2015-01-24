@@ -1,6 +1,11 @@
 package com.workstream.rest.model;
 
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.workstream.core.model.CoreEvent;
+import com.workstream.core.model.CoreEvent.EventType;
+import com.workstream.core.model.CoreEvent.TargetType;
 import com.workstream.core.model.Notification;
 
 public class NotificationResponse extends InnerWrapperObj<Notification> {
@@ -40,9 +45,42 @@ public class NotificationResponse extends InnerWrapperObj<Notification> {
 		return notification.getOrgId();
 	}
 
+	@JsonIgnore
 	public CoreEvent getEvent() {
 		// the event attribute is always eagerly fetched from DB
 		return notification.getEvent();
+	}
+
+	public TargetType getTargetType() {
+		return notification.getEvent().getTargetType();
+	}
+
+	public String getTargetId() {
+		return notification.getEvent().getTargetId();
+	}
+
+	public TargetType getParentType() {
+		return notification.getEvent().getParentType();
+	}
+
+	public String getParentId() {
+		return notification.getEvent().getParentId();
+	}
+
+	public String getActionUserId() {
+		return notification.getEvent().getUserId();
+	}
+
+	public EventType getEventType() {
+		return notification.getEvent().getEventType();
+	}
+
+	public Long getEventId() {
+		return notification.getEvent().getId();
+	}
+
+	public String getAdditionalInfo() {
+		return notification.getEvent().getAdditionalInfo();
 	}
 
 	public InnerWrapperObj<?> getTarget() {
@@ -52,7 +90,9 @@ public class NotificationResponse extends InnerWrapperObj<Notification> {
 	public void setTarget(InnerWrapperObj<?> target) {
 		this.target = target;
 	}
-	
-	
+
+	public Date getCreatedAt() {
+		return notification.getCreatedAt();
+	}
 
 }
