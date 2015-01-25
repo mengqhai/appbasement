@@ -8,6 +8,7 @@ import java.util.Map;
 import org.activiti.engine.history.HistoricFormProperty;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +28,7 @@ import com.workstream.rest.model.ArchTaskResponse;
 import com.workstream.rest.model.AttachmentResponse;
 import com.workstream.rest.model.EventResponse;
 import com.workstream.rest.model.InnerWrapperObj;
+import com.workstream.rest.model.TaskResponse;
 
 @Api(value = "archives")
 @RestController
@@ -53,6 +55,13 @@ public class ArchiveController {
 
 		ArchTaskResponse resp = new ArchTaskResponse(hiTask);
 		return resp;
+	}
+
+	@ApiOperation(value = "Recover an achived standalone task")
+	@RequestMapping(value = "/tasks/{id}", method = RequestMethod.PUT)
+	public TaskResponse recoverTask(@PathVariable("id") String taskId) {
+		Task task = core.getProjectService().createRecoveryTask(taskId);
+		return new TaskResponse(task);
 	}
 
 	@ApiOperation(value = "Retrieves the archived task for a given id")

@@ -164,9 +164,9 @@ public class TaskCapable {
 		String id = task.getId();
 		String oldAssignee = task.getAssignee();
 		String oldOwner = task.getOwner();
-		
+
 		boolean setAssignee = props.containsKey("assignee");
-		String newAssignee = (String)props.remove("assignee");
+		String newAssignee = (String) props.remove("assignee");
 		// must not trigger task.setAssignee, because it will
 		// dispatch the TASK_ASSIGNED event
 		try {
@@ -176,9 +176,7 @@ public class TaskCapable {
 			throw new BeanPropertyException(e);
 		}
 		taskSer.saveTask(task);
-		
-		
-		
+
 		if (setAssignee) {
 			String assignee = newAssignee;
 			if (assignee != null) {
@@ -204,7 +202,6 @@ public class TaskCapable {
 						IdentityLinkType.OWNER);
 			}
 		}
-
 
 		// create the event if needed
 		eventHelper.createEventCommentIfNeeded(id, props);

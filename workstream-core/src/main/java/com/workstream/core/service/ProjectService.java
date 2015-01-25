@@ -6,8 +6,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.ManagementService;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.history.HistoricTaskInstanceQuery;
+import org.activiti.engine.history.NativeHistoricTaskInstanceQuery;
+import org.activiti.engine.impl.persistence.entity.TaskEntity;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskInfo;
 import org.activiti.engine.task.TaskInfoQuery;
@@ -21,12 +24,15 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
+import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.BeanPropertyException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.Project;
 import com.workstream.core.persistence.IOrganizationDAO;
 import com.workstream.core.persistence.IProjectDAO;
+import com.workstream.core.service.cmd.CreateRecoveryTaskCmd;
+import com.workstream.core.service.cmd.DeleteHistoricTaskNoCascadeCmd;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
@@ -39,6 +45,9 @@ public class ProjectService extends TaskCapable {
 
 	@Autowired
 	private IProjectDAO proDao;
+
+	@Autowired
+	protected ManagementService mgmtService;
 
 	public Project createProject(Organization org, String name) {
 		return createProject(org, name, null, null, null);
@@ -243,6 +252,72 @@ public class ProjectService extends TaskCapable {
 		pro = proDao.reattachIfNeeded(pro, pro.getId());
 		proDao.remove(pro);
 		log.info("Deleted project {}", pro);
+	}
+
+	public Task createRecoveryTask(String taskId) {
+		HistoricTaskInstance hiTask = getArchTaskWithVars(taskId);
+		if (hiTask == null) {
+			throw new ResourceNotFoundException("No such archived task");
+		}
+		if (hiTask.getEndTime() == null || hiTask.getDeleteReason() == null) {
+			throw new AttempBadStateException("Task not ended yet.");
+		}
+
+		// we only recovers standalone tasks
+		if (hiTask.getProcessInstanceId() != null) {
+			throw new AttempBadStateException("Unable to recover process task.");
+		}
+
+		Task task = taskSer.newTask(hiTask.getId());
+		task.setTenantId(hiTask.getTenantId());
+		task.setName(hiTask.getName());
+		task.setDescription(hiTask.getDescription());
+		task.setAssignee(hiTask.getAssignee());
+		task.setCategory(hiTask.getCategory());
+		task.setOwner(hiTask.getOwner());
+		task.setDueDate(hiTask.getDueDate());
+		task.setParentTaskId(hiTask.getParentTaskId());
+		task.setPriority(hiTask.getPriority());
+		((TaskEntity) task).setCreateTime(hiTask.getCreateTime());
+		Map<String, Object> vars = hiTask.getTaskLocalVariables();
+
+		recoverByUpdateHistoricTask(hiTask, task);
+
+		if (vars != null && !vars.isEmpty()) {
+			taskSer.setVariables(taskId, vars);
+		}
+
+		return task;
+	}
+
+	// @SuppressWarnings("unused")
+	private void recoverByUpdateHistoricTask(HistoricTaskInstance hiTask,
+			Task task) {
+		mgmtService.executeCommand(new CreateRecoveryTaskCmd(task));
+		// update the HistoricTaskInstance
+		NativeHistoricTaskInstanceQuery q = hiSer
+				.createNativeHistoricTaskInstanceQuery();
+		StringBuilder builder = new StringBuilder("update ")
+				.append(mgmtService.getTableName(hiTask.getClass()))
+				.append(" set END_TIME_=null, DELETE_REASON_=null, DURATION_=null where ID_=")
+				.append(hiTask.getId());
+		q.sql(builder.toString());
+		q.singleResult();
+	}
+
+	/**
+	 * The startTime field in HistoricTaskInstance is not correct.
+	 * 
+	 * @param hiTask
+	 * @param task
+	 */
+	@SuppressWarnings("unused")
+	private void recoverByDeleteHistoricTask(HistoricTaskInstance hiTask,
+			Task task) {
+		// only delete the historic task entry without any cascading
+		mgmtService.executeCommand(new DeleteHistoricTaskNoCascadeCmd(hiTask));
+
+		taskSer.saveTask(task);
 	}
 
 }

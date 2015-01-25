@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.engine.task.Attachment;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,7 +33,7 @@ public class AttachmentController {
 	@Autowired
 	private CoreFacadeService core;
 
-	@ApiOperation(value = "Retrieve the attachment obj")
+	@ApiOperation(value = "Retrieve the attachment obj", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.GET)
 	public AttachmentResponse getAttachment(
 			@PathVariable("id") String attachmentId) {
