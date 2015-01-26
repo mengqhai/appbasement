@@ -2,7 +2,6 @@ package com.workstream.rest.conf;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -23,9 +22,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 		@PropertySource(value = "classpath:db.properties", ignoreResourceNotFound = true),
 		@PropertySource(value = "classpath:engine.properties", ignoreResourceNotFound = true) })
 @ComponentScan(basePackages = { "com.workstream.rest.conf",
-		"com.workstream.core.conf", "com.workstream.rest.exception",
-		"com.workstream.rest.advices" })
-@EnableAspectJAutoProxy
+		"com.workstream.core.conf", "com.workstream.rest.exception" })
 public class RestApplicationConfiguration extends WebMvcConfigurerAdapter {
 
 }
