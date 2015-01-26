@@ -1,5 +1,7 @@
 package com.workstream.rest.model;
 
+import java.util.TimeZone;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -11,7 +13,7 @@ public class LoginResponse {
 	private String failReason;
 
 	private UserResponse user;
-	
+
 	private String apiToken;
 
 	public boolean isSuccess() {
@@ -44,5 +46,9 @@ public class LoginResponse {
 
 	public void setApiToken(String apiToken) {
 		this.apiToken = apiToken;
+	}
+
+	public String getDefaultTimeZone() {
+		return TimeZone.getDefault().getID();
 	}
 }
