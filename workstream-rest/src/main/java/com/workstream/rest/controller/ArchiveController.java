@@ -22,6 +22,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Project;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.core.service.ProcessService.UserProcessRole;
 import com.workstream.core.service.TaskCapable.UserTaskRole;
 import com.workstream.rest.RestConstants;
 import com.workstream.rest.model.ArchFormPropertyResponse;
@@ -49,7 +50,8 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Query the tasks by user role and userId", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(value = "/tasks", method = RequestMethod.GET)
-	public List<ArchTaskResponse> getTasksForUser(@RequestParam(required = true) UserTaskRole role,
+	public List<ArchTaskResponse> getTasksForUser(
+			@RequestParam(required = true) UserTaskRole role,
 			@RequestParam(required = true) String userIdBase64) {
 		String userId = RestUtils.decodeUserId(userIdBase64);
 		List<HistoricTaskInstance> tasks = core.getProjectService()
@@ -135,6 +137,17 @@ public class ArchiveController {
 		List<HistoricTaskInstance> hiTasks = core.getProjectService()
 				.filterArchTask(project);
 		return InnerWrapperObj.valueOf(hiTasks, ArchTaskResponse.class);
+	}
+
+	@ApiOperation(value = "Query the process by user role and userId", notes = RestConstants.TEST_USER_ID_INFO)
+	@RequestMapping(value = "/processes", method = RequestMethod.GET)
+	public List<ArchProcessResponse> getArchProcessByUser(
+			@RequestParam(required = true) UserProcessRole role,
+			@RequestParam(required = true) String userIdBase64) {
+		String userId = RestUtils.decodeUserId(userIdBase64);
+		List<HistoricProcessInstance> hiList = core.getProcessService()
+				.filterHiProcessByUser(role, userId, true);
+		return InnerWrapperObj.valueOf(hiList, ArchProcessResponse.class);
 	}
 
 	@ApiOperation(value = "Retrieves the archived task for a given id")

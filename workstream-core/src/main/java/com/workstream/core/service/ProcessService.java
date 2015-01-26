@@ -57,6 +57,10 @@ public class ProcessService extends TaskCapable {
 	@Autowired
 	private RepositoryService repoSer;
 
+	public enum UserProcessRole {
+		STARTER, INVOLVED
+	}
+
 	/**
 	 * 
 	 * @param processDefinitionId
@@ -219,6 +223,32 @@ public class ProcessService extends TaskCapable {
 			}
 			q.processInstanceIds(ids);
 			q.unfinished();
+		}
+		return q.list();
+	}
+
+	public List<HistoricProcessInstance> filterHiProcessByUser(
+			UserProcessRole role, String userId, boolean finished) {
+		switch (role) {
+		case STARTER:
+			return filterHiProcessByStarter(userId, finished);
+		case INVOLVED:
+			return filterHiProcessByInvolved(userId, finished);
+		default:
+			throw new BadArgumentException("Unsupported user role");
+		}
+	}
+
+	public List<HistoricProcessInstance> filterHiProcessByInvolved(
+			String userId, boolean finished) {
+		HistoricProcessInstanceQuery q = hiSer
+				.createHistoricProcessInstanceQuery();
+		q.involvedUser(userId);
+		if (finished) {
+			q.finished();
+			q.orderByProcessInstanceEndTime().desc();
+		} else {
+			q.orderByProcessInstanceStartTime().desc();
 		}
 		return q.list();
 	}

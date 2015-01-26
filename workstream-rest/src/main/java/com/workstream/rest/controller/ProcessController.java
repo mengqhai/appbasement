@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,6 +31,8 @@ import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.CoreEvent.TargetType;
 import com.workstream.core.model.Subscription;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.core.service.ProcessService.UserProcessRole;
+import com.workstream.rest.RestConstants;
 import com.workstream.rest.model.ArchProcessResponse;
 import com.workstream.rest.model.AttachmentResponse;
 import com.workstream.rest.model.InnerWrapperObj;
@@ -59,12 +62,32 @@ public class ProcessController {
 		return new ProcessResponse(pi);
 	}
 
+	@ApiOperation(value = "Query the process by user role and userId", notes = RestConstants.TEST_USER_ID_INFO)
+	@RequestMapping(method = RequestMethod.GET)
+	public List<ArchProcessResponse> getProcessesByUser(
+			@RequestParam(required = true) UserProcessRole role,
+			@RequestParam(required = true) String userIdBase64) {
+		String userId = RestUtils.decodeUserId(userIdBase64);
+		List<HistoricProcessInstance> hiList = core.getProcessService()
+				.filterHiProcessByUser(role, userId, false);
+		return InnerWrapperObj.valueOf(hiList, ArchProcessResponse.class);
+	}
+
 	@ApiOperation(value = "Retrieve running processes started by the current user", notes = "Note: The returned result is a list of <b>history process objects</b>")
 	@RequestMapping(value = "/_startedByMe", method = RequestMethod.GET)
 	public List<ArchProcessResponse> getProcessesStartedByMe() {
 		String userId = core.getAuthUserId();
 		List<HistoricProcessInstance> hiList = core.getProcessService()
 				.filterHiProcessByStarter(userId, false);
+		return InnerWrapperObj.valueOf(hiList, ArchProcessResponse.class);
+	}
+
+	@ApiOperation(value = "Retrieve running processes involved the current user", notes = "Note: The returned result is a list of <b>history process objects</b>")
+	@RequestMapping(value = "/_involvedMe", method = RequestMethod.GET)
+	public List<ArchProcessResponse> getProcessesInvolvedMe() {
+		String userId = core.getAuthUserId();
+		List<HistoricProcessInstance> hiList = core.getProcessService()
+				.filterHiProcessByInvolved(userId, false);
 		return InnerWrapperObj.valueOf(hiList, ArchProcessResponse.class);
 	}
 
