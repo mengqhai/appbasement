@@ -204,6 +204,14 @@ public class ProjectService extends TaskCapable {
 		}
 	}
 
+	public List<Task> filterTask(Long proId, String assignee) {
+		Project proj = getProject(proId);
+		if (proj == null) {
+			throw new ResourceNotFoundException("No such project");
+		}
+		return filterTask(proj, assignee);
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<Task> filterTask(Project pro, String assignee) {
 		TaskQuery q = (TaskQuery) prepairTaskInfoQuery(pro, assignee,

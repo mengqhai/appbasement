@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wordnik.swagger.annotations.Api;
@@ -21,6 +22,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Project;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.core.service.TaskCapable.UserTaskRole;
 import com.workstream.rest.RestConstants;
 import com.workstream.rest.model.ArchFormPropertyResponse;
 import com.workstream.rest.model.ArchProcessResponse;
@@ -29,6 +31,7 @@ import com.workstream.rest.model.AttachmentResponse;
 import com.workstream.rest.model.EventResponse;
 import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.TaskResponse;
+import com.workstream.rest.utils.RestUtils;
 
 @Api(value = "archives")
 @RestController
@@ -43,6 +46,18 @@ public class ArchiveController {
 
 	@Autowired
 	private ProcessController processCtrl;
+
+	@ApiOperation(value = "Query the tasks by user role and userId", notes = RestConstants.TEST_USER_ID_INFO)
+	@RequestMapping(value = "/tasks", method = RequestMethod.GET)
+	public List<ArchTaskResponse> getTasksForUser(@RequestParam(required = true) UserTaskRole role,
+			@RequestParam(required = true) String userIdBase64) {
+		String userId = RestUtils.decodeUserId(userIdBase64);
+		List<HistoricTaskInstance> tasks = core.getProjectService()
+				.filterArchTaskByUser(role, userId);
+		List<ArchTaskResponse> respList = InnerWrapperObj.valueOf(tasks,
+				ArchTaskResponse.class);
+		return respList;
+	}
 
 	@ApiOperation(value = "Retrieves the archived task for a given id")
 	@RequestMapping(value = "/tasks/{id}", method = RequestMethod.GET)

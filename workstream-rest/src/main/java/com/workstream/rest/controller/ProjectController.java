@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wordnik.swagger.annotations.Api;
@@ -29,6 +30,7 @@ import com.workstream.rest.model.ProjectResponse;
 import com.workstream.rest.model.SubscriptionResponse;
 import com.workstream.rest.model.TaskRequest;
 import com.workstream.rest.model.TaskResponse;
+import com.workstream.rest.utils.RestUtils;
 
 @Api(value = "projects", description = "Project related operations")
 @RestController
@@ -76,11 +78,20 @@ public class ProjectController {
 		return new TaskResponse(task);
 	}
 
+	@ApiOperation(value = "Retrieves the tasks in the project", notes = "If no assigneeId is provided, all the tasks in the project will be retrieved.")
 	@RequestMapping(value = "/{id}/tasks", method = RequestMethod.GET)
 	public List<TaskResponse> getTasksInProject(
-			@PathVariable("id") Long projectId)
+			@PathVariable("id") Long projectId,
+			@RequestParam(required = false) String assigneeId)
 			throws ResourceNotFoundException {
-		List<Task> tasks = core.getProjectService().filterTask(projectId);
+		List<Task> tasks = null;
+		if (assigneeId == null || assigneeId.isEmpty()) {
+			core.getProjectService().filterTask(projectId);
+		} else {
+			String userId = RestUtils.decodeUserId(assigneeId);
+			core.getProjectService().filterTask(projectId, userId);
+		}
+
 		List<TaskResponse> respList = InnerWrapperObj.valueOf(tasks,
 				TaskResponse.class);
 		return respList;

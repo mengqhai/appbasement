@@ -36,7 +36,7 @@ public class ArchTaskResponse extends InnerWrapperObj<HistoricTaskInstance> {
 		return task.getDeleteReason();
 	}
 
-	public String getOwner() {
+	public String getCreator() {
 		return task.getOwner();
 	}
 

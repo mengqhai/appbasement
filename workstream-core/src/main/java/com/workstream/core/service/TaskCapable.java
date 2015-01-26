@@ -33,12 +33,17 @@ import org.springframework.transaction.annotation.Transactional;
 import com.workstream.core.CoreConstants;
 import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.AuthenticationNotSetException;
+import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.BeanPropertyException;
 import com.workstream.core.exception.ResourceNotFoundException;
 
 public class TaskCapable {
 
 	protected final Logger log = LoggerFactory.getLogger(TaskCapable.class);
+
+	public enum UserTaskRole {
+		CREATOR, ASSIGNEE, CANDIDATE
+	}
 
 	@Autowired
 	protected TaskService taskSer;
@@ -50,6 +55,47 @@ public class TaskCapable {
 
 	@Autowired
 	protected FormService formService;
+
+	/**
+	 * A generic querying method by userId
+	 * 
+	 * @param role
+	 * @param userId
+	 * @return
+	 */
+	public List<Task> filterTaskByUser(UserTaskRole role, String userId) {
+		switch (role) {
+		case ASSIGNEE:
+			return filterTaskByAssignee(userId);
+		case CREATOR:
+			return filterTaskByCreator(userId);
+		case CANDIDATE:
+			return filterTaskByCandidateUser(userId);
+		default:
+			throw new BadArgumentException("Unsupported user task role.");
+		}
+	}
+
+	/**
+	 * A generic querying method by userId
+	 * 
+	 * @param role
+	 * @param userId
+	 * @return
+	 */
+	public List<HistoricTaskInstance> filterArchTaskByUser(UserTaskRole role,
+			String userId) {
+		switch (role) {
+		case ASSIGNEE:
+			return filterArchTaskByAssignee(userId);
+		case CREATOR:
+			return filterArchTaskByCreator(userId);
+		case CANDIDATE:
+			return filterArchTaskByCandidateUser(userId);
+		default:
+			throw new BadArgumentException("Unsupported user task role.");
+		}
+	}
 
 	/**
 	 * Doesn't care about org or project. (Process related tasks will also be
@@ -74,6 +120,12 @@ public class TaskCapable {
 	public List<Task> filterTaskByCreator(String creatorId) {
 		TaskQuery q = taskSer.createTaskQuery().taskOwner(creatorId)
 				.orderByTaskCreateTime().desc();
+		return q.list();
+	}
+
+	public List<Task> filterTaskByCandidateUser(String userId) {
+		TaskQuery q = taskSer.createTaskQuery().taskCandidateUser(userId)
+				.taskUnassigned().orderByTaskCreateTime().desc();
 		return q.list();
 	}
 
@@ -336,7 +388,7 @@ public class TaskCapable {
 	 */
 	public List<HistoricTaskInstance> filterArchTaskByAssignee(String assigneeId) {
 		return hiSer.createHistoricTaskInstanceQuery().taskAssignee(assigneeId)
-				.finished().list();
+				.finished().orderByHistoricTaskInstanceEndTime().desc().list();
 	}
 
 	/**
@@ -347,7 +399,14 @@ public class TaskCapable {
 	 */
 	public List<HistoricTaskInstance> filterArchTaskByCreator(String creator) {
 		return hiSer.createHistoricTaskInstanceQuery().taskOwner(creator)
-				.finished().list();
+				.finished().orderByHistoricTaskInstanceEndTime().desc().list();
+	}
+
+	public List<HistoricTaskInstance> filterArchTaskByCandidateUser(
+			String candidate) {
+		return hiSer.createHistoricTaskInstanceQuery()
+				.taskCandidateUser(candidate).finished()
+				.orderByHistoricTaskInstanceEndTime().desc().list();
 	}
 
 	public List<HistoricFormProperty> filterArchTaskFormProperties(String taskId) {

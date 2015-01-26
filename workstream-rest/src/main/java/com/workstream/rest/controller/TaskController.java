@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,6 +39,8 @@ import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.CoreEvent.TargetType;
 import com.workstream.core.model.Subscription;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.core.service.TaskCapable.UserTaskRole;
+import com.workstream.rest.RestConstants;
 import com.workstream.rest.model.AttachmentResponse;
 import com.workstream.rest.model.CommentResponse;
 import com.workstream.rest.model.EventResponse;
@@ -57,6 +60,19 @@ public class TaskController {
 
 	@Autowired
 	private CoreFacadeService core;
+
+	@ApiOperation(value = "Query the tasks by user role and userId", notes = RestConstants.TEST_USER_ID_INFO)
+	@RequestMapping(method = RequestMethod.GET)
+	public List<TaskResponse> getTasksForUser(
+			@RequestParam(required = true) UserTaskRole role,
+			@RequestParam(required = true) String userIdBase64) {
+		String userId = RestUtils.decodeUserId(userIdBase64);
+		List<Task> tasks = core.getProjectService().filterTaskByUser(role,
+				userId);
+		List<TaskResponse> respList = InnerWrapperObj.valueOf(tasks,
+				TaskResponse.class);
+		return respList;
+	}
 
 	@ApiOperation(value = "Query the tasks assigned to the current user")
 	@RequestMapping(value = "/_my", method = RequestMethod.GET)
@@ -81,7 +97,18 @@ public class TaskController {
 
 	@ApiOperation(value = "Query the candidate tasks of the current user")
 	@RequestMapping(value = "/_myCandidate", method = RequestMethod.GET)
-	public Map<String, List<TaskResponse>> getMyCandidateTask() {
+	public List<TaskResponse> getMyCandidateTasks() {
+		String userId = core.getAuthUserId();
+		List<Task> tasks = core.getProjectService().filterTaskByCandidateUser(
+				userId);
+		List<TaskResponse> respList = InnerWrapperObj.valueOf(tasks,
+				TaskResponse.class);
+		return respList;
+	}
+
+	@ApiOperation(value = "Query the candidate tasks of the current user with groupId as keys")
+	@RequestMapping(value = "/_myCandidateWithGroup", method = RequestMethod.GET)
+	public Map<String, List<TaskResponse>> getMyCandidateTasskWithGroup() {
 		String userId = core.getAuthUserId();
 		List<Group> groups = core.getUserService().filterGroupByUser(userId);
 		Map<String, List<TaskResponse>> respMap = new HashMap<String, List<TaskResponse>>(
