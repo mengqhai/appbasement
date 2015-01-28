@@ -17,6 +17,8 @@ public class CoreFormTypes extends FormTypes {
 		// build in types
 		addFormType(new StringFormType());
 		addFormType(new LongFormType());
+		//addFormType(new WsDateFormType("yyyy-MM-dd"));
+		// see http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
 		addFormType(new WsDateFormType("yyyy-MM-dd"));
 		addFormType(new BooleanFormType());
 		addFormType(new DoubleFormType());
