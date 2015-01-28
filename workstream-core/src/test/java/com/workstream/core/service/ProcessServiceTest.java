@@ -125,8 +125,8 @@ public class ProcessServiceTest {
 		Assert.assertEquals(0, myTasks.size());
 		// then the historic instance can be removed
 		pSer.removeHiProcess(hi.getId());
-		Assert.assertEquals(0, pSer.filterHiProcessByStarter(userId, false)
-				.size());
+		Assert.assertEquals(0,
+				pSer.filterHiProcessByStarter(userId, false, 0, 10).size());
 	}
 
 	@Test
@@ -148,8 +148,8 @@ public class ProcessServiceTest {
 		// then the historic instance can be removed
 		pSer.removeHiProcess(pi.getProcessInstanceId());
 		// HistoricProcessInstance.id == ProcessInstanceId
-		Assert.assertEquals(0, pSer.filterHiProcessByStarter(userId, false)
-				.size());
+		Assert.assertEquals(0,
+				pSer.filterHiProcessByStarter(userId, false, 0, 10).size());
 	}
 
 }

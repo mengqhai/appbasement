@@ -66,28 +66,34 @@ public class ProcessController {
 	@RequestMapping(method = RequestMethod.GET)
 	public List<ArchProcessResponse> getProcessesByUser(
 			@RequestParam(required = true) UserProcessRole role,
-			@RequestParam(required = true) String userIdBase64) {
+			@RequestParam(required = true) String userIdBase64,
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
 		String userId = RestUtils.decodeUserId(userIdBase64);
 		List<HistoricProcessInstance> hiList = core.getProcessService()
-				.filterHiProcessByUser(role, userId, false);
+				.filterHiProcessByUser(role, userId, false, first, max);
 		return InnerWrapperObj.valueOf(hiList, ArchProcessResponse.class);
 	}
 
 	@ApiOperation(value = "Retrieve running processes started by the current user", notes = "Note: The returned result is a list of <b>history process objects</b>")
 	@RequestMapping(value = "/_startedByMe", method = RequestMethod.GET)
-	public List<ArchProcessResponse> getProcessesStartedByMe() {
+	public List<ArchProcessResponse> getProcessesStartedByMe(
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
 		String userId = core.getAuthUserId();
 		List<HistoricProcessInstance> hiList = core.getProcessService()
-				.filterHiProcessByStarter(userId, false);
+				.filterHiProcessByStarter(userId, false, first, max);
 		return InnerWrapperObj.valueOf(hiList, ArchProcessResponse.class);
 	}
 
 	@ApiOperation(value = "Retrieve running processes involved the current user", notes = "Note: The returned result is a list of <b>history process objects</b>")
 	@RequestMapping(value = "/_involvedMe", method = RequestMethod.GET)
-	public List<ArchProcessResponse> getProcessesInvolvedMe() {
+	public List<ArchProcessResponse> getProcessesInvolvedMe(
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
 		String userId = core.getAuthUserId();
 		List<HistoricProcessInstance> hiList = core.getProcessService()
-				.filterHiProcessByInvolved(userId, false);
+				.filterHiProcessByInvolved(userId, false, first, max);
 		return InnerWrapperObj.valueOf(hiList, ArchProcessResponse.class);
 	}
 

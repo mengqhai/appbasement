@@ -143,10 +143,12 @@ public class ArchiveController {
 	@RequestMapping(value = "/processes", method = RequestMethod.GET)
 	public List<ArchProcessResponse> getArchProcessByUser(
 			@RequestParam(required = true) UserProcessRole role,
-			@RequestParam(required = true) String userIdBase64) {
+			@RequestParam(required = true) String userIdBase64,
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
 		String userId = RestUtils.decodeUserId(userIdBase64);
 		List<HistoricProcessInstance> hiList = core.getProcessService()
-				.filterHiProcessByUser(role, userId, true);
+				.filterHiProcessByUser(role, userId, true, first, max);
 		return InnerWrapperObj.valueOf(hiList, ArchProcessResponse.class);
 	}
 
@@ -197,10 +199,12 @@ public class ArchiveController {
 	@ApiOperation(value = "Retrieves the archived processes started by a given user id", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(value = "/users/{userIdBase64}/processes", method = RequestMethod.GET)
 	public List<ArchProcessResponse> getArchProcessesByStarter(
-			@PathVariable("userIdBase64") String userIdBase64) {
+			@PathVariable("userIdBase64") String userIdBase64,
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
 		String userId = decodeUserId(userIdBase64);
 		List<HistoricProcessInstance> hiPiList = core.getProcessService()
-				.filterHiProcessByStarter(userId, true);
+				.filterHiProcessByStarter(userId, true, first, max);
 		return InnerWrapperObj.valueOf(hiPiList, ArchProcessResponse.class);
 	}
 

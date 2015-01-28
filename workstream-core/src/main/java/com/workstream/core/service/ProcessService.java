@@ -228,19 +228,20 @@ public class ProcessService extends TaskCapable {
 	}
 
 	public List<HistoricProcessInstance> filterHiProcessByUser(
-			UserProcessRole role, String userId, boolean finished) {
+			UserProcessRole role, String userId, boolean finished, int first,
+			int max) {
 		switch (role) {
 		case STARTER:
-			return filterHiProcessByStarter(userId, finished);
+			return filterHiProcessByStarter(userId, finished, first, max);
 		case INVOLVED:
-			return filterHiProcessByInvolved(userId, finished);
+			return filterHiProcessByInvolved(userId, finished, first, max);
 		default:
 			throw new BadArgumentException("Unsupported user role");
 		}
 	}
 
 	public List<HistoricProcessInstance> filterHiProcessByInvolved(
-			String userId, boolean finished) {
+			String userId, boolean finished, int first, int max) {
 		HistoricProcessInstanceQuery q = hiSer
 				.createHistoricProcessInstanceQuery();
 		q.involvedUser(userId);
@@ -250,11 +251,11 @@ public class ProcessService extends TaskCapable {
 		} else {
 			q.orderByProcessInstanceStartTime().desc();
 		}
-		return q.list();
+		return q.listPage(first, max);
 	}
 
 	public List<HistoricProcessInstance> filterHiProcessByStarter(
-			String starterUserId, boolean finished) {
+			String starterUserId, boolean finished, int first, int max) {
 		HistoricProcessInstanceQuery q = hiSer
 				.createHistoricProcessInstanceQuery().startedBy(starterUserId);
 		if (finished) {
@@ -280,7 +281,7 @@ public class ProcessService extends TaskCapable {
 			q.unfinished();
 			q.orderByProcessInstanceStartTime().desc();
 		}
-		return q.list();
+		return q.listPage(first, max);
 	}
 
 	public List<HistoricFormProperty> filterHiProcessFormProperties(
