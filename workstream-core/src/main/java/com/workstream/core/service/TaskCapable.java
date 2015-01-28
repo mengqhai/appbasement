@@ -84,14 +84,14 @@ public class TaskCapable {
 	 * @return
 	 */
 	public List<HistoricTaskInstance> filterArchTaskByUser(UserTaskRole role,
-			String userId) {
+			String userId, int first, int max) {
 		switch (role) {
 		case ASSIGNEE:
-			return filterArchTaskByAssignee(userId);
+			return filterArchTaskByAssignee(userId, first, max);
 		case CREATOR:
-			return filterArchTaskByCreator(userId);
+			return filterArchTaskByCreator(userId, first, max);
 		case CANDIDATE:
-			return filterArchTaskByCandidateUser(userId);
+			return filterArchTaskByCandidateUser(userId, first, max);
 		default:
 			throw new BadArgumentException("Unsupported user task role.");
 		}
@@ -386,9 +386,12 @@ public class TaskCapable {
 	 * @param assigneeId
 	 * @return
 	 */
-	public List<HistoricTaskInstance> filterArchTaskByAssignee(String assigneeId) {
-		return hiSer.createHistoricTaskInstanceQuery().taskAssignee(assigneeId)
-				.finished().orderByHistoricTaskInstanceEndTime().desc().list();
+	public List<HistoricTaskInstance> filterArchTaskByAssignee(
+			String assigneeId, int first, int max) {
+		HistoricTaskInstanceQuery q = hiSer.createHistoricTaskInstanceQuery();
+		q.taskAssignee(assigneeId).finished()
+				.orderByHistoricTaskInstanceEndTime().desc();
+		return q.listPage(first, max);
 	}
 
 	/**
@@ -397,16 +400,20 @@ public class TaskCapable {
 	 * @param assigneeId
 	 * @return
 	 */
-	public List<HistoricTaskInstance> filterArchTaskByCreator(String creator) {
-		return hiSer.createHistoricTaskInstanceQuery().taskOwner(creator)
-				.finished().orderByHistoricTaskInstanceEndTime().desc().list();
+	public List<HistoricTaskInstance> filterArchTaskByCreator(String creator,
+			int first, int max) {
+		HistoricTaskInstanceQuery q = hiSer.createHistoricTaskInstanceQuery()
+				.taskOwner(creator).finished()
+				.orderByHistoricTaskInstanceEndTime().desc();
+		return q.listPage(first, max);
 	}
 
 	public List<HistoricTaskInstance> filterArchTaskByCandidateUser(
-			String candidate) {
-		return hiSer.createHistoricTaskInstanceQuery()
+			String candidate, int first, int max) {
+		HistoricTaskInstanceQuery q = hiSer.createHistoricTaskInstanceQuery()
 				.taskCandidateUser(candidate).finished()
-				.orderByHistoricTaskInstanceEndTime().desc().list();
+				.orderByHistoricTaskInstanceEndTime().desc();
+		return q.listPage(first, max);
 	}
 
 	public List<HistoricFormProperty> filterArchTaskFormProperties(String taskId) {

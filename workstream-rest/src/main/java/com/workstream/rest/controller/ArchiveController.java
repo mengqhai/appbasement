@@ -52,10 +52,12 @@ public class ArchiveController {
 	@RequestMapping(value = "/tasks", method = RequestMethod.GET)
 	public List<ArchTaskResponse> getTasksForUser(
 			@RequestParam(required = true) UserTaskRole role,
-			@RequestParam(required = true) String userIdBase64) {
+			@RequestParam(required = true) String userIdBase64,
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
 		String userId = RestUtils.decodeUserId(userIdBase64);
 		List<HistoricTaskInstance> tasks = core.getProjectService()
-				.filterArchTaskByUser(role, userId);
+				.filterArchTaskByUser(role, userId, first, max);
 		List<ArchTaskResponse> respList = InnerWrapperObj.valueOf(tasks,
 				ArchTaskResponse.class);
 		return respList;
