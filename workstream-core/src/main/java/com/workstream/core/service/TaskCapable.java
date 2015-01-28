@@ -431,11 +431,12 @@ public class TaskCapable {
 	 * @param parentTaskId
 	 * @return
 	 */
-	public List<HistoricTaskInstance> filterArchSubTasks(String parentTaskId) {
+	public List<HistoricTaskInstance> filterArchSubTasks(String parentTaskId,
+			int first, int max) {
 		HistoricTaskInstanceQuery q = hiSer.createHistoricTaskInstanceQuery();
 		q.taskParentTaskId(parentTaskId).finished()
 				.orderByHistoricTaskInstanceEndTime().desc();
-		return q.list();
+		return q.listPage(first, max);
 	}
 
 	public FormService getFormService() {

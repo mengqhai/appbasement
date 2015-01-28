@@ -111,9 +111,11 @@ public class ArchiveController {
 	@ApiOperation(value = "Retrieve the sub tasks for a task")
 	@RequestMapping(value = "/tasks/{id:\\d+}/tasks", method = RequestMethod.GET)
 	public List<ArchTaskResponse> getArchSubTasks(
-			@PathVariable("id") String taskId) {
+			@PathVariable("id") String taskId,
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
 		List<HistoricTaskInstance> hiTasks = core.getProjectService()
-				.filterArchSubTasks(taskId);
+				.filterArchSubTasks(taskId, first, max);
 		return InnerWrapperObj.valueOf(hiTasks, ArchTaskResponse.class);
 	}
 
