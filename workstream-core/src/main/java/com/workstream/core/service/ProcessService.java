@@ -198,7 +198,7 @@ public class ProcessService extends TaskCapable {
 	}
 
 	public List<HistoricProcessInstance> filterHiProcessByOrg(Long orgId,
-			boolean finished) {
+			boolean finished, int first, int max) {
 		HistoricProcessInstanceQuery q = hiSer
 				.createHistoricProcessInstanceQuery()
 				.processInstanceTenantId(String.valueOf(orgId))
@@ -224,7 +224,7 @@ public class ProcessService extends TaskCapable {
 			q.processInstanceIds(ids);
 			q.unfinished();
 		}
-		return q.list();
+		return q.listPage(first, max);
 	}
 
 	public List<HistoricProcessInstance> filterHiProcessByUser(

@@ -95,11 +95,11 @@ public class ProcessServiceTest {
 
 		// test get HistoricProcessInstance
 		List<HistoricProcessInstance> hiList = pSer.filterHiProcessByOrg(
-				org.getId(), false);
+				org.getId(), false, 0, 10);
 		Assert.assertEquals(1, hiList.size());
 		Assert.assertEquals(hi.getId(), hiList.get(0).getId());
 
-		hiList = pSer.filterHiProcessByOrg(org.getId(), true);
+		hiList = pSer.filterHiProcessByOrg(org.getId(), true, 0, 10);
 		Assert.assertEquals(0, hiList.size());
 
 		hiList = pSer.filterHiProcessByOrgStarter(org.getId(), userId, false);

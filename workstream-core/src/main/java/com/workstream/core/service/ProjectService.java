@@ -230,13 +230,16 @@ public class ProjectService extends TaskCapable {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<HistoricTaskInstance> filterArchTask(Project pro) {
+	public List<HistoricTaskInstance> filterArchTask(Project pro, int first,
+			int max) {
 		HistoricTaskInstanceQuery q = (HistoricTaskInstanceQuery) prepairTaskInfoQuery(
 				pro, hiSer.createHistoricTaskInstanceQuery());
 		if (q == null) {
 			return Collections.EMPTY_LIST;
 		} else {
-			return (List<HistoricTaskInstance>) q.finished().list();
+			q.orderByTaskCreateTime().desc();
+			return (List<HistoricTaskInstance>) q.finished().listPage(first,
+					max);
 		}
 	}
 

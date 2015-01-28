@@ -132,14 +132,16 @@ public class ArchiveController {
 	@ApiOperation(value = "Retrieves the archived task list in project")
 	@RequestMapping(value = "/projects/{projectId}/tasks", method = RequestMethod.GET)
 	public List<ArchTaskResponse> getArchTasksInProject(
-			@PathVariable("projectId") long projectId) {
+			@PathVariable("projectId") long projectId,
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
 		Project project = core.getProjectService().getProject(projectId);
 		if (project == null) {
 			throw new ResourceNotFoundException("No such project");
 		}
 
 		List<HistoricTaskInstance> hiTasks = core.getProjectService()
-				.filterArchTask(project);
+				.filterArchTask(project, first, max);
 		return InnerWrapperObj.valueOf(hiTasks, ArchTaskResponse.class);
 	}
 
@@ -194,9 +196,11 @@ public class ArchiveController {
 	@ApiOperation(value = "Retrieves the archived processes for a given org id")
 	@RequestMapping(value = "/orgs/{orgId}/processes", method = RequestMethod.GET)
 	public List<ArchProcessResponse> getArchProcessesInOrg(
-			@PathVariable("orgId") Long orgId) {
+			@PathVariable("orgId") Long orgId,
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
 		List<HistoricProcessInstance> hiPiList = core.getProcessService()
-				.filterHiProcessByOrg(orgId, true);
+				.filterHiProcessByOrg(orgId, true, first, max);
 		return InnerWrapperObj.valueOf(hiPiList, ArchProcessResponse.class);
 	}
 
