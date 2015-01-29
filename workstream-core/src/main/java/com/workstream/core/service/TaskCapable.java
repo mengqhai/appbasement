@@ -85,16 +85,35 @@ public class TaskCapable {
 	 */
 	public List<HistoricTaskInstance> filterArchTaskByUser(UserTaskRole role,
 			String userId, int first, int max) {
+		HistoricTaskInstanceQuery q = prepareArchTaskQueryByUser(role, userId);
+		return q.listPage(first, max);
+	}
+
+	public long countArchTaskByUser(UserTaskRole role, String userId) {
+		HistoricTaskInstanceQuery q = prepareArchTaskQueryByUser(role, userId);
+		return q.count();
+	}
+
+	protected HistoricTaskInstanceQuery prepareArchTaskQueryByUser(
+			UserTaskRole role, String userId) {
+		HistoricTaskInstanceQuery q = hiSer.createHistoricTaskInstanceQuery();
+		q.finished().orderByHistoricTaskInstanceEndTime().desc();
+
 		switch (role) {
 		case ASSIGNEE:
-			return filterArchTaskByAssignee(userId, first, max);
+			q.taskAssignee(userId);
+			break;
 		case CREATOR:
-			return filterArchTaskByCreator(userId, first, max);
+			q.taskOwner(userId);
+			break;
 		case CANDIDATE:
-			return filterArchTaskByCandidateUser(userId, first, max);
+			q.taskCandidateUser(userId);
+			break;
 		default:
 			throw new BadArgumentException("Unsupported user task role.");
 		}
+
+		return q;
 	}
 
 	/**
@@ -388,10 +407,8 @@ public class TaskCapable {
 	 */
 	public List<HistoricTaskInstance> filterArchTaskByAssignee(
 			String assigneeId, int first, int max) {
-		HistoricTaskInstanceQuery q = hiSer.createHistoricTaskInstanceQuery();
-		q.taskAssignee(assigneeId).finished()
-				.orderByHistoricTaskInstanceEndTime().desc();
-		return q.listPage(first, max);
+		return filterArchTaskByUser(UserTaskRole.ASSIGNEE, assigneeId, first,
+				max);
 	}
 
 	/**
@@ -402,18 +419,13 @@ public class TaskCapable {
 	 */
 	public List<HistoricTaskInstance> filterArchTaskByCreator(String creator,
 			int first, int max) {
-		HistoricTaskInstanceQuery q = hiSer.createHistoricTaskInstanceQuery()
-				.taskOwner(creator).finished()
-				.orderByHistoricTaskInstanceEndTime().desc();
-		return q.listPage(first, max);
+		return filterArchTaskByUser(UserTaskRole.CREATOR, creator, first, max);
 	}
 
 	public List<HistoricTaskInstance> filterArchTaskByCandidateUser(
 			String candidate, int first, int max) {
-		HistoricTaskInstanceQuery q = hiSer.createHistoricTaskInstanceQuery()
-				.taskCandidateUser(candidate).finished()
-				.orderByHistoricTaskInstanceEndTime().desc();
-		return q.listPage(first, max);
+		return filterArchTaskByUser(UserTaskRole.CANDIDATE, candidate, first,
+				max);
 	}
 
 	public List<HistoricFormProperty> filterArchTaskFormProperties(String taskId) {
@@ -427,16 +439,27 @@ public class TaskCapable {
 		return formProperties;
 	}
 
+	protected HistoricTaskInstanceQuery prepareArchSubTaskQuery(
+			String parentTaskId) {
+		HistoricTaskInstanceQuery q = hiSer.createHistoricTaskInstanceQuery();
+		q.taskParentTaskId(parentTaskId).finished()
+				.orderByHistoricTaskInstanceEndTime().desc();
+		return q;
+	}
+
 	/**
 	 * @param parentTaskId
 	 * @return
 	 */
 	public List<HistoricTaskInstance> filterArchSubTasks(String parentTaskId,
 			int first, int max) {
-		HistoricTaskInstanceQuery q = hiSer.createHistoricTaskInstanceQuery();
-		q.taskParentTaskId(parentTaskId).finished()
-				.orderByHistoricTaskInstanceEndTime().desc();
+		HistoricTaskInstanceQuery q = prepareArchSubTaskQuery(parentTaskId);
 		return q.listPage(first, max);
+	}
+
+	public long countArchSubTasks(String parentTaskId) {
+		HistoricTaskInstanceQuery q = prepareArchSubTaskQuery(parentTaskId);
+		return q.count();
 	}
 
 	public FormService getFormService() {

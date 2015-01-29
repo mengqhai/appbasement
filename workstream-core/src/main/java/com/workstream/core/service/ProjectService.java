@@ -243,6 +243,16 @@ public class ProjectService extends TaskCapable {
 		}
 	}
 
+	public long countArchTask(Project pro) {
+		HistoricTaskInstanceQuery q = (HistoricTaskInstanceQuery) prepairTaskInfoQuery(
+				pro, hiSer.createHistoricTaskInstanceQuery());
+		if (q == null) {
+			return 0;
+		} else {
+			return q.finished().count();
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<HistoricTaskInstance> filterArchTask(Project pro,
 			String assignee) {

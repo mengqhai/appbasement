@@ -51,7 +51,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Query the tasks by user role and userId", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(value = "/tasks", method = RequestMethod.GET)
-	public List<ArchTaskResponse> getTasksForUser(
+	public List<ArchTaskResponse> getArchTasksByUser(
 			@RequestParam(required = true) UserTaskRole role,
 			@RequestParam(required = true) String userIdBase64,
 			@RequestParam(defaultValue = "0") int first,
@@ -64,9 +64,19 @@ public class ArchiveController {
 		return respList;
 	}
 
+	@ApiOperation(value = "Count the tasks by user role and userId", notes = RestConstants.TEST_USER_ID_INFO)
+	@RequestMapping(value = "/tasks/_count", method = RequestMethod.GET)
+	public SingleValueResponse countArchTasksByUser(
+			@RequestParam(required = true) UserTaskRole role,
+			@RequestParam(required = true) String userIdBase64) {
+		String userId = RestUtils.decodeUserId(userIdBase64);
+		long count = core.getProjectService().countArchTaskByUser(role, userId);
+		return new SingleValueResponse(count);
+	}
+
 	@ApiOperation(value = "Retrieves the archived task for a given id")
 	@RequestMapping(value = "/tasks/{id}", method = RequestMethod.GET)
-	public ArchTaskResponse getArchivedTask(@PathVariable("id") String taskId) {
+	public ArchTaskResponse getArchTask(@PathVariable("id") String taskId) {
 		HistoricTaskInstance hiTask = core.getProjectService().getArchTask(
 				taskId);
 		if (hiTask == null) {
@@ -86,14 +96,14 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Retrieves the archived task for a given id")
 	@RequestMapping(value = "/tasks/{id}/events", method = RequestMethod.GET)
-	public List<EventResponse> getArchivedTaskEvents(
+	public List<EventResponse> getArchTaskEvents(
 			@PathVariable("id") String taskId) {
 		return taskCtrl.getTaskEvents(taskId);
 	}
 
 	@ApiOperation(value = "Retrieve the attachment list for a task")
 	@RequestMapping(value = "/tasks/{id:\\d+}/attachments", method = RequestMethod.GET)
-	public List<AttachmentResponse> getTaskAttachments(
+	public List<AttachmentResponse> getArchTaskAttachments(
 			@PathVariable("id") String taskId) {
 		return taskCtrl.getTaskAttachments(taskId);
 	}
@@ -118,6 +128,14 @@ public class ArchiveController {
 		List<HistoricTaskInstance> hiTasks = core.getProjectService()
 				.filterArchSubTasks(taskId, first, max);
 		return InnerWrapperObj.valueOf(hiTasks, ArchTaskResponse.class);
+	}
+
+	@ApiOperation(value = "Retrieve the sub task count for a task")
+	@RequestMapping(value = "/tasks/{id:\\d+}/tasks/_count", method = RequestMethod.GET)
+	public SingleValueResponse countArchSubTasks(
+			@PathVariable("id") String taskId) {
+		long count = core.getProjectService().countArchSubTasks(taskId);
+		return new SingleValueResponse(count);
 	}
 
 	@ApiOperation(value = "Retrieve the for properties for a task")
@@ -146,6 +164,19 @@ public class ArchiveController {
 		return InnerWrapperObj.valueOf(hiTasks, ArchTaskResponse.class);
 	}
 
+	@ApiOperation(value = "Count the archived task in project")
+	@RequestMapping(value = "/projects/{projectId}/tasks/_count", method = RequestMethod.GET)
+	public SingleValueResponse countArchTasksInProject(
+			@PathVariable("projectId") long projectId) {
+		Project project = core.getProjectService().getProject(projectId);
+		if (project == null) {
+			throw new ResourceNotFoundException("No such project");
+		}
+		long count = core.getProjectService().countArchTask(project);
+		return new SingleValueResponse(count);
+
+	}
+
 	@ApiOperation(value = "Query the process by user role and userId", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(value = "/processes", method = RequestMethod.GET)
 	public List<ArchProcessResponse> getArchProcessByUser(
@@ -170,13 +201,23 @@ public class ArchiveController {
 		return new SingleValueResponse(count);
 	}
 
-	@ApiOperation(value = "Retrieves the archived task for a given id")
+	@ApiOperation(value = "Retrieves the archived tasks in a given process")
 	@RequestMapping(value = "/processes/{processId}/tasks", method = RequestMethod.GET)
 	public List<ArchTaskResponse> getArchTasksInProcess(
-			@PathVariable("processId") String processId) {
+			@PathVariable("processId") String processId,
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
 		List<HistoricTaskInstance> hiTasks = core.getProcessService()
-				.filterArchTaskByProcess(processId);
+				.filterArchTaskByProcess(processId, first, max);
 		return InnerWrapperObj.valueOf(hiTasks, ArchTaskResponse.class);
+	}
+
+	@ApiOperation(value = "Count the archived task in a given process")
+	@RequestMapping(value = "/processes/{processId}/tasks/_count", method = RequestMethod.GET)
+	public SingleValueResponse countArchTasksInProcess(
+			@PathVariable("processId") String processId) {
+		long count = core.getProcessService().countArchTaskByProcess(processId);
+		return new SingleValueResponse(count);
 	}
 
 	@ApiOperation(value = "Retrieves the variables for a process")
@@ -200,7 +241,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Retrieve the attachment list for a task")
 	@RequestMapping(value = "/processes/{id:\\d+}/attachments", method = RequestMethod.GET)
-	public List<AttachmentResponse> getProcessAttachments(
+	public List<AttachmentResponse> getArchProcessAttachments(
 			@PathVariable("id") String processId) {
 		return processCtrl.getProcesssAttachments(processId);
 	}

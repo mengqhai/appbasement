@@ -20,6 +20,7 @@ import org.activiti.engine.history.HistoricFormProperty;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricProcessInstanceQuery;
 import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.history.HistoricTaskInstanceQuery;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
@@ -318,10 +319,20 @@ public class ProcessService extends TaskCapable {
 				.list();
 	}
 
-	public List<HistoricTaskInstance> filterArchTaskByProcess(
+	protected HistoricTaskInstanceQuery prepareArchTaskQueryByProcess(
 			String processInstanceId) {
-		return hiSer.createHistoricTaskInstanceQuery()
-				.processInstanceId(processInstanceId).list();
+		return hiSer.createHistoricTaskInstanceQuery().processInstanceId(
+				processInstanceId);
+	}
+
+	public List<HistoricTaskInstance> filterArchTaskByProcess(
+			String processInstanceId, int first, int max) {
+		return prepareArchTaskQueryByProcess(processInstanceId).listPage(first,
+				max);
+	}
+
+	public long countArchTaskByProcess(String processInstanceId) {
+		return prepareArchTaskQueryByProcess(processInstanceId).count();
 	}
 
 	public StartFormData getStartFormData(String processDefinitionId) {
