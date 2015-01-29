@@ -193,14 +193,15 @@ public class ProjectServiceTest {
 		Assert.assertTrue(messages.contains(userId + "_|_owner"));
 		Assert.assertTrue(messages.contains(userId + "_|_assignee"));
 
-		taskList = proSer.filterTaskByAssignee(userId); // only by user, doesn't
-														// care about project
+		taskList = proSer.filterTaskByAssignee(userId, 0, 10); // only by user,
+																// doesn't
+		// care about project
 		Assert.assertEquals(2, taskList.size());
 		for (Task t : taskList) {
 			Assert.assertEquals(userId, t.getAssignee());
 		}
 
-		taskList = proSer.filterTaskByCreator(userId);
+		taskList = proSer.filterTaskByCreator(userId, 0, 10);
 		Assert.assertEquals(2, taskList.size());
 		for (Task t : taskList) {
 			Assert.assertEquals(userId, t.getOwner());

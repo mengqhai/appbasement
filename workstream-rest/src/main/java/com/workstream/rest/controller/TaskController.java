@@ -45,6 +45,7 @@ import com.workstream.rest.model.AttachmentResponse;
 import com.workstream.rest.model.CommentResponse;
 import com.workstream.rest.model.EventResponse;
 import com.workstream.rest.model.InnerWrapperObj;
+import com.workstream.rest.model.SingleValueResponse;
 import com.workstream.rest.model.SubscriptionResponse;
 import com.workstream.rest.model.TaskFormDataResponse;
 import com.workstream.rest.model.TaskRequest;
@@ -65,10 +66,12 @@ public class TaskController {
 	@RequestMapping(method = RequestMethod.GET)
 	public List<TaskResponse> getTasksForUser(
 			@RequestParam(required = true) UserTaskRole role,
-			@RequestParam(required = true) String userIdBase64) {
+			@RequestParam(required = true) String userIdBase64,
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
 		String userId = RestUtils.decodeUserId(userIdBase64);
 		List<Task> tasks = core.getProjectService().filterTaskByUser(role,
-				userId);
+				userId, first, max);
 		List<TaskResponse> respList = InnerWrapperObj.valueOf(tasks,
 				TaskResponse.class);
 		return respList;
@@ -76,10 +79,12 @@ public class TaskController {
 
 	@ApiOperation(value = "Query the tasks assigned to the current user")
 	@RequestMapping(value = "/_my", method = RequestMethod.GET)
-	public List<TaskResponse> getMyAssigneeTasks() {
+	public List<TaskResponse> getMyAssigneeTasks(
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
 		String userId = core.getAuthUserId();
-		List<Task> tasks = core.getProjectService()
-				.filterTaskByAssignee(userId);
+		List<Task> tasks = core.getProjectService().filterTaskByAssignee(
+				userId, first, max);
 		List<TaskResponse> respList = InnerWrapperObj.valueOf(tasks,
 				TaskResponse.class);
 		return respList;
@@ -87,9 +92,12 @@ public class TaskController {
 
 	@ApiOperation(value = "Query the tasks created current user")
 	@RequestMapping(value = "/_createdByMe", method = RequestMethod.GET)
-	public List<TaskResponse> getMyCreatorTasks() {
+	public List<TaskResponse> getMyCreatorTasks(
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
 		String userId = core.getAuthUserId();
-		List<Task> tasks = core.getProjectService().filterTaskByCreator(userId);
+		List<Task> tasks = core.getProjectService().filterTaskByCreator(userId,
+				first, max);
 		List<TaskResponse> respList = InnerWrapperObj.valueOf(tasks,
 				TaskResponse.class);
 		return respList;
@@ -97,10 +105,12 @@ public class TaskController {
 
 	@ApiOperation(value = "Query the candidate tasks of the current user")
 	@RequestMapping(value = "/_myCandidate", method = RequestMethod.GET)
-	public List<TaskResponse> getMyCandidateTasks() {
+	public List<TaskResponse> getMyCandidateTasks(
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
 		String userId = core.getAuthUserId();
 		List<Task> tasks = core.getProjectService().filterTaskByCandidateUser(
-				userId);
+				userId, first, max);
 		List<TaskResponse> respList = InnerWrapperObj.valueOf(tasks,
 				TaskResponse.class);
 		return respList;
@@ -121,6 +131,16 @@ public class TaskController {
 			respMap.put(g.getId(), respList);
 		}
 		return respMap;
+	}
+
+	@ApiOperation(value = "Query the task count of a given userId", notes = RestConstants.TEST_USER_ID_INFO)
+	@RequestMapping(value = "/_count", method = RequestMethod.GET)
+	public SingleValueResponse countTaskForUser(
+			@RequestParam(required = true) UserTaskRole role,
+			@RequestParam(required = true) String userIdBase64) {
+		String userId = RestUtils.decodeUserId(userIdBase64);
+		long count = core.getProjectService().countTaskByUser(role, userId);
+		return new SingleValueResponse(count);
 	}
 
 	@ApiOperation(value = "Get the task for id")

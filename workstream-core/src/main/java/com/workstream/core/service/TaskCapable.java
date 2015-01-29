@@ -63,17 +63,15 @@ public class TaskCapable {
 	 * @param userId
 	 * @return
 	 */
-	public List<Task> filterTaskByUser(UserTaskRole role, String userId) {
-		switch (role) {
-		case ASSIGNEE:
-			return filterTaskByAssignee(userId);
-		case CREATOR:
-			return filterTaskByCreator(userId);
-		case CANDIDATE:
-			return filterTaskByCandidateUser(userId);
-		default:
-			throw new BadArgumentException("Unsupported user task role.");
-		}
+	public List<Task> filterTaskByUser(UserTaskRole role, String userId,
+			int first, int max) {
+		TaskQuery q = prepareTaskQueryByUser(role, userId);
+		return q.listPage(first, max);
+	}
+
+	public long countTaskByUser(UserTaskRole role, String userId) {
+		TaskQuery q = prepareTaskQueryByUser(role, userId);
+		return q.count();
 	}
 
 	/**
@@ -116,6 +114,25 @@ public class TaskCapable {
 		return q;
 	}
 
+	protected TaskQuery prepareTaskQueryByUser(UserTaskRole role, String userId) {
+		TaskQuery q = taskSer.createTaskQuery();
+
+		switch (role) {
+		case ASSIGNEE:
+			q.taskAssignee(userId);
+			break;
+		case CREATOR:
+			q.taskOwner(userId);
+			break;
+		case CANDIDATE:
+			q.taskCandidateUser(userId).taskUnassigned();
+			break;
+		default:
+			throw new BadArgumentException("Unsupported user task role.");
+		}
+		return q.orderByTaskCreateTime().desc();
+	}
+
 	/**
 	 * Doesn't care about org or project. (Process related tasks will also be
 	 * included)
@@ -123,10 +140,8 @@ public class TaskCapable {
 	 * @param assigneeId
 	 * @return
 	 */
-	public List<Task> filterTaskByAssignee(String assigneeId) {
-		TaskQuery q = taskSer.createTaskQuery().taskAssignee(assigneeId)
-				.orderByTaskCreateTime().desc();
-		return q.list();
+	public List<Task> filterTaskByAssignee(String assigneeId, int first, int max) {
+		return filterTaskByUser(UserTaskRole.ASSIGNEE, assigneeId, first, max);
 	}
 
 	/**
@@ -136,16 +151,13 @@ public class TaskCapable {
 	 * @param creatorId
 	 * @return
 	 */
-	public List<Task> filterTaskByCreator(String creatorId) {
-		TaskQuery q = taskSer.createTaskQuery().taskOwner(creatorId)
-				.orderByTaskCreateTime().desc();
-		return q.list();
+	public List<Task> filterTaskByCreator(String creatorId, int first, int max) {
+		return filterTaskByUser(UserTaskRole.CREATOR, creatorId, first, max);
 	}
 
-	public List<Task> filterTaskByCandidateUser(String userId) {
-		TaskQuery q = taskSer.createTaskQuery().taskCandidateUser(userId)
-				.taskUnassigned().orderByTaskCreateTime().desc();
-		return q.list();
+	public List<Task> filterTaskByCandidateUser(String userId, int first,
+			int max) {
+		return filterTaskByUser(UserTaskRole.CANDIDATE, userId, first, max);
 	}
 
 	public List<Task> filterTaskByCandidateGroup(String... groupIds) {

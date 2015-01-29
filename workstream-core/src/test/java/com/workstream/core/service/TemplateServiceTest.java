@@ -190,7 +190,7 @@ public class TemplateServiceTest {
 				.filterHiProcessByOrgStarter(org.getId(), userId, false);
 		Assert.assertEquals(1, hiList.size());
 
-		List<Task> tasks = proSer.filterTaskByAssignee(userId);
+		List<Task> tasks = proSer.filterTaskByAssignee(userId, 0, 10);
 		Assert.assertEquals(1, tasks.size());
 		Task task = tasks.get(0);
 		Assert.assertEquals("Do you agree?", task.getName());
@@ -203,7 +203,7 @@ public class TemplateServiceTest {
 		props.put("agree", "true");
 		formSer.submitTaskFormData(task.getId(), props);
 
-		tasks = proSer.filterTaskByAssignee(userId);
+		tasks = proSer.filterTaskByAssignee(userId, 0, 10);
 		Assert.assertEquals(1, tasks.size());
 		task = tasks.get(0);
 
