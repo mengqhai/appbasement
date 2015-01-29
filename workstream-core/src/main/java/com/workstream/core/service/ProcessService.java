@@ -197,52 +197,49 @@ public class ProcessService extends TaskCapable {
 		return q.list();
 	}
 
-	public List<HistoricProcessInstance> filterHiProcessByOrg(Long orgId,
-			boolean finished, int first, int max) {
+	protected HistoricProcessInstanceQuery prepareHiProcessQueryByOrg(
+			Long orgId, boolean finished) {
 		HistoricProcessInstanceQuery q = hiSer
 				.createHistoricProcessInstanceQuery()
 				.processInstanceTenantId(String.valueOf(orgId))
 				.orderByProcessInstanceEndTime().desc();
 		if (finished) {
-			// has to directly touch the history table
 			q.finished();
 		} else {
-			// The historic process instance table can easily get extremely
-			// large.
-			// So need to firstly query a smaller table to get ids, then
-			// query the historic process instance table with ids where index
-			// has already been created.
-			List<ProcessInstance> piList = ruSer.createProcessInstanceQuery()
-					.processInstanceTenantId(String.valueOf(orgId)).list();
-			if (piList.isEmpty()) {
-				return Collections.emptyList();
-			}
-			Set<String> ids = new HashSet<String>(piList.size());
-			for (ProcessInstance pi : piList) {
-				ids.add(pi.getProcessInstanceId());
-			}
-			q.processInstanceIds(ids);
 			q.unfinished();
 		}
+		return q;
+	}
+
+	public List<HistoricProcessInstance> filterHiProcessByOrg(Long orgId,
+			boolean finished, int first, int max) {
+		HistoricProcessInstanceQuery q = prepareHiProcessQueryByOrg(orgId,
+				finished);
 		return q.listPage(first, max);
+	}
+
+	public long countHiProcessByOrg(Long orgId, boolean finished) {
+		HistoricProcessInstanceQuery q = prepareHiProcessQueryByOrg(orgId,
+				finished);
+		return q.count();
 	}
 
 	public List<HistoricProcessInstance> filterHiProcessByUser(
 			UserProcessRole role, String userId, boolean finished, int first,
 			int max) {
-		HistoricProcessInstanceQuery q = prepareHiProcessByUser(role, userId,
-				finished);
+		HistoricProcessInstanceQuery q = prepareHiProcessQueryByUser(role,
+				userId, finished);
 		return q.listPage(first, max);
 	}
 
 	public long countHiProcessByUser(UserProcessRole role, String userId,
 			boolean finished) {
-		HistoricProcessInstanceQuery q = prepareHiProcessByUser(role, userId,
-				finished);
+		HistoricProcessInstanceQuery q = prepareHiProcessQueryByUser(role,
+				userId, finished);
 		return q.count();
 	}
 
-	public HistoricProcessInstanceQuery prepareHiProcessByUser(
+	protected HistoricProcessInstanceQuery prepareHiProcessQueryByUser(
 			UserProcessRole role, String userId, boolean finished) {
 		HistoricProcessInstanceQuery q = hiSer
 				.createHistoricProcessInstanceQuery();

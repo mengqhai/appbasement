@@ -216,6 +216,14 @@ public class ArchiveController {
 		return InnerWrapperObj.valueOf(hiPiList, ArchProcessResponse.class);
 	}
 
+	@ApiOperation(value = "Retrieves the archived processes for a given org id")
+	@RequestMapping(value = "/orgs/{orgId}/processes/_count", method = RequestMethod.GET)
+	public SingleValueResponse countArchProcessesInOrg(
+			@PathVariable("orgId") Long orgId) {
+		long count = core.getProcessService().countHiProcessByOrg(orgId, true);
+		return new SingleValueResponse(count);
+	}
+
 	@ApiOperation(value = "Retrieves the archived processes started by a given user id", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(value = "/users/{userIdBase64}/processes", method = RequestMethod.GET)
 	public List<ArchProcessResponse> getArchProcessesByStarter(
