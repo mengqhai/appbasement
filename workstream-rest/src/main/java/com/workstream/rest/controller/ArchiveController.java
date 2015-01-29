@@ -31,6 +31,7 @@ import com.workstream.rest.model.ArchTaskResponse;
 import com.workstream.rest.model.AttachmentResponse;
 import com.workstream.rest.model.EventResponse;
 import com.workstream.rest.model.InnerWrapperObj;
+import com.workstream.rest.model.SingleValueResponse;
 import com.workstream.rest.model.TaskResponse;
 import com.workstream.rest.utils.RestUtils;
 
@@ -156,6 +157,17 @@ public class ArchiveController {
 		List<HistoricProcessInstance> hiList = core.getProcessService()
 				.filterHiProcessByUser(role, userId, true, first, max);
 		return InnerWrapperObj.valueOf(hiList, ArchProcessResponse.class);
+	}
+
+	@ApiOperation(value = "Query the process count by user role and userId", notes = RestConstants.TEST_USER_ID_INFO)
+	@RequestMapping(value = "/processes/_count", method = RequestMethod.GET)
+	public SingleValueResponse countArchProcessByUser(
+			@RequestParam(required = true) UserProcessRole role,
+			@RequestParam(required = true) String userIdBase64) {
+		String userId = RestUtils.decodeUserId(userIdBase64);
+		long count = core.getProcessService().countHiProcessByUser(role,
+				userId, true);
+		return new SingleValueResponse(count);
 	}
 
 	@ApiOperation(value = "Retrieves the archived task for a given id")

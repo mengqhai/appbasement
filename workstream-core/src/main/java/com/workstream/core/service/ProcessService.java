@@ -230,58 +230,51 @@ public class ProcessService extends TaskCapable {
 	public List<HistoricProcessInstance> filterHiProcessByUser(
 			UserProcessRole role, String userId, boolean finished, int first,
 			int max) {
+		HistoricProcessInstanceQuery q = prepareHiProcessByUser(role, userId,
+				finished);
+		return q.listPage(first, max);
+	}
+
+	public long countHiProcessByUser(UserProcessRole role, String userId,
+			boolean finished) {
+		HistoricProcessInstanceQuery q = prepareHiProcessByUser(role, userId,
+				finished);
+		return q.count();
+	}
+
+	public HistoricProcessInstanceQuery prepareHiProcessByUser(
+			UserProcessRole role, String userId, boolean finished) {
+		HistoricProcessInstanceQuery q = hiSer
+				.createHistoricProcessInstanceQuery();
 		switch (role) {
 		case STARTER:
-			return filterHiProcessByStarter(userId, finished, first, max);
+			q.startedBy(userId);
+			break;
 		case INVOLVED:
-			return filterHiProcessByInvolved(userId, finished, first, max);
+			q.involvedUser(userId);
+			break;
 		default:
 			throw new BadArgumentException("Unsupported user role");
 		}
+		if (finished) {
+			q.finished();
+			q.orderByProcessInstanceEndTime().desc();
+		} else {
+			q.orderByProcessInstanceStartTime().desc();
+		}
+		return q;
 	}
 
 	public List<HistoricProcessInstance> filterHiProcessByInvolved(
 			String userId, boolean finished, int first, int max) {
-		HistoricProcessInstanceQuery q = hiSer
-				.createHistoricProcessInstanceQuery();
-		q.involvedUser(userId);
-		if (finished) {
-			q.finished();
-			q.orderByProcessInstanceEndTime().desc();
-		} else {
-			q.orderByProcessInstanceStartTime().desc();
-		}
-		return q.listPage(first, max);
+		return filterHiProcessByUser(UserProcessRole.INVOLVED, userId,
+				finished, first, max);
 	}
 
 	public List<HistoricProcessInstance> filterHiProcessByStarter(
 			String starterUserId, boolean finished, int first, int max) {
-		HistoricProcessInstanceQuery q = hiSer
-				.createHistoricProcessInstanceQuery().startedBy(starterUserId);
-		if (finished) {
-			// has to directly touch the history table
-			q.finished();
-			q.orderByProcessInstanceEndTime().desc();
-		} else {
-			// The historic process instance table can easily get extremely
-			// large.
-			// So need to firstly query a smaller table to get ids, then
-			// query the historic process instance table with ids where index
-			// has already been created.
-			List<ProcessInstance> piList = ruSer.createProcessInstanceQuery()
-					.involvedUser(starterUserId).list();
-			if (piList.isEmpty()) {
-				return Collections.emptyList();
-			}
-			Set<String> ids = new HashSet<String>(piList.size());
-			for (ProcessInstance pi : piList) {
-				ids.add(pi.getProcessInstanceId());
-			}
-			q.processInstanceIds(ids);
-			q.unfinished();
-			q.orderByProcessInstanceStartTime().desc();
-		}
-		return q.listPage(first, max);
+		return filterHiProcessByUser(UserProcessRole.STARTER, starterUserId,
+				finished, first, max);
 	}
 
 	public List<HistoricFormProperty> filterHiProcessFormProperties(
