@@ -27,6 +27,7 @@ import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.ProjectRequest;
 import com.workstream.rest.model.ProjectResponse;
+import com.workstream.rest.model.SingleValueResponse;
 import com.workstream.rest.model.SubscriptionResponse;
 import com.workstream.rest.model.TaskRequest;
 import com.workstream.rest.model.TaskResponse;
@@ -86,15 +87,31 @@ public class ProjectController {
 			throws ResourceNotFoundException {
 		List<Task> tasks = null;
 		if (assigneeId == null || assigneeId.isEmpty()) {
-			core.getProjectService().filterTask(projectId);
+			tasks = core.getProjectService().filterTask(projectId);
 		} else {
 			String userId = RestUtils.decodeUserId(assigneeId);
-			core.getProjectService().filterTask(projectId, userId);
+			tasks = core.getProjectService().filterTask(projectId, userId);
 		}
 
 		List<TaskResponse> respList = InnerWrapperObj.valueOf(tasks,
 				TaskResponse.class);
 		return respList;
+	}
+
+	@ApiOperation(value = "Count the tasks in the project", notes = "If no assigneeId is provided, all the tasks in the project will be counted.")
+	@RequestMapping(value = "/{id}/tasks/_count", method = RequestMethod.GET)
+	public SingleValueResponse countTasksInProject(
+			@PathVariable("id") Long projectId,
+			@RequestParam(required = false) String assigneeId)
+			throws ResourceNotFoundException {
+		long count = 0;
+		if (assigneeId == null || assigneeId.isEmpty()) {
+			count = core.getProjectService().countTask(projectId);
+		} else {
+			String userId = RestUtils.decodeUserId(assigneeId);
+			count = core.getProjectService().countTask(projectId, userId);
+		}
+		return new SingleValueResponse(count);
 	}
 
 	@ApiOperation(value = "Retrieve subscription list for a project")

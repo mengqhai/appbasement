@@ -193,6 +193,20 @@ public class ProjectService extends TaskCapable {
 		return filterTask(proj);
 	}
 
+	public long countTask(Long projectId) {
+		Project proj = getProject(projectId);
+		if (proj == null) {
+			throw new ResourceNotFoundException("No such project");
+		}
+		TaskQuery q = (TaskQuery) prepairTaskInfoQuery(proj,
+				taskSer.createTaskQuery());
+		if (q == null) {
+			return 0;
+		} else {
+			return q.count();
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<Task> filterTask(Project pro) {
 		TaskQuery q = (TaskQuery) prepairTaskInfoQuery(pro,
@@ -210,6 +224,20 @@ public class ProjectService extends TaskCapable {
 			throw new ResourceNotFoundException("No such project");
 		}
 		return filterTask(proj, assignee);
+	}
+
+	public long countTask(Long proId, String assignee) {
+		Project proj = getProject(proId);
+		if (proj == null) {
+			throw new ResourceNotFoundException("No such project");
+		}
+		TaskQuery q = (TaskQuery) prepairTaskInfoQuery(proj, assignee,
+				taskSer.createTaskQuery());
+		if (q == null) {
+			return 0;
+		} else {
+			return q.count();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
