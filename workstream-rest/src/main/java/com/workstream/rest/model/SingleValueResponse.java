@@ -6,7 +6,7 @@ public class SingleValueResponse extends InnerWrapperObj<Object> {
 		super(inner);
 	}
 
-	public Object getValue() {
+	public Object getV() {
 		return inner;
 	}
 

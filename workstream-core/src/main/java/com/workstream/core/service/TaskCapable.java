@@ -160,11 +160,21 @@ public class TaskCapable {
 		return filterTaskByUser(UserTaskRole.CANDIDATE, userId, first, max);
 	}
 
-	public List<Task> filterTaskByCandidateGroup(String... groupIds) {
+	protected TaskQuery prepareTaskQueryByCandidateGroup(String... groupIds) {
 		TaskQuery q = taskSer.createTaskQuery()
 				.taskCandidateGroupIn(Arrays.asList(groupIds)).taskUnassigned()
 				.orderByTaskCreateTime().desc();
+		return q;
+	}
+
+	public List<Task> filterTaskByCandidateGroup(String... groupIds) {
+		TaskQuery q = prepareTaskQueryByCandidateGroup(groupIds);
 		return q.list();
+	}
+
+	public long countTaskByCandidateGroup(String... groupIds) {
+		TaskQuery q = prepareTaskQueryByCandidateGroup(groupIds);
+		return q.count();
 	}
 
 	public Task getTask(String taskId) {
@@ -241,6 +251,14 @@ public class TaskCapable {
 		});
 
 		return tasks;
+	}
+
+	public long countSubTasks(String parentTaskId) {
+		// The TaskQuery doesn't provide the ability to query by parentTaskId.
+		// So have to query the HistorictTaskInstance.
+		HistoricTaskInstanceQuery q = hiSer.createHistoricTaskInstanceQuery();
+		q.taskParentTaskId(parentTaskId);
+		return q.count();
 	}
 
 	public Task updateTask(Task task, Map<String, ? extends Object> props) {

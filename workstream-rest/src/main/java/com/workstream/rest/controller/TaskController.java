@@ -90,7 +90,16 @@ public class TaskController {
 		return respList;
 	}
 
-	@ApiOperation(value = "Query the tasks created current user")
+	@ApiOperation(value = "Count the tasks assigned to the current user")
+	@RequestMapping(value = "/_my/_count", method = RequestMethod.GET)
+	public SingleValueResponse countMyAssigneeTasks() {
+		String userId = core.getAuthUserId();
+		long count = core.getProjectService().countTaskByUser(
+				UserTaskRole.ASSIGNEE, userId);
+		return new SingleValueResponse(count);
+	}
+
+	@ApiOperation(value = "Query the tasks created by the current user")
 	@RequestMapping(value = "/_createdByMe", method = RequestMethod.GET)
 	public List<TaskResponse> getMyCreatorTasks(
 			@RequestParam(defaultValue = "0") int first,
@@ -101,6 +110,15 @@ public class TaskController {
 		List<TaskResponse> respList = InnerWrapperObj.valueOf(tasks,
 				TaskResponse.class);
 		return respList;
+	}
+
+	@ApiOperation(value = "Count the tasks created by the current user")
+	@RequestMapping(value = "/_createdByMe/_count", method = RequestMethod.GET)
+	public SingleValueResponse countMyCreatorTasks() {
+		String userId = core.getAuthUserId();
+		long count = core.getProjectService().countTaskByUser(
+				UserTaskRole.CREATOR, userId);
+		return new SingleValueResponse(count);
 	}
 
 	@ApiOperation(value = "Query the candidate tasks of the current user")
@@ -116,6 +134,15 @@ public class TaskController {
 		return respList;
 	}
 
+	@ApiOperation(value = "Count the candidate tasks of the current user")
+	@RequestMapping(value = "/_myCandidate/_count", method = RequestMethod.GET)
+	public SingleValueResponse countMyCandidateTasks() {
+		String userId = core.getAuthUserId();
+		long count = core.getProjectService().countTaskByUser(
+				UserTaskRole.CANDIDATE, userId);
+		return new SingleValueResponse(count);
+	}
+
 	@ApiOperation(value = "Query the candidate tasks of the current user with groupId as keys")
 	@RequestMapping(value = "/_myCandidateWithGroup", method = RequestMethod.GET)
 	public Map<String, List<TaskResponse>> getMyCandidateTasskWithGroup() {
@@ -129,6 +156,20 @@ public class TaskController {
 			List<TaskResponse> respList = InnerWrapperObj.valueOf(tasks,
 					TaskResponse.class);
 			respMap.put(g.getId(), respList);
+		}
+		return respMap;
+	}
+
+	@ApiOperation(value = "Count the candidate tasks of the current user with groupId as keys")
+	@RequestMapping(value = "/_myCandidateWithGroup/_count", method = RequestMethod.GET)
+	public Map<String, Long> countMyCandidateTasskWithGroup() {
+		String userId = core.getAuthUserId();
+		List<Group> groups = core.getUserService().filterGroupByUser(userId);
+		Map<String, Long> respMap = new HashMap<String, Long>(groups.size());
+		for (Group g : groups) {
+			long count = core.getProcessService().countTaskByCandidateGroup(
+					g.getId());
+			respMap.put(g.getId(), count);
 		}
 		return respMap;
 	}
@@ -169,6 +210,13 @@ public class TaskController {
 	public List<TaskResponse> getSubTasks(@PathVariable("id") String taskId) {
 		List<Task> tasks = core.getProjectService().getSubTasks(taskId);
 		return InnerWrapperObj.valueOf(tasks, TaskResponse.class);
+	}
+
+	@ApiOperation(value = "Count the sub tasks for a given task")
+	@RequestMapping(value = "/{id:\\d+}/tasks/_count", method = RequestMethod.GET)
+	public SingleValueResponse countSubTasks(@PathVariable("id") String taskId) {
+		long count = core.getProjectService().countSubTasks(taskId);
+		return new SingleValueResponse(count);
 	}
 
 	@ApiOperation(value = "Complete the task", notes = "There's a security hole here: user is able to set any process "
