@@ -32,7 +32,9 @@ public class NoRedirectLogoutSuccessHandler extends
 			response.setHeader("Access-Control-Allow-Credentials", "true");
 			// must do so, otherwise angularJs $http.get got error status code =
 			// 0
-			log.info("User logged out: {} ", authentication.getName());
+			if (authentication != null) {
+				log.info("User logged out: {} ", authentication.getName());
+			}
 			return;
 		} else {
 			super.onLogoutSuccess(request, response, authentication);

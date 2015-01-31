@@ -38,4 +38,10 @@
 	<listener>
 	  <listener-class>net.sf.ehcache.constructs.web.ShutdownListener</listener-class>
 	</listener>
+	
+	<!-- for SessionRegistry -->
+	<listener>
+		<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+	</listener>
+	
 </web-app>

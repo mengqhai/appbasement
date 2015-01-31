@@ -104,10 +104,46 @@ public class RestTokenSecurityContextRepository extends
 		return (String) request.getParameter(RestConstants.API_KEY);
 	}
 
-	public List<SecurityContext> getSecurityContextByUser(String userId) {
+	public void clearSecurityContextByToken(HttpServletRequest request) {
+		String token = getRestToken(request);
+		if (token != null) {
+			getCache().remove(token);
+		}
+	}
+
+	public void clearSecurityContextByToken(String token) {
+		getCache().remove(token);
+	}
+
+	public void clearSecurityContextByUser(String userId) {
+		Query q = prepareQueryForUser(userId);
+		q.includeValues();
+		q.includeKeys();
+		Results r = q.execute();
+		List<Result> resultList = r.all();
+		List<String> keys = new ArrayList<String>(resultList.size());
+		List<SecurityContext> ctxList = new ArrayList<SecurityContext>(r.size());
+		for (Result result : resultList) {
+			SecurityContext ctx = (SecurityContext) result.getValue();
+			ctxList.add(ctx);
+			keys.add((String) result.getKey());
+		}
+
+		for (SecurityContext ctx : ctxList) {
+			ctx.setAuthentication(null);
+		}
+		getCache().removeAll(keys);
+	}
+
+	protected Query prepareQueryForUser(String userId) {
 		Query q = getCache().createQuery();
 		Attribute<String> userIdAtt = getCache().getSearchAttribute("userId");
 		q.addCriteria(userIdAtt.eq(userId));
+		return q;
+	}
+
+	public List<SecurityContext> getSecurityContextByUser(String userId) {
+		Query q = prepareQueryForUser(userId);
 		q.includeValues();
 		Results r = q.execute();
 		List<Result> resultList = r.all();

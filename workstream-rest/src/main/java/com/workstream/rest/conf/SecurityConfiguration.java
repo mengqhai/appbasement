@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 
 import com.workstream.rest.RestConstants;
 import com.workstream.rest.security.BasicAuthenticationProvider;
@@ -83,14 +85,36 @@ public class SecurityConfiguration {
 					.antMatchers(RestConstants.REST_ROOT + "/login")
 					.permitAll().antMatchers("/logout").permitAll()
 					.antMatchers(RestConstants.REST_ROOT + "/api-docs/**")
-					.permitAll().antMatchers("/swagger/**").permitAll()
-					.anyRequest().authenticated().and();
+					.permitAll().antMatchers("/swagger/**")
+					.permitAll()
+					.anyRequest()
+					.authenticated()
+					.and()
+					// This enables ConcurrentSessionFilter that will force the
+					// HttpSevletSession to invalidate if
+					// SessionInformation.expireNow()
+					// is somehow invoked.
+					.sessionManagement().maximumSessions(5)
+					.sessionRegistry(sessionRegistry())
+					// redirect to a URL that gives a 401 code
+					.expiredUrl(RestConstants.REST_ROOT + "/login/_count");
 			http.httpBasic().authenticationEntryPoint(
 					cors403ForbiddenEntryPoint());
 			http.logout().logoutUrl("/logout")
 					.logoutSuccessHandler(noRedirectLogoutSuccessHandler);
 			http.securityContext().securityContextRepository(
 					restTokenSecurityContextRepository());
+		}
+
+		/**
+		 * Must create the session registry bean in the dispather context,
+		 * otherwise it won't receive the session events.
+		 * 
+		 * @return
+		 */
+		@Bean
+		public SessionRegistry sessionRegistry() {
+			return new SessionRegistryImpl();
 		}
 
 	}
