@@ -160,8 +160,9 @@ public class CoreEventService {
 	}
 
 	public Collection<Notification> filterNotificationByUser(String userId,
-			boolean onlyUnread) {
-		return notDao.filterNotificationByUserId(userId, onlyUnread);
+			boolean onlyUnread, int first, int max) {
+		return notDao
+				.filterNotificationByUserId(userId, onlyUnread, first, max);
 	}
 
 	public void markNotificationRead(Long notificationId) {
@@ -181,4 +182,7 @@ public class CoreEventService {
 		return notDao.getLastNotificationTimeForUser(userId);
 	}
 
+	public Long countNotificationsFurUser(String userId, boolean onlyUnread) {
+		return notDao.countNotificationByUserId(userId, onlyUnread);
+	}
 }

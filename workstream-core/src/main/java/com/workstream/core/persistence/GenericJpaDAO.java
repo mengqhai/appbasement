@@ -91,7 +91,7 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 
 	@Override
 	public Long getAllCount() {
-		return countFilteredFor(null, null);
+		return countFor(null, null);
 	}
 
 	@Override
@@ -318,8 +318,31 @@ public abstract class GenericJpaDAO<T, ID extends Serializable> implements
 		}
 	}
 
-	protected Long countFilteredFor(String attributeName,
-			Serializable attributeValue) {
+	protected Long countFor(Map<String, ? extends Serializable> attributes) {
+		Class<T> getClass = persistentClass;
+		CriteriaBuilder cb = getEm().getCriteriaBuilder();
+		CriteriaQuery<Long> c = cb.createQuery(Long.class);
+		Root<T> all = c.from(getClass);
+		Expression<Boolean> lastEx = null;
+		for (String attributeName : attributes.keySet()) {
+			Serializable attributeValue = attributes.get(attributeName);
+			if (attributeName != null && !attributeName.equals("")) {
+				Expression<Boolean> ex = cb.equal(
+						parsePath(all, attributeName), attributeValue);
+				if (lastEx == null) {
+					lastEx = ex;
+				} else {
+					lastEx = cb.and(lastEx, ex);
+				}
+			}
+		}
+		c.where(lastEx);
+		Expression<Long> count = cb.count(all);
+		c.select(count);
+		return em.createQuery(c).getSingleResult();
+	}
+
+	protected Long countFor(String attributeName, Serializable attributeValue) {
 		Class<T> getClass = persistentClass;
 		CriteriaBuilder cb = getEm().getCriteriaBuilder();
 		CriteriaQuery<Long> c = cb.createQuery(Long.class);

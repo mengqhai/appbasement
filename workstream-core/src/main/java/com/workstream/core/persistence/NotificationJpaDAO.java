@@ -23,14 +23,25 @@ public class NotificationJpaDAO extends GenericJpaDAO<Notification, Long>
 
 	@Override
 	public Collection<Notification> filterNotificationByUserId(String userId,
-			boolean onlyUnread) {
+			boolean onlyUnread, int first, int max) {
 		Map<String, Serializable> attri = new HashMap<String, Serializable>();
 		attri.put("userId", userId);
 		if (onlyUnread) {
 			attri.put("read", false);
 		}
 		// else get all
-		return this.filterFor(attri, 0, Integer.MAX_VALUE);
+		return this.filterFor(attri, first, max);
+	}
+
+	@Override
+	public Long countNotificationByUserId(String userId, boolean onlyUnread) {
+		Map<String, Serializable> attri = new HashMap<String, Serializable>();
+		attri.put("userId", userId);
+		if (onlyUnread) {
+			attri.put("read", false);
+		}
+		// else get all
+		return this.countFor(attri);
 	}
 
 	@Override

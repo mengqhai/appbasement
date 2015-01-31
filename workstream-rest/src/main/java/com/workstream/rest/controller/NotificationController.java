@@ -78,13 +78,25 @@ public class NotificationController {
 		return new SingleValueResponse(latestTime);
 	}
 
+	@ApiOperation("Count the notifications for the current user")
+	@RequestMapping(value = "/_count", method = RequestMethod.GET)
+	public SingleValueResponse countMyNotifications(
+			@RequestParam(required = false, defaultValue = "true") Boolean onlyUnread) {
+		String userId = core.getAuthUserId();
+		Long count = core.getEventService().countNotificationsFurUser(userId,
+				onlyUnread);
+		return new SingleValueResponse(count);
+	}
+
 	@ApiOperation("Retrieve the notifications for the current user")
 	@RequestMapping(method = RequestMethod.GET)
 	public Collection<NotificationResponse> getMyNotifications(
-			@RequestParam(required = false, defaultValue = "true") Boolean onlyUnread) {
+			@RequestParam(required = false, defaultValue = "true") Boolean onlyUnread,
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
 		String userId = core.getAuthUserId();
 		Collection<Notification> notifications = core.getEventService()
-				.filterNotificationByUser(userId, onlyUnread);
+				.filterNotificationByUser(userId, onlyUnread, first, max);
 		Collection<NotificationResponse> respList = InnerWrapperObj.valueOf(
 				notifications, NotificationResponse.class);
 		for (NotificationResponse resp : respList) {
@@ -93,21 +105,21 @@ public class NotificationController {
 				logger.error("Unable to fetch the target: {} {}", resp
 						.getEvent().getTargetType(), resp.getEvent()
 						.getTargetId());
-			}
+			} else {
+				Class<? extends InnerWrapperObj<?>> targetRespClass = RESPONSE_MAP
+						.get(target.getClass());
+				if (targetRespClass == null) {
+					logger.error("Unable to fetch the target class: {}",
+							target.getClass());
+				}
 
-			Class<? extends InnerWrapperObj<?>> targetRespClass = RESPONSE_MAP
-					.get(target.getClass());
-			if (targetRespClass == null) {
-				logger.error("Unable to fetch the target class: {}",
-						target.getClass());
-			}
-
-			try {
-				InnerWrapperObj<?> targetResp = ConstructorUtils
-						.invokeConstructor(targetRespClass, target);
-				resp.setTarget(targetResp);
-			} catch (Exception e) {
-				throw new DataMappingException(e.getMessage(), e);
+				try {
+					InnerWrapperObj<?> targetResp = ConstructorUtils
+							.invokeConstructor(targetRespClass, target);
+					resp.setTarget(targetResp);
+				} catch (Exception e) {
+					throw new DataMappingException(e.getMessage(), e);
+				}
 			}
 		}
 

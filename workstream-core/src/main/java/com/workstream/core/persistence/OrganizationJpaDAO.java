@@ -17,7 +17,7 @@ public class OrganizationJpaDAO extends GenericJpaDAO<Organization, Long>
 
 	@Override
 	public Long countWithIdentifier(String identifier) {
-		return countFilteredFor("identifier", identifier);
+		return countFor("identifier", identifier);
 	}
 
 	@Override
