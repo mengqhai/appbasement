@@ -185,12 +185,12 @@ public class ProjectService extends TaskCapable {
 		return q;
 	}
 
-	public List<Task> filterTask(Long projectId) {
+	public List<Task> filterTask(Long projectId, int first, int max) {
 		Project proj = getProject(projectId);
 		if (proj == null) {
 			throw new ResourceNotFoundException("No such project");
 		}
-		return filterTask(proj);
+		return filterTask(proj, first, max);
 	}
 
 	public long countTask(Long projectId) {
@@ -208,22 +208,22 @@ public class ProjectService extends TaskCapable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Task> filterTask(Project pro) {
+	public List<Task> filterTask(Project pro, int first, int max) {
 		TaskQuery q = (TaskQuery) prepairTaskInfoQuery(pro,
 				taskSer.createTaskQuery());
 		if (q == null) {
 			return Collections.EMPTY_LIST;
 		} else {
-			return (List<Task>) q.list();
+			return (List<Task>) q.listPage(first, max);
 		}
 	}
 
-	public List<Task> filterTask(Long proId, String assignee) {
+	public List<Task> filterTask(Long proId, String assignee, int first, int max) {
 		Project proj = getProject(proId);
 		if (proj == null) {
 			throw new ResourceNotFoundException("No such project");
 		}
-		return filterTask(proj, assignee);
+		return filterTask(proj, assignee, first, max);
 	}
 
 	public long countTask(Long proId, String assignee) {
@@ -241,13 +241,14 @@ public class ProjectService extends TaskCapable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Task> filterTask(Project pro, String assignee) {
+	public List<Task> filterTask(Project pro, String assignee, int first,
+			int max) {
 		TaskQuery q = (TaskQuery) prepairTaskInfoQuery(pro, assignee,
 				taskSer.createTaskQuery());
 		if (q == null) {
 			return Collections.EMPTY_LIST;
 		} else {
-			return (List<Task>) q.list();
+			return (List<Task>) q.listPage(first, max);
 		}
 	}
 
@@ -294,7 +295,7 @@ public class ProjectService extends TaskCapable {
 	}
 
 	public void deleteProject(Project pro) {
-		List<Task> tasks = filterTask(pro);
+		List<Task> tasks = filterTask(pro, 0, Integer.MAX_VALUE);
 		for (Task task : tasks) {
 			deleteTask(task);
 		}

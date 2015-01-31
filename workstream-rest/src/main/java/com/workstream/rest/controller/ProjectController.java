@@ -83,14 +83,17 @@ public class ProjectController {
 	@RequestMapping(value = "/{id}/tasks", method = RequestMethod.GET)
 	public List<TaskResponse> getTasksInProject(
 			@PathVariable("id") Long projectId,
-			@RequestParam(required = false) String assigneeId)
+			@RequestParam(required = false) String assigneeId,
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max)
 			throws ResourceNotFoundException {
 		List<Task> tasks = null;
 		if (assigneeId == null || assigneeId.isEmpty()) {
-			tasks = core.getProjectService().filterTask(projectId);
+			tasks = core.getProjectService().filterTask(projectId, first, max);
 		} else {
 			String userId = RestUtils.decodeUserId(assigneeId);
-			tasks = core.getProjectService().filterTask(projectId, userId);
+			tasks = core.getProjectService().filterTask(projectId, userId,
+					first, max);
 		}
 
 		List<TaskResponse> respList = InnerWrapperObj.valueOf(tasks,

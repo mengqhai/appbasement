@@ -117,7 +117,7 @@ public class ProjectServiceTest {
 	@Test
 	public void testCreateTask() {
 		Project pro = proSer.createProject(org, "Project #2");
-		Assert.assertEquals(0, proSer.filterTask(pro).size());
+		Assert.assertEquals(0, proSer.filterTask(pro, 0, 10).size());
 
 		Task task = proSer.createTask(pro.getId(), userId, "Task #1", null,
 				null, null, null);
@@ -125,7 +125,7 @@ public class ProjectServiceTest {
 		Assert.assertEquals("Task #1", created.getName());
 		Assert.assertEquals(String.valueOf(pro.getOrg().getId()),
 				task.getTenantId());
-		List<Task> taskList = proSer.filterTask(pro);
+		List<Task> taskList = proSer.filterTask(pro, 0, 10);
 		Assert.assertEquals(1, taskList.size());
 		Assert.assertEquals(created.getId(), taskList.get(0).getId());
 
@@ -137,16 +137,16 @@ public class ProjectServiceTest {
 		// test task deletion
 		task = proSer.createTask(pro.getId(), userId, "Task #2", null, null,
 				null, null);
-		taskList = proSer.filterTask(pro);
+		taskList = proSer.filterTask(pro, 0, 10);
 		Assert.assertEquals(2, taskList.size());
 		proSer.deleteTask(task);
-		taskList = proSer.filterTask(pro);
+		taskList = proSer.filterTask(pro, 0, 10);
 		Assert.assertEquals(1, taskList.size());
 		Assert.assertEquals(created.getId(), taskList.get(0).getId());
 
 		// delete the project
 		proSer.deleteProject(pro);
-		taskList = proSer.filterTask(pro);
+		taskList = proSer.filterTask(pro, 0, 10);
 
 		Long orgId = pro.getOrg().getId();
 		Long proId = pro.getId();
@@ -170,7 +170,7 @@ public class ProjectServiceTest {
 													// event is created
 		proSer.updateTask(task.getId(), props);
 
-		List<Task> taskList = proSer.filterTask(pro, userId);
+		List<Task> taskList = proSer.filterTask(pro, userId, 0, 10);
 		Assert.assertEquals(1, taskList.size());
 		Assert.assertEquals(task.getId(), taskList.get(0).getId());
 		Assert.assertEquals(userId, taskList.get(0).getAssignee());
