@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.engine.identity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,6 +13,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wordnik.swagger.annotations.Api;
@@ -21,11 +23,18 @@ import com.workstream.core.service.UserService;
 import com.workstream.rest.RestConstants;
 import com.workstream.rest.model.LoginRequest;
 import com.workstream.rest.model.LoginResponse;
+import com.workstream.rest.model.SingleValueResponse;
 import com.workstream.rest.model.UserResponse;
+import com.workstream.rest.security.RestTokenSecurityContextRepository;
+import com.workstream.rest.utils.RestUtils;
 
 @Api(value = "login", description = "Login endpoint", position = 1)
 @RestController
+@RequestMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RestLoginController {
+
+	@Autowired
+	private RestTokenSecurityContextRepository securityCtxRepo;
 
 	/**
 	 * If expose the AuthenticationManager from WebSecurityConfigurerAdapter,
@@ -74,5 +83,19 @@ public class RestLoginController {
 			result.setFailReason(e.getMessage());
 		}
 		return result;
+	}
+
+	@ApiOperation(value = "Count current login number", notes = RestConstants.TEST_USER_ID_INFO)
+	@RequestMapping(value = "/login/_count", method = RequestMethod.GET)
+	public SingleValueResponse getLoggedInUserCount(
+			@RequestParam(value = "userId", required = false) String userIdBase64) {
+		int count = 0;
+		if (userIdBase64 == null || userIdBase64.isEmpty()) {
+			count = securityCtxRepo.getSecurityContextCount();
+		} else {
+			String userId = RestUtils.decodeUserId(userIdBase64);
+			count = securityCtxRepo.getSecurityContextByUser(userId).size();
+		}
+		return new SingleValueResponse(count);
 	}
 }

@@ -4,8 +4,15 @@
 	<diskStore path="java.io.tmpdir" />
 	<defaultCache maxElementsInMemory="500" eternal="false"
 		timeToIdleSeconds="300" timeToLiveSeconds="1200" overflowToDisk="true" />
-		<!-- http://blog.csdn.net/vtopqx/article/details/8522333 -->
-	<cache name="SPRING_SECURITY_CONTEXT" maxElementsInMemory="150"
-		eternal="false" timeToIdleSeconds="1800"
-		overflowToDisk="true" />
+	<!-- http://blog.csdn.net/vtopqx/article/details/8522333 -->
+	<!-- maxElementsInMemory="150" eternal="false" timeToIdleSeconds="1800" 
+		overflowToDisk="true" Commented because: net.sf.ehcache.config.InvalidConfigurationException: 
+		Search attributes not supported by this store type: net.sf.ehcache.store.disk.DiskStore -->
+	<cache name="SPRING_SECURITY_CONTEXT" maxBytesLocalHeap="100M"
+		timeToIdleSeconds="1800">
+		<searchable>
+			<searchAttribute name="userId"
+				class="com.workstream.rest.security.RestTokenUserIdAttributeExtractor" />
+		</searchable>
+	</cache>
 </ehcache>

@@ -1,11 +1,18 @@
 package com.workstream.rest.security;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.search.Attribute;
+import net.sf.ehcache.search.Query;
+import net.sf.ehcache.search.Result;
+import net.sf.ehcache.search.Results;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,6 +102,25 @@ public class RestTokenSecurityContextRepository extends
 
 	public String getRestToken(HttpServletRequest request) {
 		return (String) request.getParameter(RestConstants.API_KEY);
+	}
+
+	public List<SecurityContext> getSecurityContextByUser(String userId) {
+		Query q = getCache().createQuery();
+		Attribute<String> userIdAtt = getCache().getSearchAttribute("userId");
+		q.addCriteria(userIdAtt.eq(userId));
+		q.includeValues();
+		Results r = q.execute();
+		List<Result> resultList = r.all();
+		List<SecurityContext> ctxList = new ArrayList<SecurityContext>(r.size());
+		for (Result result : resultList) {
+			SecurityContext ctx = (SecurityContext) result.getValue();
+			ctxList.add(ctx);
+		}
+		return ctxList;
+	}
+
+	public int getSecurityContextCount() {
+		return getCache().getKeysWithExpiryCheck().size();
 	}
 
 }
