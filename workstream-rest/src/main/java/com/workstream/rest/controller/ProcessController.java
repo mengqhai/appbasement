@@ -37,6 +37,7 @@ import com.workstream.rest.model.ArchProcessResponse;
 import com.workstream.rest.model.AttachmentResponse;
 import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.ProcessResponse;
+import com.workstream.rest.model.SingleValueResponse;
 import com.workstream.rest.model.SubscriptionResponse;
 import com.workstream.rest.model.TaskResponse;
 import com.workstream.rest.utils.RestUtils;
@@ -112,10 +113,20 @@ public class ProcessController {
 	@ApiOperation(value = "Retrieve the unfinished tasks for a process instance")
 	@RequestMapping(value = "/{id}/tasks", method = RequestMethod.GET)
 	public List<TaskResponse> getProcessTasks(
-			@PathVariable("id") String processId) {
+			@PathVariable("id") String processId,
+			@RequestParam(defaultValue = "0", required = false) int first,
+			@RequestParam(defaultValue = "" + Integer.MAX_VALUE, required = false) int max) {
 		List<Task> tasks = core.getProcessService().filterTaskByProcess(
-				processId);
+				processId, first, max);
 		return InnerWrapperObj.valueOf(tasks, TaskResponse.class);
+	}
+
+	@ApiOperation(value = "Count the unfinished tasks for a process instance")
+	@RequestMapping(value = "/{id}/tasks/_count", method = RequestMethod.GET)
+	public SingleValueResponse countProcessTasks(
+			@PathVariable("id") String processId) {
+		long count = core.getProcessService().countTaskByProcess(processId);
+		return new SingleValueResponse(count);
 	}
 
 	@ApiOperation(value = "Retrieve subscription list for a process")

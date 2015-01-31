@@ -25,6 +25,7 @@ import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.activiti.engine.task.TaskQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -314,9 +315,18 @@ public class ProcessService extends TaskCapable {
 		ruSer.deleteProcessInstance(processInstanceId, deleteReason);
 	}
 
-	public List<Task> filterTaskByProcess(String processInstanceId) {
-		return taskSer.createTaskQuery().processInstanceId(processInstanceId)
-				.list();
+	public List<Task> filterTaskByProcess(String processInstanceId, int first,
+			int max) {
+		return prepareTaskQueryByProcess(processInstanceId)
+				.listPage(first, max);
+	}
+
+	public long countTaskByProcess(String processInstanceId) {
+		return prepareTaskQueryByProcess(processInstanceId).count();
+	}
+
+	protected TaskQuery prepareTaskQueryByProcess(String processInstanceId) {
+		return taskSer.createTaskQuery().processInstanceId(processInstanceId);
 	}
 
 	protected HistoricTaskInstanceQuery prepareArchTaskQueryByProcess(

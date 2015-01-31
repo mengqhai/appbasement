@@ -134,8 +134,8 @@ public class ProcessServiceTest {
 		Map<String, Object> vars = new HashMap<String, Object>();
 		vars.put("assigneeId", userId);
 		ProcessInstance pi = pSer.startProcess(pDef.getId(), vars);
-		List<Task> myTasks = pSer
-				.filterTaskByProcess(pi.getProcessInstanceId());
+		List<Task> myTasks = pSer.filterTaskByProcess(
+				pi.getProcessInstanceId(), 0, 10);
 		Assert.assertEquals(1, myTasks.size());
 		Task myTask = myTasks.get(0);
 		Assert.assertEquals(userId, myTask.getAssignee());
