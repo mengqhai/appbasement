@@ -16,8 +16,13 @@ public class ProjectJpaDAO extends GenericJpaDAO<Project, Long> implements
 		IProjectDAO {
 
 	@Override
-	public Collection<Project> filterFor(Organization org) {
-		return filterFor("org", org, 0, Integer.MAX_VALUE);
+	public Collection<Project> filterFor(Organization org, int first, int max) {
+		return filterFor("org", org, first, max);
+	}
+
+	@Override
+	public Long countFor(Organization org) {
+		return countFor("org", org);
 	}
 
 }

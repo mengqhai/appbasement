@@ -286,7 +286,8 @@ public class CoreFacadeService {
 		}
 
 		// delete projects of the org
-		Collection<Project> projects = projSer.filterProject(org);
+		Collection<Project> projects = projSer.filterProject(org, 0,
+				Integer.MAX_VALUE);
 		for (Project pro : projects) {
 			projSer.deleteProject(pro);
 		}
@@ -338,9 +339,15 @@ public class CoreFacadeService {
 		return uSer.filterUser(org);
 	}
 
-	public Collection<Project> filterProjectByOrgId(Long orgId) {
+	public Collection<Project> filterProjectByOrgId(Long orgId, int first,
+			int max) {
 		Organization org = getOrg(orgId);
-		return projSer.filterProject(org);
+		return projSer.filterProject(org, first, max);
+	}
+
+	public Long countProjectByOrgId(Long orgId) {
+		Organization org = getOrg(orgId);
+		return projSer.countProject(org);
 	}
 
 	/**

@@ -92,8 +92,13 @@ public class ProjectService extends TaskCapable {
 		}
 	}
 
-	public Collection<Project> filterProject(Organization org) {
-		return proDao.filterFor(org);
+	public Collection<Project> filterProject(Organization org, int first,
+			int max) {
+		return proDao.filterFor(org, first, max);
+	}
+
+	public Long countProject(Organization org) {
+		return proDao.countFor(org);
 	}
 
 	public Task createTask(Long projectId, String creator, String name) {

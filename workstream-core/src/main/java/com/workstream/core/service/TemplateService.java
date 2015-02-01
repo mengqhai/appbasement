@@ -18,6 +18,7 @@ import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.DeploymentBuilder;
 import org.activiti.engine.repository.Model;
+import org.activiti.engine.repository.ModelQuery;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.activiti.image.ProcessDiagramGenerator;
@@ -125,15 +126,25 @@ public class TemplateService {
 				.processDefinitionId(processDefinitionId).singleResult();
 	}
 
-	public List<ProcessDefinition> filterProcessTemplate(Long orgId,
-			boolean onlyLatest) {
+	protected ProcessDefinitionQuery prepareProcessDefinitionQueryForOrg(
+			Long orgId, boolean onlyLatest) {
 		ProcessDefinitionQuery q = repoSer.createProcessDefinitionQuery()
 				.processDefinitionTenantId(String.valueOf(orgId));
 		if (onlyLatest) {
 			q.latestVersion(); // it's OK to combine with the
 								// processDefinitionTenantId()
 		}
-		return q.orderByProcessDefinitionId().asc().list();
+		return q.orderByProcessDefinitionId().asc();
+	}
+
+	public List<ProcessDefinition> filterProcessTemplate(Long orgId,
+			boolean onlyLatest, int first, int max) {
+		return prepareProcessDefinitionQueryForOrg(orgId, onlyLatest).listPage(
+				first, max);
+	}
+
+	public long countProcessTemplate(Long orgId, boolean onlyLatest) {
+		return prepareProcessDefinitionQueryForOrg(orgId, onlyLatest).count();
 	}
 
 	public List<ProcessDefinition> filterProcessTemplate(String deploymentId) {
@@ -231,9 +242,16 @@ public class TemplateService {
 		return model;
 	}
 
-	public List<Model> filterModel(Long orgId) {
-		return repoSer.createModelQuery().modelTenantId(String.valueOf(orgId))
-				.list();
+	protected ModelQuery prepareModelQueryForOrg(Long orgId) {
+		return repoSer.createModelQuery().modelTenantId(String.valueOf(orgId));
+	}
+
+	public List<Model> filterModel(Long orgId, int first, int max) {
+		return prepareModelQueryForOrg(orgId).listPage(first, max);
+	}
+
+	public long countModel(Long orgId) {
+		return prepareModelQueryForOrg(orgId).count();
 	}
 
 	public List<Model> filterModelByDeploymentId(String deploymentId) {

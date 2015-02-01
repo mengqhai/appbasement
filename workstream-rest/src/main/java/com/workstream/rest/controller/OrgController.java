@@ -46,6 +46,7 @@ import com.workstream.rest.model.OrgResponse;
 import com.workstream.rest.model.ProcessResponse;
 import com.workstream.rest.model.ProjectRequest;
 import com.workstream.rest.model.ProjectResponse;
+import com.workstream.rest.model.SingleValueResponse;
 import com.workstream.rest.model.TemplateResponse;
 import com.workstream.rest.model.UserResponse;
 
@@ -184,11 +185,22 @@ public class OrgController {
 	@ApiOperation(value = "Get project list of in the given organization")
 	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/projects")
 	public List<ProjectResponse> getProjectsInOrg(
-			@PathVariable("orgId") Long orgId) {
-		Collection<Project> projects = core.filterProjectByOrgId(orgId);
+			@PathVariable("orgId") Long orgId,
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
+		Collection<Project> projects = core.filterProjectByOrgId(orgId, first,
+				max);
 		List<ProjectResponse> respList = InnerWrapperObj.valueOf(projects,
 				ProjectResponse.class);
 		return respList;
+	}
+
+	@ApiOperation(value = "Get project list of in the given organization")
+	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/projects/_count")
+	public SingleValueResponse countProjectsInOrg(
+			@PathVariable("orgId") Long orgId) {
+		Long count = core.countProjectByOrgId(orgId);
+		return new SingleValueResponse(count);
 	}
 
 	@ApiOperation(value = "Create a project in the organization")
@@ -202,12 +214,24 @@ public class OrgController {
 		return new ProjectResponse(proj);
 	}
 
-	@ApiOperation(value = "Get process template model list of in the given organization")
+	@ApiOperation(value = "Get process template model list in the given organization")
 	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/templatemodels")
-	public List<ModelResponse> getModelsInOrg(@PathVariable("orgId") Long orgId) {
-		core.getOrg(orgId); // check org existence
-		List<Model> models = core.getTemplateService().filterModel(orgId);
+	public List<ModelResponse> getModelsInOrg(
+			@PathVariable("orgId") Long orgId,
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
+		// core.getOrg(orgId); // check org existence
+		List<Model> models = core.getTemplateService().filterModel(orgId,
+				first, max);
 		return InnerWrapperObj.valueOf(models, ModelResponse.class);
+	}
+
+	@ApiOperation(value = "Count the process template models in the given organization")
+	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/templatemodels/_count")
+	public SingleValueResponse countModelsInOrg(
+			@PathVariable("orgId") Long orgId) {
+		long count = core.getTemplateService().countModel(orgId);
+		return new SingleValueResponse(count);
 	}
 
 	@ApiOperation(value = "Create an empty model in the organization", notes = "name field is required")
@@ -224,19 +248,43 @@ public class OrgController {
 	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/templates")
 	public List<TemplateResponse> getProcessTemplatesInOrg(
 			@PathVariable("orgId") Long orgId,
-			@RequestParam(required = false) boolean onlyLatest) {
-		core.getOrg(orgId); // check org existence
+			@RequestParam(required = false) boolean onlyLatest,
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
+		// core.getOrg(orgId); // check org existence
 		List<ProcessDefinition> pd = core.getTemplateService()
-				.filterProcessTemplate(orgId, onlyLatest);
+				.filterProcessTemplate(orgId, onlyLatest, first, max);
 		List<TemplateResponse> respList = InnerWrapperObj.valueOf(pd,
 				TemplateResponse.class);
 		return respList;
 	}
-	
+
+	@ApiOperation(value = "Count the process template count in the organization")
+	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/templates/_count")
+	public SingleValueResponse countProcessTemplatesInOrg(
+			@PathVariable("orgId") Long orgId,
+			@RequestParam(required = false) boolean onlyLatest) {
+		long count = core.getTemplateService().countProcessTemplate(orgId,
+				onlyLatest);
+		return new SingleValueResponse(count);
+	}
+
 	@ApiOperation(value = "Retrieve the running process list in the organization")
 	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/processes")
-	public List<ProcessResponse> getProcessesInOrg(@PathVariable("orgId") Long orgId) {
-		List<ProcessInstance> piList = core.getProcessService().filterProcess(orgId);
+	public List<ProcessResponse> getProcessesInOrg(
+			@PathVariable("orgId") Long orgId,
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
+		List<ProcessInstance> piList = core.getProcessService().filterProcess(
+				orgId, first, max);
 		return InnerWrapperObj.valueOf(piList, ProcessResponse.class);
+	}
+
+	@ApiOperation(value = "Count the running process in the organization")
+	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/processes/_count")
+	public SingleValueResponse countProcessesInOrg(
+			@PathVariable("orgId") Long orgId) {
+		long count = core.getProcessService().countProcess(orgId);
+		return new SingleValueResponse(count);
 	}
 }

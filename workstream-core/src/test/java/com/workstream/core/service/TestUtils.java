@@ -80,7 +80,8 @@ public class TestUtils {
 	}
 
 	public static void clearProcessForOrg(Long orgId, ProcessService pSer) {
-		List<ProcessInstance> piList = pSer.filterProcess(orgId);
+		List<ProcessInstance> piList = pSer.filterProcess(orgId, 0,
+				Integer.MAX_VALUE);
 		for (ProcessInstance pi : piList) {
 			pSer.removeProcess(pi.getId());
 			log.info("Deleted process instance: {} ", pi.getId());
@@ -94,7 +95,7 @@ public class TestUtils {
 	}
 
 	public static void clearModelForOrg(Long orgId, TemplateService tSer) {
-		List<Model> models = tSer.filterModel(orgId);
+		List<Model> models = tSer.filterModel(orgId, 0, Integer.MAX_VALUE);
 		for (Model model : models) {
 			tSer.removeModel(model.getId());
 			log.info("Deleted model: {} ", model.getId());

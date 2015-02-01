@@ -119,14 +119,14 @@ public class TemplateServiceTest {
 				.getId());
 		Assert.assertEquals(1, pdList.size());
 		List<ProcessDefinition> pdList1 = temSer.filterProcessTemplate(
-				org.getId(), false);
+				org.getId(), false, 0, 10);
 		Assert.assertEquals(1, pdList1.size());
 
 		// test delete
 		temSer.removeDeployment(deploy.getId());
 		deployList = temSer.filterDeployment(org.getId());
 		Assert.assertEquals(0, deployList.size());
-		pdList1 = temSer.filterProcessTemplate(org.getId(), false);
+		pdList1 = temSer.filterProcessTemplate(org.getId(), false, 0, 10);
 		Assert.assertEquals(0, pdList1.size());
 	}
 
@@ -138,7 +138,7 @@ public class TemplateServiceTest {
 		Assert.assertEquals(String.valueOf(org.getId()), created.getTenantId());
 		Assert.assertEquals("An empty model", created.getName());
 
-		List<Model> models = temSer.filterModel(org.getId());
+		List<Model> models = temSer.filterModel(org.getId(), 0, 10);
 		Assert.assertEquals(1, models.size());
 
 		// check revision
@@ -149,7 +149,7 @@ public class TemplateServiceTest {
 		Assert.assertEquals(Revision.TYPE_CREATE, rev.getAction());
 
 		temSer.removeModel(model.getId());
-		models = temSer.filterModel(org.getId());
+		models = temSer.filterModel(org.getId(), 0, 10);
 		Assert.assertEquals(0, models.size());
 
 		revisions = temSer.filterModelRevision(model.getId());

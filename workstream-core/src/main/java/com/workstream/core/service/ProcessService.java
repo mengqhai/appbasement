@@ -24,6 +24,7 @@ import org.activiti.engine.history.HistoricTaskInstanceQuery;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
 import org.slf4j.Logger;
@@ -129,9 +130,17 @@ public class ProcessService extends TaskCapable {
 		}
 	}
 
-	public List<ProcessInstance> filterProcess(Long orgId) {
-		return ruSer.createProcessInstanceQuery()
-				.processInstanceTenantId(String.valueOf(orgId)).list();
+	protected ProcessInstanceQuery prepareProcessInstanceQueryForOrg(Long orgId) {
+		return ruSer.createProcessInstanceQuery().processInstanceId(
+				String.valueOf(orgId));
+	}
+
+	public List<ProcessInstance> filterProcess(Long orgId, int first, int max) {
+		return prepareProcessInstanceQueryForOrg(orgId).listPage(first, max);
+	}
+
+	public long countProcess(Long orgId) {
+		return prepareProcessInstanceQueryForOrg(orgId).count();
 	}
 
 	public List<ProcessInstance> filterProcessByTemplateId(String templateId) {
