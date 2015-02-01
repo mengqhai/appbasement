@@ -72,9 +72,9 @@ public class OrgController {
 			+ " identifier which is globally unique.  It's the name of the organization by default, but if are existing ones in the system, suffix will"
 			+ " be appended to guarantee its uniqueness.")
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public OrgResponse createOrg(@RequestBody @Validated({ Default.class,
-			ValidateOnCreate.class }) OrgRequest orgReq, BindingResult bResult)
-			throws AuthenticationNotSetException {
+	public OrgResponse createOrg(@RequestBody(required = true) @Validated({
+			Default.class, ValidateOnCreate.class }) OrgRequest orgReq,
+			BindingResult bResult) throws AuthenticationNotSetException {
 		if (bResult.hasErrors()) {
 			throw new BeanValidationException(bResult);
 		}

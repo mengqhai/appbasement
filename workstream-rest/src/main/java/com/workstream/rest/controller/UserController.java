@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.groups.Default;
 
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
@@ -19,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +45,7 @@ import com.workstream.core.model.Subscription;
 import com.workstream.core.persistence.binary.BinaryPicture;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.RestConstants;
+import com.workstream.rest.exception.BeanValidationException;
 import com.workstream.rest.exception.NotAuthorizedException;
 import com.workstream.rest.model.GroupResponse;
 import com.workstream.rest.model.InnerWrapperObj;
@@ -49,6 +53,7 @@ import com.workstream.rest.model.SingleValueResponse;
 import com.workstream.rest.model.SubscriptionResponse;
 import com.workstream.rest.model.UserRequest;
 import com.workstream.rest.model.UserResponse;
+import com.workstream.rest.validation.ValidateOnCreate;
 
 @Api(value = "users", description = "User related operations", position = 2)
 @RestController
@@ -71,8 +76,14 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public UserResponse createUser(
-			@ApiParam(required = true) @RequestBody UserRequest uReq,
-			@RequestParam String captcha, @ApiIgnore HttpSession session) {
+			@ApiParam(required = true) @RequestBody @Validated({ Default.class,
+					ValidateOnCreate.class }) UserRequest uReq,
+			@RequestParam(required = true) String captcha,
+			@ApiIgnore HttpSession session, BindingResult bResult) {
+		if (bResult.hasErrors()) {
+			throw new BeanValidationException(bResult);
+		}
+
 		if (captcha == null || captcha.equals("")) {
 			throw new BadArgumentException("No captcha");
 		}
@@ -100,9 +111,14 @@ public class UserController {
 			+ "</ul>"
 			+ "Note: id is not not updatable and will be ignored")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
-	public void updateUser(@PathVariable("id") String userIdBase64,
-			@ApiParam(required = true) @RequestBody UserRequest uReq)
-			throws ResourceNotFoundException {
+	public void updateUser(
+			@PathVariable("id") String userIdBase64,
+			@ApiParam(required = true) @RequestBody(required = true) UserRequest uReq,
+			BindingResult bResult) throws ResourceNotFoundException {
+		if (bResult.hasErrors()) {
+			throw new BeanValidationException(bResult);
+		}
+
 		String userId = decodeUserId(userIdBase64);
 		if (!userId.equals(core.getAuthUserId())) {
 			throw new NotAuthorizedException(
