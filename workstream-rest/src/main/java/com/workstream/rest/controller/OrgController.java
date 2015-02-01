@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.groups.Default;
+
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.repository.Model;
@@ -52,6 +54,7 @@ import com.workstream.rest.model.ProjectResponse;
 import com.workstream.rest.model.SingleValueResponse;
 import com.workstream.rest.model.TemplateResponse;
 import com.workstream.rest.model.UserResponse;
+import com.workstream.rest.validation.ValidateOnCreate;
 
 @Api(value = "orgs", description = "Organization related operations")
 @RestController
@@ -69,8 +72,9 @@ public class OrgController {
 			+ " identifier which is globally unique.  It's the name of the organization by default, but if are existing ones in the system, suffix will"
 			+ " be appended to guarantee its uniqueness.")
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public OrgResponse createOrg(@RequestBody @Validated OrgRequest orgReq,
-			BindingResult bResult) throws AuthenticationNotSetException {
+	public OrgResponse createOrg(@RequestBody @Validated({ Default.class,
+			ValidateOnCreate.class }) OrgRequest orgReq, BindingResult bResult)
+			throws AuthenticationNotSetException {
 		if (bResult.hasErrors()) {
 			throw new BeanValidationException(bResult);
 		}
@@ -121,8 +125,9 @@ public class OrgController {
 			+ " the identifier, system automatically guarantees its uniqueness.")
 	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.PATCH)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void updateOrg(@PathVariable("id") Long orgId,
-			@ApiParam(required = true) @RequestBody OrgRequest orgReq) {
+	public void updateOrg(
+			@PathVariable("id") Long orgId,
+			@ApiParam(required = true) @RequestBody @Validated({ Default.class }) OrgRequest orgReq) {
 		Map<String, Object> props = orgReq.getPropMap();
 		if (props.isEmpty()) {
 			return;
