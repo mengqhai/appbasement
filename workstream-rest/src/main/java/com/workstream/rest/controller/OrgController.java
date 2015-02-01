@@ -153,6 +153,13 @@ public class OrgController {
 		return respList;
 	}
 
+	@ApiOperation(value = "Count all the users in the given organization")
+	@RequestMapping(method = RequestMethod.GET, value = "/{id:\\d+}/users/_count")
+	public SingleValueResponse countUsersInOrg(@PathVariable("id") Long orgId) {
+		long count = core.countUserByOrgId(orgId);
+		return new SingleValueResponse(count);
+	}
+
 	@ApiOperation(value = "Request to join an organization", notes = "A approval task will be created for the admin group of the target org")
 	@RequestMapping(method = RequestMethod.PUT, value = "/{id:\\d+}/users")
 	public void requestUserJoinOrg(@PathVariable("id") Long orgId)

@@ -159,6 +159,10 @@ public class CoreEventService {
 		return subDao.filterSubscriptionByUser(userId);
 	}
 
+	public Long countSubscriptionByUser(String userId) {
+		return subDao.countSubscriptionByUser(userId);
+	}
+
 	public Collection<Notification> filterNotificationByUser(String userId,
 			boolean onlyUnread, int first, int max) {
 		return notDao

@@ -29,6 +29,7 @@ import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.model.GroupRequest;
 import com.workstream.rest.model.GroupResponse;
 import com.workstream.rest.model.InnerWrapperObj;
+import com.workstream.rest.model.SingleValueResponse;
 import com.workstream.rest.model.TaskResponse;
 import com.workstream.rest.model.UserResponse;
 import com.workstream.rest.utils.RestUtils;
@@ -58,6 +59,14 @@ public class GroupController {
 			@PathVariable("groupId") String groupId) {
 		List<User> users = core.getUserService().filterUserByGroupId(groupId);
 		return InnerWrapperObj.valueOf(users, UserResponse.class);
+	}
+
+	@ApiOperation(value = "Count user for a given group")
+	@RequestMapping(value = "/{groupId}/users/_count", method = RequestMethod.GET)
+	public SingleValueResponse countGroupUsers(
+			@PathVariable("groupId") String groupId) {
+		long count = core.getUserService().countUserByGroupId(groupId);
+		return new SingleValueResponse(count);
 	}
 
 	@ApiOperation(value = "Partially update a group", notes = "Doesn't care whether the proper is in Group or GroupX")
@@ -129,6 +138,16 @@ public class GroupController {
 		List<Task> tasks = core.getProcessService().filterTaskByCandidateGroup(
 				groupId);
 		return InnerWrapperObj.valueOf(tasks, TaskResponse.class);
+	}
+
+	@ApiOperation(value = "Count candidate tasks for the group", notes = "In other words, get the task(unassigned/claimed) list whose candidate group is "
+			+ "the speicified one.")
+	@RequestMapping(value = "/{groupId}/candidateTasks/_count", method = RequestMethod.GET)
+	public SingleValueResponse countTasksForGroup(
+			@PathVariable("groupId") String groupId) {
+		long count = core.getProcessService()
+				.countTaskByCandidateGroup(groupId);
+		return new SingleValueResponse(count);
 	}
 
 }

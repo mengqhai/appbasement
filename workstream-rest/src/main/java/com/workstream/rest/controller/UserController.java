@@ -45,6 +45,7 @@ import com.workstream.rest.RestConstants;
 import com.workstream.rest.exception.NotAuthorizedException;
 import com.workstream.rest.model.GroupResponse;
 import com.workstream.rest.model.InnerWrapperObj;
+import com.workstream.rest.model.SingleValueResponse;
 import com.workstream.rest.model.SubscriptionResponse;
 import com.workstream.rest.model.UserRequest;
 import com.workstream.rest.model.UserResponse;
@@ -147,6 +148,15 @@ public class UserController {
 		return respList;
 	}
 
+	@ApiOperation(value = "Count groups for a given user", notes = TEST_USER_ID_INFO)
+	@RequestMapping(method = RequestMethod.GET, value = "/{id}/groups/_count")
+	public SingleValueResponse countUserGroups(
+			@PathVariable("id") String userIdBase64) {
+		String userId = decodeUserId(userIdBase64);
+		long count = core.getUserService().countGroupByUser(userId);
+		return new SingleValueResponse(count);
+	}
+
 	@ApiOperation(value = "Upload the picture for the current user.", notes = "The user id must be the current users."
 			+ TEST_USER_ID_INFO)
 	@RequestMapping(value = "/{id}/picture", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -234,6 +244,16 @@ public class UserController {
 		Collection<Subscription> subs = core.getEventService()
 				.filterSubscriptionByUser(userId);
 		return InnerWrapperObj.valueOf(subs, SubscriptionResponse.class);
+	}
+
+	@ApiOperation(value = "Count subscription for the a user.", notes = TEST_USER_ID_INFO)
+	@RequestMapping(value = "/{id}/subscriptions/_count", method = RequestMethod.GET)
+	public SingleValueResponse countUserSubscriptions(
+			@PathVariable("id") String userIdBase64)
+			throws BadArgumentException {
+		String userId = decodeUserId(userIdBase64);
+		long count = core.getEventService().countSubscriptionByUser(userId);
+		return new SingleValueResponse(count);
 	}
 
 }

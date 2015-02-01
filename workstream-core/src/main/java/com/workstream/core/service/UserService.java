@@ -172,9 +172,19 @@ public class UserService {
 		return nq.list();
 	}
 
+	public long countUserX(Organization org) {
+		Collection<UserX> userXes = filterUserX(org);
+		return userXes.size();
+	}
+
 	public List<User> filterUserByGroupId(String groupId) {
 		UserQuery q = idService.createUserQuery();
 		return q.memberOfGroup(groupId).list();
+	}
+
+	public long countUserByGroupId(String groupId) {
+		UserQuery q = idService.createUserQuery();
+		return q.memberOfGroup(groupId).count();
 	}
 
 	public List<User> filterUser(Group group) {
@@ -299,6 +309,10 @@ public class UserService {
 
 	public List<Group> filterGroupByUser(String userId) {
 		return idService.createGroupQuery().groupMember(userId).list();
+	}
+
+	public long countGroupByUser(String userId) {
+		return idService.createGroupQuery().groupMember(userId).count();
 	}
 
 	public boolean isUserInGroup(String userId, String groupId) {
