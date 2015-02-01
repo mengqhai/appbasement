@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,6 +31,7 @@ import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.ProcessResponse;
+import com.workstream.rest.model.SingleValueResponse;
 import com.workstream.rest.model.StartFormDataResponse;
 import com.workstream.rest.model.TemplateResponse;
 import com.workstream.rest.utils.RestUtils;
@@ -117,10 +119,21 @@ public class TemplateController {
 	@ApiOperation(value = "Retrieve the running process list of the process template")
 	@RequestMapping(method = RequestMethod.GET, value = "/{templateId}/processes")
 	public List<ProcessResponse> getProcessesForTemplate(
-			@PathVariable("templateId") String templateId) {
+			@PathVariable("templateId") String templateId,
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
 		List<ProcessInstance> piList = core.getProcessService()
-				.filterProcessByTemplateId(templateId);
+				.filterProcessByTemplateId(templateId, first, max);
 		return InnerWrapperObj.valueOf(piList, ProcessResponse.class);
+	}
+
+	@ApiOperation(value = "Count the running process of the process template")
+	@RequestMapping(method = RequestMethod.GET, value = "/{templateId}/processes/_count")
+	public SingleValueResponse countProcessesForTemplate(
+			@PathVariable("templateId") String templateId) {
+		long count = core.getProcessService().countProcessByTemplateId(
+				templateId);
+		return new SingleValueResponse(count);
 	}
 
 	@ApiOperation(value = "Retrieve the start form data for a template")

@@ -143,10 +143,21 @@ public class ProcessService extends TaskCapable {
 		return prepareProcessInstanceQueryForOrg(orgId).count();
 	}
 
-	public List<ProcessInstance> filterProcessByTemplateId(String templateId) {
+	protected ProcessInstanceQuery prepareProcessInstanceQueryForTemplate(
+			String templateId) {
 		return ruSer.createProcessInstanceQuery()
 				.processDefinitionId(templateId).orderByProcessInstanceId()
-				.desc().list();
+				.desc();
+	}
+
+	public List<ProcessInstance> filterProcessByTemplateId(String templateId,
+			int first, int max) {
+		return prepareProcessInstanceQueryForTemplate(templateId).listPage(
+				first, max);
+	}
+
+	public long countProcessByTemplateId(String templateId) {
+		return prepareProcessInstanceQueryForTemplate(templateId).count();
 	}
 
 	public ProcessInstance getProcess(String id) {
