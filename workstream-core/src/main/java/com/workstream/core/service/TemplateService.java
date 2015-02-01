@@ -3,9 +3,7 @@ package com.workstream.core.service;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
@@ -134,7 +132,7 @@ public class TemplateService {
 			q.latestVersion(); // it's OK to combine with the
 								// processDefinitionTenantId()
 		}
-		return q.orderByProcessDefinitionId().asc();
+		return q.orderByProcessDefinitionId().desc();
 	}
 
 	public List<ProcessDefinition> filterProcessTemplate(Long orgId,
@@ -176,26 +174,45 @@ public class TemplateService {
 	 * @return
 	 */
 	public List<ProcessDefinition> filterProcessTemplateByModelId(
+			String modelId, boolean onlyLatest, int first, int max) {
+		// List<Deployment> deployments = filterDeploymentByModelId(modelId);
+		// // the deployments' category id field is set to be the its model id
+		// // method deployModel()
+		// if (onlyLatest) {
+		// if (!deployments.isEmpty()) {
+		// Deployment lastDeployment = deployments.get(0);
+		// return filterProcessTemplate(lastDeployment.getId());
+		// } else {
+		// return Collections.emptyList();
+		// }
+		// } else {
+		// List<ProcessDefinition> result = new ArrayList<ProcessDefinition>();
+		// for (Deployment deploy : deployments) {
+		// List<ProcessDefinition> defList = this
+		// .filterProcessTemplate(deploy.getId());
+		// result.addAll(defList);
+		// }
+		// return result;
+		// }
+		ProcessDefinitionQuery q = prepareProcessDefinitionQueryForModel(
+				modelId, onlyLatest);
+		return q.listPage(first, max);
+	}
+
+	protected ProcessDefinitionQuery prepareProcessDefinitionQueryForModel(
 			String modelId, boolean onlyLatest) {
-		List<Deployment> deployments = filterDeploymentByModelId(modelId);
-		// the deployments' category id field is set to be the its model id
-		// method deployModel()
+		ProcessDefinitionQuery q = repoSer.createProcessDefinitionQuery();
+		q.processDefinitionKey("model_" + modelId);
 		if (onlyLatest) {
-			if (!deployments.isEmpty()) {
-				Deployment lastDeployment = deployments.get(0);
-				return filterProcessTemplate(lastDeployment.getId());
-			} else {
-				return Collections.emptyList();
-			}
-		} else {
-			List<ProcessDefinition> result = new ArrayList<ProcessDefinition>();
-			for (Deployment deploy : deployments) {
-				List<ProcessDefinition> defList = this
-						.filterProcessTemplate(deploy.getId());
-				result.addAll(defList);
-			}
-			return result;
+			q.latestVersion();
 		}
+		q.orderByProcessDefinitionId().desc();
+		return q;
+	}
+
+	public long countProcessTemplateByModelId(String modelId, boolean onlyLatest) {
+		return prepareProcessDefinitionQueryForModel(modelId, onlyLatest)
+				.count();
 	}
 
 	/**

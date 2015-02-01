@@ -30,6 +30,7 @@ import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.ModelResponse;
 import com.workstream.rest.model.ModelWorkflowDefRequest;
 import com.workstream.rest.model.RevisionResponse;
+import com.workstream.rest.model.SingleValueResponse;
 import com.workstream.rest.model.TemplateResponse;
 
 @Api(value = "template models", description = "Process template model related operations")
@@ -62,14 +63,27 @@ public class TemplateModelController {
 	@RequestMapping(value = "/{id}/templates", method = RequestMethod.GET)
 	public List<TemplateResponse> getDeployedTemplatesByModel(
 			@PathVariable("id") String modelId,
-			@RequestParam(required = false) boolean onlyLatest) {
+			@RequestParam(required = false) boolean onlyLatest,
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
 		// Model model = core.getTemplateService().getModel(modelId);
 		// if (model == null) {
 		// throw new ResourceNotFoundException("No such model");
 		// }
-		List<ProcessDefinition> pdList = core.getTemplateService()
-				.filterProcessTemplateByModelId(modelId, onlyLatest);
+		List<ProcessDefinition> pdList = core
+				.getTemplateService()
+				.filterProcessTemplateByModelId(modelId, onlyLatest, first, max);
 		return InnerWrapperObj.valueOf(pdList, TemplateResponse.class);
+	}
+
+	@ApiOperation("Retrieve the deployed process template list of a model")
+	@RequestMapping(value = "/{id}/templates/_count", method = RequestMethod.GET)
+	public SingleValueResponse countDeployedTemplatesByModel(
+			@PathVariable("id") String modelId,
+			@RequestParam(required = false) boolean onlyLatest) {
+		long count = core.getTemplateService().countProcessTemplateByModelId(
+				modelId, onlyLatest);
+		return new SingleValueResponse(count);
 	}
 
 	@ApiOperation("Deploy a process template model")
