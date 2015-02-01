@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +38,7 @@ import com.workstream.core.model.Organization;
 import com.workstream.core.model.Project;
 import com.workstream.core.model.UserX;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.rest.exception.BeanValidationException;
 import com.workstream.rest.model.GroupRequest;
 import com.workstream.rest.model.GroupResponse;
 import com.workstream.rest.model.InnerWrapperObj;
@@ -66,8 +69,12 @@ public class OrgController {
 			+ " identifier which is globally unique.  It's the name of the organization by default, but if are existing ones in the system, suffix will"
 			+ " be appended to guarantee its uniqueness.")
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public OrgResponse createOrg(@RequestBody OrgRequest orgReq)
-			throws AuthenticationNotSetException {
+	public OrgResponse createOrg(@RequestBody @Validated OrgRequest orgReq,
+			BindingResult bResult) throws AuthenticationNotSetException {
+		if (bResult.hasErrors()) {
+			throw new BeanValidationException(bResult);
+		}
+
 		String identifier = orgReq.getIdentifier();
 		String name = orgReq.getName();
 		if (identifier == null || identifier.equals("")) {

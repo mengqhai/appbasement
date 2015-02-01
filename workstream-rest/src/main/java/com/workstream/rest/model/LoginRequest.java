@@ -1,5 +1,8 @@
 package com.workstream.rest.model;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -15,6 +18,8 @@ public class LoginRequest {
 	public LoginRequest() {
 	}
 
+	@NotNull
+	@Size(min = 1)
 	public String getUserId() {
 		return userId;
 	}
@@ -23,6 +28,8 @@ public class LoginRequest {
 		this.userId = userId;
 	}
 
+	@NotNull
+	@Size(min = 1)
 	public String getPassword() {
 		return password;
 	}

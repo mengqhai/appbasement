@@ -15,6 +15,8 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.util.DigestUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,6 +29,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.service.UserService;
 import com.workstream.rest.RestConstants;
+import com.workstream.rest.exception.BeanValidationException;
 import com.workstream.rest.model.LoginRequest;
 import com.workstream.rest.model.LoginResponse;
 import com.workstream.rest.model.SingleValueResponse;
@@ -71,9 +74,13 @@ public class RestLoginController {
 			+ "\"userId\": \"mqhnow1@sina.com\"<br/>" + "}</b>")
 	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public LoginResponse login(
-			@ApiParam(required = true) @RequestBody LoginRequest req,
+			@ApiParam(required = true) @RequestBody @Validated LoginRequest req,
 			@ApiIgnore HttpServletResponse httpResponse,
-			@ApiIgnore HttpServletRequest httpRequest) {
+			@ApiIgnore HttpServletRequest httpRequest, BindingResult bResult) {
+		if (bResult.hasErrors()) {
+			throw new BeanValidationException(bResult);
+		}
+
 		String username = req.getUserId();
 		String password = req.getPassword();
 		LoginResponse result = new LoginResponse();

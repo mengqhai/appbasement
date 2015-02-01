@@ -73,4 +73,14 @@ public class ErrorHandlerAdvice {
 		return r;
 	}
 
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(BeanValidationException.class)
+	@ResponseBody
+	public RestErrorResponse handleBeanValidationException(
+			BeanValidationException e) {
+		RestErrorResponse r = new RestErrorResponse(400,
+				e.getBindingErrorMessage());
+		return r;
+	}
+
 }
