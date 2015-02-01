@@ -75,8 +75,8 @@ public class RestLoginController {
 	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public LoginResponse login(
 			@ApiParam(required = true) @RequestBody @Validated LoginRequest req,
-			@ApiIgnore HttpServletResponse httpResponse,
-			@ApiIgnore HttpServletRequest httpRequest, BindingResult bResult) {
+			BindingResult bResult, @ApiIgnore HttpServletResponse httpResponse,
+			@ApiIgnore HttpServletRequest httpRequest) {
 		if (bResult.hasErrors()) {
 			throw new BeanValidationException(bResult);
 		}

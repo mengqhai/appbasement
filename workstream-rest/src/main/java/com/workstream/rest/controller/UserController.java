@@ -78,8 +78,9 @@ public class UserController {
 	public UserResponse createUser(
 			@ApiParam(required = true) @RequestBody @Validated({ Default.class,
 					ValidateOnCreate.class }) UserRequest uReq,
+			BindingResult bResult,
 			@RequestParam(required = true) String captcha,
-			@ApiIgnore HttpSession session, BindingResult bResult) {
+			@ApiIgnore HttpSession session) {
 		if (bResult.hasErrors()) {
 			throw new BeanValidationException(bResult);
 		}
