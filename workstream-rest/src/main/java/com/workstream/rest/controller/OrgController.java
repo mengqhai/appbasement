@@ -226,7 +226,13 @@ public class OrgController {
 	@RequestMapping(method = RequestMethod.POST, value = "/{orgId:\\d+}/projects", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ProjectResponse createProjectInOrg(
 			@PathVariable("orgId") Long orgId,
-			@ApiParam(required = true) @RequestBody ProjectRequest projectReq) {
+			@ApiParam(required = true) @RequestBody @Validated({ Default.class,
+					ValidateOnCreate.class }) ProjectRequest projectReq,
+			BindingResult bResult) {
+		if (bResult.hasErrors()) {
+			throw new BeanValidationException(bResult);
+		}
+
 		Project proj = core.createProjectInOrg(orgId, projectReq.getName(),
 				projectReq.getStartTime(), projectReq.getDueTime(),
 				projectReq.getDescription());

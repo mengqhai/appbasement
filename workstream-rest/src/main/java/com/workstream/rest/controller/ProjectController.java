@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,11 +21,13 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.AttempBadStateException;
+import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Project;
 import com.workstream.core.model.Subscription;
 import com.workstream.core.model.CoreEvent.TargetType;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.rest.exception.BeanValidationException;
 import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.ProjectRequest;
 import com.workstream.rest.model.ProjectResponse;
@@ -56,7 +60,16 @@ public class ProjectController {
 	@ApiOperation(value = "Partially update a project")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
 	public void updateProject(@PathVariable("id") Long projectId,
-			@RequestBody ProjectRequest projectReq) {
+			@RequestBody @Validated ProjectRequest projectReq,
+			BindingResult bResult) {
+		if (bResult.hasErrors()) {
+			throw new BeanValidationException(bResult);
+		}
+
+		if (projectReq.isRemovingName()) {
+			throw new BadArgumentException("Name can't be null");
+		}
+
 		core.getProjectService().updateProject(projectId,
 				projectReq.getPropMap());
 	}

@@ -2,8 +2,13 @@ package com.workstream.rest.model;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
+import com.workstream.rest.RestConstants;
+import com.workstream.rest.validation.ValidateOnCreate;
 
 @ApiModel
 public class ProjectRequest extends MapPropObj {
@@ -16,6 +21,8 @@ public class ProjectRequest extends MapPropObj {
 		props.put(NAME, name);
 	}
 
+	@NotNull(groups = ValidateOnCreate.class)
+	@Size(min = 1, max = RestConstants.VALID_NAME_SIZE)
 	public String getName() {
 		return getProp(NAME);
 	}
@@ -24,6 +31,7 @@ public class ProjectRequest extends MapPropObj {
 		props.put(DESCRIPTION, description);
 	}
 
+	@Size(min = 1, max = RestConstants.VALID_NAME_SIZE)
 	public String getDescription() {
 		return getProp(DESCRIPTION);
 	}
@@ -42,6 +50,11 @@ public class ProjectRequest extends MapPropObj {
 
 	public Date getDueTime() {
 		return getProp(DUE_TIME);
+	}
+
+	public boolean isRemovingName() {
+		return (getName() == null && getPropMap().containsKey(
+				ProjectRequest.NAME));
 	}
 
 }
