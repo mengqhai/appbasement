@@ -292,6 +292,14 @@ public class TaskController {
 	@RequestMapping(value = "/{id:\\d+}/comments", method = RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE)
 	public CommentResponse addTaskComment(@PathVariable("id") String taskId,
 			@RequestBody(required = true) String message) {
+		if (message == null || message.isEmpty()) {
+			throw new BadArgumentException("Message can be empty");
+		}
+		if (message.length() > RestConstants.VALID_COMMENT_MAX_SIZE) {
+			throw new BadArgumentException(
+					"Message length must smaller then 4000");
+		}
+
 		Comment comment = core.getProjectService().addTaskComment(taskId,
 				message);
 		return new CommentResponse(comment);

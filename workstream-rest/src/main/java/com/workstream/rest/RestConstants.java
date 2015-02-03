@@ -17,4 +17,5 @@ public class RestConstants {
 	public static final int VALID_DESCRIPTION_SIZE = 500;
 	public static final int VALID_PASSWORD_MIN_SIZE = 3;
 	public static final int VALID_PASSWORD_MAX_SIZE = 255;
+	public static final int VALID_COMMENT_MAX_SIZE = 4000;
 }
