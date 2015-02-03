@@ -3,6 +3,8 @@ package com.workstream.rest.controller;
 import java.util.Collection;
 import java.util.List;
 
+import javax.validation.groups.Default;
+
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
@@ -11,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,12 +30,15 @@ import com.workstream.core.exception.BytesNotFoundException;
 import com.workstream.core.exception.DataBadStateException;
 import com.workstream.core.model.Revision;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.rest.exception.BeanValidationException;
 import com.workstream.rest.model.InnerWrapperObj;
+import com.workstream.rest.model.ModelRequest;
 import com.workstream.rest.model.ModelResponse;
 import com.workstream.rest.model.ModelWorkflowDefRequest;
 import com.workstream.rest.model.RevisionResponse;
 import com.workstream.rest.model.SingleValueResponse;
 import com.workstream.rest.model.TemplateResponse;
+import com.workstream.rest.validation.ValidateOnUpdate;
 
 @Api(value = "template models", description = "Process template model related operations")
 @RestController
@@ -142,6 +149,20 @@ public class TemplateModelController {
 		core.getTemplateService().updateModel(modelId, def,
 				workflow.getComment());
 		log.info("Model workflow updated by {}", userId);
+	}
+
+	@ApiOperation(value = "Update a template model")
+	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
+	public void updateModel(@PathVariable("id") String modelId,
+			@ApiParam(required = true) @RequestBody @Validated({ Default.class,
+					ValidateOnUpdate.class }) ModelRequest modelReq,
+			BindingResult bResult) {
+
+		if (bResult.hasErrors()) {
+			throw new BeanValidationException(bResult);
+		}
+
+		core.getTemplateService().updateModel(modelId, modelReq.getPropMap());
 	}
 
 	@ApiOperation("Get the workflow definition of a process template model")

@@ -272,7 +272,13 @@ public class OrgController {
 	@ApiOperation(value = "Create an empty model in the organization", notes = "name field is required")
 	@RequestMapping(method = RequestMethod.POST, value = "/{orgId:\\d+}/templatemodels")
 	public ModelResponse createModelInOrg(@PathVariable("orgId") Long orgId,
-			@ApiParam(required = true) @RequestBody ModelRequest modelReq) {
+			@ApiParam(required = true) @RequestBody @Validated({ Default.class,
+					ValidateOnCreate.class }) ModelRequest modelReq,
+			BindingResult bResult) {
+		if (bResult.hasErrors()) {
+			throw new BeanValidationException(bResult);
+		}
+
 		core.getOrg(orgId); // check org existence
 		Model model = core.getTemplateService().createModel(orgId,
 				modelReq.getName());
