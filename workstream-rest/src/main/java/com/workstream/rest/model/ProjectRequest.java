@@ -2,6 +2,7 @@ package com.workstream.rest.model;
 
 import java.util.Date;
 
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -31,7 +32,7 @@ public class ProjectRequest extends MapPropObj {
 		props.put(DESCRIPTION, description);
 	}
 
-	@Size(min = 1, max = RestConstants.VALID_NAME_SIZE)
+	@Size(min = 1, max = RestConstants.VALID_DESCRIPTION_SIZE)
 	public String getDescription() {
 		return getProp(DESCRIPTION);
 	}
@@ -48,6 +49,7 @@ public class ProjectRequest extends MapPropObj {
 		props.put(DUE_TIME, dueTime);
 	}
 
+	@Future(groups = ValidateOnCreate.class)
 	public Date getDueTime() {
 		return getProp(DUE_TIME);
 	}

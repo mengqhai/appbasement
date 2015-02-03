@@ -149,7 +149,12 @@ public class OrgController {
 	@ApiOperation(value = "Create a group in the given organization", notes = "Name field is required")
 	@RequestMapping(method = RequestMethod.POST, value = "/{id:\\d+}/groups")
 	public GroupResponse createGroupInOrg(@PathVariable("id") Long orgId,
-			@ApiParam(required = true) @RequestBody GroupRequest groupReq) {
+			@ApiParam(required = true) @RequestBody @Validated({ Default.class,
+					ValidateOnCreate.class }) GroupRequest groupReq,
+			BindingResult bResult) {
+		if (bResult.hasErrors()) {
+			throw new BeanValidationException(bResult);
+		}
 		Group group = core.createGroupInOrg(orgId, groupReq.getName(),
 				groupReq.getDescription());
 		GroupResponse resp = new GroupResponse(group);

@@ -1,18 +1,27 @@
 package com.workstream.rest.model;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mangofactory.swagger.annotations.ApiIgnore;
+import com.workstream.rest.RestConstants;
+import com.workstream.rest.validation.NotRemovable;
+import com.workstream.rest.validation.ValidateOnCreate;
 
+@NotRemovable({ MapPropObj.NAME })
 public class GroupRequest extends MapPropObj {
 
 	private boolean groupPropSet;
 	private boolean groupXPropSet;
 
-	public void setName(String name) {
+	public void setName(@NotNull String name) {
 		props.put(NAME, name);
 		groupPropSet = true;
 	}
 
+	@NotNull(groups = ValidateOnCreate.class)
+	@Size(min = 1, max = RestConstants.VALID_NAME_SIZE)
 	public String getName() {
 		return getProp(NAME);
 	}
@@ -22,6 +31,7 @@ public class GroupRequest extends MapPropObj {
 		groupXPropSet = true;
 	}
 
+	@Size(min = 1, max = RestConstants.VALID_DESCRIPTION_SIZE)
 	public String getDescription() {
 		return getProp(DESCRIPTION);
 	}
@@ -36,6 +46,11 @@ public class GroupRequest extends MapPropObj {
 	@JsonIgnore
 	public boolean isGroupXPropSet() {
 		return groupXPropSet;
+	}
+
+	public boolean isRemovingName() {
+		return (getName() == null && getPropMap().containsKey(
+				ProjectRequest.NAME));
 	}
 
 }

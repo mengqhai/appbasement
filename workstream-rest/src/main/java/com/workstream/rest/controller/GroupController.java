@@ -11,6 +11,8 @@ import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,7 @@ import com.workstream.core.exception.DataBadStateException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.GroupX;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.rest.exception.BeanValidationException;
 import com.workstream.rest.model.GroupRequest;
 import com.workstream.rest.model.GroupResponse;
 import com.workstream.rest.model.InnerWrapperObj;
@@ -71,8 +74,15 @@ public class GroupController {
 
 	@ApiOperation(value = "Partially update a group", notes = "Doesn't care whether the proper is in Group or GroupX")
 	@RequestMapping(value = "/{groupId}", method = RequestMethod.PATCH)
-	public void updateGroup(@PathVariable("groupId") String groupId,
-			@ApiParam(required = true) @RequestBody GroupRequest groupReq) {
+	public void updateGroup(
+			@PathVariable("groupId") String groupId,
+			@ApiParam(required = true) @RequestBody @Validated GroupRequest groupReq,
+			BindingResult bResult) {
+		if (bResult.hasErrors()) {
+			throw new BeanValidationException(bResult);
+		}
+		
+
 		Map<String, Object> props = groupReq.getPropMap();
 		if (props.isEmpty()) {
 			return;
