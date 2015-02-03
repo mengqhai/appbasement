@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.groups.Default;
+
 import org.activiti.engine.form.TaskFormData;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.task.Attachment;
@@ -19,6 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +45,7 @@ import com.workstream.core.model.Subscription;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.core.service.TaskCapable.UserTaskRole;
 import com.workstream.rest.RestConstants;
+import com.workstream.rest.exception.BeanValidationException;
 import com.workstream.rest.model.AttachmentResponse;
 import com.workstream.rest.model.CommentResponse;
 import com.workstream.rest.model.EventResponse;
@@ -51,6 +56,8 @@ import com.workstream.rest.model.TaskFormDataResponse;
 import com.workstream.rest.model.TaskRequest;
 import com.workstream.rest.model.TaskResponse;
 import com.workstream.rest.utils.RestUtils;
+import com.workstream.rest.validation.ValidateOnCreate;
+import com.workstream.rest.validation.ValidateOnUpdate;
 
 @Api(value = "tasks", description = "Task related operations")
 @RestController
@@ -198,7 +205,13 @@ public class TaskController {
 	@ApiOperation(value = "Create a task for a given task")
 	@RequestMapping(value = "/{id:\\d+}/tasks", method = RequestMethod.POST)
 	public TaskResponse createSubTask(@PathVariable("id") String taskId,
-			@RequestBody(required = true) TaskRequest taskReq) {
+			@RequestBody(required = true) @Validated({ Default.class,
+					ValidateOnCreate.class }) TaskRequest taskReq,
+			BindingResult bResult) {
+		if (bResult.hasErrors()) {
+			throw new BeanValidationException(bResult);
+		}
+
 		Task task = core.createSubTask(taskId, taskReq.getName(),
 				taskReq.getDescription(), taskReq.getDueDate(),
 				taskReq.getAssignee(), taskReq.getPriority());
@@ -239,7 +252,13 @@ public class TaskController {
 	@ApiOperation(value = "Partially update the task for id")
 	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void updateTask(@PathVariable("id") String taskId,
-			@ApiParam(required = true) @RequestBody TaskRequest taskReq) {
+			@ApiParam(required = true) @RequestBody @Validated({ Default.class,
+					ValidateOnUpdate.class }) TaskRequest taskReq,
+			BindingResult bResult) {
+		if (bResult.hasErrors()) {
+			throw new BeanValidationException(bResult);
+		}
+
 		core.updateTask(taskId, taskReq.getPropMap());
 		log.debug("Updated task {}", taskId);
 	}

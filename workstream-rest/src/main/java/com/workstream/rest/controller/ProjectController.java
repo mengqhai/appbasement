@@ -25,9 +25,9 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.ResourceNotFoundException;
+import com.workstream.core.model.CoreEvent.TargetType;
 import com.workstream.core.model.Project;
 import com.workstream.core.model.Subscription;
-import com.workstream.core.model.CoreEvent.TargetType;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.exception.BeanValidationException;
 import com.workstream.rest.model.InnerWrapperObj;
@@ -38,6 +38,7 @@ import com.workstream.rest.model.SubscriptionResponse;
 import com.workstream.rest.model.TaskRequest;
 import com.workstream.rest.model.TaskResponse;
 import com.workstream.rest.utils.RestUtils;
+import com.workstream.rest.validation.ValidateOnCreate;
 import com.workstream.rest.validation.ValidateOnUpdate;
 
 @Api(value = "projects", description = "Project related operations")
@@ -88,8 +89,15 @@ public class ProjectController {
 
 	@ApiOperation(value = "Create a task in the project")
 	@RequestMapping(value = "/{id}/tasks", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public TaskResponse createTaskInProject(@PathVariable("id") Long projectId,
-			@ApiParam(required = true) @RequestBody TaskRequest taskReq) {
+	public TaskResponse createTaskInProject(
+			@PathVariable("id") Long projectId,
+			@ApiParam(required = true) @RequestBody(required = true) @Validated({
+					Default.class, ValidateOnCreate.class }) TaskRequest taskReq,
+			BindingResult bResult) {
+		if (bResult.hasErrors()) {
+			throw new BeanValidationException(bResult);
+		}
+
 		Task task = core.createTaskInProject(projectId, taskReq.getName(),
 				taskReq.getDescription(), taskReq.getDueDate(),
 				taskReq.getAssignee(), taskReq.getPriority());
