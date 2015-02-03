@@ -54,6 +54,7 @@ import com.workstream.rest.model.SubscriptionResponse;
 import com.workstream.rest.model.UserRequest;
 import com.workstream.rest.model.UserResponse;
 import com.workstream.rest.validation.ValidateOnCreate;
+import com.workstream.rest.validation.ValidateOnUpdate;
 
 @Api(value = "users", description = "User related operations", position = 2)
 @RestController
@@ -114,7 +115,8 @@ public class UserController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
 	public void updateUser(
 			@PathVariable("id") String userIdBase64,
-			@ApiParam(required = true) @RequestBody(required = true) UserRequest uReq,
+			@ApiParam(required = true) @RequestBody(required = true) @Validated({
+					Default.class, ValidateOnUpdate.class }) UserRequest uReq,
 			BindingResult bResult) throws ResourceNotFoundException {
 		if (bResult.hasErrors()) {
 			throw new BeanValidationException(bResult);

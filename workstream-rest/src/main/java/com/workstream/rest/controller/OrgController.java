@@ -55,6 +55,7 @@ import com.workstream.rest.model.SingleValueResponse;
 import com.workstream.rest.model.TemplateResponse;
 import com.workstream.rest.model.UserResponse;
 import com.workstream.rest.validation.ValidateOnCreate;
+import com.workstream.rest.validation.ValidateOnUpdate;
 
 @Api(value = "orgs", description = "Organization related operations")
 @RestController
@@ -125,9 +126,13 @@ public class OrgController {
 			+ " the identifier, system automatically guarantees its uniqueness.")
 	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.PATCH)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void updateOrg(
-			@PathVariable("id") Long orgId,
-			@ApiParam(required = true) @RequestBody @Validated({ Default.class }) OrgRequest orgReq) {
+	public void updateOrg(@PathVariable("id") Long orgId,
+			@ApiParam(required = true) @RequestBody @Validated({ Default.class,
+					ValidateOnUpdate.class }) OrgRequest orgReq,
+			BindingResult bResult) {
+		if (bResult.hasErrors()) {
+			throw new BeanValidationException(bResult);
+		}
 		Map<String, Object> props = orgReq.getPropMap();
 		if (props.isEmpty()) {
 			return;

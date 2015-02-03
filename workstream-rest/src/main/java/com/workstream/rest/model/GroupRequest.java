@@ -8,8 +8,9 @@ import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.workstream.rest.RestConstants;
 import com.workstream.rest.validation.NotRemovable;
 import com.workstream.rest.validation.ValidateOnCreate;
+import com.workstream.rest.validation.ValidateOnUpdate;
 
-@NotRemovable({ MapPropObj.NAME })
+@NotRemovable(value = { MapPropObj.NAME }, groups = ValidateOnUpdate.class)
 public class GroupRequest extends MapPropObj {
 
 	private boolean groupPropSet;

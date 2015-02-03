@@ -5,6 +5,8 @@ import static com.workstream.rest.RestConstants.TEST_USER_ID_INFO;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.groups.Default;
+
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.task.Task;
@@ -36,6 +38,7 @@ import com.workstream.rest.model.SingleValueResponse;
 import com.workstream.rest.model.TaskResponse;
 import com.workstream.rest.model.UserResponse;
 import com.workstream.rest.utils.RestUtils;
+import com.workstream.rest.validation.ValidateOnUpdate;
 
 @Api(value = "groups", description = "Group related operations")
 @RestController
@@ -74,14 +77,13 @@ public class GroupController {
 
 	@ApiOperation(value = "Partially update a group", notes = "Doesn't care whether the proper is in Group or GroupX")
 	@RequestMapping(value = "/{groupId}", method = RequestMethod.PATCH)
-	public void updateGroup(
-			@PathVariable("groupId") String groupId,
-			@ApiParam(required = true) @RequestBody @Validated GroupRequest groupReq,
+	public void updateGroup(@PathVariable("groupId") String groupId,
+			@ApiParam(required = true) @RequestBody @Validated({ Default.class,
+					ValidateOnUpdate.class }) GroupRequest groupReq,
 			BindingResult bResult) {
 		if (bResult.hasErrors()) {
 			throw new BeanValidationException(bResult);
 		}
-		
 
 		Map<String, Object> props = groupReq.getPropMap();
 		if (props.isEmpty()) {

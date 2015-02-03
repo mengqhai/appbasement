@@ -9,9 +9,12 @@ import javax.validation.constraints.Size;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import com.workstream.rest.RestConstants;
+import com.workstream.rest.validation.NotRemovable;
 import com.workstream.rest.validation.ValidateOnCreate;
+import com.workstream.rest.validation.ValidateOnUpdate;
 
 @ApiModel
+@NotRemovable(value = { MapPropObj.NAME }, groups = ValidateOnUpdate.class)
 public class ProjectRequest extends MapPropObj {
 
 	public static final String DUE_TIME = "dueTime";

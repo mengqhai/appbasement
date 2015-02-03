@@ -3,10 +3,12 @@ package com.workstream.rest.model;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.workstream.core.exception.BadArgumentException;
 import com.workstream.rest.RestConstants;
+import com.workstream.rest.validation.NotRemovable;
 import com.workstream.rest.validation.ValidateOnCreate;
+import com.workstream.rest.validation.ValidateOnUpdate;
 
+@NotRemovable(value = { OrgRequest.IDENTIFIER, OrgRequest.NAME }, groups = ValidateOnUpdate.class)
 public class OrgRequest extends MapPropObj {
 
 	public static final String IDENTIFIER = "identifier";
@@ -22,9 +24,6 @@ public class OrgRequest extends MapPropObj {
 	}
 
 	public void setIdentifier(String identifier) {
-		if (identifier == null || identifier.isEmpty()) {
-			throw new BadArgumentException("Identifier can't be empty");
-		}
 		props.put(IDENTIFIER, identifier);
 	}
 

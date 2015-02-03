@@ -3,16 +3,20 @@ package com.workstream.rest.model;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.Email;
+
 import com.wordnik.swagger.annotations.ApiModelProperty;
-import com.workstream.core.exception.BadArgumentException;
 import com.workstream.rest.RestConstants;
+import com.workstream.rest.validation.NotRemovable;
 import com.workstream.rest.validation.ValidateOnCreate;
 
+@NotRemovable(value = { UserRequest.PASSWORD, UserRequest.EMAIL,
+		UserRequest.LAST_NAME, UserRequest.ID })
 public class UserRequest extends MapPropObj {
 
 	public static final String PASSWORD = "password";
 
-	private static final String EMAIL = "email";
+	public static final String EMAIL = "email";
 
 	public static final String LAST_NAME = "lastName";
 
@@ -22,9 +26,6 @@ public class UserRequest extends MapPropObj {
 
 	@ApiModelProperty(required = true)
 	public void setId(String userId) {
-		if (userId == null || userId.isEmpty()) {
-			throw new BadArgumentException();
-		}
 		props.put(ID, userId);
 	}
 
@@ -41,9 +42,6 @@ public class UserRequest extends MapPropObj {
 	}
 
 	public void setFirstName(String firstName) {
-		if (firstName == null || firstName.isEmpty()) {
-			throw new BadArgumentException();
-		}
 		props.put(FIRST_NAME, firstName);
 	}
 
@@ -57,21 +55,16 @@ public class UserRequest extends MapPropObj {
 	}
 
 	public void setEmail(String email) {
-		if (email == null || email.isEmpty()) {
-			throw new BadArgumentException();
-		}
 		props.put(EMAIL, email);
 	}
 
 	@NotNull(groups = ValidateOnCreate.class)
+	@Email
 	public String getEmail() {
 		return getProp(EMAIL);
 	}
 
 	public void setPassword(String password) {
-		if (password == null || password.isEmpty()) {
-			throw new BadArgumentException();
-		}
 		props.put(PASSWORD, password);
 	}
 

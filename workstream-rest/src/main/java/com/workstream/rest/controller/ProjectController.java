@@ -3,6 +3,8 @@ package com.workstream.rest.controller;
 import java.util.Collection;
 import java.util.List;
 
+import javax.validation.groups.Default;
+
 import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +38,7 @@ import com.workstream.rest.model.SubscriptionResponse;
 import com.workstream.rest.model.TaskRequest;
 import com.workstream.rest.model.TaskResponse;
 import com.workstream.rest.utils.RestUtils;
+import com.workstream.rest.validation.ValidateOnUpdate;
 
 @Api(value = "projects", description = "Project related operations")
 @RestController
@@ -59,8 +62,9 @@ public class ProjectController {
 
 	@ApiOperation(value = "Partially update a project")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
-	public void updateProject(@PathVariable("id") Long projectId,
-			@RequestBody @Validated ProjectRequest projectReq,
+	public void updateProject(
+			@PathVariable("id") Long projectId,
+			@RequestBody @Validated({ Default.class, ValidateOnUpdate.class }) ProjectRequest projectReq,
 			BindingResult bResult) {
 		if (bResult.hasErrors()) {
 			throw new BeanValidationException(bResult);
