@@ -1,5 +1,7 @@
 package com.workstream.rest.model;
 
+import javax.validation.Valid;
+
 import org.activiti.workflow.simple.definition.WorkflowDefinition;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -13,6 +15,8 @@ public class ModelWorkflowDefRequest {
 
 	private String comment;
 
+	@Valid
+	// cascade validation
 	public WorkflowDefinition getWorkflow() {
 		return workflow;
 	}

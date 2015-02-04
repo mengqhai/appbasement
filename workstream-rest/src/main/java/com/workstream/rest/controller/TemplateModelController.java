@@ -138,7 +138,12 @@ public class TemplateModelController {
 	@RequestMapping(value = "/{id}/workflow", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void updateWorkflowDefinition(
 			@PathVariable("id") String modelId,
-			@ApiParam(required = true) @RequestBody ModelWorkflowDefRequest workflow) {
+			@ApiParam(required = true) @RequestBody @Validated ModelWorkflowDefRequest workflow,
+			BindingResult bResult) {
+		if (bResult.hasErrors()) {
+			throw new BeanValidationException(bResult);
+		}
+
 		WorkflowDefinition def = workflow.getWorkflow();
 		if (def == null) {
 			throw new BadArgumentException("No workflow definition provided");
