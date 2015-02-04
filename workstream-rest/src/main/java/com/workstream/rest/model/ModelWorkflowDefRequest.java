@@ -4,8 +4,10 @@ import javax.validation.Valid;
 
 import org.activiti.workflow.simple.definition.WorkflowDefinition;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
+import com.workstream.core.worflow.simple.def.WsWorkflowDefinition;
 
 @ApiModel
 public class ModelWorkflowDefRequest {
@@ -21,6 +23,7 @@ public class ModelWorkflowDefRequest {
 		return workflow;
 	}
 
+	@JsonDeserialize(as = WsWorkflowDefinition.class)
 	public void setWorkflow(WorkflowDefinition workflow) {
 		this.workflow = workflow;
 	}
