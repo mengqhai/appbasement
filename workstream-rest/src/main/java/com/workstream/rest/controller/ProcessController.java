@@ -63,6 +63,13 @@ public class ProcessController {
 		return new ProcessResponse(pi);
 	}
 
+	@ApiOperation(value = "Delete a running process")
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public void deleteProcess(@PathVariable("id") String processId,
+			@RequestBody(required = false) String deleteReason) {
+		core.getProcessService().removeProcess(processId, deleteReason);
+	}
+
 	@ApiOperation(value = "Query the process by user role and userId", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(method = RequestMethod.GET)
 	public List<ArchProcessResponse> getProcessesByUser(

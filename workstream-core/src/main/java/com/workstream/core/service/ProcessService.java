@@ -332,7 +332,11 @@ public class ProcessService extends TaskCapable {
 	}
 
 	public void removeProcess(String processInstanceId, String deleteReason) {
-		ruSer.deleteProcessInstance(processInstanceId, deleteReason);
+		try {
+			ruSer.deleteProcessInstance(processInstanceId, deleteReason);
+		} catch (ActivitiObjectNotFoundException e) {
+			throw new ResourceNotFoundException("No such process");
+		}
 	}
 
 	public List<Task> filterTaskByProcess(String processInstanceId, int first,
