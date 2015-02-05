@@ -1,6 +1,7 @@
 package com.workstream.core.worflow.simple;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.activiti.workflow.simple.converter.WorkflowDefinitionConversionFactory;
@@ -11,6 +12,20 @@ import org.activiti.workflow.simple.converter.step.FeedbackStepDefinitionConvert
 import org.activiti.workflow.simple.converter.step.ParallelStepsDefinitionConverter;
 import org.activiti.workflow.simple.converter.step.ScriptStepDefinitionConverter;
 import org.activiti.workflow.simple.converter.step.StepDefinitionConverter;
+import org.activiti.workflow.simple.definition.ChoiceStepsDefinition;
+import org.activiti.workflow.simple.definition.DelayStepDefinition;
+import org.activiti.workflow.simple.definition.FeedbackStepDefinition;
+import org.activiti.workflow.simple.definition.HumanStepDefinition;
+import org.activiti.workflow.simple.definition.ParallelStepsDefinition;
+import org.activiti.workflow.simple.definition.ScriptStepDefinition;
+
+import com.workstream.core.worflow.simple.converter.CoreHumanStepDefinitionConverter;
+import com.workstream.core.worflow.simple.def.step.WsChoiceStepsDefinition;
+import com.workstream.core.worflow.simple.def.step.WsDelayStepDefinition;
+import com.workstream.core.worflow.simple.def.step.WsFeedbackStepDefinition;
+import com.workstream.core.worflow.simple.def.step.WsHumanStepDefinition;
+import com.workstream.core.worflow.simple.def.step.WsParallelStepsDefinition;
+import com.workstream.core.worflow.simple.def.step.WsScriptStepDefinition;
 
 public class CoreWorkflowDefinitionConversionFactory extends
 		WorkflowDefinitionConversionFactory {
@@ -26,6 +41,22 @@ public class CoreWorkflowDefinitionConversionFactory extends
 		converters.add(new ScriptStepDefinitionConverter());
 		converters.add(new DelayStepDefinitionConverter());
 		setDefaultStepDefinitionConverters(converters);
+
+		if (this.stepConverters == null) {
+			this.stepConverters = new HashMap<>();
+		}
+		stepConverters.put(WsHumanStepDefinition.class,
+				defaultStepConverters.get(HumanStepDefinition.class));
+		stepConverters.put(WsParallelStepsDefinition.class,
+				defaultStepConverters.get(ParallelStepsDefinition.class));
+		stepConverters.put(WsChoiceStepsDefinition.class,
+				defaultStepConverters.get(ChoiceStepsDefinition.class));
+		stepConverters.put(WsFeedbackStepDefinition.class,
+				defaultStepConverters.get(FeedbackStepDefinition.class));
+		stepConverters.put(WsScriptStepDefinition.class,
+				defaultStepConverters.get(ScriptStepDefinition.class));
+		stepConverters.put(WsDelayStepDefinition.class,
+				defaultStepConverters.get(DelayStepDefinition.class));
 	}
 
 	@Override

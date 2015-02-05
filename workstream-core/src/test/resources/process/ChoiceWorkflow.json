@@ -13,7 +13,7 @@
         "formGroups": [],
         "formProperties": [
           {
-            "type": null,
+            "type": "boolean",
             "name": "agree",
             "displayName": "Agree?",
             "mandatory": true,

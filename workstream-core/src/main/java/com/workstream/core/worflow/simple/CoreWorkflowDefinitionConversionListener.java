@@ -11,6 +11,8 @@ import org.activiti.workflow.simple.converter.WorkflowDefinitionConversion;
 import org.activiti.workflow.simple.converter.listener.DefaultWorkflowDefinitionConversionListener;
 import org.activiti.workflow.simple.definition.WorkflowDefinition;
 
+import com.workstream.core.worflow.simple.converter.CoreHumanStepDefinitionConverter;
+
 public class CoreWorkflowDefinitionConversionListener extends
 		DefaultWorkflowDefinitionConversionListener {
 

@@ -1,4 +1,4 @@
-package com.workstream.core.worflow.simple;
+package com.workstream.core.worflow.simple.converter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import org.activiti.bpmn.model.FormProperty;
 import org.activiti.bpmn.model.FormValue;
 import org.activiti.workflow.simple.converter.step.HumanStepDefinitionConverter;
+import org.activiti.workflow.simple.definition.StepDefinition;
 import org.activiti.workflow.simple.definition.form.BooleanPropertyDefinition;
 import org.activiti.workflow.simple.definition.form.DatePropertyDefinition;
 import org.activiti.workflow.simple.definition.form.FormDefinition;
@@ -14,8 +15,15 @@ import org.activiti.workflow.simple.definition.form.ListPropertyDefinition;
 import org.activiti.workflow.simple.definition.form.ListPropertyEntry;
 import org.activiti.workflow.simple.definition.form.NumberPropertyDefinition;
 
+import com.workstream.core.worflow.simple.def.step.WsHumanStepDefinition;
+
 public class CoreHumanStepDefinitionConverter extends
 		HumanStepDefinitionConverter {
+
+	@Override
+	public Class<? extends StepDefinition> getHandledClass() {
+		return WsHumanStepDefinition.class;
+	}
 
 	public static List<FormProperty> convertFormProperties(
 			FormDefinition formDefinition) {

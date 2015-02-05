@@ -408,7 +408,8 @@ public class TemplateService {
 				.createWorkflowDefinitionConversion(flow);
 		con.convert();
 		Model model = repoSer.getModel(modelId);
-		model.setName(flow.getName());
+		// model.setName(flow.getName());
+		flow.setName(model.getName());
 		model.setCategory("table-editor");
 		repoSer.saveModel(model);
 		// must delete the old source and extra first
