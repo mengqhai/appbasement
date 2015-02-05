@@ -4,8 +4,8 @@ import org.activiti.workflow.simple.definition.ListConditionStepDefinition;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @JsonTypeName("list")
 @JsonInclude(Include.NON_NULL)

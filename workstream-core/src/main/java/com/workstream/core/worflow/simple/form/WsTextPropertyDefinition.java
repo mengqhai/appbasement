@@ -32,9 +32,8 @@ public class WsTextPropertyDefinition extends TextPropertyDefinition {
 	@NotNull
 	@Size(min = 1, max = CoreConstants.VALID_NAME_SIZE)
 	@Override
-	public void setDisplayName(String displayName) {
-		super.setDisplayName(displayName);
+	public String getDisplayName() {
+		return super.getDisplayName();
 	}
-
 
 }
