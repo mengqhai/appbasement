@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.BytesNotFoundException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.service.CoreFacadeService;
@@ -160,6 +161,23 @@ public class TemplateController {
 			@PathVariable("templateId") String templateId) {
 		ProcessInstance pi = core.getProcessService().startProcess(templateId);
 		return InnerWrapperObj.valueOf(pi, ProcessResponse.class);
+	}
+
+	@ApiOperation(value = "Delete a deployed process template")
+	@RequestMapping(method = RequestMethod.DELETE, value = "/{templateId}")
+	public void deleteTemplate(@PathVariable("templateId") String templateId) {
+		ProcessDefinition template = core.getTemplateService()
+				.getProcessTemplate(templateId);
+		if (template == null) {
+			throw new ResourceNotFoundException("No such template");
+		}
+		List<ProcessInstance> piList = core.getProcessService()
+				.filterProcessByTemplateId(templateId, 0, Integer.MAX_VALUE);
+		if (piList.size() > 0) {
+			throw new AttempBadStateException(
+					"Unable to delete a template with running processes.");
+		}
+		core.getTemplateService().removeDeployment(template.getDeploymentId());
 	}
 
 }

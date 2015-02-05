@@ -111,7 +111,8 @@ public class TemplateService {
 	}
 
 	/**
-	 * non-cascading deletion
+	 * non-cascading deletion: delete only the template and deployment, but
+	 * doesn't touch the process instance
 	 * 
 	 * @param deploymentId
 	 */
