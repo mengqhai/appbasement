@@ -142,6 +142,10 @@ public class RestLoginController {
 	public void kickOutUser(
 			@RequestParam(value = "userId", required = true) String userIdBase64) {
 		String userId = RestUtils.decodeUserId(userIdBase64);
+		kickOutUserById(userId);
+	}
+
+	int kickOutUserById(String userId) {
 		if (sReg.getAllPrincipals().contains(userId)) {
 			List<SessionInformation> sessions = sReg.getAllSessions(userId,
 					false);
@@ -149,7 +153,9 @@ public class RestLoginController {
 				s.expireNow(); // force the session to expire
 			}
 		}
-		securityCtxRepo.clearSecurityContextByUser(userId);
+		int clearedCount = securityCtxRepo.clearSecurityContextByUser(userId);
+		log.info("Kicked {} logins for user {}", clearedCount, userId);
+		return clearedCount;
 	}
 
 	@ApiOperation(value = "Logout the current user")

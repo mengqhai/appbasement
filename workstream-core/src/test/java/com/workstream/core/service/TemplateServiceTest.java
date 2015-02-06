@@ -178,7 +178,8 @@ public class TemplateServiceTest {
 
 		SimpleWorkflowJsonConverter con = new SimpleWorkflowJsonConverter();
 		con.writeWorkflowDefinition(def, new PrintWriter(System.out));
-		Model model = temSer.saveToModel(org.getId(), def);
+		Model model = temSer.saveToModel(org.getId(), def,
+				"Process with choice");
 		Deployment deploy = temSer.deployModel(model.getId());
 		idService.setAuthenticatedUserId(userId);
 		ProcessDefinition proDef = temSer.getProcessTemplateByDeployment(deploy
@@ -214,15 +215,20 @@ public class TemplateServiceTest {
 	public void testConvertWorkflow() {
 		idService.setAuthenticatedUserId(userId); // for revision record
 		WorkflowDefinition def = new WorkflowDefinition();
-		def.setName("Test simple workflow.");
+		// def.setName("Test simple workflow."); // no longer saved to json
 		def.setDescription("This is the simplest workflow");
 		def.addHumanStep("HelloTask哦", userId);
 
-		Model model = temSer.saveToModel(org.getId(), def);
+		Model model = temSer.saveToModel(org.getId(), def,
+				"Test simple workflow.");
+		model.setName("Test simple workflow.");
+		Map<String, Object> props = new HashMap<String, Object>();
+		props.put("name", "Test simple workflow.");
+		temSer.updateModel(model.getId(), props);
 		Assert.assertNotNull(model.getId());
 		WorkflowDefinition defSaved = temSer.getModelWorkflowDef(model.getId());
 		Assert.assertEquals(def.getDescription(), defSaved.getDescription());
-		Assert.assertEquals(def.getName(), defSaved.getName());
+		// Assert.assertEquals(def.getName(), defSaved.getName());
 		Assert.assertEquals(1, defSaved.getSteps().size());
 		HumanStepDefinition step1 = (HumanStepDefinition) defSaved.getSteps()
 				.get(0);

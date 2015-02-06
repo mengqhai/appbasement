@@ -7,7 +7,7 @@
     <userTask id="adminApproval" name="Admin Approval ${userId} to ${orgName}" activiti:candidateGroups="${adminGroupId}">
       <documentation>User ${userId} is applying to join your organization ${orgName}.  Do you want to approve the request?</documentation>
       <extensionElements>
-        <activiti:formProperty id="approval" type="boolean" variable="${approval}" required="true"></activiti:formProperty>
+        <activiti:formProperty id="approval" type="boolean" variable="approval" required="true"></activiti:formProperty>
       </extensionElements>
     </userTask>
     <exclusiveGateway id="approvalGateway" name="Exclusive Gateway"></exclusiveGateway>

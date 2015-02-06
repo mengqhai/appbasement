@@ -339,10 +339,10 @@ public class TemplateService {
 	 * 
 	 * @return
 	 */
-	public Model saveToModel(Long orgId, WorkflowDefinition flow)
-			throws DataPersistException {
+	public Model saveToModel(Long orgId, WorkflowDefinition flow,
+			String modelName) throws DataPersistException {
 		Model model = repoSer.newModel();
-		model.setName(flow.getName());
+		model.setName(modelName);
 		model.setTenantId(String.valueOf(orgId));
 		model.setCategory("table-editor"); // for explorer table editing
 		repoSer.saveModel(model);
@@ -437,8 +437,10 @@ public class TemplateService {
 			orgId = Long.valueOf(orgIdStr);
 		}
 		WorkflowDefinition def = getModelWorkflowDef(modelId);
-		def.setName(new StringBuilder(def.getName()).append("_copy").toString());
-		Model target = saveToModel(orgId, def);
+		// no longer saved in workflow definition
+		// def.setName(new
+		// StringBuilder(def.getName()).append("_copy").toString());
+		Model target = saveToModel(orgId, def, source.getName() + "_copy");
 		return target;
 	}
 

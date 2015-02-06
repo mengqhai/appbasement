@@ -115,7 +115,7 @@ public class RestTokenSecurityContextRepository extends
 		getCache().remove(token);
 	}
 
-	public void clearSecurityContextByUser(String userId) {
+	public int clearSecurityContextByUser(String userId) {
 		Query q = prepareQueryForUser(userId);
 		q.includeValues();
 		q.includeKeys();
@@ -133,6 +133,7 @@ public class RestTokenSecurityContextRepository extends
 			ctx.setAuthentication(null);
 		}
 		getCache().removeAll(keys);
+		return keys.size();
 	}
 
 	protected Query prepareQueryForUser(String userId) {

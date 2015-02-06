@@ -10,6 +10,8 @@ import javax.validation.groups.Default;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.task.Task;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,8 +47,14 @@ import com.workstream.rest.validation.ValidateOnUpdate;
 @RequestMapping(value = "/groups", produces = MediaType.APPLICATION_JSON_VALUE)
 public class GroupController {
 
+	private static final Logger log = LoggerFactory
+			.getLogger(GroupController.class);
+
 	@Autowired
-	CoreFacadeService core;
+	private CoreFacadeService core;
+
+	@Autowired
+	private RestLoginController login;
 
 	@ApiOperation(value = "Get the detailed group information for a given group id", notes = "The detailed information including the description, createdAt, etc.")
 	@RequestMapping(value = "/{groupId}", method = RequestMethod.GET)
@@ -141,6 +149,9 @@ public class GroupController {
 			throws BadArgumentException {
 		String userId = RestUtils.decodeUserId(userIdBase64);
 		core.getUserService().removeUserFromGroup(userId, groupId);
+		// need to kick the user out
+		log.info("Kicking user {} off", userId);
+		login.kickOutUserById(userId);
 	}
 
 	@ApiOperation(value = "Get candidate tasks for the group", notes = "In other words, get the task(unassigned/claimed) list whose candidate group is "
