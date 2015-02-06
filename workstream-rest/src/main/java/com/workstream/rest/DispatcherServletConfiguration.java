@@ -9,12 +9,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import com.workstream.core.service.components.WsObjectMapper;
+import com.workstream.rest.security.exp.WsSecurityExpressionHandler;
 
 /**
  * Configuration for the MVC dispatcher servlet context which is separate from
@@ -31,8 +34,6 @@ import com.workstream.core.service.components.WsObjectMapper;
 // WebMvcConfigurerAdapter, DO NOT use this annotation if your configuration
 // bean extends
 // WebMvcConfigurationSupport, otherwise overriden methods won't be invoked)
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-// http://docs.spring.io/spring-security/site/faq/faq.html#faq-method-security-in-web-context
 public class DispatcherServletConfiguration extends WebMvcConfigurationSupport {
 
 	@Autowired
@@ -55,6 +56,22 @@ public class DispatcherServletConfiguration extends WebMvcConfigurationSupport {
 				MappingJackson2HttpMessageConverter jackson = (MappingJackson2HttpMessageConverter) con;
 				jackson.setObjectMapper(objectMapper);
 			}
+		}
+	}
+
+	@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+	// http://docs.spring.io/spring-security/site/faq/faq.html#faq-method-security-in-web-context
+	public static class WsGlablMethodSecurityConfiguration extends
+			GlobalMethodSecurityConfiguration {
+
+		@Override
+		protected MethodSecurityExpressionHandler createExpressionHandler() {
+			return wsSecurityExpressionHandler();
+		}
+
+		@Bean
+		public WsSecurityExpressionHandler wsSecurityExpressionHandler() {
+			return new WsSecurityExpressionHandler();
 		}
 	}
 

@@ -126,7 +126,7 @@ public class RestLoginController {
 
 	@ApiOperation(value = "Count current login number", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(value = "/login/_count", method = RequestMethod.GET)
-	@PreAuthorize("principal == #userIdBase64")
+	@PreAuthorize("principal == decodeUserId(#userIdBase64)")
 	public SingleValueResponse getLoggedInUserCount(
 			@RequestParam(value = "userId", required = false) String userIdBase64) {
 		int count = 0;

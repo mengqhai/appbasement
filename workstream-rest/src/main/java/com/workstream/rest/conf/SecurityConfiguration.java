@@ -106,6 +106,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.logoutSuccessHandler(noRedirectLogoutSuccessHandler);
 			http.securityContext().securityContextRepository(
 					restTokenSecurityContextRepository());
+
 		}
 
 		/**
