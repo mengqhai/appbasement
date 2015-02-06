@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
@@ -125,6 +126,7 @@ public class RestLoginController {
 
 	@ApiOperation(value = "Count current login number", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(value = "/login/_count", method = RequestMethod.GET)
+	@PreAuthorize("principal == #userIdBase64")
 	public SingleValueResponse getLoggedInUserCount(
 			@RequestParam(value = "userId", required = false) String userIdBase64) {
 		int count = 0;
