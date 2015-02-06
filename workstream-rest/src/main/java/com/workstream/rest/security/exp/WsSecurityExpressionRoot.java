@@ -48,13 +48,14 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 			}
 		}
 
+		// No longer needed as DynamicAuthenticationToken is used
 		// worst case, need to check actual group
-		List<Group> groups = getGroups((String) auth.getPrincipal());
-		for (Group group : groups) {
-			if (group.getId().startsWith(orgId + "|")) {
-				return true;
-			}
-		}
+		// List<Group> groups = getGroups((String) auth.getPrincipal());
+		// for (Group group : groups) {
+		// if (group.getId().startsWith(orgId + "|")) {
+		// return true;
+		// }
+		// }
 		return false;
 	}
 
@@ -83,13 +84,14 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 			}
 		}
 
+		// No longer needed as DynamicAuthenticationToken is used
 		// worst case, need to check actual group
-		List<Group> groups = getGroups((String) auth.getPrincipal(), type);
-		for (Group group : groups) {
-			if (group.getId().startsWith(orgId + "|")) {
-				return true;
-			}
-		}
+		// List<Group> groups = getGroups((String) auth.getPrincipal(), type);
+		// for (Group group : groups) {
+		// if (group.getId().startsWith(orgId + "|")) {
+		// return true;
+		// }
+		// }
 		return false;
 	}
 

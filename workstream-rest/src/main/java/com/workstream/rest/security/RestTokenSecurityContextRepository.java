@@ -17,6 +17,8 @@ import net.sf.ehcache.search.Results;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.context.HttpRequestResponseHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -154,6 +156,24 @@ public class RestTokenSecurityContextRepository extends
 			ctxList.add(ctx);
 		}
 		return ctxList;
+	}
+
+	/**
+	 * Only supports DynamicAuthenticationTokens
+	 * 
+	 * @param role
+	 */
+	public void addRoleToAuthentication(String userId, String role) {
+		List<SecurityContext> ctxList = getSecurityContextByUser(userId);
+		for (SecurityContext ctx : ctxList) {
+			Authentication auth = ctx.getAuthentication();
+			if (auth instanceof DynamicAuthenticationToken) {
+				DynamicAuthenticationToken dy = (DynamicAuthenticationToken) auth;
+				synchronized (dy) {
+					dy.getAuthorities().add(new SimpleGrantedAuthority(role));
+				}
+			}
+		}
 	}
 
 	public int getSecurityContextCount() {

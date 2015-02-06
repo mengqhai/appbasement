@@ -41,6 +41,7 @@ import com.workstream.core.model.Organization;
 import com.workstream.core.model.Project;
 import com.workstream.core.model.UserX;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.core.service.UserService.GroupType;
 import com.workstream.rest.exception.BeanValidationException;
 import com.workstream.rest.model.GroupRequest;
 import com.workstream.rest.model.GroupResponse;
@@ -69,6 +70,9 @@ public class OrgController {
 	@Autowired
 	private CoreFacadeService core;
 
+	@Autowired
+	private RestLoginController login;
+
 	@ApiOperation(value = "Create a new organization", notes = "The name field is required.<br/>"
 			+ "About identifier: If identifier is not specified, the created organization will be automatically assigned an"
 			+ " identifier which is globally unique.  It's the name of the organization by default, but if are existing ones in the system, suffix will"
@@ -92,6 +96,15 @@ public class OrgController {
 				identifier, orgReq.getDescription());
 		OrgResponse res = new OrgResponse(org);
 		log.info("Org created: {} - {}", org.getName(), org.getId());
+
+		// Update Authentication because the user has currently logged in
+		String userId = core.getAuthUserId();
+		List<Group> groups = new ArrayList<Group>(2);
+		groups.addAll(core.getUserService().filterGroupByUser(userId,
+				GroupType.PROCESS_DESIGNER, org.getId()));
+		groups.addAll(core.getUserService().filterGroupByUser(userId,
+				GroupType.ADMIN, org.getId()));
+		login.addGroupsToAuthentication(userId, groups);
 		return res;
 	}
 

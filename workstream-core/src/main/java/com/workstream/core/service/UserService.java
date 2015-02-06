@@ -1,6 +1,7 @@
 package com.workstream.core.service;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -327,6 +328,18 @@ public class UserService {
 	public List<Group> filterGroupByUser(String userId, GroupType type) {
 		return idService.createGroupQuery().groupMember(userId)
 				.groupType(type.toString()).list();
+	}
+
+	public List<Group> filterGroupByUser(String userId, GroupType type,
+			Long orgId) {
+		List<Group> groups = filterGroupByUser(userId, type);
+		List<Group> result = new ArrayList<Group>(groups.size());
+		for (Group group : groups) {
+			if (group.getId().startsWith(orgId + "|")) {
+				result.add(group);
+			}
+		}
+		return result;
 	}
 
 	public long countGroupByUser(String userId) {

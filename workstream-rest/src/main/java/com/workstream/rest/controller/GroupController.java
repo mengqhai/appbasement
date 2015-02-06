@@ -131,6 +131,7 @@ public class GroupController {
 			BadArgumentException {
 		String userId = RestUtils.decodeUserId(userIdBase64);
 		core.getUserService().addUserToGroup(userId, groupId);
+		login.addGroupsToAuthentication(userId, groupId);
 	}
 
 	/**

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,6 +159,18 @@ public class RestLoginController {
 		int clearedCount = securityCtxRepo.clearSecurityContextByUser(userId);
 		log.info("Kicked {} logins for user {}", clearedCount, userId);
 		return clearedCount;
+	}
+
+	void addGroupsToAuthentication(String userId, List<Group> groups) {
+		for (Group group : groups) {
+			securityCtxRepo.addRoleToAuthentication(userId, group.getId());
+		}
+	}
+
+	void addGroupsToAuthentication(String userId, String... groupIds) {
+		for (String groupId : groupIds) {
+			securityCtxRepo.addRoleToAuthentication(userId, groupId);
+		}
 	}
 
 	@ApiOperation(value = "Logout the current user")

@@ -44,7 +44,9 @@ public class BasicAuthenticationProvider implements AuthenticationProvider {
 			if (log.isTraceEnabled()) {
 				log.trace("UserX: {}", uSer.getUserX(userId));
 			}
-			return new UsernamePasswordAuthenticationToken(userId, password,
+			// return new UsernamePasswordAuthenticationToken(userId, password,
+			// grantedAuthorities);
+			return new DynamicAuthenticationToken(userId, password,
 					grantedAuthorities);
 		} else {
 			throw new BadCredentialsException(
