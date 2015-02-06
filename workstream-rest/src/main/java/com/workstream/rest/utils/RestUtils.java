@@ -40,4 +40,14 @@ public class RestUtils {
 		}
 	}
 
+	public static String getOrgIdFromGroupId(String groupId) {
+		try {
+			String orgIdStr = groupId.split("\\|")[0];
+			return orgIdStr;
+		} catch (Exception e) {
+			throw new BadArgumentException("Bad groupId: " + groupId, e);
+		}
+
+	}
+
 }

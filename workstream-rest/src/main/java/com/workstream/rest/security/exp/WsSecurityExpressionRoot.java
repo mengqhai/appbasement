@@ -59,6 +59,23 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 		return false;
 	}
 
+	public boolean isAuthInGroup(Authentication auth, String groupId) {
+		Collection<? extends GrantedAuthority> authorities = auth
+				.getAuthorities();
+		for (GrantedAuthority a : authorities) {
+			String role = a.getAuthority();
+			if (role != null && role.equals(groupId)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isAuthInOrgForGroup(Authentication auth, String groupId) {
+		String orgId = RestUtils.getOrgIdFromGroupId(groupId);
+		return isAuthInOrg(auth, orgId);
+	}
+
 	protected List<Group> getGroups(String userId) {
 		return CoreFacadeService.getInstance().getUserService()
 				.filterGroupByUser(userId);
@@ -101,6 +118,11 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 
 	public boolean isAuthAdmin(Authentication auth, String orgId) {
 		return isAuthOfGroupType(auth, orgId, GroupType.ADMIN);
+	}
+
+	public boolean isAuthAdminForGroup(Authentication auth, String groupId) {
+		String orgId = RestUtils.getOrgIdFromGroupId(groupId);
+		return isAuthAdmin(auth, orgId);
 	}
 
 	@Override
