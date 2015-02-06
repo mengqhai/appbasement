@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -126,6 +127,7 @@ public class OrgController {
 			+ " the identifier, system automatically guarantees its uniqueness.")
 	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.PATCH)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@PreAuthorize("isAuthAdmin(authentication, #orgId)")
 	public void updateOrg(@PathVariable("id") Long orgId,
 			@ApiParam(required = true) @RequestBody @Validated({ Default.class,
 					ValidateOnUpdate.class }) OrgRequest orgReq,
@@ -144,6 +146,7 @@ public class OrgController {
 	@ApiOperation(value = "Get the group list(no description) of a give organization", notes = "Returns the non-detailed information of all the groups "
 			+ "that belong to the given organization.")
 	@RequestMapping(method = RequestMethod.GET, value = "/{id:\\d+}/groups")
+	@PreAuthorize("isAuthInOrg(authentication, #orgId)")
 	public List<GroupResponse> getUserGroups(@PathVariable("id") Long orgId) {
 		List<Group> groups = core.getUserService().filterGroup(orgId);
 		List<GroupResponse> respList = InnerWrapperObj.valueOf(groups,
@@ -153,6 +156,7 @@ public class OrgController {
 
 	@ApiOperation(value = "Create a group in the given organization", notes = "Name field is required")
 	@RequestMapping(method = RequestMethod.POST, value = "/{id:\\d+}/groups")
+	@PreAuthorize("isAuthAdmin(authentication, #orgId)")
 	public GroupResponse createGroupInOrg(@PathVariable("id") Long orgId,
 			@ApiParam(required = true) @RequestBody @Validated({ Default.class,
 					ValidateOnCreate.class }) GroupRequest groupReq,
@@ -168,6 +172,7 @@ public class OrgController {
 
 	@ApiOperation(value = "Get all the users in the given organization")
 	@RequestMapping(method = RequestMethod.GET, value = "/{id:\\d+}/users")
+	@PreAuthorize("isAuthInOrg(authentication, #orgId)")
 	public List<UserResponse> getUsersInOrg(@PathVariable("id") Long orgId) {
 		List<User> users = core.filterUserByOrgId(orgId);
 		List<UserResponse> respList = InnerWrapperObj.valueOf(users,
@@ -177,6 +182,7 @@ public class OrgController {
 
 	@ApiOperation(value = "Count all the users in the given organization")
 	@RequestMapping(method = RequestMethod.GET, value = "/{id:\\d+}/users/_count")
+	@PreAuthorize("isAuthInOrg(authentication, #orgId)")
 	public SingleValueResponse countUsersInOrg(@PathVariable("id") Long orgId) {
 		long count = core.countUserByOrgId(orgId);
 		return new SingleValueResponse(count);
@@ -191,6 +197,7 @@ public class OrgController {
 
 	@ApiOperation(value = "Get groups of the user in the given organization", notes = TEST_USER_ID_INFO)
 	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/users/{userIdBase64}/groups")
+	@PreAuthorize("isAuthInOrg(authentication, #orgId)")
 	public List<GroupResponse> getGroupsOfUserInOrg(
 			@PathVariable("orgId") Long orgId,
 			@PathVariable("userIdBase64") String userIdBase64) {
@@ -213,6 +220,7 @@ public class OrgController {
 
 	@ApiOperation(value = "Get project list of in the given organization")
 	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/projects")
+	@PreAuthorize("isAuthInOrg(authentication, #orgId)")
 	public List<ProjectResponse> getProjectsInOrg(
 			@PathVariable("orgId") Long orgId,
 			@RequestParam(defaultValue = "0") int first,
@@ -226,6 +234,7 @@ public class OrgController {
 
 	@ApiOperation(value = "Get project list of in the given organization")
 	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/projects/_count")
+	@PreAuthorize("isAuthInOrg(authentication, #orgId)")
 	public SingleValueResponse countProjectsInOrg(
 			@PathVariable("orgId") Long orgId) {
 		Long count = core.countProjectByOrgId(orgId);
@@ -234,6 +243,7 @@ public class OrgController {
 
 	@ApiOperation(value = "Create a project in the organization")
 	@RequestMapping(method = RequestMethod.POST, value = "/{orgId:\\d+}/projects", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("isAuthAdmin(authentication, #orgId)")
 	public ProjectResponse createProjectInOrg(
 			@PathVariable("orgId") Long orgId,
 			@ApiParam(required = true) @RequestBody @Validated({ Default.class,
@@ -251,6 +261,7 @@ public class OrgController {
 
 	@ApiOperation(value = "Get process template model list in the given organization")
 	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/templatemodels")
+	@PreAuthorize("isAuthProcessDesigner(authentication, #orgId)")
 	public List<ModelResponse> getModelsInOrg(
 			@PathVariable("orgId") Long orgId,
 			@RequestParam(defaultValue = "0") int first,
@@ -263,6 +274,7 @@ public class OrgController {
 
 	@ApiOperation(value = "Count the process template models in the given organization")
 	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/templatemodels/_count")
+	@PreAuthorize("isAuthProcessDesigner(authentication, #orgId)")
 	public SingleValueResponse countModelsInOrg(
 			@PathVariable("orgId") Long orgId) {
 		long count = core.getTemplateService().countModel(orgId);
@@ -271,6 +283,7 @@ public class OrgController {
 
 	@ApiOperation(value = "Create an empty model in the organization", notes = "name field is required")
 	@RequestMapping(method = RequestMethod.POST, value = "/{orgId:\\d+}/templatemodels")
+	@PreAuthorize("isAuthProcessDesigner(authentication, #orgId)")
 	public ModelResponse createModelInOrg(@PathVariable("orgId") Long orgId,
 			@ApiParam(required = true) @RequestBody @Validated({ Default.class,
 					ValidateOnCreate.class }) ModelRequest modelReq,
@@ -287,6 +300,7 @@ public class OrgController {
 
 	@ApiOperation(value = "Retrieve the process template list in the organization")
 	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/templates")
+	@PreAuthorize("isAuthInOrg(authentication, #orgId)")
 	public List<TemplateResponse> getProcessTemplatesInOrg(
 			@PathVariable("orgId") Long orgId,
 			@RequestParam(required = false) boolean onlyLatest,
@@ -302,6 +316,7 @@ public class OrgController {
 
 	@ApiOperation(value = "Count the process template count in the organization")
 	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/templates/_count")
+	@PreAuthorize("isAuthInOrg(authentication, #orgId)")
 	public SingleValueResponse countProcessTemplatesInOrg(
 			@PathVariable("orgId") Long orgId,
 			@RequestParam(required = false) boolean onlyLatest) {
@@ -312,6 +327,7 @@ public class OrgController {
 
 	@ApiOperation(value = "Retrieve the running process list in the organization")
 	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/processes")
+	@PreAuthorize("isAuthInOrg(authentication, #orgId)")
 	public List<ProcessResponse> getProcessesInOrg(
 			@PathVariable("orgId") Long orgId,
 			@RequestParam(defaultValue = "0") int first,
@@ -323,6 +339,7 @@ public class OrgController {
 
 	@ApiOperation(value = "Count the running process in the organization")
 	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/processes/_count")
+	@PreAuthorize("isAuthInOrg(authentication, #orgId)")
 	public SingleValueResponse countProcessesInOrg(
 			@PathVariable("orgId") Long orgId) {
 		long count = core.getProcessService().countProcess(orgId);

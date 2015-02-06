@@ -37,6 +37,7 @@ import com.workstream.core.model.GroupX;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.Project;
 import com.workstream.core.model.UserX;
+import com.workstream.core.service.UserService.GroupType;
 
 @Service
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
@@ -177,10 +178,11 @@ public class CoreFacadeService {
 		orgSer.userJoinOrg(creator, org);
 		// create predefined groups
 		Group group = uSer.createGroup(org, "Admin",
-				"Adimistrators of the organization.");
+				"Adimistrators of the organization.", GroupType.ADMIN);
 		uSer.addUserToGroup(creator, group.getId());
 		group = uSer.createGroup(org, "Process Designer",
-				"Process Designers of the organization");
+				"Process Designers of the organization",
+				GroupType.PROCESS_DESIGNER);
 		uSer.addUserToGroup(creator, group.getId());
 		return org;
 	}

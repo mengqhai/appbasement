@@ -51,6 +51,10 @@ public class UserService {
 	private final Logger log = LoggerFactory
 			.getLogger(OrganizationService.class);
 
+	public enum GroupType {
+		ASSIGNMENT, PROCESS_DESIGNER, ADMIN
+	}
+
 	@Autowired
 	private IUserXDAO userDao;
 
@@ -200,6 +204,11 @@ public class UserService {
 	 * 
 	 */
 	public Group createGroup(Organization org, String name, String description) {
+		return createGroup(org, name, description, null);
+	}
+
+	public Group createGroup(Organization org, String name, String description,
+			GroupType type) {
 		GroupX groupX = new GroupX();
 		groupX.setOrg(org);
 
@@ -213,7 +222,11 @@ public class UserService {
 
 		Group group = idService.newGroup(groupId);
 		group.setName(name);
-		group.setType("assignment");
+		if (type != null) {
+			group.setType(type.toString());
+		} else {
+			group.setType(GroupType.ASSIGNMENT.toString());
+		}
 		idService.saveGroup(group);
 		return group;
 	}
@@ -309,6 +322,11 @@ public class UserService {
 
 	public List<Group> filterGroupByUser(String userId) {
 		return idService.createGroupQuery().groupMember(userId).list();
+	}
+
+	public List<Group> filterGroupByUser(String userId, GroupType type) {
+		return idService.createGroupQuery().groupMember(userId)
+				.groupType(type.toString()).list();
 	}
 
 	public long countGroupByUser(String userId) {
