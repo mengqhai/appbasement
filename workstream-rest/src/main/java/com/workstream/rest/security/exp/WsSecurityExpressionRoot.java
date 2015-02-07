@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.activiti.engine.identity.Group;
+import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Attachment;
 import org.activiti.engine.task.Task;
@@ -96,9 +97,25 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 	public boolean isAuthInOrgForProcess(String processId) {
 		String orgId = getOrgIdFromProcess(processId);
 		if (orgId == null) {
-			return true; // system task
+			return true; // system process
 		}
 		return isAuthInOrg(orgId);
+	}
+
+	public boolean isAuthInOrgForTemplate(String templateId) {
+		String orgId = getOrgIdFromTemplate(templateId);
+		if (orgId == null) {
+			return true; // system template
+		}
+		return isAuthInOrg(orgId);
+	}
+
+	public boolean isAuthAdminForTemplate(String templateId) {
+		String orgId = getOrgIdFromTemplate(templateId);
+		if (orgId == null) {
+			return true; // system template
+		}
+		return isAuthAdmin(orgId);
 	}
 
 	public boolean isAuthInOrgForUser(String userId) {
@@ -140,6 +157,15 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 			throw new ResourceNotFoundException("No such project");
 		}
 		return String.valueOf(pro.getOrg().getId());
+	}
+
+	protected String getOrgIdFromTemplate(String templateId) {
+		ProcessDefinition pd = CoreFacadeService.getInstance()
+				.getTemplateService().getProcessTemplate(templateId);
+		if (pd == null) {
+			throw new ResourceNotFoundException("No such template");
+		}
+		return pd.getTenantId();
 	}
 
 	protected Set<String> getOrgIdsFromUser(String userId) {

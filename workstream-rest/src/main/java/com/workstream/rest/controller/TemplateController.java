@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,6 +72,7 @@ public class TemplateController {
 	 */
 	@ApiOperation("Get a process template model")
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForTemplate(#templateId)")
 	public TemplateResponse getTemplate(@PathVariable("id") String templateId) {
 		String decode = templateId;
 		decode = RestUtils.decodeIsoToUtf8(templateId);
@@ -86,6 +88,7 @@ public class TemplateController {
 	@ApiOperation(value = "Get the diagram image of a template", produces = MediaType.IMAGE_PNG_VALUE)
 	@RequestMapping(value = "/{id}/diagram", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
 	@ResponseBody
+	@PreAuthorize("isAuthInOrgForTemplate(#templateId)")
 	public void getTemplateDiagram(@PathVariable("id") String templateId,
 			@ApiIgnore HttpServletResponse response) {
 		String decode = templateId;
@@ -103,6 +106,7 @@ public class TemplateController {
 	@ApiOperation(value = "Get the BPMN xml of a template", produces = MediaType.APPLICATION_XML_VALUE)
 	@RequestMapping(value = "/{id}/bpmn", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
 	@ResponseBody
+	@PreAuthorize("isAuthInOrgForTemplate(#templateId)")
 	public void getTemplateBpmn(@PathVariable("id") String templateId,
 			@ApiIgnore HttpServletResponse response) {
 		String decode = templateId;
@@ -119,6 +123,7 @@ public class TemplateController {
 
 	@ApiOperation(value = "Retrieve the running process list of the process template")
 	@RequestMapping(method = RequestMethod.GET, value = "/{templateId}/processes")
+	@PreAuthorize("isAuthInOrgForTemplate(#templateId)")
 	public List<ProcessResponse> getProcessesForTemplate(
 			@PathVariable("templateId") String templateId,
 			@RequestParam(defaultValue = "0") int first,
@@ -130,6 +135,7 @@ public class TemplateController {
 
 	@ApiOperation(value = "Count the running process of the process template")
 	@RequestMapping(method = RequestMethod.GET, value = "/{templateId}/processes/_count")
+	@PreAuthorize("isAuthInOrgForTemplate(#templateId)")
 	public SingleValueResponse countProcessesForTemplate(
 			@PathVariable("templateId") String templateId) {
 		long count = core.getProcessService().countProcessByTemplateId(
@@ -139,6 +145,7 @@ public class TemplateController {
 
 	@ApiOperation(value = "Retrieve the start form data for a template")
 	@RequestMapping(method = RequestMethod.GET, value = "/{templateId}/form")
+	@PreAuthorize("isAuthInOrgForTemplate(#templateId)")
 	public StartFormDataResponse getStartFormDataForTemplate(
 			@PathVariable("templateId") String templateId) {
 		StartFormData formData = core.getProcessService().getStartFormData(
@@ -148,6 +155,7 @@ public class TemplateController {
 
 	@ApiOperation(value = "Start a process by submitting the form")
 	@RequestMapping(method = RequestMethod.POST, value = "/{templateId}/form")
+	@PreAuthorize("isAuthInOrgForTemplate(#templateId)")
 	public ProcessResponse startProcessByForm(
 			@PathVariable("templateId") String templateId,
 			@RequestBody(required = true) Map<String, String> formProps) {
@@ -157,6 +165,7 @@ public class TemplateController {
 
 	@ApiOperation(value = "Start a process instance for the template")
 	@RequestMapping(method = RequestMethod.POST, value = "/{templateId}/processes")
+	@PreAuthorize("isAuthInOrgForTemplate(#templateId)")
 	public ProcessResponse startProcess(
 			@PathVariable("templateId") String templateId) {
 		ProcessInstance pi = core.getProcessService().startProcess(templateId);
@@ -165,6 +174,7 @@ public class TemplateController {
 
 	@ApiOperation(value = "Delete a deployed process template")
 	@RequestMapping(method = RequestMethod.DELETE, value = "/{templateId}")
+	@PreAuthorize("isAuthAdminForTemplate(#templateId)")
 	public void deleteTemplate(@PathVariable("templateId") String templateId) {
 		ProcessDefinition template = core.getTemplateService()
 				.getProcessTemplate(templateId);
