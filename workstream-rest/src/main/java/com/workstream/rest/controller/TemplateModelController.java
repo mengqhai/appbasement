@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +54,7 @@ public class TemplateModelController {
 
 	@ApiOperation("Get a process template model")
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForModel(#modelId)")
 	public ModelResponse getModel(@PathVariable("id") String modelId) {
 		Model model = core.getModel(modelId);
 		return new ModelResponse(model);
@@ -61,6 +63,7 @@ public class TemplateModelController {
 	@SuppressWarnings("unused")
 	@ApiOperation("Delete a process template model")
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@PreAuthorize("isAuthProcessDesignerForModel(#modelId) or isAuthAdminForModel(#modelId)")
 	public void deleteModel(@PathVariable("id") String modelId) {
 		Model model = core.getModel(modelId);// existence check
 		core.getTemplateService().removeModel(modelId);
@@ -68,6 +71,7 @@ public class TemplateModelController {
 
 	@ApiOperation("Retrieve the deployed process template list of a model")
 	@RequestMapping(value = "/{id}/templates", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForModel(#modelId)")
 	public List<TemplateResponse> getDeployedTemplatesByModel(
 			@PathVariable("id") String modelId,
 			@RequestParam(required = false) boolean onlyLatest,
@@ -85,6 +89,7 @@ public class TemplateModelController {
 
 	@ApiOperation("Retrieve the deployed process template list of a model")
 	@RequestMapping(value = "/{id}/templates/_count", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForModel(#modelId)")
 	public SingleValueResponse countDeployedTemplatesByModel(
 			@PathVariable("id") String modelId,
 			@RequestParam(required = false) boolean onlyLatest) {
@@ -95,6 +100,7 @@ public class TemplateModelController {
 
 	@ApiOperation("Deploy a process template model")
 	@RequestMapping(value = "/{id}/templates", method = RequestMethod.POST)
+	@PreAuthorize("isAuthProcessDesignerForModel(#modelId) or isAuthAdminForModel(#modelId)")
 	public TemplateResponse deployModel(@PathVariable("id") String modelId) {
 		// TODO user authority check
 		Deployment deploy = core.getTemplateService().deployModel(modelId);
@@ -112,6 +118,7 @@ public class TemplateModelController {
 	@ApiOperation(value = "Undeploy a process template model", notes = "If only undeploy the last deployment of the model, "
 			+ "specify <b>onlyLast=true</b>")
 	@RequestMapping(value = "/{id}/templates", method = RequestMethod.DELETE)
+	@PreAuthorize("isAuthProcessDesignerForModel(#modelId) or isAuthAdminForModel(#modelId)")
 	public void undeployModel(@PathVariable("id") String modelId,
 			@RequestParam(required = false, value = "onlyLast") boolean onlyLast) {
 		if (onlyLast) {
@@ -123,6 +130,7 @@ public class TemplateModelController {
 
 	@ApiOperation("Get the workflow definition of a process template model")
 	@RequestMapping(value = "/{id}/workflow", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForModel(#modelId)")
 	public WorkflowDefinition getModelWorkflowDefinition(
 			@PathVariable("id") String modelId) {
 		return core.getTemplateService().getModelWorkflowDef(modelId);
@@ -136,6 +144,7 @@ public class TemplateModelController {
 			+ "\"name\":\"a human step\",<br/>"
 			+ "\"assignee\":\"mqhnow1@sina.com\"}")
 	@RequestMapping(value = "/{id}/workflow", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("isAuthProcessDesignerForModel(#modelId) or isAuthAdminForModel(#modelId)")
 	public void updateWorkflowDefinition(
 			@PathVariable("id") String modelId,
 			@ApiParam(required = true) @RequestBody @Validated ModelWorkflowDefRequest workflow,
@@ -158,6 +167,7 @@ public class TemplateModelController {
 
 	@ApiOperation(value = "Update a template model")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
+	@PreAuthorize("isAuthProcessDesignerForModel(#modelId) or isAuthAdminForModel(#modelId)")
 	public void updateModel(@PathVariable("id") String modelId,
 			@ApiParam(required = true) @RequestBody @Validated({ Default.class,
 					ValidateOnUpdate.class }) ModelRequest modelReq,
@@ -172,6 +182,7 @@ public class TemplateModelController {
 
 	@ApiOperation("Get the workflow definition of a process template model")
 	@RequestMapping(value = "/{id}/diagram", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+	@PreAuthorize("isAuthInOrgForModel(#modelId)")
 	public byte[] getModelWorkflowDiagram(@PathVariable("id") String modelId)
 			throws BytesNotFoundException {
 		byte[] bytes = core.getTemplateService().getModelDiagram(modelId);
@@ -183,6 +194,7 @@ public class TemplateModelController {
 
 	@ApiOperation("Get the revision list of a process template model")
 	@RequestMapping(value = "/{id}/revisions", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForModel(#modelId)")
 	public List<RevisionResponse> getRevisions(
 			@PathVariable("id") String modelId) {
 		Collection<Revision> revisions = core.getTemplateService()
