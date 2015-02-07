@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,6 +56,7 @@ public class ProcessController {
 
 	@ApiOperation(value = "Retrieve a running process")
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForProcess(#processId)")
 	public ProcessResponse getProcess(@PathVariable("id") String processId) {
 		ProcessInstance pi = core.getProcessService().getProcess(processId);
 		if (pi == null) {
@@ -65,6 +67,7 @@ public class ProcessController {
 
 	@ApiOperation(value = "Delete a running process")
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@PreAuthorize("isAuthInOrgForProcess(#processId)")
 	public void deleteProcess(@PathVariable("id") String processId,
 			@RequestBody(required = false) String deleteReason) {
 		core.getProcessService().removeProcess(processId, deleteReason);
@@ -72,6 +75,8 @@ public class ProcessController {
 
 	@ApiOperation(value = "Query the process by user role and userId", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(method = RequestMethod.GET)
+	@PreAuthorize("principal == decodeUserId(#userIdBase64)")
+	// only able to see my own
 	public List<ArchProcessResponse> getProcessesByUser(
 			@RequestParam(required = true) UserProcessRole role,
 			@RequestParam(required = true) String userIdBase64,
@@ -107,6 +112,7 @@ public class ProcessController {
 
 	@ApiOperation(value = "Retrieve all the variables for the process instance", notes = "This is a security hole to be fixed.")
 	@RequestMapping(value = "/{id}/vars", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForProcess(#processId)")
 	public Map<String, Object> getProcessVariables(
 			@PathVariable("id") String processId) {
 		ProcessInstance pi = core.getProcessService().getProcessWithVars(
@@ -119,6 +125,7 @@ public class ProcessController {
 
 	@ApiOperation(value = "Retrieve the unfinished tasks for a process instance")
 	@RequestMapping(value = "/{id}/tasks", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForProcess(#processId)")
 	public List<TaskResponse> getProcessTasks(
 			@PathVariable("id") String processId,
 			@RequestParam(defaultValue = "0", required = false) int first,
@@ -130,6 +137,7 @@ public class ProcessController {
 
 	@ApiOperation(value = "Count the unfinished tasks for a process instance")
 	@RequestMapping(value = "/{id}/tasks/_count", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForProcess(#processId)")
 	public SingleValueResponse countProcessTasks(
 			@PathVariable("id") String processId) {
 		long count = core.getProcessService().countTaskByProcess(processId);
@@ -138,6 +146,7 @@ public class ProcessController {
 
 	@ApiOperation(value = "Retrieve subscription list for a process")
 	@RequestMapping(value = "/{id}/subscriptions", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForProcess(#processId)")
 	public Collection<SubscriptionResponse> getProcessSubscriptions(
 			@PathVariable("id") String processId) {
 		Collection<Subscription> subs = core.getEventService()
@@ -154,6 +163,7 @@ public class ProcessController {
 	 */
 	@ApiOperation(value = "Subscribe a process for the current user")
 	@RequestMapping(value = "/{id}/subscriptions", method = RequestMethod.POST)
+	@PreAuthorize("isAuthInOrgForProcess(#processId)")
 	public SubscriptionResponse subscribeProcess(
 			@PathVariable("id") String processId)
 			throws AttempBadStateException {
@@ -165,6 +175,7 @@ public class ProcessController {
 
 	@ApiOperation(value = "Retrieve the attachment list for a process")
 	@RequestMapping(value = "/{id}/attachments", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForProcess(#processId)")
 	public List<AttachmentResponse> getProcesssAttachments(
 			@PathVariable("id") String processId) {
 		List<Attachment> attachments = core.getAttachmentService()
@@ -174,6 +185,7 @@ public class ProcessController {
 
 	@ApiOperation(value = "Create an attachment for a process")
 	@RequestMapping(value = "/{id}/attachments", method = RequestMethod.POST)
+	@PreAuthorize("isAuthInOrgForProcess(#processId)")
 	public AttachmentResponse createProcessAttachment(
 			@PathVariable("id") String processId,
 			@ApiParam(required = true) @RequestBody MultipartFile file) {

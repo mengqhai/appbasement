@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.activiti.engine.identity.Group;
+import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +91,14 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 		return isAuthInOrg(orgId);
 	}
 
+	public boolean isAuthInOrgForProcess(String processId) {
+		String orgId = getOrgIdFromProcess(processId);
+		if (orgId == null) {
+			return true; // system task
+		}
+		return isAuthInOrg(orgId);
+	}
+
 	public boolean isAuthInOrgForUser(String userId) {
 		Collection<String> orgIds = getOrgIdsFromUser(userId);
 		for (String orgId : orgIds) {
@@ -122,6 +131,15 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 			orgIds.add(String.valueOf(org.getId()));
 		}
 		return orgIds;
+	}
+
+	public String getOrgIdFromProcess(String processId) {
+		ProcessInstance pi = CoreFacadeService.getInstance()
+				.getProcessService().getProcess(processId);
+		if (pi == null) {
+			throw new ResourceNotFoundException("No such process");
+		}
+		return pi.getTenantId();
 	}
 
 	protected List<Group> getGroups(String userId) {
