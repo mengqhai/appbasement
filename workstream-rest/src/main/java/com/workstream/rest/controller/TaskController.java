@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -71,6 +72,8 @@ public class TaskController {
 
 	@ApiOperation(value = "Query the tasks by user role and userId", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(method = RequestMethod.GET)
+	@PreAuthorize("principal == decodeUserId(#userIdBase64)")
+	// only able to see my own
 	public List<TaskResponse> getTasksForUser(
 			@RequestParam(required = true) UserTaskRole role,
 			@RequestParam(required = true) String userIdBase64,
@@ -183,6 +186,7 @@ public class TaskController {
 
 	@ApiOperation(value = "Query the task count of a given userId", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(value = "/_count", method = RequestMethod.GET)
+	@PreAuthorize("principal == decodeUserId(#userIdBase64)")
 	public SingleValueResponse countTaskForUser(
 			@RequestParam(required = true) UserTaskRole role,
 			@RequestParam(required = true) String userIdBase64) {
@@ -193,6 +197,7 @@ public class TaskController {
 
 	@ApiOperation(value = "Get the task for id")
 	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public TaskResponse getTask(@PathVariable("id") String taskId) {
 		Task task = core.getProjectService().getTask(taskId);
 		if (task == null) {
@@ -204,6 +209,7 @@ public class TaskController {
 
 	@ApiOperation(value = "Create a task for a given task")
 	@RequestMapping(value = "/{id:\\d+}/tasks", method = RequestMethod.POST)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public TaskResponse createSubTask(@PathVariable("id") String taskId,
 			@RequestBody(required = true) @Validated({ Default.class,
 					ValidateOnCreate.class }) TaskRequest taskReq,
@@ -220,6 +226,7 @@ public class TaskController {
 
 	@ApiOperation(value = "Retrieve the sub tasks for a given task")
 	@RequestMapping(value = "/{id:\\d+}/tasks", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public List<TaskResponse> getSubTasks(@PathVariable("id") String taskId) {
 		List<Task> tasks = core.getProjectService().getSubTasks(taskId);
 		return InnerWrapperObj.valueOf(tasks, TaskResponse.class);
@@ -227,6 +234,7 @@ public class TaskController {
 
 	@ApiOperation(value = "Count the sub tasks for a given task")
 	@RequestMapping(value = "/{id:\\d+}/tasks/_count", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public SingleValueResponse countSubTasks(@PathVariable("id") String taskId) {
 		long count = core.getProjectService().countSubTasks(taskId);
 		return new SingleValueResponse(count);
@@ -236,6 +244,7 @@ public class TaskController {
 			+ "instance variables by submitting the vars object.")
 	@RequestMapping(value = "/{id:\\d+}/_complete", method = RequestMethod.PUT)
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public void completeTask(@PathVariable("id") String taskId,
 			@RequestBody(required = false) Map<String, Object> vars) {
 		core.getProcessService().completeTask(taskId, vars);
@@ -244,6 +253,7 @@ public class TaskController {
 	@ApiOperation(value = "Claim the task")
 	@RequestMapping(value = "/{id:\\d+}/_claim", method = RequestMethod.PUT)
 	@Transactional(propagation = Propagation.REQUIRED, value = CoreConstants.TX_MANAGER)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public void claimTask(@PathVariable("id") String taskId) {
 		String userId = core.getAuthUserId();
 		core.getProcessService().claimTask(taskId, userId);
@@ -251,6 +261,7 @@ public class TaskController {
 
 	@ApiOperation(value = "Partially update the task for id")
 	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public void updateTask(@PathVariable("id") String taskId,
 			@ApiParam(required = true) @RequestBody @Validated({ Default.class,
 					ValidateOnUpdate.class }) TaskRequest taskReq,
@@ -265,6 +276,7 @@ public class TaskController {
 
 	@ApiOperation(value = "Delete(cancel) the task for id")
 	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.DELETE)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public void deleteTask(@PathVariable("id") String taskId) {
 		// TODO if it's a task of a running process, trying to delete it will
 		// cause activiti exception, so an exception mapping is required
@@ -274,6 +286,7 @@ public class TaskController {
 
 	@ApiOperation(value = "Retrieve all the events for a task")
 	@RequestMapping(value = "/{id:\\d+}/events", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public List<EventResponse> getTaskEvents(@PathVariable("id") String taskId) {
 		List<Event> events = core.getProjectService().filterTaskEvent(taskId);
 		return InnerWrapperObj.valueOf(events, EventResponse.class);
@@ -281,6 +294,7 @@ public class TaskController {
 
 	@ApiOperation(value = "Retrieve all the comments for a task")
 	@RequestMapping(value = "/{id:\\d+}/comments", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public List<CommentResponse> getTaskComments(
 			@PathVariable("id") String taskId) {
 		List<Comment> events = core.getProjectService().filterTaskComment(
@@ -290,6 +304,7 @@ public class TaskController {
 
 	@ApiOperation(value = "Post a comment for a task")
 	@RequestMapping(value = "/{id:\\d+}/comments", method = RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public CommentResponse addTaskComment(@PathVariable("id") String taskId,
 			@RequestBody(required = true) String message) {
 		if (message == null || message.isEmpty()) {
@@ -307,6 +322,7 @@ public class TaskController {
 
 	@ApiOperation(value = "Retrieve the form property definitions for a task")
 	@RequestMapping(value = "/{id:\\d+}/form", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public TaskFormDataResponse getTaskFormProps(
 			@PathVariable("id") String taskId) {
 		TaskFormData formData = core.getProcessService()
@@ -323,6 +339,7 @@ public class TaskController {
 			+ "\"numProp\":1235,<br/>"
 			+ "\"dateProp\":\"2014-11-16 23:30:15\"<br/>" + "}</b>")
 	@RequestMapping(value = "/{id:\\d+}/form", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public void completeTaskByForm(@PathVariable("id") String taskId,
 			@RequestBody(required = true) Map<String, String> formProps) {
 		core.completeTaskByForm(taskId, formProps);
@@ -330,6 +347,7 @@ public class TaskController {
 
 	@ApiOperation(value = "Retrieve the attachment list for a task")
 	@RequestMapping(value = "/{id:\\d+}/attachments", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public List<AttachmentResponse> getTaskAttachments(
 			@PathVariable("id") String taskId) {
 		List<Attachment> attachments = core.getAttachmentService()
@@ -339,6 +357,7 @@ public class TaskController {
 
 	@ApiOperation(value = "Create an attachment for a task")
 	@RequestMapping(value = "/{id:\\d+}/attachments", method = RequestMethod.POST)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public AttachmentResponse createTaskAttachment(
 			@PathVariable("id") String taskId,
 			@ApiParam(required = true) @RequestBody MultipartFile file) {
@@ -375,6 +394,7 @@ public class TaskController {
 
 	@ApiOperation(value = "Retrieve subscription list for a task")
 	@RequestMapping(value = "/{id}/subscriptions", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public Collection<SubscriptionResponse> getTaskSubscriptions(
 			@PathVariable("id") String taskId) {
 		Collection<Subscription> subs = core.getEventService()
@@ -391,6 +411,7 @@ public class TaskController {
 	 */
 	@ApiOperation(value = "Subscribe a task for the current user")
 	@RequestMapping(value = "/{id}/subscriptions", method = RequestMethod.POST)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public SubscriptionResponse subscribeTask(@PathVariable("id") String taskId)
 			throws AttempBadStateException {
 		String userId = core.getAuthUserId();
@@ -401,12 +422,14 @@ public class TaskController {
 
 	@ApiOperation(value = "Retrieve the local variables of a task")
 	@RequestMapping(value = "/{id}/vars", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public Map<String, Object> getTaskVars(@PathVariable("id") String taskId) {
 		return core.getProcessService().getTaskLocalVariables(taskId);
 	}
 
 	@ApiOperation(value = "Set the local variables of a task")
 	@RequestMapping(value = "/{id}/vars", method = RequestMethod.PUT)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public void setTaskVars(@PathVariable("id") String taskId,
 			@RequestBody(required = true) Map<String, Object> vars) {
 		core.getProcessService().setTaskLocalVariables(taskId, vars);

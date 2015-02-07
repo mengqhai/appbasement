@@ -1,9 +1,12 @@
 package com.workstream.rest.security.exp;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.activiti.engine.identity.Group;
+import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
@@ -11,6 +14,9 @@ import org.springframework.security.access.expression.method.MethodSecurityExpre
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
+import com.workstream.core.exception.ResourceNotFoundException;
+import com.workstream.core.model.Organization;
+import com.workstream.core.model.UserX;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.core.service.UserService.GroupType;
 import com.workstream.rest.utils.RestUtils;
@@ -74,6 +80,48 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 	public boolean isAuthInOrgForGroup(String groupId) {
 		String orgId = RestUtils.getOrgIdFromGroupId(groupId);
 		return isAuthInOrg(orgId);
+	}
+
+	public boolean isAuthInOrgForTask(String taskId) {
+		String orgId = getOrgIdFromTask(taskId);
+		if (orgId == null) {
+			return true; // system task
+		}
+		return isAuthInOrg(orgId);
+	}
+
+	public boolean isAuthInOrgForUser(String userId) {
+		Collection<String> orgIds = getOrgIdsFromUser(userId);
+		for (String orgId : orgIds) {
+			if (isAuthInOrg(orgId)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public String getOrgIdFromTask(String taskId) {
+		Task task = CoreFacadeService.getInstance().getProjectService()
+				.getTask(taskId);
+		if (task == null) {
+			throw new ResourceNotFoundException("No such task");
+		}
+		return task.getTenantId();
+	}
+
+	public Set<String> getOrgIdsFromUser(String userId) {
+		UserX userX = CoreFacadeService.getInstance().getUserService()
+				.getUserX(userId);
+		if (userX == null) {
+			throw new ResourceNotFoundException("No such user");
+		}
+		Collection<Organization> orgList = CoreFacadeService.getInstance()
+				.getOrgService().filterOrg(userX);
+		Set<String> orgIds = new HashSet<String>(orgList.size());
+		for (Organization org : orgList) {
+			orgIds.add(String.valueOf(org.getId()));
+		}
+		return orgIds;
 	}
 
 	protected List<Group> getGroups(String userId) {
