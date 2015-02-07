@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Attachment;
 import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,7 +110,15 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 		return false;
 	}
 
-	public String getOrgIdFromTask(String taskId) {
+	public boolean isAuthInOrgForAttachment(String attachmentId) {
+		String orgId = getOrgIdFromAttachment(attachmentId);
+		if (orgId != null) {
+			return isAuthInOrg(orgId);
+		}
+		return false;
+	}
+
+	protected String getOrgIdFromTask(String taskId) {
 		Task task = CoreFacadeService.getInstance().getProjectService()
 				.getTask(taskId);
 		if (task == null) {
@@ -118,7 +127,7 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 		return task.getTenantId();
 	}
 
-	public Set<String> getOrgIdsFromUser(String userId) {
+	protected Set<String> getOrgIdsFromUser(String userId) {
 		UserX userX = CoreFacadeService.getInstance().getUserService()
 				.getUserX(userId);
 		if (userX == null) {
@@ -133,7 +142,18 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 		return orgIds;
 	}
 
-	public String getOrgIdFromProcess(String processId) {
+	protected String getOrgIdFromAttachment(String attachment) {
+		Attachment att = CoreFacadeService.getInstance().getAttachmentService()
+				.getAttachment(attachment);
+		if (att == null) {
+			throw new ResourceNotFoundException("No such attachment");
+		}
+		String desc = att.getDescription();
+		String orgId = RestUtils.getOrgIdFromAttachmentDesc(desc);
+		return orgId;
+	}
+
+	protected String getOrgIdFromProcess(String processId) {
 		ProcessInstance pi = CoreFacadeService.getInstance()
 				.getProcessService().getProcess(processId);
 		if (pi == null) {
@@ -147,7 +167,7 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 				.filterGroupByUser(userId);
 	}
 
-	public List<Group> getGroups(String userId, GroupType type) {
+	protected List<Group> getGroups(String userId, GroupType type) {
 		return CoreFacadeService.getInstance().getUserService()
 				.filterGroupByUser(userId, type);
 	}

@@ -206,11 +206,20 @@ public class ProcessController {
 				// I'll replace the attachment with my own implementation in the
 				// future.
 
+				ProcessInstance pi = core.getProcessService().getProcess(
+						processId);
+				StringBuilder desc = new StringBuilder();
+				if (pi != null && pi.getTenantId() != null) {
+					desc.append(pi.getTenantId());
+				}
+				desc.append("|");
+				desc.append(file.getSize());
+
 				Attachment attachment = core.getAttachmentService()
 						.createProcessAttachment(processId,
 								file.getContentType(), decoded,
-								"size: " + file.getSize() / 1024L + "KB",
-								file.getInputStream(), file.getSize());
+								desc.toString(), file.getInputStream(),
+								file.getSize());
 				return new AttachmentResponse(attachment);
 			} catch (IOException e) {
 				throw new DataPersistException(e);

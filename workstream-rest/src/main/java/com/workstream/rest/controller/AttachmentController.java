@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.activiti.engine.task.Attachment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,6 +36,7 @@ public class AttachmentController {
 
 	@ApiOperation(value = "Retrieve the attachment obj", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForAttachment(#attachmentId)")
 	public AttachmentResponse getAttachment(
 			@PathVariable("id") String attachmentId) {
 		Attachment attachment = core.getAttachmentService().getAttachment(
@@ -44,6 +46,7 @@ public class AttachmentController {
 
 	@ApiOperation(value = "Delete the attachment")
 	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.DELETE)
+	@PreAuthorize("isAuthInOrgForAttachment(#attachmentId)")
 	public void deleteAttachment(@PathVariable("id") String attachmentId) {
 		core.getAttachmentService().deleteAttachment(attachmentId);
 	}
@@ -80,6 +83,7 @@ public class AttachmentController {
 
 	@RequestMapping(value = "/{attachmentId}/content", method = RequestMethod.GET)
 	@ResponseBody
+	@PreAuthorize("isAuthInOrgForAttachment(#attachmentId)")
 	public void getAttachmentContent(
 			@PathVariable("attachmentId") String attachmentId,
 			@ApiIgnore HttpServletResponse response) {

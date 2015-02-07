@@ -42,12 +42,24 @@ public class RestUtils {
 
 	public static String getOrgIdFromGroupId(String groupId) {
 		try {
-			String orgIdStr = groupId.split("\\|")[0];
+			String orgIdStr = getStrField(groupId, 0);
 			return orgIdStr;
 		} catch (Exception e) {
 			throw new BadArgumentException("Bad groupId: " + groupId, e);
 		}
+	}
 
+	public static String getOrgIdFromAttachmentDesc(String desc) {
+		try {
+			String orgIdStr = getStrField(desc, 0);
+			return orgIdStr;
+		} catch (Exception e) {
+			throw new BadArgumentException("Bad attachment desc: " + desc, e);
+		}
+	}
+
+	private static String getStrField(String str, int idx) {
+		return str.split("\\|")[idx];
 	}
 
 }
