@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -113,6 +114,7 @@ public class UserController {
 			+ "</ul>"
 			+ "Note: id is not not updatable and will be ignored")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
+	@PreAuthorize("principal == decodeUserId(#userIdBase64)")
 	public void updateUser(
 			@PathVariable("id") String userIdBase64,
 			@ApiParam(required = true) @RequestBody(required = true) @Validated({
@@ -179,6 +181,7 @@ public class UserController {
 	@ApiOperation(value = "Upload the picture for the current user.", notes = "The user id must be the current users."
 			+ TEST_USER_ID_INFO)
 	@RequestMapping(value = "/{id}/picture", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PreAuthorize("principal == decodeUserId(#userIdBase64)")
 	public void setUserPicture(@PathVariable("id") String userIdBase64,
 			@ApiParam(required = true) @RequestBody MultipartFile file) {
 		String userId = decodeUserId(userIdBase64);
@@ -232,6 +235,7 @@ public class UserController {
 	@ApiOperation(value = "Set user info for a user", notes = "To delete an info entry, just set the value to null.  "
 			+ TEST_USER_ID_INFO)
 	@RequestMapping(value = "/{id}/info", method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("principal == decodeUserId(#userIdBase64)")
 	public void setUserInfo(@PathVariable("id") String userIdBase64,
 			@ApiParam(required = true) @RequestBody Map<String, String> userInfo) {
 		String userId = decodeUserId(userIdBase64);
