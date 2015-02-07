@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +54,7 @@ public class ProjectController {
 	private CoreFacadeService core;
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForProject(#projectId)")
 	public ProjectResponse getProject(@PathVariable("id") Long projectId) {
 		Project proj = core.getProjectService().getProject(projectId);
 		if (proj == null) {
@@ -63,6 +65,7 @@ public class ProjectController {
 
 	@ApiOperation(value = "Partially update a project")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
+	@PreAuthorize("isAuthInOrgForProject(#projectId)")
 	public void updateProject(
 			@PathVariable("id") Long projectId,
 			@RequestBody @Validated({ Default.class, ValidateOnUpdate.class }) ProjectRequest projectReq,
@@ -81,6 +84,7 @@ public class ProjectController {
 
 	@ApiOperation(value = "Delete a project", notes = "A cascade delete action")
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@PreAuthorize("isAuthAdminForProject(#projectId)")
 	public void deleteProject(@PathVariable("id") Long projectId)
 			throws ResourceNotFoundException {
 		core.deleteProject(projectId);
@@ -89,6 +93,7 @@ public class ProjectController {
 
 	@ApiOperation(value = "Create a task in the project")
 	@RequestMapping(value = "/{id}/tasks", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("isAuthInOrgForProject(#projectId)")
 	public TaskResponse createTaskInProject(
 			@PathVariable("id") Long projectId,
 			@ApiParam(required = true) @RequestBody(required = true) @Validated({
@@ -106,6 +111,7 @@ public class ProjectController {
 
 	@ApiOperation(value = "Retrieves the tasks in the project", notes = "If no assigneeId is provided, all the tasks in the project will be retrieved.")
 	@RequestMapping(value = "/{id}/tasks", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForProject(#projectId)")
 	public List<TaskResponse> getTasksInProject(
 			@PathVariable("id") Long projectId,
 			@RequestParam(required = false) String assigneeId,
@@ -128,6 +134,7 @@ public class ProjectController {
 
 	@ApiOperation(value = "Count the tasks in the project", notes = "If no assigneeId is provided, all the tasks in the project will be counted.")
 	@RequestMapping(value = "/{id}/tasks/_count", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForProject(#projectId)")
 	public SingleValueResponse countTasksInProject(
 			@PathVariable("id") Long projectId,
 			@RequestParam(required = false) String assigneeId)
@@ -144,6 +151,7 @@ public class ProjectController {
 
 	@ApiOperation(value = "Retrieve subscription list for a project")
 	@RequestMapping(value = "/{id}/subscriptions", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForProject(#projectId)")
 	public Collection<SubscriptionResponse> getProjectSubscriptions(
 			@PathVariable("id") String project) {
 		Collection<Subscription> subs = core.getEventService()
@@ -160,6 +168,7 @@ public class ProjectController {
 	 */
 	@ApiOperation(value = "Subscribe a project for the current user")
 	@RequestMapping(value = "/{id}/subscriptions", method = RequestMethod.POST)
+	@PreAuthorize("isAuthInOrgForProject(#projectId)")
 	public SubscriptionResponse subscribeProject(
 			@PathVariable("id") String projectId)
 			throws AttempBadStateException {

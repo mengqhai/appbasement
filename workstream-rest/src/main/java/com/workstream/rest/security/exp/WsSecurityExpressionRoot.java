@@ -18,6 +18,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Organization;
+import com.workstream.core.model.Project;
 import com.workstream.core.model.UserX;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.core.service.UserService.GroupType;
@@ -110,6 +111,11 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 		return false;
 	}
 
+	public boolean isAuthInOrgForProject(Long projectId) {
+		String orgId = getOrgIdFromProject(projectId);
+		return isAuthInOrg(orgId);
+	}
+
 	public boolean isAuthInOrgForAttachment(String attachmentId) {
 		String orgId = getOrgIdFromAttachment(attachmentId);
 		if (orgId != null) {
@@ -125,6 +131,15 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 			throw new ResourceNotFoundException("No such task");
 		}
 		return task.getTenantId();
+	}
+
+	protected String getOrgIdFromProject(Long projectId) {
+		Project pro = CoreFacadeService.getInstance().getProjectService()
+				.getProject(projectId);
+		if (pro == null) {
+			throw new ResourceNotFoundException("No such project");
+		}
+		return String.valueOf(pro.getOrg().getId());
 	}
 
 	protected Set<String> getOrgIdsFromUser(String userId) {
@@ -207,6 +222,11 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 
 	public boolean isAuthAdminForGroup(String groupId) {
 		String orgId = RestUtils.getOrgIdFromGroupId(groupId);
+		return isAuthAdmin(orgId);
+	}
+
+	public boolean isAuthAdminForProject(Long projectId) {
+		String orgId = getOrgIdFromProject(projectId);
 		return isAuthAdmin(orgId);
 	}
 
