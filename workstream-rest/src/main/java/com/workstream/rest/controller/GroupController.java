@@ -59,7 +59,7 @@ public class GroupController {
 
 	@ApiOperation(value = "Get the detailed group information for a given group id", notes = "The detailed information including the description, createdAt, etc.")
 	@RequestMapping(value = "/{groupId:\\d+\\|\\d+}", method = RequestMethod.GET)
-	@PreAuthorize("isAuthInOrgForGroup(authentication, #groupId)")
+	@PreAuthorize("isAuthInOrgForGroup(#groupId)")
 	public GroupResponse getGroup(@PathVariable("groupId") String groupId) {
 		GroupX groupX = core.getUserService().getGroupX(groupId);
 		if (groupX == null) {
@@ -71,7 +71,7 @@ public class GroupController {
 
 	@ApiOperation(value = "Get user list for a given group", notes = "The list doesn't contain detailed information like createdAt.")
 	@RequestMapping(value = "/{groupId:\\d+\\|\\d+}/users", method = RequestMethod.GET)
-	@PreAuthorize("isAuthInOrgForGroup(authentication, #groupId)")
+	@PreAuthorize("isAuthInOrgForGroup(#groupId)")
 	public List<UserResponse> getGroupUsers(
 			@PathVariable("groupId") String groupId) {
 		List<User> users = core.getUserService().filterUserByGroupId(groupId);
@@ -88,7 +88,7 @@ public class GroupController {
 
 	@ApiOperation(value = "Partially update a group", notes = "Doesn't care whether the proper is in Group or GroupX")
 	@RequestMapping(value = "/{groupId:\\d+\\|\\d+}", method = RequestMethod.PATCH)
-	@PreAuthorize("isAuthAdminForGroup(authentication, #groupId)")
+	@PreAuthorize("isAuthAdminForGroup(#groupId)")
 	public void updateGroup(@PathVariable("groupId") String groupId,
 			@ApiParam(required = true) @RequestBody @Validated({ Default.class,
 					ValidateOnUpdate.class }) GroupRequest groupReq,
@@ -129,7 +129,7 @@ public class GroupController {
 	@ApiOperation(value = "Add a user to a group", notes = TEST_USER_ID_INFO)
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@RequestMapping(value = "/{groupId:\\d+\\|\\d+}/users/{userIdBase64}", method = RequestMethod.PUT)
-	@PreAuthorize("isAuthAdminForGroup(authentication, #groupId)")
+	@PreAuthorize("isAuthAdminForGroup(#groupId)")
 	public void addUserToGroup(@PathVariable("groupId") String groupId,
 			@PathVariable("userIdBase64") String userIdBase64)
 			throws ResourceNotFoundException, DataBadStateException,
@@ -150,7 +150,7 @@ public class GroupController {
 	@ApiOperation(value = "Remove a user from a group", notes = TEST_USER_ID_INFO)
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	@RequestMapping(value = "/{groupId:\\d+\\|\\d+}/users/{userIdBase64}", method = RequestMethod.DELETE)
-	@PreAuthorize("isAuthAdminForGroup(authentication, #groupId)")
+	@PreAuthorize("isAuthAdminForGroup(#groupId)")
 	public void removeUserFromGroup(@PathVariable("groupId") String groupId,
 			@PathVariable("userIdBase64") String userIdBase64)
 			throws BadArgumentException {
@@ -164,7 +164,7 @@ public class GroupController {
 	@ApiOperation(value = "Get candidate tasks for the group", notes = "In other words, get the task(unassigned/claimed) list whose candidate group is "
 			+ "the speicified one.")
 	@RequestMapping(value = "/{groupId:\\d+\\|\\d+}/candidateTasks", method = RequestMethod.GET)
-	@PreAuthorize("isAuthInGroup(authentication, #groupId)")
+	@PreAuthorize("isAuthInGroup(#groupId)")
 	public List<TaskResponse> getTasks(@PathVariable("groupId") String groupId) {
 		List<Task> tasks = core.getProcessService().filterTaskByCandidateGroup(
 				groupId);
@@ -174,7 +174,7 @@ public class GroupController {
 	@ApiOperation(value = "Count candidate tasks for the group", notes = "In other words, get the task(unassigned/claimed) list whose candidate group is "
 			+ "the speicified one.")
 	@RequestMapping(value = "/{groupId:\\d+\\|\\d+}/candidateTasks/_count", method = RequestMethod.GET)
-	@PreAuthorize("isAuthInGroup(authentication, #groupId)")
+	@PreAuthorize("isAuthInGroup(#groupId)")
 	public SingleValueResponse countTasksForGroup(
 			@PathVariable("groupId") String groupId) {
 		long count = core.getProcessService()

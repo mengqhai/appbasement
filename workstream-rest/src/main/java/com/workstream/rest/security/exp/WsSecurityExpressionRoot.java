@@ -38,8 +38,8 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 		}
 	}
 
-	public boolean isAuthInOrg(Authentication auth, String orgId) {
-		Collection<? extends GrantedAuthority> authorities = auth
+	public boolean isAuthInOrg(String orgId) {
+		Collection<? extends GrantedAuthority> authorities = getAuthentication()
 				.getAuthorities();
 		for (GrantedAuthority a : authorities) {
 			String role = a.getAuthority();
@@ -59,9 +59,9 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 		return false;
 	}
 
-	public boolean isAuthInGroup(Authentication auth, String groupId) {
-		Collection<? extends GrantedAuthority> authorities = auth
-				.getAuthorities();
+	public boolean isAuthInGroup(String groupId) {
+		Collection<? extends GrantedAuthority> authorities = this
+				.getAuthentication().getAuthorities();
 		for (GrantedAuthority a : authorities) {
 			String role = a.getAuthority();
 			if (role != null && role.equals(groupId)) {
@@ -71,9 +71,9 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 		return false;
 	}
 
-	public boolean isAuthInOrgForGroup(Authentication auth, String groupId) {
+	public boolean isAuthInOrgForGroup(String groupId) {
 		String orgId = RestUtils.getOrgIdFromGroupId(groupId);
-		return isAuthInOrg(auth, orgId);
+		return isAuthInOrg(orgId);
 	}
 
 	protected List<Group> getGroups(String userId) {
@@ -86,9 +86,8 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 				.filterGroupByUser(userId, type);
 	}
 
-	protected boolean isAuthOfGroupType(Authentication auth, String orgId,
-			GroupType type) {
-		Collection<? extends GrantedAuthority> authorities = auth
+	protected boolean isAuthOfGroupType(String orgId, GroupType type) {
+		Collection<? extends GrantedAuthority> authorities = getAuthentication()
 				.getAuthorities();
 		for (GrantedAuthority a : authorities) {
 			String role = a.getAuthority();
@@ -112,17 +111,17 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 		return false;
 	}
 
-	public boolean isAuthProcessDesigner(Authentication auth, String orgId) {
-		return isAuthOfGroupType(auth, orgId, GroupType.PROCESS_DESIGNER);
+	public boolean isAuthProcessDesigner(String orgId) {
+		return isAuthOfGroupType(orgId, GroupType.PROCESS_DESIGNER);
 	}
 
-	public boolean isAuthAdmin(Authentication auth, String orgId) {
-		return isAuthOfGroupType(auth, orgId, GroupType.ADMIN);
+	public boolean isAuthAdmin(String orgId) {
+		return isAuthOfGroupType(orgId, GroupType.ADMIN);
 	}
 
-	public boolean isAuthAdminForGroup(Authentication auth, String groupId) {
+	public boolean isAuthAdminForGroup(String groupId) {
 		String orgId = RestUtils.getOrgIdFromGroupId(groupId);
-		return isAuthAdmin(auth, orgId);
+		return isAuthAdmin(orgId);
 	}
 
 	@Override
