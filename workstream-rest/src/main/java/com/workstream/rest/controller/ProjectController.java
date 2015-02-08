@@ -30,6 +30,7 @@ import com.workstream.core.model.CoreEvent.TargetType;
 import com.workstream.core.model.Project;
 import com.workstream.core.model.Subscription;
 import com.workstream.core.service.CoreFacadeService;
+import com.workstream.rest.RestConstants;
 import com.workstream.rest.exception.BeanValidationException;
 import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.ProjectRequest;
@@ -166,15 +167,19 @@ public class ProjectController {
 	 * @throws AttempBadStateException
 	 *             if user already subscribed it
 	 */
-	@ApiOperation(value = "Subscribe a project for the current user")
+	@ApiOperation(value = "Subscribe a project for the current user", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(value = "/{id}/subscriptions", method = RequestMethod.POST)
 	@PreAuthorize("isAuthInOrgForProject(#projectId)")
 	public SubscriptionResponse subscribeProject(
-			@PathVariable("id") String projectId)
-			throws AttempBadStateException {
+			@PathVariable("id") String projectId,
+			@RequestParam(required = false) String userIdBase64) throws AttempBadStateException {
 		String userId = core.getAuthUserId();
-		Subscription sub = core.getEventService().subscribe(userId,
-				TargetType.PROJECT, projectId);
+		if (userIdBase64 != null && !userIdBase64.isEmpty()) {
+			userId = RestUtils.decodeUserId(userIdBase64);
+		}
+
+		Subscription sub = core.checkSubscribe(userId, TargetType.PROJECT,
+				projectId);
 		return new SubscriptionResponse(sub);
 	}
 

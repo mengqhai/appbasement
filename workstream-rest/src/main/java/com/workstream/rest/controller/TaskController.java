@@ -416,14 +416,18 @@ public class TaskController {
 	 * @throws AttempBadStateException
 	 *             if user already subscribed it
 	 */
-	@ApiOperation(value = "Subscribe a task for the current user")
+	@ApiOperation(value = "Subscribe a task for the current user", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(value = "/{id}/subscriptions", method = RequestMethod.POST)
 	@PreAuthorize("isAuthInOrgForTask(#taskId)")
-	public SubscriptionResponse subscribeTask(@PathVariable("id") String taskId)
+	public SubscriptionResponse subscribeTask(
+			@PathVariable("id") String taskId,
+			@RequestParam(required = false) String userIdBase64)
 			throws AttempBadStateException {
 		String userId = core.getAuthUserId();
-		Subscription sub = core.getEventService().subscribe(userId,
-				TargetType.TASK, taskId);
+		if (userIdBase64 != null && !userIdBase64.isEmpty()) {
+			userId = RestUtils.decodeUserId(userIdBase64);
+		}
+		Subscription sub = core.checkSubscribe(userId, TargetType.TASK, taskId);
 		return new SubscriptionResponse(sub);
 	}
 

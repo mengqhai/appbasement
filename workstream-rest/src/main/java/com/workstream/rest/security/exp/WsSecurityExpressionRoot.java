@@ -1,9 +1,7 @@
 package com.workstream.rest.security.exp;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
@@ -21,9 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
 import com.workstream.core.exception.ResourceNotFoundException;
-import com.workstream.core.model.Organization;
 import com.workstream.core.model.Project;
-import com.workstream.core.model.UserX;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.core.service.UserService.GroupType;
 import com.workstream.rest.utils.RestUtils;
@@ -146,7 +142,8 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 	}
 
 	public boolean isAuthInOrgForUser(String userId) {
-		Collection<String> orgIds = getOrgIdsFromUser(userId);
+		Collection<String> orgIds = CoreFacadeService.getInstance()
+				.getOrgIdsFromUser(userId);
 		for (String orgId : orgIds) {
 			if (isAuthInOrg(orgId)) {
 				return true;
@@ -235,21 +232,6 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 			throw new ResourceNotFoundException("No such model");
 		}
 		return model.getTenantId();
-	}
-
-	protected Set<String> getOrgIdsFromUser(String userId) {
-		UserX userX = CoreFacadeService.getInstance().getUserService()
-				.getUserX(userId);
-		if (userX == null) {
-			throw new ResourceNotFoundException("No such user");
-		}
-		Collection<Organization> orgList = CoreFacadeService.getInstance()
-				.getOrgService().filterOrg(userX);
-		Set<String> orgIds = new HashSet<String>(orgList.size());
-		for (Organization org : orgList) {
-			orgIds.add(String.valueOf(org.getId()));
-		}
-		return orgIds;
 	}
 
 	protected String getOrgIdFromAttachment(String attachment) {

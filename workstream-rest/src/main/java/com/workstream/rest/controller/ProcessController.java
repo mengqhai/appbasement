@@ -161,15 +161,19 @@ public class ProcessController {
 	 * @throws AttempBadStateException
 	 *             if user already subscribed it
 	 */
-	@ApiOperation(value = "Subscribe a process for the current user")
+	@ApiOperation(value = "Subscribe a process for the current user", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(value = "/{id}/subscriptions", method = RequestMethod.POST)
 	@PreAuthorize("isAuthInOrgForProcess(#processId)")
 	public SubscriptionResponse subscribeProcess(
-			@PathVariable("id") String processId)
+			@PathVariable("id") String processId,
+			@RequestParam(required = false) String userIdBase64)
 			throws AttempBadStateException {
 		String userId = core.getAuthUserId();
-		Subscription sub = core.getEventService().subscribe(userId,
-				TargetType.PROCESS, processId);
+		if (userIdBase64 != null && !userIdBase64.isEmpty()) {
+			userId = RestUtils.decodeUserId(userIdBase64);
+		}
+		Subscription sub = core.checkSubscribe(userId, TargetType.PROCESS,
+				processId);
 		return new SubscriptionResponse(sub);
 	}
 

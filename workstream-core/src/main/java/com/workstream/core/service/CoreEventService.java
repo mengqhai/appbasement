@@ -85,6 +85,7 @@ public class CoreEventService {
 			logger.debug("User already subscribed it {}", sub);
 			return sub;
 		}
+
 		Subscription sub = new Subscription();
 		sub.setUserId(subscriber);
 		sub.setTargetType(targetType);

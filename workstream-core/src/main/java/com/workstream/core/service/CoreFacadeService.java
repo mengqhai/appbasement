@@ -3,8 +3,10 @@ package com.workstream.core.service;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.activiti.engine.form.FormProperty;
@@ -33,9 +35,11 @@ import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.DataBadStateException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.CoreEvent;
+import com.workstream.core.model.CoreEvent.TargetType;
 import com.workstream.core.model.GroupX;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.Project;
+import com.workstream.core.model.Subscription;
 import com.workstream.core.model.UserX;
 import com.workstream.core.service.UserService.GroupType;
 
@@ -521,5 +525,66 @@ public class CoreFacadeService {
 	// throw new DataPersistException(e);
 	// }
 	// }
+
+	/**
+	 * Check if the user is in the target's org before actually subscribe the
+	 * target
+	 * 
+	 * @param userId
+	 * @param targetType
+	 * @param targetId
+	 */
+	public Subscription checkSubscribe(String userId, TargetType targetType,
+			String targetId) throws AttempBadStateException,
+			ResourceNotFoundException {
+		switch (targetType) {
+		case TASK:
+			Task task = projSer.getTask(targetId);
+			if (task == null) {
+				throw new ResourceNotFoundException("No such task");
+			}
+			if (!getOrgIdsFromUser(userId).contains(task.getTenantId())) {
+				throw new AttempBadStateException("User not in task's org");
+			}
+			break;
+		case PROJECT:
+			Project proj = projSer.getProject(Long.valueOf(targetId));
+			if (proj == null) {
+				throw new ResourceNotFoundException("No such project");
+			}
+			if (!getOrgIdsFromUser(userId).contains(
+					String.valueOf(proj.getOrg().getId()))) {
+				throw new AttempBadStateException("User not in project's org");
+			}
+			break;
+		case PROCESS:
+			ProcessInstance process = procSer.getProcess(targetId);
+			if (process == null) {
+				throw new ResourceNotFoundException("No such process");
+			}
+			if (!getOrgIdsFromUser(userId).contains(process.getTenantId())) {
+				throw new AttempBadStateException("User not in process's org");
+			}
+			break;
+		default:
+			throw new BadArgumentException("Target type not substribable:"
+					+ targetType);
+		}
+		return eventSer.subscribe(userId, targetType, targetId);
+	}
+
+	public Set<String> getOrgIdsFromUser(String userId) {
+		UserX userX = getUserService().getUserX(userId);
+		if (userX == null) {
+			throw new ResourceNotFoundException("No such user");
+		}
+		Collection<Organization> orgList = CoreFacadeService.getInstance()
+				.getOrgService().filterOrg(userX);
+		Set<String> orgIds = new HashSet<String>(orgList.size());
+		for (Organization org : orgList) {
+			orgIds.add(String.valueOf(org.getId()));
+		}
+		return orgIds;
+	}
 
 }
