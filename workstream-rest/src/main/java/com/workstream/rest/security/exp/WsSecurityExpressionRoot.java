@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
@@ -153,6 +155,22 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 		return false;
 	}
 
+	public boolean isAuthInOrgForArchTask(String taskId) {
+		String orgId = getOrgIdFromArchTask(taskId);
+		if (orgId == null) {
+			return true; // system task
+		}
+		return isAuthInOrg(orgId);
+	}
+
+	public boolean isAuthInOrgForArchProcess(String processId) {
+		String orgId = getOrgIdFromArchProcess(processId);
+		if (orgId == null) {
+			return true; // system task
+		}
+		return isAuthInOrg(orgId);
+	}
+
 	public boolean isAuthInOrgForProject(Long projectId) {
 		String orgId = getOrgIdFromProject(projectId);
 		return isAuthInOrg(orgId);
@@ -191,6 +209,24 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 			throw new ResourceNotFoundException("No such template");
 		}
 		return pd.getTenantId();
+	}
+
+	protected String getOrgIdFromArchTask(String taskId) {
+		HistoricTaskInstance archTask = CoreFacadeService.getInstance()
+				.getProjectService().getArchTask(taskId);
+		if (archTask == null) {
+			throw new ResourceNotFoundException("No such task");
+		}
+		return archTask.getTenantId();
+	}
+
+	protected String getOrgIdFromArchProcess(String processId) {
+		HistoricProcessInstance archTask = CoreFacadeService.getInstance()
+				.getProcessService().getHiProcess(processId);
+		if (archTask == null) {
+			throw new ResourceNotFoundException("No such process");
+		}
+		return archTask.getTenantId();
 	}
 
 	protected String getOrgIdFromModel(String modelId) {

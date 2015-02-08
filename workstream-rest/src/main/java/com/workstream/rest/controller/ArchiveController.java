@@ -11,6 +11,7 @@ import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -51,6 +52,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Query the tasks by user role and userId", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(value = "/tasks", method = RequestMethod.GET)
+	@PreAuthorize("principal == decodeUserId(#userIdBase64)")
 	public List<ArchTaskResponse> getArchTasksByUser(
 			@RequestParam(required = true) UserTaskRole role,
 			@RequestParam(required = true) String userIdBase64,
@@ -66,6 +68,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Count the tasks by user role and userId", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(value = "/tasks/_count", method = RequestMethod.GET)
+	@PreAuthorize("principal == decodeUserId(#userIdBase64)")
 	public SingleValueResponse countArchTasksByUser(
 			@RequestParam(required = true) UserTaskRole role,
 			@RequestParam(required = true) String userIdBase64) {
@@ -76,6 +79,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Retrieves the archived task for a given id")
 	@RequestMapping(value = "/tasks/{id}", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForArchTask(#taskId)")
 	public ArchTaskResponse getArchTask(@PathVariable("id") String taskId) {
 		HistoricTaskInstance hiTask = core.getProjectService().getArchTask(
 				taskId);
@@ -89,6 +93,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Recover an achived standalone task")
 	@RequestMapping(value = "/tasks/{id}", method = RequestMethod.PUT)
+	@PreAuthorize("isAuthInOrgForArchTask(#taskId)")
 	public TaskResponse recoverTask(@PathVariable("id") String taskId) {
 		Task task = core.getProjectService().createRecoveryTask(taskId);
 		return new TaskResponse(task);
@@ -96,6 +101,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Retrieves the archived task for a given id")
 	@RequestMapping(value = "/tasks/{id}/events", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForArchTask(#taskId)")
 	public List<EventResponse> getArchTaskEvents(
 			@PathVariable("id") String taskId) {
 		return taskCtrl.getTaskEvents(taskId);
@@ -103,6 +109,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Retrieve the attachment list for a task")
 	@RequestMapping(value = "/tasks/{id:\\d+}/attachments", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForArchTask(#taskId)")
 	public List<AttachmentResponse> getArchTaskAttachments(
 			@PathVariable("id") String taskId) {
 		return taskCtrl.getTaskAttachments(taskId);
@@ -110,6 +117,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Retrieve the local variables for a task")
 	@RequestMapping(value = "/tasks/{id:\\d+}/vars", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForArchTask(#taskId)")
 	public Map<String, Object> getArchTaskVars(@PathVariable("id") String taskId) {
 		HistoricTaskInstance hiTask = core.getProjectService()
 				.getArchTaskWithVars(taskId);
@@ -121,6 +129,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Retrieve the sub tasks for a task")
 	@RequestMapping(value = "/tasks/{id:\\d+}/tasks", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForArchTask(#taskId)")
 	public List<ArchTaskResponse> getArchSubTasks(
 			@PathVariable("id") String taskId,
 			@RequestParam(defaultValue = "0") int first,
@@ -132,6 +141,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Retrieve the sub task count for a task")
 	@RequestMapping(value = "/tasks/{id:\\d+}/tasks/_count", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForArchTask(#taskId)")
 	public SingleValueResponse countArchSubTasks(
 			@PathVariable("id") String taskId) {
 		long count = core.getProjectService().countArchSubTasks(taskId);
@@ -140,6 +150,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Retrieve the for properties for a task")
 	@RequestMapping(value = "/tasks/{id:\\d+}/form", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForArchTask(#taskId)")
 	public List<ArchFormPropertyResponse> getArchTaskFormProperties(
 			@PathVariable("id") String taskId) {
 		List<HistoricFormProperty> formProperties = core.getProcessService()
@@ -150,6 +161,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Retrieves the archived task list in project")
 	@RequestMapping(value = "/projects/{projectId}/tasks", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForProject(#projectId)")
 	public List<ArchTaskResponse> getArchTasksInProject(
 			@PathVariable("projectId") long projectId,
 			@RequestParam(defaultValue = "0") int first,
@@ -166,6 +178,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Count the archived task in project")
 	@RequestMapping(value = "/projects/{projectId}/tasks/_count", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForProject(#projectId)")
 	public SingleValueResponse countArchTasksInProject(
 			@PathVariable("projectId") long projectId) {
 		Project project = core.getProjectService().getProject(projectId);
@@ -179,6 +192,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Query the process by user role and userId", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(value = "/processes", method = RequestMethod.GET)
+	@PreAuthorize("principal == decodeUserId(#userIdBase64)")
 	public List<ArchProcessResponse> getArchProcessByUser(
 			@RequestParam(required = true) UserProcessRole role,
 			@RequestParam(required = true) String userIdBase64,
@@ -192,6 +206,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Query the process count by user role and userId", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(value = "/processes/_count", method = RequestMethod.GET)
+	@PreAuthorize("principal == decodeUserId(#userIdBase64)")
 	public SingleValueResponse countArchProcessByUser(
 			@RequestParam(required = true) UserProcessRole role,
 			@RequestParam(required = true) String userIdBase64) {
@@ -203,6 +218,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Retrieves the archived tasks in a given process")
 	@RequestMapping(value = "/processes/{processId}/tasks", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForArchProcess(#processId)")
 	public List<ArchTaskResponse> getArchTasksInProcess(
 			@PathVariable("processId") String processId,
 			@RequestParam(defaultValue = "0") int first,
@@ -214,6 +230,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Count the archived task in a given process")
 	@RequestMapping(value = "/processes/{processId}/tasks/_count", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForArchProcess(#processId)")
 	public SingleValueResponse countArchTasksInProcess(
 			@PathVariable("processId") String processId) {
 		long count = core.getProcessService().countArchTaskByProcess(processId);
@@ -222,6 +239,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Retrieves the variables for a process")
 	@RequestMapping(value = "/processes/{processId}/vars", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForArchProcess(#processId)")
 	public Map<String, Object> getArchProcessVars(
 			@PathVariable("processId") String processId) {
 		HistoricProcessInstance hiPi = core.getProcessService()
@@ -231,6 +249,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Retrieve the form properties for a process", notes = "Including the start form properties and the task form properties")
 	@RequestMapping(value = "/processes/{id:\\d+}/form", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForArchProcess(#processId)")
 	public List<ArchFormPropertyResponse> getArchProcessFormProperties(
 			@PathVariable("id") String processId) {
 		List<HistoricFormProperty> formProperties = core.getProcessService()
@@ -241,6 +260,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Retrieve the attachment list for a task")
 	@RequestMapping(value = "/processes/{id:\\d+}/attachments", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForArchProcess(#processId)")
 	public List<AttachmentResponse> getArchProcessAttachments(
 			@PathVariable("id") String processId) {
 		return processCtrl.getProcesssAttachments(processId);
@@ -248,6 +268,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Retrieves the archived processes for a given org id")
 	@RequestMapping(value = "/orgs/{orgId}/processes", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrg(#orgId)")
 	public List<ArchProcessResponse> getArchProcessesInOrg(
 			@PathVariable("orgId") Long orgId,
 			@RequestParam(defaultValue = "0") int first,
@@ -259,6 +280,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Retrieves the archived processes for a given org id")
 	@RequestMapping(value = "/orgs/{orgId}/processes/_count", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrg(#orgId)")
 	public SingleValueResponse countArchProcessesInOrg(
 			@PathVariable("orgId") Long orgId) {
 		long count = core.getProcessService().countHiProcessByOrg(orgId, true);
@@ -267,6 +289,7 @@ public class ArchiveController {
 
 	@ApiOperation(value = "Retrieves the archived processes started by a given user id", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(value = "/users/{userIdBase64}/processes", method = RequestMethod.GET)
+	@PreAuthorize("principal == decodeUserId(#userIdBase64)")
 	public List<ArchProcessResponse> getArchProcessesByStarter(
 			@PathVariable("userIdBase64") String userIdBase64,
 			@RequestParam(defaultValue = "0") int first,
