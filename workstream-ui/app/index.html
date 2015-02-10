@@ -13,6 +13,7 @@
     <!-- endbuild -->
     <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/css/sidebar.css">
     <!-- endbuild -->
   </head>
   <body ng-app="workstreamUiApp">
@@ -47,6 +48,21 @@
         </div>
       </div>
     </div>
+    <aside class="app-sidebar">
+        <a href>Create</a>
+        <div>
+            <ul>
+                <li>
+                    <a href>Task</a>
+                </li>
+                <li>
+                    <a href>Process</a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+
+
 
     <div class="container">
     <div ng-view=""></div>
