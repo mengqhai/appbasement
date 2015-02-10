@@ -18,6 +18,7 @@ angular
         'ngTouch',
         'ui.sortable',
         'ui.router',
+        'ui.bootstrap',
         'LocalStorageModule',
         'controllers.login'
     ])

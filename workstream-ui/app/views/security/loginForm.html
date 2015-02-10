@@ -20,4 +20,10 @@
             <input name="pass" type="password" ng-model="user.password" required autocomplete="off">
         </fieldset>
     </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-primary login" ng-click="login()" ng-disabled="form.$invalid">Sign in</button>
+        <button class="btn clear" ng-click="clearForm()">Clear</button>
+        <button class="btn btn-warning cancel" ng-click="cancelLogin()">Cancel</button>
+    </div>
 </form>
