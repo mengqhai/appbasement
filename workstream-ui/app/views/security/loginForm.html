@@ -1,0 +1,23 @@
+<form name="form" class="form-horizontal">
+    <div class="modal-header">
+        <h4>Sign in</h4>
+    </div>
+    <div class="modal-body">
+        <div class="alert alert-warning" ng-show="authReason">
+            {{authReason}}
+        </div>
+        <div class="alert alert-danger" ng-show="authError">
+            {{authError}}
+        </div>
+        <div class="alert alert-info">
+            {{authInfo}}
+        </div>
+
+        <fieldset>
+            <label>Username</label>
+            <input name="login" type="text" ng-model="user.userId" required autofocus>
+            <label>Password</label>
+            <input name="pass" type="password" ng-model="user.password" required autocomplete="off">
+        </fieldset>
+    </div>
+</form>

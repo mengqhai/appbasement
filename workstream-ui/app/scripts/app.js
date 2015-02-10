@@ -18,7 +18,8 @@ angular
         'ngTouch',
         'ui.sortable',
         'ui.router',
-        'LocalStorageModule'
+        'LocalStorageModule',
+        'controllers.login'
     ])
     .config(['localStorageServiceProvider', function (localStorageServiceProvider) {
         localStorageServiceProvider.setPrefix('ls');
