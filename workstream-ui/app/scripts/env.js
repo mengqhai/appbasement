@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('env', [])
     .constant('URL_BASE', 'http://localhost:8080/workstream-rest')
     .factory('envConstants', ['URL_BASE', function (URL_BASE) {
@@ -8,6 +10,6 @@ angular.module('env', [])
     }])
     .factory('envVars', [function() {
         return {
-            apiKey:""
-        }
+            apiKey:''
+        };
     }]);

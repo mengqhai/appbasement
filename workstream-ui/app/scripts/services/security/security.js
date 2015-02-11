@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('services.security', ['env'])
     .factory('loginService', ['$http', 'envConstants', 'envVars', function($http, envConstants, envVars) {
         var login = function(userId, password) {
