@@ -3,23 +3,20 @@
 angular.module('service.security.interceptor', [])
     .factory('SecurityInterceptor', ['SecurityRetryQueue', 'envVars', function (queue, envVars) {
         return {
-            responseError: function (promise) {
-                // Intercept only failed requests
-                return promise.then(null, function (originalResponse) {
-                    if (originResponse.status === 401) {
-                        // The request bounced because it was not authorized - add a new request to the retry queue
-                        promise = queue.pushRetryFn('You need to log in to perform the action.', function () {
-                            // We must use $injector to get the $http service to prevent circular dependency
-                            return $injector.get('$http')(originResponse.config);
-                        });
-                    }
-                    return promise
-                })
-            },
-            request: function (config) {
-                config.url = config.url +'?api_key='+envVars.apiKey;
-                return config;
-            }
+            responseError: function (originResponse) {
+                if (originResponse.status === 401) {
+                    // The request bounced because it was not authorized - add a new request to the retry queue
+                    queue.pushRetryFn('You need to log in to perform the action.', function () {
+                        // We must use $injector to get the $http service to prevent circular dependency
+                        return $injector.get('$http')(originResponse.config);
+                    });
+                }
+                return originResponse;
+            }//,
+//            request: function(config) {
+//                config.headers['x-api-key']=envVars.apiKey;
+//                return config;
+//            }
         };
     }])
     .config(['$httpProvider', function ($httpProvider) {

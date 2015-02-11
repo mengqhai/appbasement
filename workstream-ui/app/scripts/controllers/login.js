@@ -19,7 +19,7 @@ angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.b
                 } else {
                     $scope.authInfo = 'Login success';
                     if ($modalInstance) {
-                        $modalInstance.dismiss('loginSuccess');
+                        $modalInstance.close(response.data);
                     }
                 }
             }, function (x) {
@@ -35,12 +35,12 @@ angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.b
         };
 
         $scope.cancelLogin = function () {
-            if($modalInstance) {
+            if ($modalInstance) {
                 $modalInstance.dismiss('cancelLogin');
             }
         };
     }])
-    .controller('LoginDialogController', ['$modal', '$scope', function ($modal, $scope) {
+    .controller('LoginDialogController', ['$modal', '$scope', 'SecurityRetryQueue', function ($modal, $scope, queue) {
         var dialog = null;
         $scope.open = function () {
             if (dialog) {
@@ -55,8 +55,16 @@ angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.b
 
             dialog.result.then(function () {
                 dialog = null;
+                queue.retryAll();
             }, function () {
                 dialog = null;
+                queue.cancelAll();
             });
         };
+
+        queue.onItemAddedCallbacks.push(function (retryItem) {
+            if (queue.hasMore()) {
+                $scope.open();
+            }
+        });
     }]);

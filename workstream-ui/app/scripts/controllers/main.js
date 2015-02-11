@@ -27,8 +27,9 @@ angular.module('workstreamUiApp')
         };
 
         $scope.getUser = function () {
+            var userId = envVars.currentUser ? envVars.currentUser.id : '';
             $scope.user = Users.get({
-                userIdBase64: btoa(envVars.currentUser.id)
+                userIdBase64: btoa(userId)
             });
         }
     }]);
