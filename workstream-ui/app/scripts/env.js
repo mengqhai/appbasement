@@ -5,4 +5,9 @@ angular.module('env', [])
             URL_BASE: URL_BASE,
             REST_BASE: URL_BASE+'/rest'
         };
+    }])
+    .factory('envVars', [function() {
+        return {
+            apiKey:""
+        }
     }]);

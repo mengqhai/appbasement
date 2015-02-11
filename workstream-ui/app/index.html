@@ -48,22 +48,7 @@
         </div>
       </div>
     </div>
-    <aside class="app-sidebar">
-        <a href>Create</a>
-        <div ng-controller="LoginDialogController as login">
-            <button class="btn btn-default" ng-click="open()">Login</button>
-        </div>
-        <div>
-            <ul>
-                <li>
-                    <a href>Task</a>
-                </li>
-                <li>
-                    <a href>Process</a>
-                </li>
-            </ul>
-        </div>
-    </aside>
+    <sidebar></sidebar>
 
 
 
@@ -114,6 +99,7 @@
         <script src="scripts/controllers/about.js"></script>
         <script src="scripts/controllers/login.js"></script>
         <script src="scripts/controllers/main.js"></script>
+        <script src="scripts/directives/sidebar.js"></script>
         <script src="scripts/env.js"></script>
         <script src="scripts/services/security/security.js"></script>
         <!--SCRIPTS END-->

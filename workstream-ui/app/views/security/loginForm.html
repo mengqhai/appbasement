@@ -1,4 +1,4 @@
-<form name="form" class="form-horizontal">
+<form name="loginForm" class="form-horizontal" novalidate>
     <div class="modal-header">
         <h4>Sign in</h4>
     </div>
@@ -22,7 +22,7 @@
     </div>
 
     <div class="modal-footer">
-        <button class="btn btn-primary login" ng-click="login()" ng-disabled="form.$invalid">Sign in</button>
+        <button class="btn btn-primary login" ng-click="login()" ng-disabled="loginForm.$invalid">Sign in</button>
         <button class="btn clear" ng-click="clearForm()">Clear</button>
         <button class="btn btn-warning cancel" ng-click="cancelLogin()">Cancel</button>
     </div>

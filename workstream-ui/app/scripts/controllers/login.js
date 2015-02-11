@@ -14,6 +14,9 @@ angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.b
                 if (!response.data.success) {
                     $scope.authError = response.data.failReason;
                     $scope.authInfo = instruction;
+                } else {
+                    $scope.authInfo = "Login success";
+                    $modalInstance && $modalInstance.dismiss("loginSuccess");
                 }
             }, function (x) {
                 // If we get here then there was a problem with the login request to the server

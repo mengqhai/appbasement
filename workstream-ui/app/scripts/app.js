@@ -20,7 +20,8 @@ angular
         'ui.router',
         'ui.bootstrap',
         'LocalStorageModule',
-        'controllers.login'
+        'controllers.login',
+        'directives.sidebar'
     ])
     .config(['localStorageServiceProvider', function (localStorageServiceProvider) {
         localStorageServiceProvider.setPrefix('ls');
