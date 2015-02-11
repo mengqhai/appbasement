@@ -8,12 +8,12 @@
  * Controller of the workstreamUiApp
  */
 angular.module('workstreamUiApp')
-    .controller('MainCtrl', ['$scope', 'localStorageService', function ($scope, localStorageService) {
+    .controller('MainCtrl', ['$scope', 'localStorageService', 'Users', 'envVars', function ($scope, localStorageService, Users, envVars) {
         //$scope.todos = [];
         var todosInStore = localStorageService.get('todos');
         $scope.todos = todosInStore || [];
 
-        $scope.$watch('todos', function() {
+        $scope.$watch('todos', function () {
             localStorageService.set('todos', $scope.todos);
         }, true);
 
@@ -25,4 +25,10 @@ angular.module('workstreamUiApp')
         $scope.removeTodo = function (index) {
             $scope.todos.splice(index, 1);
         };
+
+        $scope.getUser = function () {
+            $scope.user = Users.get({
+                userIdBase64: btoa(envVars.currentUser.id)
+            });
+        }
     }]);

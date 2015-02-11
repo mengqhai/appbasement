@@ -8,7 +8,7 @@
  * Controller of the workstreamUiApp
  */
 angular.module('workstreamUiApp')
-  .controller('AboutCtrl', function ($scope) {
+  .controller('AboutCtrl','Users', 'envVar', function ($scope, Users, envVar) {
     $scope.awesomeThings = [
       'HTML5 Boilerplate',
       'AngularJS',

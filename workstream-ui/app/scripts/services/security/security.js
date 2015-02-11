@@ -15,6 +15,7 @@ angular.module('services.security', ['env'])
             promise.then(function(response) {
                 if (response.data.success) {
                     envVars.apiKey = response.data.apiToken;
+                    envVars.currentUser = response.data.user;
                 }
             });
             return promise;

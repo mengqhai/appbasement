@@ -10,6 +10,7 @@ angular.module('env', [])
     }])
     .factory('envVars', [function() {
         return {
-            apiKey:''
+            apiKey:'',
+            currentUser: null
         };
     }]);

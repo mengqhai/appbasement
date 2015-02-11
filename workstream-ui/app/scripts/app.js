@@ -21,7 +21,8 @@ angular
         'ui.bootstrap',
         'LocalStorageModule',
         'controllers.login',
-        'directives.sidebar'
+        'directives.sidebar',
+        'resources.users'
     ])
     .config(['localStorageServiceProvider', function (localStorageServiceProvider) {
         localStorageServiceProvider.setPrefix('ls');

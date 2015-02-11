@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('service.security.interceptor', [])
-    .factory('SecurityInterceptor', ['SecurityRetryQueue', function (queue) {
+    .factory('SecurityInterceptor', ['SecurityRetryQueue', 'envVars', function (queue, envVars) {
         return {
             responseError: function (promise) {
                 // Intercept only failed requests
@@ -15,6 +15,10 @@ angular.module('service.security.interceptor', [])
                     }
                     return promise
                 })
+            },
+            request: function (config) {
+                config.url = config.url +'?api_key='+envVars.apiKey;
+                return config;
             }
         };
     }])
