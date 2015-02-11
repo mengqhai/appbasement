@@ -1,11 +1,15 @@
 'use strict';
 
 angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.bootstrap.tpls', 'services.security', 'service.security.interceptor'])
-    .controller('LoginFormController', ['$scope', 'loginService', '$modalInstance', function ($scope, loginService, $modalInstance) {
+    .controller('LoginFormController', ['$scope', 'loginService', '$modalInstance', 'SecurityRetryQueue', function ($scope, loginService, $modalInstance, queue) {
         $scope.user = {}; // model for the form
         $scope.authError = null; // error message
         var instruction = 'Please enter your user id and password';
         $scope.authInfo = instruction;
+
+        // The reason that we are being asked to login - for instance because we tried to access something to which we are not authorized
+        // We could do something diffent for each reason here but to keep it simple...
+        $scope.authReason = queue.retryReason();
 
         $scope.login = function () {
             // Clear any previous security errors

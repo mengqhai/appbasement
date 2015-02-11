@@ -1,12 +1,16 @@
 'use strict';
 
 angular.module('service.security.interceptor', [])
-    .factory('SecurityInterceptor', ['SecurityRetryQueue', 'envVars', function (queue, envVars) {
+    .factory('SecurityInterceptor', ['SecurityRetryQueue', 'envVars', '$injector', function (queue, envVars, $injector) {
         return {
             responseError: function (originResponse) {
                 if (originResponse.status === 401) {
                     // The request bounced because it was not authorized - add a new request to the retry queue
                     queue.pushRetryFn('You need to log in to perform the action.', function () {
+                        if (envVars.apiKey !== originResponse.config.params.api_key) {
+                            originResponse.config.params.api_key = envVars.apiKey;
+                        }
+
                         // We must use $injector to get the $http service to prevent circular dependency
                         return $injector.get('$http')(originResponse.config);
                     });
