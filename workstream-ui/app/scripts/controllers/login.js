@@ -44,7 +44,7 @@ angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.b
             }
         };
     }])
-    .controller('LoginDialogController', ['$modal', '$scope', 'SecurityRetryQueue', function ($modal, $scope, queue) {
+    .controller('LoginDialogController', ['$modal', '$scope', 'SecurityRetryQueue', 'loginService', function ($modal, $scope, queue, loginService) {
         var dialog = null;
         $scope.open = function () {
             if (dialog) {
@@ -71,4 +71,8 @@ angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.b
                 $scope.open();
             }
         });
+
+        $scope.logout = function() {
+            loginService.logout();
+        };
     }]);

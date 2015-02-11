@@ -7,8 +7,8 @@ angular.module('service.security.interceptor', [])
                 if (originResponse.status === 401) {
                     // The request bounced because it was not authorized - add a new request to the retry queue
                     queue.pushRetryFn('You need to log in to perform the action.', function () {
-                        if (envVars.apiKey !== originResponse.config.params.api_key) {
-                            originResponse.config.params.api_key = envVars.apiKey;
+                        if (envVars.getApiKey() !== originResponse.config.params.api_key) {
+                            originResponse.config.params.api_key = envVars.getApiKey();
                         }
 
                         // We must use $injector to get the $http service to prevent circular dependency
