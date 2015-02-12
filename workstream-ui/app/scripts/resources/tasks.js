@@ -11,6 +11,20 @@ angular.module('resources.tasks', ['env'])
             },
             countMyTasks: {
                 url: homeUrl + '/_my/_count'
+            },
+            getCreatedByMe: {
+                url: homeUrl+'/_createdByMe',
+                isArray: true
+            },
+            countCreatedByMe: {
+                url: homeUrl+'/_createdByMe/_count'
+            },
+            getMyCandidateTasks: {
+                url: homeUrl+'/_myCandidate',
+                isArray: true
+            },
+            countMyCandidateTasks: {
+                url: homeUrl+'/_myCandidate/_count'
             }
         });
         return Tasks;

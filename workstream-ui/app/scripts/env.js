@@ -34,4 +34,7 @@ angular.module('env', ['LocalStorageModule'])
             }
         };
         return envVars;
+    }])
+    .run(['$rootScope', 'envVars', function ($rootScope, envVars) {
+        $rootScope.isLoggedIn = envVars.isLoggedIn;
     }]);

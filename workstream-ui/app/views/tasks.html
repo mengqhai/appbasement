@@ -3,15 +3,17 @@
 </header>
 <div class="row">
     <aside class="col-md-3">
-        <div class="list-group">
+        <div class="list-group" ng-if="isLoggedIn()" ng-init="loadCounts()">
             <a href class="list-group-item">
                 <span class="badge">{{myTaskCount.v}}</span>
                 All my assignment
             </a>
             <a href class="list-group-item">
+                <span class="badge">{{createdByMeCount.v}}</span>
                 Created by me
             </a>
             <a href class="list-group-item">
+                <span class="badge">{{myCandidateTaskCount.v}}</span>
                 All my candidate
             </a>
         </div>
