@@ -1,8 +1,11 @@
-<div class="modal-header">
-    <h4 class="modal-title row">
-        <span>{{task.name}}</span>
-        <a href ng-click="closeDialog()" class="glyphicon glyphicon-remove" style="float: right;"></a>
-    </h4>
+<div>
+    <div class="modal-header">
+        <h4>
+            {{task.name}}
+            <button type="button" ng-click="closeDialog()" class="close" aria-label="Close" style="float: right;"><span aria-hidden="true">&times;</span></button>
+        </h4>
+    </div>
+
     <div class="modal-body">
         <div>
             {{task.description}}
@@ -12,6 +15,26 @@
         </div>
         <div>
             Assignee {{task.assignee}}
+        </div>
+        <div>
+            Org {{org.name}}
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="media" ng-repeat="event in events">
+                    <div class="media-left">
+                        <a href>
+                            <img class="media-object img-rounded" ng-src="{{getUserPicUrl(event.userId)}}" width="60" height="60">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <p>{{event.message}}</p>
+                        <div class="media-heading">{{event.userId}} at {{event.time | date}}</div>
+                    </div>
+                    <hr ng-if="!$last"/>
+                </div>
+            </div>
         </div>
     </div>
 </div>

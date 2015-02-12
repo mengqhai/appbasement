@@ -29,6 +29,14 @@ angular.module('resources.tasks', ['env'])
             getByListType: {
                 url: homeUrl + '/:type',
                 isArray: true
+            },
+            getComments: {
+                url: homeUrl + '/:taskId/comments',
+                isArray: true
+            },
+            getEvents: {
+                url: homeUrl + '/:taskId/events',
+                isArray: true
             }
         });
         return Tasks;
