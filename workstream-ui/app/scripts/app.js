@@ -27,17 +27,31 @@ angular
     .config(['localStorageServiceProvider', function (localStorageServiceProvider) {
         localStorageServiceProvider.setPrefix('ls');
     }])
-    .config(function ($routeProvider) {
-        $routeProvider
-            .when('/', {
-                templateUrl: 'views/main.html',
-                controller: 'MainCtrl'
-            })
-            .when('/about', {
-                templateUrl: 'views/about.html',
-                controller: 'AboutCtrl'
-            })
-            .otherwise({
-                redirectTo: '/'
-            });
-    });
+//    .config(function ($routeProvider) {
+//        $routeProvider
+//            .when('/', {
+//                templateUrl: 'views/main.html',
+//                controller: 'MainCtrl'
+//            })
+//            .when('/about', {
+//                templateUrl: 'views/about.html',
+//                controller: 'AboutCtrl'
+//            })
+//            .otherwise({
+//                redirectTo: '/'
+//            });
+//    })
+    .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
+        $stateProvider.state('main', {
+            url: '/',
+            templateUrl: 'views/main.html',
+            controller: 'MainCtrl'
+        });
+        $stateProvider.state('about', {
+            url: '/about',
+            templateUrl: 'views/about.html',
+            controller: 'AboutCtrl'
+        });
+        $urlRouterProvider.otherwise('/');
+
+    }]);

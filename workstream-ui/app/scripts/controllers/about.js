@@ -8,10 +8,10 @@
  * Controller of the workstreamUiApp
  */
 angular.module('workstreamUiApp')
-  .controller('AboutCtrl','Users', 'envVar', function ($scope, Users, envVar) {
-    $scope.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
-  });
+    .controller('AboutCtrl', ['$scope', 'Users', 'envVars', function ($scope, Users, envVars) {
+        $scope.awesomeThings = [
+            'HTML5 Boilerplate',
+            'AngularJS',
+            'Karma'
+        ];
+    }]);
