@@ -1,0 +1,17 @@
+<div class="modal-header">
+    <h4 class="modal-title row">
+        <span>{{task.name}}</span>
+        <a href ng-click="closeDialog()" class="glyphicon glyphicon-remove" style="float: right;"></a>
+    </h4>
+    <div class="modal-body">
+        <div>
+            {{task.description}}
+        </div>
+        <div>
+            Created by {{task.creator}} on {{task.createTime|date}}
+        </div>
+        <div>
+            Assignee {{task.assignee}}
+        </div>
+    </div>
+</div>

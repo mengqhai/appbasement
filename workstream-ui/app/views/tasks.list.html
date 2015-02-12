@@ -1,6 +1,6 @@
 <p>
 <div class="list-group" ng-if="isLoggedIn()">
-    <a href class="list-group-item" ng-repeat="task in tasks">
+    <a href class="list-group-item" ng-repeat="task in tasks" ng-click="openDialog(task)">
         {{task.name}}
     </a>
 </div>
