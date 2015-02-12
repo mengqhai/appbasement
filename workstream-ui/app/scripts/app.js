@@ -59,7 +59,12 @@ angular
             url: '/tasks',
             templateUrl: 'views/tasks.html',
             controller: 'TasksController'
-        });
+        })
+            .state('tasks.list', {
+                url: '/{listType:_my|_createdByMe|_myCandidate}',
+                templateUrl: 'views/tasks.list.html',
+                controller: 'TaskListController'
+            });
         $stateProvider.state('processes', {
             url: '/processes',
             templateUrl: 'views/processes.html'

@@ -13,18 +13,22 @@ angular.module('resources.tasks', ['env'])
                 url: homeUrl + '/_my/_count'
             },
             getCreatedByMe: {
-                url: homeUrl+'/_createdByMe',
+                url: homeUrl + '/_createdByMe',
                 isArray: true
             },
             countCreatedByMe: {
-                url: homeUrl+'/_createdByMe/_count'
+                url: homeUrl + '/_createdByMe/_count'
             },
             getMyCandidateTasks: {
-                url: homeUrl+'/_myCandidate',
+                url: homeUrl + '/_myCandidate',
                 isArray: true
             },
             countMyCandidateTasks: {
-                url: homeUrl+'/_myCandidate/_count'
+                url: homeUrl + '/_myCandidate/_count'
+            },
+            getByListType: {
+                url: homeUrl + '/:type',
+                isArray: true
             }
         });
         return Tasks;
