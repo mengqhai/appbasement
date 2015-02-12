@@ -23,7 +23,8 @@ angular
         'controllers.login',
         'directives.sidebar',
         'resources.users',
-        'controllers.currentUser'
+        'controllers.currentUser',
+        'controllers.sideOrg'
     ])
     .config(['localStorageServiceProvider', function (localStorageServiceProvider) {
         localStorageServiceProvider.setPrefix('ls');
