@@ -1,18 +1,32 @@
 <aside class="app-sidebar">
     <a href>Create</a>
-    <div ng-controller="LoginDialogController as login">
-        <button class="btn btn-default" ng-click="open()">Login</button>
-        <button class="btn btn-default" ng-click="logout()">Logout</button>
-    </div>
+
 
     <div>
         <ul>
             <li>
-                <a href>Task</a>
+                <a href="#/tasks">Task</a>
             </li>
             <li>
-                <a href>Process</a>
+                <a href="#processes">Process</a>
             </li>
         </ul>
+    </div>
+    <div ng-controller="CurrentUserController">
+        <div class="well" ng-show="isLoggedIn()">
+            <div class="row">
+                <div class="col-md-4" ng-show="getCurrentUser().pictureSet">
+                    <img ng-src="{{getCurrentUserPicUrl()}}" class="img-rounded" width="60" height="60"/>
+                </div>
+                <div class="col-md-4">
+                    <div class="row">{{getCurrentUser().id}}</div>
+                    <div class="row">{{getCurrentUser().firstName}}</div>
+                </div>
+            </div>
+        </div>
+        <div ng-controller="LoginDialogController as login">
+            <button ng-show="!isLoggedIn()" class="btn btn-default" ng-click="open()">Login</button>
+            <button ng-show="isLoggedIn()" class="btn btn-default" ng-click="logout()">Logout</button>
+        </div>
     </div>
 </aside>

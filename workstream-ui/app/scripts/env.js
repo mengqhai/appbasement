@@ -11,20 +11,27 @@ angular.module('env', ['LocalStorageModule'])
     .factory('envVars', ['localStorageService', function (localStorageService) {
         var apiKey = localStorageService.get('apiKey');
         var currentUser = localStorageService.get('currentUser');
-        return {
+        var envVars = {
             setApiKey: function (newValue) {
                 apiKey = newValue;
                 localStorageService.set('apiKey', apiKey);
             },
-            getApiKey: function() {
+            getApiKey: function () {
                 return apiKey;
             },
-            setCurrentUser: function(newUser) {
+            setCurrentUser: function (newUser) {
                 currentUser = newUser;
                 localStorageService.set('currentUser', newUser);
             },
-            getCurrentUser: function() {
+            getCurrentUser: function () {
                 return currentUser;
+            },
+            isLoggedIn: function () {
+                return currentUser && apiKey;
+            },
+            getCurrentUserIdBase64: function () {
+                return isLoggedIn() ? btoa(currentUser.id) : '';
             }
         };
+        return envVars;
     }]);

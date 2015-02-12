@@ -22,7 +22,8 @@ angular
         'LocalStorageModule',
         'controllers.login',
         'directives.sidebar',
-        'resources.users'
+        'resources.users',
+        'controllers.currentUser'
     ])
     .config(['localStorageServiceProvider', function (localStorageServiceProvider) {
         localStorageServiceProvider.setPrefix('ls');
@@ -52,6 +53,15 @@ angular
             templateUrl: 'views/about.html',
             controller: 'AboutCtrl'
         });
+        $stateProvider.state('tasks', {
+            url: '/tasks',
+            templateUrl: 'views/tasks.html'
+        });
+        $stateProvider.state('processes', {
+            url: '/processes',
+            templateUrl: 'views/processes.html'
+        });
+
         $urlRouterProvider.otherwise('/');
 
     }]);
