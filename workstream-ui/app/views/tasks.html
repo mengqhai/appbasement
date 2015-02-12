@@ -4,16 +4,16 @@
 <div class="row">
     <aside class="col-md-3">
         <div class="list-group" ng-if="isLoggedIn()" ng-init="loadCounts()">
-            <a href="#/tasks/_my" class="list-group-item">
+            <a ui-sref="tasks.list({listType: '_my'})" class="list-group-item" ui-sref-active="active">
                 <span class="badge">{{myTaskCount.v}}</span>
                 All my assignment
             </a>
-            <a href="#/tasks/_createdByMe" class="list-group-item">
+            <a ui-sref="tasks.list({listType:'_createdByMe'})" class="list-group-item" ui-sref-active="active">
                 <span class="badge">{{createdByMeCount.v}}</span>
                 Created by me
             </a>
-            <a href="#/tasks/_myCandidate" class="list-group-item">
-                <span class="badge">{{myCandidateTaskCount.v}}</span>
+            <a ui-sref="tasks.list({listType:'_myCandidate'})" class="list-group-item" ui-sref-active="active">
+                <span class="badge">{{candidateTaskCount.v}}</span>
                 All my candidate
             </a>
         </div>
