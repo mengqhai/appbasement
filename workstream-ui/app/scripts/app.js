@@ -24,7 +24,8 @@ angular
         'directives.sidebar',
         'resources.users',
         'controllers.currentUser',
-        'controllers.sideOrg'
+        'controllers.sideOrg',
+        'controllers.tasks'
     ])
     .config(['localStorageServiceProvider', function (localStorageServiceProvider) {
         localStorageServiceProvider.setPrefix('ls');
@@ -56,7 +57,8 @@ angular
         });
         $stateProvider.state('tasks', {
             url: '/tasks',
-            templateUrl: 'views/tasks.html'
+            templateUrl: 'views/tasks.html',
+            controller: 'TasksController'
         });
         $stateProvider.state('processes', {
             url: '/processes',

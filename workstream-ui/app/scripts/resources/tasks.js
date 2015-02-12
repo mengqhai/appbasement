@@ -1,0 +1,17 @@
+angular.module('resources.tasks', ['env'])
+    .factory('Tasks', ['$resource', 'envConstants', 'envVars', function ($resource, envConstants, envVars) {
+        var paramDefault = {
+            api_key: envVars.getApiKey
+        };
+        var homeUrl = envConstants.REST_BASE + '/tasks';
+        var Tasks = $resource(homeUrl + '/:taskId', paramDefault, {
+            getMyTasks: {
+                url: homeUrl + '/_my',
+                isArray: true
+            },
+            countMyTasks: {
+                url: homeUrl + '/_my/_count'
+            }
+        });
+        return Tasks;
+    }]);
