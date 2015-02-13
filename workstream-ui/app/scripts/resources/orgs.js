@@ -28,9 +28,9 @@ angular.module('resources.orgs', ['env', 'resources.users'])
                 url: envConstants.REST_BASE + '/orgs/:orgId/users',
                 method: 'GET',
                 isArray: true,
-                success: function(response) {
+                success: function (response) {
                     if (angular.isArray(response.data)) {
-                        angular.forEach(response.data, function(idx, user) {
+                        angular.forEach(response.data, function (idx, user) {
                             UserCache.put(user.id, user)
                         })
                     }
@@ -38,12 +38,21 @@ angular.module('resources.orgs', ['env', 'resources.users'])
             }
         });
 
+        Orgs.getUsersInOrgWithCache = function (params) {
+            var orgUsers = OrgCache.get('orgUsers|' + params.orgId);
+            if (!orgUsers) {
+                orgUsers = Orgs.getUsersInOrg(params);
+                OrgCache.put('orgUsers|' + params.orgId, orgUsers);
+            }
+            return orgUsers;
+        }
+
         Orgs.getWithCache = function (param) {
             var org = OrgCache.get(param.orgId);
             if (!org) {
                 org = Orgs.get(param);
+                OrgCache.put(param.orgId, org);
             }
-            OrgCache.put(param.orgId, org);
             return org;
         };
         return Orgs;

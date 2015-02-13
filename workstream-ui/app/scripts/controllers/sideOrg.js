@@ -16,6 +16,6 @@ angular.module('controllers.sideOrg', ['env', 'resources.orgs'])
             $scope.orgProjects[org.id] = Orgs.getProjectsInOrg({orgId: org.id});
         };
         $scope.loadUsersInOrg = function (org) {
-            $scope.orgUsers[org.id] = Orgs.getUsersInOrg({orgId: org.id});
+            $scope.orgUsers[org.id] = Orgs.getUsersInOrgWithCache({orgId: org.id});
         }
     }]);
