@@ -1,14 +1,14 @@
 <div>
     <div class="modal-header">
         <h4>
-            <span editable-text="task.name" onbeforesave = "updateTask('name', $data)">{{task.name || 'empty'}}</span>
-            <button type="button" ng-click="closeDialog()" class="close" aria-label="Close" style="float: right;"><span aria-hidden="true">&times;</span></button>
+            <span editable-text="task.name" onbeforesave = "updateTask('name', $data)" blur="submit" e-maxlength="30" e-minlength="1">{{task.name || 'empty'}}</span>
+            <button type="button" ng-click="closeDialog()" class="close" aria-label="Close" style="float: right;" e-maxlength="500"><span aria-hidden="true">&times;</span></button>
         </h4>
     </div>
 
     <div class="modal-body">
         <div>
-            <span editable-textarea="task.description" onbeforesave = "updateTask('description', $data)" e-rows="3" e-cols="70">{{task.description || 'empty'}}</span>
+            <span editable-textarea="task.description" onbeforesave = "updateTask('description', $data)" e-rows="3" e-cols="70" blur="submit">{{task.description || 'empty'}}</span>
         </div>
         <div>
             Created by {{task.creator}} on {{task.createTime|date}}
