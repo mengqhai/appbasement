@@ -2,6 +2,7 @@ angular.module('controllers.sideOrg', ['env', 'resources.orgs'])
     .controller('SideOrgController', ['$scope', 'Orgs', 'envVars', function ($scope, Orgs, envVars) {
         $scope.myOrgs = [];
         $scope.orgProjects = {};
+        $scope.orgUsers = {};
 
 
         $scope.loadMyOrgs = function () {
@@ -13,5 +14,8 @@ angular.module('controllers.sideOrg', ['env', 'resources.orgs'])
 
         $scope.loadProjectsForOrg = function (org) {
             $scope.orgProjects[org.id] = Orgs.getProjectsInOrg({orgId: org.id});
+        };
+        $scope.loadUsersInOrg = function (org) {
+            $scope.orgUsers[org.id] = Orgs.getUsersInOrg({orgId: org.id});
         }
     }]);

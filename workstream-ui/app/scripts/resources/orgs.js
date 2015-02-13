@@ -1,8 +1,8 @@
-angular.module('resources.orgs', ['env'])
+angular.module('resources.orgs', ['env', 'resources.users'])
     .factory('OrgCache', ['$cacheFactory', function ($cacheFactory) {
         return $cacheFactory('OrgCache');
     }])
-    .factory('Orgs', ['$resource', 'envConstants', 'envVars', 'OrgCache', function ($resource, envConstants, envVars, OrgCache) {
+    .factory('Orgs', ['$resource', 'envConstants', 'envVars', 'OrgCache', 'UserCache', function ($resource, envConstants, envVars, OrgCache, UserCache) {
         var paramDefault = {
             api_key: envVars.getApiKey
         };
@@ -23,16 +23,28 @@ angular.module('resources.orgs', ['env'])
                 url: envConstants.REST_BASE + '/orgs/:orgId/projects',
                 method: 'GET',
                 isArray: true
+            },
+            getUsersInOrg: {
+                url: envConstants.REST_BASE + '/orgs/:orgId/users',
+                method: 'GET',
+                isArray: true,
+                success: function(response) {
+                    if (angular.isArray(response.data)) {
+                        angular.forEach(response.data, function(idx, user) {
+                            UserCache.put(user.id, user)
+                        })
+                    }
+                }
             }
         });
 
-        Orgs.getWithCache = function(param) {
+        Orgs.getWithCache = function (param) {
             var org = OrgCache.get(param.orgId);
             if (!org) {
                 org = Orgs.get(param);
             }
             OrgCache.put(param.orgId, org);
             return org;
-        }
+        };
         return Orgs;
     }]);
