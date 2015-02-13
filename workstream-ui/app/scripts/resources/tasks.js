@@ -1,5 +1,5 @@
-angular.module('resources.tasks', ['env'])
-    .factory('Tasks', ['$resource', 'envConstants', 'envVars', function ($resource, envConstants, envVars) {
+angular.module('resources.tasks', ['env', 'resources.utils'])
+    .factory('Tasks', ['$resource', 'envConstants', 'envVars', 'XeditableResourcePromise', function ($resource, envConstants, envVars, xPromise) {
         var paramDefault = {
             api_key: envVars.getApiKey
         };
@@ -43,5 +43,11 @@ angular.module('resources.tasks', ['env'])
                 url: homeUrl + '/:taskId'
             }
         });
+        Tasks.xedit = function (taskId, key, value) {
+            var dataObj = {};
+            dataObj[key] = value;
+            var task = Tasks.patch({taskId: taskId}, dataObj);
+            return xPromise.xeditablePromise(task);
+        }
         return Tasks;
     }]);

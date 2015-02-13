@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('service.security.interceptor', [])
-    .factory('SecurityInterceptor', ['SecurityRetryQueue', 'envVars', '$injector', function (queue, envVars, $injector) {
+    .factory('SecurityInterceptor', ['SecurityRetryQueue', 'envVars', '$injector', '$q', function (queue, envVars, $injector, $q) {
         return {
             responseError: function (originResponse) {
                 if (originResponse.status === 401) {
@@ -15,7 +15,9 @@ angular.module('service.security.interceptor', [])
                         return $injector.get('$http')(originResponse.config);
                     });
                 }
-                return originResponse;
+                return $q.reject(originResponse);
+                // here must $q.reject() otherwise the promise will only invoke the success callback
+                // http://bneijt.nl/blog/post/angularjs-intercept-api-error-responses/
             }//,
 //            request: function(config) {
 //                config.headers['x-api-key']=envVars.apiKey;

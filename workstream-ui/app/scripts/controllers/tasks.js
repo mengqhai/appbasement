@@ -39,14 +39,12 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             }
         }
     }])
-    .controller('TaskFormController', ['$scope', 'Tasks', 'Orgs', 'Users', 'task', function ($scope, Tasks, Orgs, Users, task) {
+    .controller('TaskFormController', ['$scope', 'Tasks', 'Orgs', 'Users', '$q', 'task', function ($scope, Tasks, Orgs, Users, $q, task) {
         $scope.task = task;
         $scope.org = Orgs.getWithCache({orgId: task.orgId});
         $scope.events = Tasks.getEvents({taskId: task.id});
         $scope.getUserPicUrl = Users.getUserPicUrl;
         $scope.updateTask = function (key, value) {
-            var dataObj = {};
-            dataObj[key] = value;
-            return Tasks.patch({taskId: task.id}, dataObj);
+            return Tasks.xedit($scope.task.id, key, value);
         }
     }]);

@@ -8,7 +8,7 @@
 
     <div class="modal-body">
         <div>
-            <span editable-text="task.description" onbeforesave = "updateTask('description', $data)">{{task.description || 'empty'}}</span>
+            <span editable-textarea="task.description" onbeforesave = "updateTask('description', $data)" e-rows="3" e-cols="70">{{task.description || 'empty'}}</span>
         </div>
         <div>
             Created by {{task.creator}} on {{task.createTime|date}}
