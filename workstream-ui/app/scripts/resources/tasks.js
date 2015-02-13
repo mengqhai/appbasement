@@ -37,6 +37,10 @@ angular.module('resources.tasks', ['env'])
             getEvents: {
                 url: homeUrl + '/:taskId/events',
                 isArray: true
+            },
+            patch: {
+                method: 'PATCH',
+                url: homeUrl + '/:taskId'
             }
         });
         return Tasks;

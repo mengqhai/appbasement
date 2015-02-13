@@ -25,7 +25,8 @@ angular
         'resources.users',
         'controllers.currentUser',
         'controllers.sideOrg',
-        'controllers.tasks'
+        'controllers.tasks',
+        'xeditable'
     ])
     .config(['localStorageServiceProvider', function (localStorageServiceProvider) {
         localStorageServiceProvider.setPrefix('ls');
@@ -72,4 +73,7 @@ angular
 
         $urlRouterProvider.otherwise('/');
 
+    }])
+    .run(['editableOptions', function(editableOptions) {
+        editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
     }]);

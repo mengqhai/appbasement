@@ -1,4 +1,4 @@
-angular.module('controllers.tasks', ['resources.tasks', 'ui.router'])
+angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'])
     .controller('TasksController', ['$scope', 'Tasks', function ($scope, Tasks) {
         $scope.myTaskCount = 0;
         $scope.createdByMeCount = 0;
@@ -44,4 +44,9 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router'])
         $scope.org = Orgs.getWithCache({orgId: task.orgId});
         $scope.events = Tasks.getEvents({taskId: task.id});
         $scope.getUserPicUrl = Users.getUserPicUrl;
+        $scope.updateTask = function (key, value) {
+            var dataObj = {};
+            dataObj[key] = value;
+            return Tasks.patch({taskId: task.id}, dataObj);
+        }
     }]);
