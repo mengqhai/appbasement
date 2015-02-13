@@ -2,6 +2,10 @@
 <div class="list-group" ng-if="isLoggedIn()">
     <a href class="list-group-item" ng-repeat="task in tasks" ng-click="openDialog(task)">
         {{task.name}}
+        <span class="pull-right">
+            <span class="btn btn-default" ng-if="task.dueDate">{{task.dueDate}}</span>
+            {{task.assignee || 'Unassigned'}}
+        </span>
     </a>
 </div>
 </p>

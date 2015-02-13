@@ -1,16 +1,19 @@
 <aside class="app-sidebar" ng-controller="CurrentUserController">
-    <a href>Create</a>
-
-
-    <div>
-        <ul>
-            <li>
-                <a href="#/tasks">Task</a>
-            </li>
-            <li>
-                <a href="#processes">Process</a>
-            </li>
+    <div class="btn-group" dropdown>
+        <button type="button" class="btn btn-success dropdown-toggle" dropdown-toggle>
+            Create <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li><a href>Task</a> </li>
+            <li class="divider"></li>
+            <li><a href>Project</a> </li>
         </ul>
+    </div>
+
+
+    <div class="list-group">
+        <a class="list-group-item" ui-sref-active="active" ui-sref="tasks">Task</a>
+        <a href="#/processes" class="list-group-item" ui-sref-active="active">Process</a>
     </div>
 
     <div ng-controller="SideOrgController" ng-init="loadMyOrgs()" ng-if="isLoggedIn()">
