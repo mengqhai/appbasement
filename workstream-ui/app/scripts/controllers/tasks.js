@@ -46,5 +46,15 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
         $scope.getUserPicUrl = Users.getUserPicUrl;
         $scope.updateTask = function (key, value) {
             return Tasks.xedit($scope.task.id, key, value);
-        }
+        };
+        $scope.open = function($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            $scope.opened = true;
+        };
+        $scope.dateOptions = {
+            formatYear: 'yy',
+            startingDay: 1
+        };
+        $scope.aDate = new Date();
     }]);
