@@ -271,7 +271,11 @@ public class TaskCapable {
 		// must not trigger task.setAssignee, because it will
 		// dispatch the TASK_ASSIGNED event
 		try {
-			BeanUtils.populate(task, props);
+			BeanUtils.copyProperties(task, props);
+			// BeanUtils.populate() got exception No value specified for 'Date'
+			// when dueDate == null
+			// http://www.blogjava.net/javagrass/archive/2011/10/10/352856.html
+			// BeanUtils.populate(task, props);
 		} catch (Exception e) {
 			log.error("Failed to populate the props to task: {}", props, e);
 			throw new BeanPropertyException(e);
