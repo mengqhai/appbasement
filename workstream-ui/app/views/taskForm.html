@@ -13,16 +13,18 @@
         <div>
             Created by {{task.creator}} on {{task.createTime|date}}
         </div>
-        <div class="row">
-            <div class="col-md-6">
-                <span class="input-group">
-                  <!--<span>{{(task.dueDate|date) || 'No due date'}}</span>-->
-                  <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                  </span>
-                  <input readonly type="text" class="form-control" placeholder="Due date" datepicker-popup ng-model="task.dueDate" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
-                </span>
-            </div>
+        <div>
+            <span class="input-group" datepicker-popup ng-model="dueDateForPicker"  is-open="opened" close-text="Close" >
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+              <span class="form-control" style="width: 150px">
+                  {{(task.dueDate|date) || 'No due date'}}
+              </span>
+              <span>
+                  {{dueDateError}}
+              </span>
+            </span>
         </div>
         <div>
             Assignee {{task.assignee}}

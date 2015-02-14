@@ -52,9 +52,17 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             $event.stopPropagation();
             $scope.opened = true;
         };
-        $scope.dateOptions = {
-            formatYear: 'yy',
-            startingDay: 1
-        };
-        $scope.aDate = new Date();
+
+        $scope.dueDateForPicker = task.dueDate;
+        $scope.dueDateError = null;
+        $scope.$watch('dueDateForPicker', function(newValue, oldValue) {
+            if (newValue == oldValue) {
+                return;
+            }
+            $scope.updateTask('dueDate', newValue).then(function(sucess) {
+                $scope.task.dueDate = $scope.dueDateForPicker;
+            }, function (error) {
+                $scope.dueDateError = error;
+            })
+        })
     }]);
