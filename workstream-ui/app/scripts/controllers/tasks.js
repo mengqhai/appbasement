@@ -1,4 +1,4 @@
-angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'])
+angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable', 'ui.select'])
     .controller('TasksController', ['$scope', 'Tasks', function ($scope, Tasks) {
         $scope.myTaskCount = 0;
         $scope.createdByMeCount = 0;
@@ -42,11 +42,26 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
     .controller('TaskFormController', ['$scope', 'Tasks', 'Orgs', 'Users', '$q', 'task', function ($scope, Tasks, Orgs, Users, $q, task) {
         $scope.task = task;
         $scope.org = Orgs.getWithCache({orgId: task.orgId});
+        $scope.myOrgs = Orgs.getMyOrgsWithCache();
+
         $scope.events = Tasks.getEvents({taskId: task.id});
         $scope.getUserPicUrl = Users.getUserPicUrl;
         $scope.updateTask = function (key, value) {
             return Tasks.xedit($scope.task.id, key, value);
         };
+
+        $scope.assignee =  task.assignee ? Users.getWithCache({userIdBase64: btoa(task.assignee)}) : null;
+        $scope.getUsersInOrg = function(orgId) {
+            $scope.users = Orgs.getUsersInOrgWithCache({orgId: orgId});
+            $scope.users.push({
+                id: null,
+                firstName: 'Unassigned'
+            })
+        }
+        $scope.getUsersInOrg(task.orgId);
+
+
+
         $scope.open = function($event) {
             $event.preventDefault();
             $event.stopPropagation();

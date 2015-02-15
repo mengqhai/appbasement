@@ -13,11 +13,11 @@ angular.module('resources.users', ['env'])
         }
 
         Users.getWithCache = function (param) {
-            var user = UserCache.get(param.id);
+            var user = UserCache.get(param.userIdBase64);
             if (!user) {
                 user = Users.get(param);
             }
-            UserCache.put(param.id, user);
+            UserCache.put(param.userIdBase64, user);
             return user;
         }
         return Users;

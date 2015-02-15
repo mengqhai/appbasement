@@ -27,10 +27,30 @@
             </span>
         </div>
         <div>
-            Assignee {{task.assignee}}
+            Org
+            <!--https://github.com/angular-ui/ui-select/wiki/ui-select-choices-->
+            <ui-select ng-model="org" theme="select2" style="width: 220px">
+                <ui-select-match placeholder="Select org...">{{$select.selected.name}}</ui-select-match>
+                <ui-select-choices repeat="myOrg in myOrgs | filter: $select.search">
+                    <div ng-bind-html="myOrg.name | highlight: $select.search"></div>
+                    <small>
+                        identifier: {{myOrg.identifier}}
+                    </small>
+                </ui-select-choices>
+            </ui-select>
         </div>
         <div>
-            Org {{org.name}}
+            Assignee
+            <ui-select ng-model="assignee" theme="select2" style="width: 220px">
+                <ui-select-match placeholder="Select assignee...">{{$select.selected.id || 'Unassigned'}}</ui-select-match>
+                <ui-select-choices repeat="aUser in users | filter: $select.search">
+                    <div ng-bind-html="aUser.id | highlight: $select.search"></div>
+                    <small>
+                        Name: <span ng-bind-html="aUser.firstName | highlight: $select.search"></span>
+                    </small>
+                </ui-select-choices>
+            </ui-select>
+            {{task.assignee}}
         </div>
 
         <div class="panel panel-default">

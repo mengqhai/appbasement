@@ -6,6 +6,7 @@ angular.module('resources.orgs', ['env', 'resources.users'])
         var paramDefault = {
             api_key: envVars.getApiKey
         };
+        var myKey = 'com.workstream.orgs._my';
         var Orgs = $resource(envConstants.REST_BASE + '/orgs/:orgId', paramDefault, {
             getMyOrgs: {
                 method: 'GET',
@@ -15,7 +16,9 @@ angular.module('resources.orgs', ['env', 'resources.users'])
                         for (var i = 0; i < response.resource.length; i++) {
                             var org = response.resource[i];
                             OrgCache.put(org.id, org);
-                        }
+                        };
+                        OrgCache.put(myKey, response.resource);
+                        return response;
                     }
                 }
             },
@@ -28,7 +31,7 @@ angular.module('resources.orgs', ['env', 'resources.users'])
                 url: envConstants.REST_BASE + '/orgs/:orgId/users',
                 method: 'GET',
                 isArray: true,
-                success: function (response) {
+                interceptor: function (response) {
                     if (angular.isArray(response.data)) {
                         angular.forEach(response.data, function (idx, user) {
                             UserCache.put(user.id, user)
@@ -55,5 +58,13 @@ angular.module('resources.orgs', ['env', 'resources.users'])
             }
             return org;
         };
+        Orgs.getMyOrgsWithCache = function() {
+            var myOrgs = OrgCache.get(myKey);
+            if (!myOrgs) {
+                myOrgs = Orgs.getMyOrgs();
+            }
+            // Orgs.getMyOrgs() already put it to cache
+            return myOrgs;
+        }
         return Orgs;
     }]);
