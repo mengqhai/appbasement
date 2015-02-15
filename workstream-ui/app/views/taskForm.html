@@ -29,7 +29,7 @@
         <div>
             Org
             <!--https://github.com/angular-ui/ui-select/wiki/ui-select-choices-->
-            <ui-select ng-model="org" theme="select2" style="width: 220px">
+            <ui-select ng-model="org" theme="select2" style="min-width: 180px">
                 <ui-select-match placeholder="Select org...">{{$select.selected.name}}</ui-select-match>
                 <ui-select-choices repeat="myOrg in myOrgs | filter: $select.search">
                     <div ng-bind-html="myOrg.name | highlight: $select.search"></div>
@@ -41,7 +41,7 @@
         </div>
         <div>
             Assignee
-            <ui-select ng-model="assignee" theme="select2" style="width: 220px">
+            <ui-select ng-model="assignee" theme="select2" style="min-width: 180px">
                 <ui-select-match placeholder="Select assignee...">{{$select.selected.id || 'Unassigned'}}</ui-select-match>
                 <ui-select-choices repeat="aUser in users | filter: $select.search">
                     <div ng-bind-html="aUser.id | highlight: $select.search"></div>

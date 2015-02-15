@@ -50,13 +50,14 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             return Tasks.xedit($scope.task.id, key, value);
         };
 
-        $scope.assignee =  task.assignee ? Users.getWithCache({userIdBase64: btoa(task.assignee)}) : null;
+        var unassigned = {
+            id: null,
+            firstName: 'Unassigned'
+        }
+        $scope.assignee =  task.assignee ? Users.getWithCache({userIdBase64: btoa(task.assignee)}) : unassigned;
         $scope.getUsersInOrg = function(orgId) {
-            $scope.users = Orgs.getUsersInOrgWithCache({orgId: orgId});
-            $scope.users.push({
-                id: null,
-                firstName: 'Unassigned'
-            })
+            $scope.users = Orgs.getUsersInOrgWithCache({orgId: orgId}).slice();
+            $scope.users.push(unassigned)
         }
         $scope.getUsersInOrg(task.orgId);
 
