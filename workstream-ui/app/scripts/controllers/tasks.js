@@ -54,16 +54,23 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             id: null,
             firstName: 'Unassigned'
         }
-        $scope.assignee =  task.assignee ? Users.getWithCache({userIdBase64: btoa(task.assignee)}) : unassigned;
-        $scope.getUsersInOrg = function(orgId) {
+        $scope.assignee = task.assignee ? Users.getWithCache({userIdBase64: btoa(task.assignee)}) : unassigned;
+        $scope.getUsersInOrg = function (orgId) {
             $scope.users = Orgs.getUsersInOrgWithCache({orgId: orgId}).slice();
             $scope.users.push(unassigned)
         }
         $scope.getUsersInOrg(task.orgId);
+        $scope.assigneeError = null;
+        $scope.changeAssignee = function (newAssignee) {
+            $scope.updateTask('assignee', newAssignee.id).then(function (success) {
+                $scope.task.assignee = newAssignee.id;
+            }, function (error) {
+                $scope.assigneeError = error;
+            });
+        }
 
 
-
-        $scope.open = function($event) {
+        $scope.open = function ($event) {
             $event.preventDefault();
             $event.stopPropagation();
             $scope.opened = true;
@@ -71,11 +78,11 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
 
         $scope.dueDateForPicker = task.dueDate;
         $scope.dueDateError = null;
-        $scope.$watch('dueDateForPicker', function(newValue, oldValue) {
+        $scope.$watch('dueDateForPicker', function (newValue, oldValue) {
             if (newValue == oldValue) {
                 return;
             }
-            $scope.updateTask('dueDate', newValue).then(function(sucess) {
+            $scope.updateTask('dueDate', newValue).then(function (sucess) {
                 $scope.task.dueDate = $scope.dueDateForPicker;
             }, function (error) {
                 $scope.dueDateError = error;
