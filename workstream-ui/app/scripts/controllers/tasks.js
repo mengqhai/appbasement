@@ -20,6 +20,18 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
         };
         $scope.loadByType();
 
+        $scope.filterEx = {};
+        // This fitlerEx object can't get passed by $stataParams(as it's not defined in the URL template of the state),
+        // so we have to perform a switch-cases here.
+        switch ($stateParams.listType) {
+            case '_my':
+                $scope.filterEx.assignee = $scope.getCurrentUserId();
+                break;
+            case '_createdByMe':
+                $scope.filterEx.creator = $scope.getCurrentUserId();
+                break;
+        }
+
         var dialog = null;
         $scope.openDialog = function (task) {
             dialog = $modal.open({

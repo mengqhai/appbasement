@@ -30,11 +30,16 @@ angular.module('env', ['LocalStorageModule'])
                 return currentUser && apiKey;
             },
             getCurrentUserIdBase64: function () {
-                return isLoggedIn() ? btoa(currentUser.id) : '';
+                return envVars.isLoggedIn() ? btoa(currentUser.id) : '';
+            },
+            getCurrentUserId: function() {
+                return envVars.isLoggedIn() ? currentUser.id : null;
             }
         };
         return envVars;
     }])
     .run(['$rootScope', 'envVars', function ($rootScope, envVars) {
         $rootScope.isLoggedIn = envVars.isLoggedIn;
+        $rootScope.getCurrentUser = envVars.getCurrentUser;
+        $rootScope.getCurrentUserId = envVars.getCurrentUserId;
     }]);
