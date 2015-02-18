@@ -60,6 +60,7 @@ angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.b
             dialog.result.then(function () {
                 dialog = null;
                 queue.retryAll();
+                $scope.$emit('login');
             }, function () {
                 dialog = null;
                 queue.cancelAll();
@@ -74,5 +75,6 @@ angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.b
 
         $scope.logout = function() {
             loginService.logout();
+            $scope.$emit('logout');
         };
     }]);

@@ -13,12 +13,12 @@
                     <ui-select-match placeholder="Select project...">
                         <span class="glyphicon glyphicon-user"></span>
                         <!--{{$select.selected.id || 'Unassigned'}} -->
-                        {{myProjectMap[task.projectId].name}}
+                        {{getProject(task.projectId).name}}
                     </ui-select-match>
-                    <ui-select-choices repeat="pro in myProjects | filter: $select.search">
+                    <ui-select-choices repeat="pro in getMyProjects() | filter: $select.search">
                         <div ng-bind-html="pro.name | highlight: $select.search"></div>
                         <small>
-                            Org: <span ng-bind-html="myOrgMap[pro.orgId].name | highlight: $select.search"></span>
+                            Org: <span ng-bind-html="getOrg(pro.orgId).name | highlight: $select.search"></span>
                         </small>
                     </ui-select-choices>
                 </ui-select>

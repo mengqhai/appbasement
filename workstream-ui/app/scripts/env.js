@@ -11,6 +11,7 @@ angular.module('env', ['LocalStorageModule'])
     .factory('envVars', ['localStorageService', function (localStorageService) {
         var apiKey = localStorageService.get('apiKey');
         var currentUser = localStorageService.get('currentUser');
+
         var envVars = {
             setApiKey: function (newValue) {
                 apiKey = newValue;
@@ -36,48 +37,106 @@ angular.module('env', ['LocalStorageModule'])
                 return envVars.isLoggedIn() ? currentUser.id : null;
             }
         };
+
         return envVars;
     }])
-    .run(['$rootScope', 'envVars', 'Orgs', function ($rootScope, envVars, Orgs) {
-        $rootScope.isLoggedIn = envVars.isLoggedIn;
-        $rootScope.getCurrentUser = envVars.getCurrentUser;
-        $rootScope.getCurrentUserId = envVars.getCurrentUserId;
+    .factory('envCache', ['Orgs', 'envVars', function (Orgs, envVars) {
+        var myOrgs = [];
+        var myOrgMap = {};
+        var myProjects = [];
+        var myProjectMap = {};
+        var orgProjects = {};
+        var orgUsers = {};
 
+        var envCache = {
+            clearCache: function () {
+                myOrgs = [];
+                myOrgMap = {};
+                myProjects = [];
+                myProjectMap = {};
+                orgProjects = {};
+                orgUsers = {};
+            },
+            getProject: function (projectId) {
+                return myProjectMap[projectId];
+            },
+            getOrg: function (orgId) {
+                return myOrgMap[orgId];
+            },
+            getMyOrgs: function () {
+                return myOrgs;
+            },
+            getOrgProjects: function (orgId) {
+                return orgProjects[orgId];
+            },
+            getMyProjects: function () {
+                return myProjects;
+            },
+            getOrgUsers: function (orgId) {
+                return orgUsers[orgId];
+            }
+        };
 
-        $rootScope.myOrgs = [];
-        $rootScope.myOrgMap = {};
-        $rootScope.myProjects = [];
-        $rootScope.myProjectMap = {};
-        $rootScope.orgProjects = {};
-        $rootScope.orgUsers = {};
-
-
-
-        $rootScope.loadMyOrgs = function () {
+        envCache.loadMyOrgs = function () {
             if (!envVars.isLoggedIn()) {
                 return;
             }
             var orgs = Orgs.getMyOrgs();
-            $rootScope.myOrgs = orgs;
-            orgs.$promise.then(function() {
-                for (var i=0;i<orgs.length;i++) {
+            myOrgs = orgs;
+            orgs.$promise.then(function () {
+                for (var i = 0; i < orgs.length; i++) {
                     var o = orgs[i];
-                    $rootScope.myOrgMap[o.id] = o;
-                }
-            });
-        }
-        $rootScope.loadProjectsForOrg = function (org) {
-            var projects = Orgs.getProjectsInOrg({orgId: org.id});
-            $rootScope.orgProjects[org.id] = projects;
-            projects.$promise.then(function() {
-                $rootScope.myProjects = $rootScope.myProjects.concat(projects);
-                for (var i=0;i<projects.length; i++) {
-                    var pro = projects[i];
-                    $rootScope.myProjectMap[pro.id] = pro;
+                    myOrgMap[o.id] = o;
+                    envCache.loadProjectsForOrg(o);
+                    envCache.loadUsersInOrg(o);
                 }
             });
         };
-        $rootScope.loadUsersInOrg = function (org) {
-            $rootScope.orgUsers[org.id] = Orgs.getUsersInOrgWithCache({orgId: org.id});
-        }
+
+        envCache.loadProjectsForOrg = function (org) {
+            var projects = Orgs.getProjectsInOrg({orgId: org.id});
+            orgProjects[org.id] = projects;
+            projects.$promise.then(function () {
+                myProjects = myProjects.concat(projects);
+                for (var i = 0; i < projects.length; i++) {
+                    var pro = projects[i];
+                    myProjectMap[pro.id] = pro;
+                }
+            });
+        };
+
+        envCache.loadUsersInOrg = function (org) {
+            orgUsers[org.id] = Orgs.getUsersInOrgWithCache({orgId: org.id});
+        };
+
+        envCache.initAll = function () {
+            envCache.clearCache();
+            envCache.loadMyOrgs();
+        };
+
+        return envCache;
+    }])
+    .run(['$rootScope', 'envVars', 'envCache', function ($rootScope, envVars, envCache) {
+        $rootScope.isLoggedIn = envVars.isLoggedIn;
+        $rootScope.getCurrentUser = envVars.getCurrentUser;
+        $rootScope.getCurrentUserId = envVars.getCurrentUserId;
+
+        $rootScope.loadMyOrgs = envCache.loadMyOrgs;
+        $rootScope.loadProjectsForOrg = envCache.loadProjectsForOrg;
+        $rootScope.loadUsersInOrg = envCache.loadUsersInOrg;
+        $rootScope.getMyOrgs = envCache.getMyOrgs;
+        $rootScope.getProject = envCache.getProject;
+        $rootScope.getOrg = envCache.getOrg;
+        $rootScope.getOrgProjects = envCache.getOrgProjects;
+        $rootScope.getMyProjects = envCache.getMyProjects;
+        $rootScope.getOrgUsers = envCache.getOrgUsers;
+        $rootScope.initCache = envCache.initAll;
+
+        $rootScope.$on('login', function () {
+            envCache.initAll();
+        });
+
+        $rootScope.$on('logout', function() {
+            envCache.clearAll();
+        });
     }]);

@@ -16,15 +16,15 @@
         <a href="#/processes" class="list-group-item" ui-sref-active="active">Process</a>
     </div>
 
-    <div ng-controller="SideOrgController" ng-init="loadMyOrgs()" ng-if="isLoggedIn()">
+    <div ng-controller="SideOrgController" ng-if="isLoggedIn()">
         <accordion close-others="oneAtATime">
-            <accordion-group ng-repeat="org in myOrgs" heading="{{org.name}}" ng-init="loadProjectsForOrg(org); loadUsersInOrg(org)">
+            <accordion-group ng-repeat="org in getMyOrgs()" heading="{{org.name}}">
                 <ul class="list-group">
-                    <li class="list-group-item" ng-repeat="project in orgProjects[org.id]">{{project.name}}</li>
+                    <li class="list-group-item" ng-repeat="project in getOrgProjects(org.id)">{{project.name}}</li>
                 </ul>
                 <hr/>
                 <ul class="list-group">
-                    <li class="list-group-item" ng-repeat="user in orgUsers[org.id]">{{user.firstName}}</li>
+                    <li class="list-group-item" ng-repeat="user in getOrgUsers(org.id)">{{user.firstName}}</li>
                 </ul>
             </accordion-group>
         </accordion>
