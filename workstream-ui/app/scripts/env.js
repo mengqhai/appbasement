@@ -49,7 +49,7 @@ angular.module('env', ['LocalStorageModule'])
         var orgUsers = {};
 
         var envCache = {
-            clearCache: function () {
+            clearAll: function () {
                 myOrgs = [];
                 myOrgMap = {};
                 myProjects = [];
@@ -110,7 +110,7 @@ angular.module('env', ['LocalStorageModule'])
         };
 
         envCache.initAll = function () {
-            envCache.clearCache();
+            envCache.clearAll();
             envCache.loadMyOrgs();
         };
 
