@@ -10,8 +10,14 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             $scope.candidateTaskCount = Tasks.countMyCandidateTasks();
         }
 
-        $scope.$on('tasks.update.assignee', function (newAssignee) {
+        $scope.$on('tasks.update.assignee', function (event, newAssignee) {
             $scope.myTaskCount = Tasks.countMyTasks();
+        });
+        $scope.$on('tasks.create', function (event, task) {
+            if (task.assignee === $scope.getCurrentUserId()) {
+                $scope.myTaskCount = Tasks.countMyTasks();
+            }
+            $scope.createdByMeCount = Tasks.countCreatedByMe();
         });
 
         //$scope.loadCounts();
@@ -30,9 +36,19 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
         switch ($stateParams.listType) {
             case '_my':
                 $scope.filterEx.assignee = $scope.getCurrentUserId();
+                $scope.$on('tasks.create', function(event, task) {
+                    if (task.assignee === $scope.getCurrentUserId()) {
+                        $scope.tasks.splice(0, 0, task);
+                    }
+                });
                 break;
             case '_createdByMe':
                 $scope.filterEx.creator = $scope.getCurrentUserId();
+                $scope.$on('tasks.create', function(event, task) {
+                    if (task.creator === $scope.getCurrentUserId()) {
+                        $scope.tasks.splice(0, 0, task);
+                    }
+                });
                 break;
         }
 
@@ -53,7 +69,8 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             if (dialog) {
                 dialog.dismiss('cancelTask');
             }
-        }
+        };
+
     }])
     .controller('TaskFormController', ['$scope', 'Tasks', 'Orgs', 'Users', '$q', 'task', function ($scope, Tasks, Orgs, Users, $q, task) {
         $scope.task = task;
@@ -105,7 +122,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             })
         });
     }])
-    .controller('TaskCreateFormController', ['$scope', 'Tasks', '$modalInstance', function ($scope, Tasks, $modalInstance) {
+    .controller('TaskCreateFormController', ['$scope', 'Tasks', '$modalInstance', '$rootScope', function ($scope, Tasks, $modalInstance, $rootScope) {
         var task = {};
         $scope.task = task;
         $scope.myProjects = $scope.getMyProjects();
@@ -150,11 +167,12 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
         });
 
         $scope.createTask = function () {
-            return Tasks.create(task).$promise.then(function (response) {
+            return Tasks.create(task).$promise.then(function (task) {
                 if ($modalInstance) {
-                    $modalInstance.close(response);
+                    $rootScope.$broadcast('tasks.create', task);
+                    $modalInstance.close(task);
                 }
-            }, function(error) {
+            }, function (error) {
                 $scope.createError = error.data.message;
             });
         }
