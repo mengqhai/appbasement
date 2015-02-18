@@ -1,10 +1,10 @@
 <aside class="app-sidebar" ng-controller="CurrentUserController">
-    <div class="btn-group" dropdown>
+    <div class="btn-group" dropdown ng-controller="SideCreateController">
         <button type="button" class="btn btn-success dropdown-toggle" dropdown-toggle>
             Create <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
-            <li><a href>Task</a> </li>
+            <li><a href ng-click="openDialog()">Task</a> </li>
             <li class="divider"></li>
             <li><a href>Project</a> </li>
         </ul>

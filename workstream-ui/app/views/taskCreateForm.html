@@ -1,0 +1,40 @@
+<div>
+    <div class="modal-header">
+        <h4>
+            New Task
+            <button type="button" ng-click="closeDialog()" class="close" aria-label="Close" style="float: right;" e-maxlength="500"><span aria-hidden="true">&times;</span></button>
+        </h4>
+    </div>
+    <div class="modal-body">
+        <form name="taskCreateForm" novalidate>
+            <input type="text" ng-model="task.name" required autofocus  class="form-control" placeholder="Task title...">
+            <div>
+                <ui-select ng-model="project" theme="select2" style="min-width: 180px">
+                    <ui-select-match placeholder="Select project...">
+                        <span class="glyphicon glyphicon-user"></span>
+                        <!--{{$select.selected.id || 'Unassigned'}} -->
+                        {{myProjectMap[task.projectId].name}}
+                    </ui-select-match>
+                    <ui-select-choices repeat="pro in myProjects | filter: $select.search">
+                        <div ng-bind-html="pro.name | highlight: $select.search"></div>
+                        <small>
+                            Org: <span ng-bind-html="myOrgMap[pro.orgId].name | highlight: $select.search"></span>
+                        </small>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+            <textarea ng-model="task.description" class="form-control" placeholder="write a task description...">
+
+            </textarea>
+        </form>
+
+    </div>
+    <div>
+        <hr/>
+        {{task | json}}
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary login" ng-disabled="taskCreateForm.$invalid">Save</button>
+        <button class="btn btn-warning cancel" ng-click="closeDialog()">Cancel</button>
+    </div>
+</div>

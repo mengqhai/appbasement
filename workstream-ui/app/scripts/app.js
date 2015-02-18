@@ -25,6 +25,7 @@ angular
         'resources.users',
         'controllers.currentUser',
         'controllers.sideOrg',
+        'controllers.sideCreate',
         'controllers.tasks',
         'xeditable'
     ])
