@@ -10,6 +10,10 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             $scope.candidateTaskCount = Tasks.countMyCandidateTasks();
         }
 
+        $scope.$on('tasks.update.assignee', function(newAssignee) {
+            $scope.myTaskCount = Tasks.countMyTasks();
+        });
+
         //$scope.loadCounts();
     }])
     .controller('TaskListController', ['$scope', 'Tasks', '$stateParams', '$modal', function ($scope, Tasks, $stateParams, $modal) {
@@ -74,6 +78,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
         $scope.changeAssignee = function (newAssignee) {
             $scope.updateTask('assignee', newAssignee.id).then(function (success) {
                 $scope.task.assignee = newAssignee.id;
+                $scope.$emit('tasks.update.assignee', newAssignee);
             }, function (error) {
                 $scope.assigneeError = error;
             });
