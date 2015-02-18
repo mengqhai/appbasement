@@ -54,7 +54,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
     .controller('TaskFormController', ['$scope', 'Tasks', 'Orgs', 'Users', '$q', 'task', function ($scope, Tasks, Orgs, Users, $q, task) {
         $scope.task = task;
         $scope.org = Orgs.getWithCache({orgId: task.orgId});
-        $scope.myOrgs = Orgs.getMyOrgsWithCache();
+        //$scope.myOrgs = Orgs.getMyOrgsWithCache();
 
         $scope.events = Tasks.getEvents({taskId: task.id});
         $scope.getUserPicUrl = Users.getUserPicUrl;

@@ -54,7 +54,7 @@
                     <!--{{$select.selected.id || 'Unassigned'}} -->
                     {{task.assignee || 'Unassigned'}}
                 </ui-select-match>
-                <ui-select-choices repeat="aUser in users | filter: $select.search">
+                <ui-select-choices repeat="aUser in getOrgUsers(task.orgId) | filter: $select.search">
                     <div ng-bind-html="aUser.id | highlight: $select.search"></div>
                     <small>
                         Name: <span ng-bind-html="aUser.firstName | highlight: $select.search"></span>
