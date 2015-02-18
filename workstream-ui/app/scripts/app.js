@@ -27,6 +27,7 @@ angular
         'controllers.sideOrg',
         'controllers.sideCreate',
         'controllers.tasks',
+        'http-auth-interceptor',
         'xeditable'
     ])
     .config(['localStorageServiceProvider', function (localStorageServiceProvider) {

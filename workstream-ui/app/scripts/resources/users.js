@@ -9,7 +9,7 @@ angular.module('resources.users', ['env'])
         });
 
         Users.getUserPicUrl = function (userId) {
-            return envConstants.REST_BASE + '/users/' + btoa(userId) + '/picture?api_key=' + envVars.getApiKey();
+            return envConstants.REST_BASE + '/users/' + btoa(userId) + '/picture'; //?api_key=' + envVars.getApiKey();
         }
 
         Users.getWithCache = function (param) {

@@ -1,5 +1,8 @@
 'use strict';
 
+// deprecated
+// replaced by https://github.com/witoldsz/angular-http-auth
+
 angular.module('service.security.interceptor', [])
     .factory('SecurityInterceptor', ['SecurityRetryQueue', 'envVars', '$injector', '$q', function (queue, envVars, $injector, $q) {
         return {
@@ -12,7 +15,9 @@ angular.module('service.security.interceptor', [])
                         }
 
                         // We must use $injector to get the $http service to prevent circular dependency
-                        return $injector.get('$http')(originResponse.config);
+                        var $http = $injector.get('$http');
+                        var newPromise = $http(originResponse.config);
+                        return newPromise;
                     });
                 }
                 return $q.reject(originResponse);
@@ -26,7 +31,7 @@ angular.module('service.security.interceptor', [])
         };
     }])
     .config(['$httpProvider', function ($httpProvider) {
-        $httpProvider.interceptors.push('SecurityInterceptor');
+        //$httpProvider.interceptors.push('SecurityInterceptor');
     }])
     .factory('SecurityRetryQueue', ['$q', '$log', function ($q, $log) {
         var retryQueue = [];

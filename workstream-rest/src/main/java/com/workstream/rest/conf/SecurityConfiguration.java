@@ -86,9 +86,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 							RestConstants.REST_ROOT + "/captcha").permitAll()
 					.antMatchers(RestConstants.REST_ROOT + "/login")
 					.permitAll().antMatchers("/logout").permitAll()
+					.antMatchers(RestConstants.REST_ROOT + "/logout").permitAll()
 					.antMatchers(RestConstants.REST_ROOT + "/api-docs/**")
 					.permitAll().antMatchers("/swagger/**")
 					.permitAll()
+					.antMatchers(HttpMethod.GET,
+							RestConstants.REST_ROOT + "/users/*/picture").permitAll()
 					.anyRequest()
 					.authenticated()
 					.and()
@@ -96,7 +99,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					// HttpSevletSession to invalidate if
 					// SessionInformation.expireNow()
 					// is somehow invoked.
-					.sessionManagement().maximumSessions(5)
+					.sessionManagement().maximumSessions(10)
 					.sessionRegistry(sessionRegistry())
 					// redirect to a URL that gives a 401 code
 					.expiredUrl(RestConstants.REST_ROOT + "/login/_count");

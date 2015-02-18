@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.bootstrap.tpls', 'services.security', 'service.security.interceptor'])
-    .controller('LoginFormController', ['$scope', 'loginService', '$modalInstance', 'SecurityRetryQueue', function ($scope, loginService, $modalInstance, queue) {
+angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.bootstrap.tpls', 'services.security'])
+    .controller('LoginFormController', ['$scope', 'loginService', '$modalInstance', function ($scope, loginService, $modalInstance) {
         $scope.user = {}; // model for the form
         $scope.authError = null; // error message
         var instruction = 'Please enter your user id and password';
@@ -9,7 +9,7 @@ angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.b
 
         // The reason that we are being asked to login - for instance because we tried to access something to which we are not authorized
         // We could do something diffent for each reason here but to keep it simple...
-        $scope.authReason = queue.retryReason();
+        //$scope.authReason = null;
 
         $scope.login = function () {
             // Clear any previous security errors
@@ -44,7 +44,8 @@ angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.b
             }
         };
     }])
-    .controller('LoginDialogController', ['$modal', '$scope', 'SecurityRetryQueue', 'loginService', function ($modal, $scope, queue, loginService) {
+    .controller('LoginDialogController', ['$modal', '$scope', 'loginService', 'authService', 'envVars','$timeout',
+        function ($modal, $scope, loginService, authService, envVars, $timeout) {
         var dialog = null;
         $scope.open = function () {
             if (dialog) {
@@ -54,26 +55,39 @@ angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.b
             dialog = $modal.open({
                 templateUrl: 'views/security/loginForm.html',
                 controller: 'LoginFormController',
-                size: 'md'
+                size: 'md',
+                scope: $scope
             });
 
-            dialog.result.then(function () {
+            dialog.result.then(function (data) {
                 dialog = null;
-                queue.retryAll();
+                //queue.retryAll();
+                // see https://github.com/witoldsz/angular-http-auth
+                authService.loginConfirmed(data, function(config) {
+                    config.params.api_key = data.apiToken;
+                    return config;
+                });
                 $scope.$emit('login');
+                $scope.authReason = null;
             }, function () {
                 dialog = null;
-                queue.cancelAll();
+                //queue.cancelAll();
+                $scope.authReason = null;
             });
         };
 
-        queue.onItemAddedCallbacks.push(function (retryItem) {
-            if (queue.hasMore()) {
-                $scope.open();
-            }
+        $scope.$on('event:auth-loginRequired', function (event) {
+            $scope.authReason = 'You need to log in to perform the action.';
+            $scope.open();
         });
 
-        $scope.logout = function() {
+//        queue.onItemAddedCallbacks.push(function (retryItem) {
+//            if (queue.hasMore()) {
+//                $scope.open();
+//            }
+//        });
+
+        $scope.logout = function () {
             loginService.logout();
             $scope.$emit('logout');
         };

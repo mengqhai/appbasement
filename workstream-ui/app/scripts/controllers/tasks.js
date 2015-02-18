@@ -36,7 +36,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
         switch ($stateParams.listType) {
             case '_my':
                 $scope.filterEx.assignee = $scope.getCurrentUserId();
-                $scope.$on('tasks.create', function(event, task) {
+                $scope.$on('tasks.create', function (event, task) {
                     if (task.assignee === $scope.getCurrentUserId()) {
                         $scope.tasks.splice(0, 0, task);
                     }
@@ -44,7 +44,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                 break;
             case '_createdByMe':
                 $scope.filterEx.creator = $scope.getCurrentUserId();
-                $scope.$on('tasks.create', function(event, task) {
+                $scope.$on('tasks.create', function (event, task) {
                     if (task.creator === $scope.getCurrentUserId()) {
                         $scope.tasks.splice(0, 0, task);
                     }
