@@ -86,13 +86,12 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
         }
 
 
+        // for due date
         $scope.open = function ($event) {
             $event.preventDefault();
             $event.stopPropagation();
             $scope.opened = true;
         };
-
-        // for due date
         $scope.dueDateForPicker = task.dueDate;
         $scope.dueDateError = null;
         $scope.$watch('dueDateForPicker', function (newValue, oldValue) {
@@ -104,7 +103,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             }, function (error) {
                 $scope.dueDateError = error;
             })
-        })
+        });
     }])
     .controller('TaskCreateFormController', ['$scope', function ($scope) {
         var task = {};
@@ -116,12 +115,14 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             refreshUserList($scope.task.orgId);
         };
 
+
+        // for assignee
         var unassigned = {
             id: null,
             firstName: 'Unassigned'
         }
         $scope.assignee = task.assignee ? Users.getWithCache({userIdBase64: btoa(task.assignee)}) : unassigned;
-        var refreshUserList = function(orgId) {
+        var refreshUserList = function (orgId) {
             $scope.userList = orgId ? $scope.getOrgUsers(orgId).slice() : [];
             $scope.userList.push(unassigned);
         };
@@ -130,5 +131,21 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
         $scope.assigneeError = null;
         $scope.changeAssignee = function (newAssignee) {
             task.assignee = newAssignee.id;
-        }
+        };
+
+
+        // for due date
+        $scope.open = function ($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            $scope.opened = true;
+        };
+        $scope.dueDateForPicker = task.dueDate;
+        $scope.dueDateError = null;
+        $scope.$watch('dueDateForPicker', function (newValue, oldValue) {
+            if (newValue == oldValue) {
+                return;
+            }
+            $scope.task.dueDate = $scope.dueDateForPicker;
+        });
     }]);
