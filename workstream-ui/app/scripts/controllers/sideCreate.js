@@ -4,6 +4,7 @@ angular.module('controllers.sideCreate', [])
         $scope.openDialog = function () {
             dialog = $modal.open({
                 templateUrl: 'views/taskCreateForm.html',
+                controller: 'TaskCreateFormController',
                 scope: $scope
             })
         };
@@ -12,5 +13,4 @@ angular.module('controllers.sideCreate', [])
                 dialog.dismiss('cancelCreateTask');
             }
         };
-        $scope.task = {};
     }])

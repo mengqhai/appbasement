@@ -10,7 +10,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             $scope.candidateTaskCount = Tasks.countMyCandidateTasks();
         }
 
-        $scope.$on('tasks.update.assignee', function(newAssignee) {
+        $scope.$on('tasks.update.assignee', function (newAssignee) {
             $scope.myTaskCount = Tasks.countMyTasks();
         });
 
@@ -60,18 +60,19 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
         $scope.org = Orgs.getWithCache({orgId: task.orgId});
         //$scope.myOrgs = Orgs.getMyOrgsWithCache();
 
+        // for events/comments
         $scope.events = Tasks.getEvents({taskId: task.id});
         $scope.getUserPicUrl = Users.getUserPicUrl;
         $scope.updateTask = function (key, value) {
             return Tasks.xedit($scope.task.id, key, value);
         };
 
+        // for assignee field
         var unassigned = {
             id: null,
             firstName: 'Unassigned'
         }
         $scope.assignee = task.assignee ? Users.getWithCache({userIdBase64: btoa(task.assignee)}) : unassigned;
-
         $scope.userList = $scope.getOrgUsers(task.orgId).slice();
         $scope.userList.push(unassigned);
         $scope.assigneeError = null;
@@ -91,6 +92,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             $scope.opened = true;
         };
 
+        // for due date
         $scope.dueDateForPicker = task.dueDate;
         $scope.dueDateError = null;
         $scope.$watch('dueDateForPicker', function (newValue, oldValue) {
@@ -103,4 +105,30 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                 $scope.dueDateError = error;
             })
         })
+    }])
+    .controller('TaskCreateFormController', ['$scope', function ($scope) {
+        var task = {};
+        $scope.task = task;
+        $scope.myProjects = $scope.getMyProjects();
+        $scope.onSelectProject = function (project) {
+            $scope.task.projectId = project.id;
+            $scope.task.orgId = project.orgId;
+            refreshUserList($scope.task.orgId);
+        };
+
+        var unassigned = {
+            id: null,
+            firstName: 'Unassigned'
+        }
+        $scope.assignee = task.assignee ? Users.getWithCache({userIdBase64: btoa(task.assignee)}) : unassigned;
+        var refreshUserList = function(orgId) {
+            $scope.userList = orgId ? $scope.getOrgUsers(orgId).slice() : [];
+            $scope.userList.push(unassigned);
+        };
+        refreshUserList(task.orgId);
+
+        $scope.assigneeError = null;
+        $scope.changeAssignee = function (newAssignee) {
+            task.assignee = newAssignee.id;
+        }
     }]);
