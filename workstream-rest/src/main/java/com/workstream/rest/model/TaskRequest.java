@@ -8,6 +8,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import com.workstream.rest.RestConstants;
 import com.workstream.rest.validation.NotRemovable;
@@ -66,6 +67,16 @@ public class TaskRequest extends MapPropObj {
 	@Min(1)
 	public Integer getPriority() {
 		return getProp("priority");
+	}
+
+	@JsonIgnore
+	public void setOrgId(Long orgId) {
+		// do nothing
+	}
+
+	@JsonIgnore
+	public void setProjectId(Long projectId) {
+		// do nothing
 	}
 
 }

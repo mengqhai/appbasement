@@ -105,7 +105,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             })
         });
     }])
-    .controller('TaskCreateFormController', ['$scope', function ($scope) {
+    .controller('TaskCreateFormController', ['$scope', 'Tasks', '$modalInstance', function ($scope, Tasks, $modalInstance) {
         var task = {};
         $scope.task = task;
         $scope.myProjects = $scope.getMyProjects();
@@ -148,4 +148,14 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             }
             $scope.task.dueDate = $scope.dueDateForPicker;
         });
+
+        $scope.createTask = function () {
+            return Tasks.create(task).$promise.then(function (response) {
+                if ($modalInstance) {
+                    $modalInstance.close(response);
+                }
+            }, function(error) {
+                $scope.createError = error.data.message;
+            });
+        }
     }]);

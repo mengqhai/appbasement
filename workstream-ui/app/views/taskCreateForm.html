@@ -69,7 +69,10 @@
         {{task | json}}
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary login" ng-disabled="taskCreateForm.$invalid">Save</button>
+        <div ng-if="createError">
+            {{createError}}
+        </div>
+        <button class="btn btn-primary login" ng-click="createTask()"   ng-disabled="taskCreateForm.$invalid">Save</button>
         <button class="btn btn-warning cancel" ng-click="closeDialog()">Cancel</button>
     </div>
 </div>

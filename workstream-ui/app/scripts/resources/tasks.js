@@ -41,8 +41,18 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
             patch: {
                 method: 'PATCH',
                 url: homeUrl + '/:taskId'
+            },
+            save: {
+                method: 'POST',
+                url: envConstants.REST_BASE + '/projects/:projectId/tasks'
             }
         });
+
+        Tasks.create = function (task) {
+            var projectId = task.projectId;
+            return Tasks.save({projectId: projectId}, task);
+        };
+
         Tasks.xedit = function (taskId, key, value) {
             var dataObj = {};
             dataObj[key] = value;

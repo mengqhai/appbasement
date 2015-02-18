@@ -1,4 +1,4 @@
-angular.module('controllers.sideCreate', [])
+angular.module('controllers.sideCreate', ['controllers.tasks'])
     .controller('SideCreateController', ['$scope', '$modal', function ($scope, $modal) {
         var dialog = null;
         $scope.openDialog = function () {
