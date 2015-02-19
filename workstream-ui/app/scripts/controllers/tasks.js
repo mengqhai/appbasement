@@ -19,6 +19,12 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             }
             $scope.createdByMeCount = Tasks.countCreatedByMe();
         });
+        $scope.$on('tasks.delete', function (event, task) {
+            if (task.assignee === $scope.getCurrentUserId()) {
+                $scope.myTaskCount = Tasks.countMyTasks();
+            }
+            $scope.createdByMeCount = Tasks.countCreatedByMe();
+        });
 
         //$scope.loadCounts();
     }])
@@ -29,6 +35,13 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             $scope.tasks = Tasks.getByListType({type: $stateParams.listType});
         };
         $scope.loadByType();
+
+        var removeTask = function (task) {
+            var i = $scope.tasks.indexOf(task);
+            if (i != -1) {
+                $scope.tasks.splice(i, 1);
+            }
+        };
 
         $scope.filterEx = {};
         // This fitlerEx object can't get passed by $stataParams(as it's not defined in the URL template of the state),
@@ -41,6 +54,11 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                         $scope.tasks.splice(0, 0, task);
                     }
                 });
+                $scope.$on('tasks.delete', function (event, task) {
+                    if (task.assignee === $scope.getCurrentUserId()) {
+                        removeTask(task);
+                    }
+                });
                 break;
             case '_createdByMe':
                 $scope.filterEx.creator = $scope.getCurrentUserId();
@@ -48,6 +66,9 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                     if (task.creator === $scope.getCurrentUserId()) {
                         $scope.tasks.splice(0, 0, task);
                     }
+                });
+                $scope.$on('tasks.delete', function (event, task) {
+                    removeTask(task);
                 });
                 break;
         }
@@ -72,56 +93,69 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
         };
 
     }])
-    .controller('TaskFormController', ['$scope', 'Tasks', 'Orgs', 'Users', '$q', 'task', function ($scope, Tasks, Orgs, Users, $q, task) {
-        $scope.task = task;
-        $scope.org = Orgs.getWithCache({orgId: task.orgId});
-        //$scope.myOrgs = Orgs.getMyOrgsWithCache();
+    .controller('TaskFormController', ['$scope', 'Tasks', 'Orgs', 'Users', '$q', '$modalInstance', 'task',
+        function ($scope, Tasks, Orgs, Users, $q, $modalInstance, task) {
+            $scope.task = task;
+            $scope.org = Orgs.getWithCache({orgId: task.orgId});
+            //$scope.myOrgs = Orgs.getMyOrgsWithCache();
 
-        // for events/comments
-        $scope.events = Tasks.getEvents({taskId: task.id});
-        $scope.getUserPicUrl = Users.getUserPicUrl;
-        $scope.updateTask = function (key, value) {
-            return Tasks.xedit($scope.task.id, key, value);
-        };
+            // for events/comments
+            $scope.events = Tasks.getEvents({taskId: task.id});
+            $scope.getUserPicUrl = Users.getUserPicUrl;
+            $scope.updateTask = function (key, value) {
+                return Tasks.xedit($scope.task.id, key, value);
+            };
 
-        // for assignee field
-        var unassigned = {
-            id: null,
-            firstName: 'Unassigned'
-        }
-        $scope.assignee = task.assignee ? Users.getWithCache({userIdBase64: btoa(task.assignee)}) : unassigned;
-        $scope.userList = $scope.getOrgUsers(task.orgId).slice();
-        $scope.userList.push(unassigned);
-        $scope.assigneeError = null;
-        $scope.changeAssignee = function (newAssignee) {
-            $scope.updateTask('assignee', newAssignee.id).then(function (success) {
-                $scope.task.assignee = newAssignee.id;
-                $scope.$emit('tasks.update.assignee', newAssignee);
-            }, function (error) {
-                $scope.assigneeError = error;
-            });
-        }
-
-
-        // for due date
-        $scope.open = function ($event) {
-            $event.preventDefault();
-            $event.stopPropagation();
-            $scope.opened = true;
-        };
-        $scope.dueDateForPicker = task.dueDate;
-        $scope.dueDateError = null;
-        $scope.$watch('dueDateForPicker', function (newValue, oldValue) {
-            if (newValue == oldValue) {
-                return;
+            // for assignee field
+            var unassigned = {
+                id: null,
+                firstName: 'Unassigned'
             }
-            $scope.updateTask('dueDate', newValue).then(function (sucess) {
-                $scope.task.dueDate = $scope.dueDateForPicker;
-            }, function (error) {
-                $scope.dueDateError = error;
-            })
-        });
-    }])
+            $scope.assignee = task.assignee ? Users.getWithCache({userIdBase64: btoa(task.assignee)}) : unassigned;
+            $scope.userList = $scope.getOrgUsers(task.orgId).slice();
+            $scope.userList.push(unassigned);
+            $scope.assigneeError = null;
+            $scope.changeAssignee = function (newAssignee) {
+                $scope.updateTask('assignee', newAssignee.id).then(function (success) {
+                    $scope.task.assignee = newAssignee.id;
+                    $scope.$emit('tasks.update.assignee', newAssignee);
+                }, function (error) {
+                    $scope.assigneeError = error;
+                });
+            }
+
+
+            // for due date
+            $scope.open = function ($event) {
+                $event.preventDefault();
+                $event.stopPropagation();
+                $scope.opened = true;
+            };
+            $scope.dueDateForPicker = task.dueDate;
+            $scope.dueDateError = null;
+            $scope.$watch('dueDateForPicker', function (newValue, oldValue) {
+                if (newValue == oldValue) {
+                    return;
+                }
+                $scope.updateTask('dueDate', newValue).then(function (sucess) {
+                    $scope.task.dueDate = $scope.dueDateForPicker;
+                }, function (error) {
+                    $scope.dueDateError = error;
+                })
+            });
+
+            // for delete
+            $scope.delete = function () {
+                Tasks.delete({taskId: task.id}, function (response) {
+                    if ($modalInstance) {
+                        $scope.$emit('tasks.delete', task);
+                        $modalInstance.close();
+                    }
+                }, function (error) {
+                    $scope.deleteError = error;
+                });
+            }
+        }])
     .controller('TaskCreateFormController', ['$scope', 'Tasks', '$modalInstance', '$rootScope', function ($scope, Tasks, $modalInstance, $rootScope) {
         var task = {};
         $scope.task = task;
