@@ -1,4 +1,18 @@
 <div>
     <h4>Project {{project.name}}</h4>
-    <p>{{project.description}}</p>
+    <!--<tabset>-->
+        <!--<tab heading="About">-->
+            <!--<p>{{project.description}}</p>-->
+        <!--</tab>-->
+        <!--<tab heading="Tasks" select="showTasks()">-->
+            <!--<div ui-view></div>-->
+        <!--</tab>-->
+    <!--</tabset>-->
+    <ul class="nav nav-tabs">
+        <li role="presentation" ui-sref-active-eq="active"><a ui-sref="project">About</a></li>
+        <li role="presentation" ui-sref-active="active"><a ui-sref="project.tasks">Tasks</a></li>
+    </ul>
+    <div ui-view>
+        <p>{{project.description}}</p>
+    </div>
 </div>

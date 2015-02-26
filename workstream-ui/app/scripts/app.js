@@ -78,6 +78,10 @@ angular
             templateUrl: 'views/project.html',
             controller: 'ProjectController'
         });
+        $stateProvider.state('project.tasks', {
+            url: '/tasks',
+            templateUrl: 'views/project.tasks.html'
+        });
 
         $urlRouterProvider.otherwise('/');
 
