@@ -20,7 +20,9 @@
         <accordion close-others="oneAtATime">
             <accordion-group ng-repeat="org in getMyOrgs()" heading="{{org.name}}">
                 <ul class="list-group">
-                    <li class="list-group-item" ng-repeat="project in getOrgProjects(org.id)">{{project.name}}</li>
+                    <li class="list-group-item" ng-repeat="p in getOrgProjects(org.id)">
+                        <a ui-sref="project({projectId: p.id})">{{p.name}}</a>
+                    </li>
                 </ul>
                 <hr/>
                 <ul class="list-group">

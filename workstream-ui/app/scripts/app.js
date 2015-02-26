@@ -27,6 +27,7 @@ angular
         'controllers.sideOrg',
         'controllers.sideCreate',
         'controllers.tasks',
+        'controllers.project',
         'http-auth-interceptor',
         'xeditable'
     ])
@@ -71,6 +72,11 @@ angular
         $stateProvider.state('processes', {
             url: '/processes',
             templateUrl: 'views/processes.html'
+        });
+        $stateProvider.state('project', {
+            url: '/project/{projectId}',
+            templateUrl: 'views/project.html',
+            controller: 'ProjectController'
         });
 
         $urlRouterProvider.otherwise('/');
