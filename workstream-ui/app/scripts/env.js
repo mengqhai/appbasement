@@ -132,6 +132,10 @@ angular.module('env', ['LocalStorageModule'])
         $rootScope.getOrgUsers = envCache.getOrgUsers;
         $rootScope.initCache = envCache.initAll;
 
+        $rootScope.$on('projects.create', function(event, project) {
+            envCache.loadProjectsForOrg({id:project.orgId});
+        });
+
         $rootScope.$on('login', function () {
             envCache.initAll();
         });

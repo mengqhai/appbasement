@@ -27,7 +27,7 @@ angular
         'controllers.sideOrg',
         'controllers.sideCreate',
         'controllers.tasks',
-        'controllers.project',
+        'controllers.projects',
         'http-auth-interceptor',
         'xeditable'
     ])
