@@ -13,6 +13,10 @@
                     </div>
                 </div>
                 <div>
+                    Start date: <ws-datepicker null-label="No Start Date" date-value="project.startTime"></ws-datepicker>
+                    End date: <ws-datepicker null-label="No End Date" date-value="project.dueTime"></ws-datepicker>
+                </div>
+                <div>
                     <textarea ng-model="project.description" class="form-control" placeholder="write a project description...">
 
                     </textarea>

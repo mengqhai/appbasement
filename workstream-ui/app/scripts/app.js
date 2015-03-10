@@ -22,6 +22,7 @@ angular
         'LocalStorageModule',
         'controllers.login',
         'directives.sidebar',
+        'directives.datepicker',
         'resources.users',
         'controllers.currentUser',
         'controllers.sideOrg',
