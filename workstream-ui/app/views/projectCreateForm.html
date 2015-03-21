@@ -1,0 +1,40 @@
+<div>
+    <div class="modal-header">
+        <h4>New Project</h4>
+    </div>
+    <div class="modal-body">
+        <form name="projectCreateForm" novalidate>
+            <input type="text" ng-model="project.name" required autofocus class="form-control" placeholder="Project name...">
+            <div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <select class="form-control" ng-model="project.orgId" ng-options="org.id as org.name for org in orgs" required>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    Start date: <ws-datepicker null-label="No Start Date" date-value="project.startTime"></ws-datepicker>
+                    End date: <ws-datepicker null-label="No End Date" date-value="project.dueTime"></ws-datepicker>
+                </div>
+                <div>
+                    <textarea ng-model="project.description" class="form-control" placeholder="write a project description...">
+
+                    </textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div>
+        <hr/>
+        {{project | json}}
+    </div>
+    <div>
+        <div class="modal-footer">
+            <div ng-if="createError">
+                {{createError}}
+            </div>
+            <button class="btn btn-primary login" ng-click="createProject()"   ng-disabled="projectCreateForm.$invalid">Save</button>
+            <button class="btn btn-warning cancel" ng-click="closeDialog()">Cancel</button>
+        </div>
+    </div>
+</div>

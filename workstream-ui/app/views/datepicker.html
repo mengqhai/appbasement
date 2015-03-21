@@ -1,0 +1,13 @@
+<div class="input-group" datepicker-popup ng-model="dateInternal" is-open="opened"
+     close-text="Close">
+      <span class="input-group-btn">
+        <button type="button" class="btn btn-default" ng-click="open($event)"><i
+                class="glyphicon glyphicon-calendar"></i></button>
+      </span>
+      <span class="form-control" style="width: 150px">
+          {{(dateValue|date) || nullLabel}}
+      </span>
+      <span>
+          {{dueDateError}}
+      </span>
+</div>
