@@ -1,4 +1,4 @@
-angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable', 'ui.select'])
+angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable', 'ui.select', 'directives.errorsrc'])
     .controller('TasksController', ['$scope', 'Tasks', function ($scope, Tasks) {
         $scope.myTaskCount = 0;
         $scope.createdByMeCount = 0;
