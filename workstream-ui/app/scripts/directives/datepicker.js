@@ -22,19 +22,21 @@ angular.module('directives.datepicker', ['ui.bootstrap'])
                 scope.$watch('dateInternal', function (newValue, oldValue) {
                     if (newValue == oldValue) {
                         return;
-                    };
+                    }
+                    ;
                     if (scope.dateInternal == scope.dateValue) {
                         return;
                     }
                     if (attrs['onSelected']) {
-                        scope.onSelected(newValue).then(function (sucess) {
+                        scope.onSelected({newValue: newValue, oldValue: oldValue}).then(function (sucess) {
                             scope.dateValue = newValue;
                         }, function (error) {
                             scope.dueDateError = error;
                         })
                     } else {
                         scope.dateValue = newValue;
-                    };
+                    }
+                    ;
                 })
             }
         };

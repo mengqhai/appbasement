@@ -14,6 +14,7 @@
             Created by {{task.creator}} on {{task.createTime|date}}
         </div>
         <div>
+            <!--
             <span class="input-group" datepicker-popup ng-model="dueDateForPicker"  is-open="opened" close-text="Close" >
               <span class="input-group-btn">
                 <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -25,6 +26,9 @@
                   {{dueDateError}}
               </span>
             </span>
+            -->
+            <ws-datepicker null-label="No due date" date-value="task.dueDate" on-selected="onDueDateSelect(newValue,oldValue)">
+            </ws-datepicker>
         </div>
         <div>
             Org: {{org.name}}

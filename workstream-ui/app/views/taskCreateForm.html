@@ -43,6 +43,7 @@
                 </ui-select>
 
                 <!-- due date -->
+                <!--
                 <div class="input-group" datepicker-popup ng-model="dueDateForPicker" is-open="opened"
                      close-text="Close">
                   <span class="input-group-btn">
@@ -56,6 +57,8 @@
                       {{dueDateError}}
                   </span>
                 </div>
+                -->
+                <ws-datepicker null-label="No due date" date-value="task.dueDate"></ws-datepicker>
 
             </div>
             <textarea ng-model="task.description" class="form-control" placeholder="write a task description...">

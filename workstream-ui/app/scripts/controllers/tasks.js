@@ -126,23 +126,28 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
 
 
             // for due date
-            $scope.open = function ($event) {
-                $event.preventDefault();
-                $event.stopPropagation();
-                $scope.opened = true;
+            /*
+             $scope.open = function ($event) {
+             $event.preventDefault();
+             $event.stopPropagation();
+             $scope.opened = true;
+             };
+             $scope.dueDateForPicker = task.dueDate;
+             $scope.dueDateError = null;
+             $scope.$watch('dueDateForPicker', function (newValue, oldValue) {
+             if (newValue == oldValue) {
+             return;
+             }
+             $scope.updateTask('dueDate', newValue).then(function (sucess) {
+             $scope.task.dueDate = $scope.dueDateForPicker;
+             }, function (error) {
+             $scope.dueDateError = error;
+             })
+             });
+             */
+            $scope.onDueDateSelect = function (newValue, oldValue) {
+                return $scope.updateTask('dueDate', newValue);
             };
-            $scope.dueDateForPicker = task.dueDate;
-            $scope.dueDateError = null;
-            $scope.$watch('dueDateForPicker', function (newValue, oldValue) {
-                if (newValue == oldValue) {
-                    return;
-                }
-                $scope.updateTask('dueDate', newValue).then(function (sucess) {
-                    $scope.task.dueDate = $scope.dueDateForPicker;
-                }, function (error) {
-                    $scope.dueDateError = error;
-                })
-            });
 
             // for delete
             $scope.delete = function () {
@@ -191,14 +196,17 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             $event.stopPropagation();
             $scope.opened = true;
         };
-        $scope.dueDateForPicker = task.dueDate;
-        $scope.dueDateError = null;
-        $scope.$watch('dueDateForPicker', function (newValue, oldValue) {
-            if (newValue == oldValue) {
-                return;
-            }
-            $scope.task.dueDate = $scope.dueDateForPicker;
-        });
+
+        /*
+         $scope.dueDateForPicker = task.dueDate;
+         $scope.dueDateError = null;
+         $scope.$watch('dueDateForPicker', function (newValue, oldValue) {
+         if (newValue == oldValue) {
+         return;
+         }
+         $scope.task.dueDate = $scope.dueDateForPicker;
+         });
+         */
 
         $scope.createTask = function () {
             return Tasks.create(task).$promise.then(function (task) {
