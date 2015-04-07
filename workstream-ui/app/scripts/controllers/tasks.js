@@ -124,6 +124,17 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                 });
             }
 
+            $scope.project = $scope.getProject(task.projectId);
+            //$scope.myProjects = $scope.getMyProjects();
+            $scope.onSelectProject = function (project) {
+                $scope.updateTask('projectId', project.id).then(function (success) {
+                    $scope.task.projectId = project.id;
+                    $scope.task.orgId = project.orgId;
+                }, function(error) {
+                    $scope.projectError=error;
+                })
+            }
+
 
             // for due date
             /*
