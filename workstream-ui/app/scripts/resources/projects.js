@@ -8,6 +8,11 @@ angular.module('resources.projects', [])
             save: {
                 method: 'POST',
                 url: envConstants.REST_BASE + '/orgs/:orgId/projects'
+            },
+            getTasks: {
+                method: 'GET',
+                url: homeUrl + "/:projectId/tasks",
+                isArray: true
             }
         });
         Projects.create = function(project) {

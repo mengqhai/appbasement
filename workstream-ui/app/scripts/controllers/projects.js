@@ -26,4 +26,7 @@ angular.module('controllers.projects', ['resources.projects'])
                     $scope.createError = error.data.message;
                 });
             };
-        }]);
+        }])
+    .controller('ProjectTaskListController', ['$scope', 'Projects', '$stateParams', function($scope, Projects, $stateParams) {
+        $scope.tasks = Projects.getTasks({projectId: $stateParams.projectId});
+    }]);
