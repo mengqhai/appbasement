@@ -1,5 +1,12 @@
 <div>
-    <h4>Project {{project.name}}</h4>
+    <h4>Project
+        <span editable-text="project.name" e-form="projectNameForm" onbeforesave = "updateProject('name', $data)" blur="submit" e-maxlength="30" e-minlength="1">
+            {{project.name}}
+        </span>
+        <button class="btn btn-default btn-xs" ng-click="projectNameForm.$show()" ng-hide="projectNameForm.$visible">
+            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+        </button>
+    </h4>
     <!--<tabset>-->
         <!--<tab heading="About">-->
             <!--<p>{{project.description}}</p>-->

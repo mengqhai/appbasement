@@ -9,6 +9,10 @@ angular.module('controllers.projects', ['resources.projects'])
         $scope.showTasks = function () {
             $state.go('.tasks', $stateParams);
         }
+
+        $scope.updateProject = function (key, value) {
+            return Projects.xedit($scope.project.id, key, value);
+        };
     }])
     .controller('ProjectCreateFormController', ['$scope', 'Projects', '$modalInstance', '$rootScope',
         function ($scope, Projects, $modalInstance, $rootScope) {
