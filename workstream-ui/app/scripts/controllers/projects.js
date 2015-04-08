@@ -27,6 +27,25 @@ angular.module('controllers.projects', ['resources.projects'])
                 });
             };
         }])
-    .controller('ProjectTaskListController', ['$scope', 'Projects', '$stateParams', function($scope, Projects, $stateParams) {
+    .controller('ProjectTaskListController', ['$scope', 'Projects', '$stateParams', '$modal', function($scope, Projects, $stateParams, $modal) {
         $scope.tasks = Projects.getTasks({projectId: $stateParams.projectId});
+
+        var dialog = null;
+        $scope.openDialog = function (task) {
+            dialog = $modal.open({
+                templateUrl: 'views/taskForm.html',
+                controller: 'TaskFormController',
+                resolve: {
+                    task: function () {
+                        return task;
+                    }
+                },
+                scope: $scope
+            })
+        };
+        $scope.closeDialog = function () {
+            if (dialog) {
+                dialog.dismiss('cancelTask');
+            }
+        };
     }]);
