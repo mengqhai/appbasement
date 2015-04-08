@@ -74,9 +74,9 @@ public class TaskRequest extends MapPropObj {
 		// do nothing
 	}
 
-	@JsonIgnore
+	//@JsonIgnore
 	public void setProjectId(Long projectId) {
-		// do nothing
+		props.put("category", projectId);
 	}
 
 }
