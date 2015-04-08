@@ -1,6 +1,7 @@
 <div>
     <h4>Project
-        <span editable-text="project.name" e-form="projectNameForm" onbeforesave = "updateProject('name', $data)" blur="submit" e-maxlength="30" e-minlength="1">
+        <span editable-text="project.name" e-form="projectNameForm" onbeforesave="updateProject('name', $data)"
+              blur="submit" e-maxlength="30" e-minlength="1">
             {{project.name}}
         </span>
         <button class="btn btn-default btn-xs" ng-click="projectNameForm.$show()" ng-hide="projectNameForm.$visible">
@@ -8,18 +9,21 @@
         </button>
     </h4>
     <!--<tabset>-->
-        <!--<tab heading="About">-->
-            <!--<p>{{project.description}}</p>-->
-        <!--</tab>-->
-        <!--<tab heading="Tasks" select="showTasks()">-->
-            <!--<div ui-view></div>-->
-        <!--</tab>-->
+    <!--<tab heading="About">-->
+    <!--<p>{{project.description}}</p>-->
+    <!--</tab>-->
+    <!--<tab heading="Tasks" select="showTasks()">-->
+    <!--<div ui-view></div>-->
+    <!--</tab>-->
     <!--</tabset>-->
     <ul class="nav nav-tabs">
         <li role="presentation" ui-sref-active-eq="active"><a ui-sref="project">About</a></li>
         <li role="presentation" ui-sref-active="active"><a ui-sref="project.tasks">Tasks</a></li>
     </ul>
     <div ui-view>
-        <p>{{project.description}}</p>
+        <p>
+            <span editable-text="project.description" onbeforesave="updateProject('description', $data)"
+                  blur="submit" >{{project.description || 'Add some description for the project'}}
+            </span></p>
     </div>
 </div>
