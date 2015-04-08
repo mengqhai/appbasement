@@ -98,8 +98,15 @@ angular.module('env', ['LocalStorageModule'])
             var projects = Orgs.getProjectsInOrg({orgId: org.id});
             orgProjects[org.id] = projects;
             projects.$promise.then(function () {
-
-
+                var temp = myProjects.filter(function(value,index, array) {
+                    if (value.orgId == org.id) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                });
+                myProjects.length = 0;
+                myProjects = myProjects.concat(temp);
                 myProjects = myProjects.concat(projects);
                 for (var i = 0; i < projects.length; i++) {
                     var pro = projects[i];
@@ -136,8 +143,8 @@ angular.module('env', ['LocalStorageModule'])
         $rootScope.initCache = envCache.initAll;
 
         $rootScope.$on('projects.create', function(event, project) {
-            //envCache.loadProjectsForOrg({id:project.orgId});
-            envCache.initAll();
+            envCache.loadProjectsForOrg({id:project.orgId});
+            //envCache.initAll();
         });
 
         $rootScope.$on('login', function () {
