@@ -84,6 +84,14 @@ angular
             templateUrl: 'views/project.tasks.html',
             controller: 'ProjectTaskListController'
         });
+        $stateProvider.state('account', {
+            url: '/account',
+            templateUrl: 'views/account.html'
+        });
+        $stateProvider.state('orgSettings', {
+            url: '/orgSettings',
+            templateUrl: 'views/orgSettings.html'
+        });
 
         $urlRouterProvider.otherwise('/');
 
