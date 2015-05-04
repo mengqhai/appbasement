@@ -29,6 +29,7 @@ angular
         'controllers.sideCreate',
         'controllers.tasks',
         'controllers.projects',
+        'controllers.account',
         'http-auth-interceptor',
         'xeditable'
     ])
@@ -87,6 +88,23 @@ angular
         $stateProvider.state('account', {
             url: '/account',
             templateUrl: 'views/account.html'
+        });
+        $stateProvider.state('account.settings', {
+            url: '/account',
+            templateUrl: 'views/account.settings.html',
+            controller: 'AccountSettingsController'
+        });
+        $stateProvider.state('account.info', {
+            url: '/account',
+            templateUrl: 'views/account.info.html'
+        });
+        $stateProvider.state('account.pic', {
+            url: '/account',
+            templateUrl: 'views/account.pic.html'
+        });
+        $stateProvider.state('account.password', {
+            url: '/account',
+            templateUrl: 'views/account.password.html'
         });
         $stateProvider.state('orgSettings', {
             url: '/orgSettings',
