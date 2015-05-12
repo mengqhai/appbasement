@@ -6,6 +6,10 @@ angular.module('resources.users', ['env'])
         var Users = $resource(envConstants.REST_BASE + '/users/:userIdBase64', {
             userIdBase64: '@userIdBase64',
             api_key: envVars.getApiKey
+        }, {
+            patch: {
+                method: 'PATCH'
+            }
         });
 
         Users.getUserPicUrl = function (userId) {
