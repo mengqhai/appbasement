@@ -26,12 +26,22 @@ angular.module('controllers.account', ['resources.users', 'env'])
     }])
     .controller('AccountInfoController', ['$scope', 'Users', 'envVars', function ($scope, Users, envVars) {
         $scope.info = Users.getInfo({userIdBase64: envVars.getCurrentUserIdBase64()});
-
-        $scope.info.$promise.then(function() {
+        $scope.instantType = 'QQ';
+        $scope.socialType = 'Twitter';
+        $scope.setInstantType = function (type) {
+            $scope.instantType = type;
+        }
+        $scope.setSocialType = function (type) {
+            $scope.socialType = type;
+        }
+        $scope.info.$promise.then(function () {
             for (var key in $scope.info) {
                 if (key.indexOf('instant.') === 0) {
                     $scope.instant = $scope.info[key];
                     $scope.instantType = key.substring(8);
+                } else if (key.indexOf('social.') === 0) {
+                    $scope.social = $scope.info[key];
+                    $scope.socialType = key.substring(7);
                 }
             }
         });

@@ -1,7 +1,7 @@
 <form name="infoForm" style="max-width: 500px">
     <div class="form-group">
         <label>About:</label>
-        <textarea name="about" type="text" class="form-control" rows="5"></textarea>
+        <textarea name="about" type="text" class="form-control" rows="5" ng-model="info.about"></textarea>
     </div>
     <div class="form-group">
         <label>Phone Number:</label>
@@ -13,11 +13,11 @@
             <div class="input-group-btn">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{instantType}} <span class="caret"></span></button>
                 <ul class="dropdown-menu">
-                    <li><a href>AIM</a></li>
-                    <li><a href>ICQ</a></li>
-                    <li><a href>QQ</a></li>
-                    <li><a href>MSN</a></li>
-                    <li><a href>Skype</a></li>
+                    <li><a href ng-click="setInstantType('AIM')">AIM</a></li>
+                    <li><a href ng-click="setInstantType('ICQ')">ICQ</a></li>
+                    <li><a href ng-click="setInstantType('QQ')">QQ</a></li>
+                    <li><a href ng-click="setInstantType('MSN')">MSN</a></li>
+                    <li><a href ng-click="setInstantType('Skype')">Skype</a></li>
                 </ul>
             </div>
             <input name="instant" type="text" class="form-control" ng-model="instant">
@@ -27,20 +27,20 @@
         <label>Social networks:</label>
         <div class="input-group">
             <div class="input-group-btn">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Twitter <span class="caret"></span></button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{socialType}} <span class="caret"></span></button>
                 <ul class="dropdown-menu">
-                    <li><a href>Twitter</a></li>
-                    <li><a href>Facebook</a></li>
-                    <li><a href>Linked in</a></li>
-                    <li><a href>MySpace</a></li>
+                    <li><a href ng-click="setSocialType('Twitter')">Twitter</a></li>
+                    <li><a href ng-click="setSocialType('Facebook')">Facebook</a></li>
+                    <li><a href ng-click="setSocialType('Linked in')">Linked in</a></li>
+                    <li><a href ng-click="setSocialType('MySpace')">MySpace</a></li>
                 </ul>
             </div>
-            <input name="social" type="text" class="form-control">
+            <input name="social" type="text" class="form-control" ng-model="social">
         </div>
     </div>
     <div class="form-group">
         <label>Address</label>
-        <input name="instant" type="text" class="form-control">
+        <input name="address" type="text" class="form-control" ng-model="info.address">
     </div>
 
 
