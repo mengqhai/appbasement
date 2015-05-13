@@ -96,7 +96,8 @@ angular
         });
         $stateProvider.state('account.info', {
             url: '/info',
-            templateUrl: 'views/account.info.html'
+            templateUrl: 'views/account.info.html',
+            controller: 'AccountInfoController'
         });
         $stateProvider.state('account.pic', {
             url: '/pic',

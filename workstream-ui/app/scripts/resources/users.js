@@ -3,12 +3,16 @@ angular.module('resources.users', ['env'])
         return $cacheFactory('UserCache');
     }])
     .factory('Users', ['$resource', 'envConstants', 'envVars', 'UserCache', function ($resource, envConstants, envVars, UserCache) {
-        var Users = $resource(envConstants.REST_BASE + '/users/:userIdBase64', {
+        var homeUrl = envConstants.REST_BASE + '/users/:userIdBase64';
+        var Users = $resource(homeUrl, {
             userIdBase64: '@userIdBase64',
             api_key: envVars.getApiKey
         }, {
             patch: {
                 method: 'PATCH'
+            },
+            getInfo: {
+                url: homeUrl + '/info'
             }
         });
 

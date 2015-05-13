@@ -5,13 +5,13 @@
     </div>
     <div class="form-group">
         <label>Phone Number:</label>
-        <input name="phone" type="tel" class="form-control">
+        <input name="phone" type="tel" class="form-control" ng-model="info.phone">
     </div>
     <div class="form-group">
         <label>Instant Messaging:</label>
         <div class="input-group">
             <div class="input-group-btn">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">QQ <span class="caret"></span></button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{instantType}} <span class="caret"></span></button>
                 <ul class="dropdown-menu">
                     <li><a href>AIM</a></li>
                     <li><a href>ICQ</a></li>
@@ -20,7 +20,7 @@
                     <li><a href>Skype</a></li>
                 </ul>
             </div>
-            <input name="instant" type="text" class="form-control">
+            <input name="instant" type="text" class="form-control" ng-model="instant">
         </div>
     </div>
     <div class="form-group">
@@ -45,5 +45,5 @@
 
 
     <button type="button" class="btn btn-default">Save</button>
-    <span>{{message}}</span>
+    <span>{{info | json}}</span>
 </form>
