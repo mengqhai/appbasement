@@ -90,20 +90,20 @@ angular
             templateUrl: 'views/account.html'
         });
         $stateProvider.state('account.settings', {
-            url: '/account',
+            url: '/settings',
             templateUrl: 'views/account.settings.html',
             controller: 'AccountSettingsController'
         });
         $stateProvider.state('account.info', {
-            url: '/account',
+            url: '/info',
             templateUrl: 'views/account.info.html'
         });
         $stateProvider.state('account.pic', {
-            url: '/account',
+            url: '/pic',
             templateUrl: 'views/account.pic.html'
         });
         $stateProvider.state('account.password', {
-            url: '/account',
+            url: '/password',
             templateUrl: 'views/account.password.html'
         });
         $stateProvider.state('orgSettings', {

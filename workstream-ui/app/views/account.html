@@ -1,11 +1,13 @@
 <div>
     <h1>Your account</h1>
     <div class="row">
-        <header class="col-md-2">
-            <h4><a href ui-sref="account.settings">Account settings</a></h4>
-            <h4><a href ui-sref="account.info">Profile information</a></h4>
-            <h4><a href ui-sref="account.pic">Profile picture</a></h4>
-            <h4><a href ui-sref="account.password">Password</a></h4>
+        <header class="col-md-2 list-group">
+            <h4>
+                <a href class="list-group-item" ui-sref="account.settings" ui-sref-active="active">Account settings</a>
+                <a href class="list-group-item" ui-sref="account.info" ui-sref-active="active">Profile information</a>
+                <a href class="list-group-item" ui-sref="account.pic" ui-sref-active="active">Profile picture</a>
+                <a href class="list-group-item" ui-sref="account.password" ui-sref-active="active">Password</a>
+            </h4>
         </header>
         <div class="col-md-10">
             <div ui-view></div>

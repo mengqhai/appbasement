@@ -1,3 +1,49 @@
-<div>
-    Profile Information
-</div>
+<form name="infoForm" style="max-width: 500px">
+    <div class="form-group">
+        <label>About:</label>
+        <textarea name="about" type="text" class="form-control" rows="5"></textarea>
+    </div>
+    <div class="form-group">
+        <label>Phone Number:</label>
+        <input name="phone" type="tel" class="form-control">
+    </div>
+    <div class="form-group">
+        <label>Instant Messaging:</label>
+        <div class="input-group">
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">QQ <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li><a href>AIM</a></li>
+                    <li><a href>ICQ</a></li>
+                    <li><a href>QQ</a></li>
+                    <li><a href>MSN</a></li>
+                    <li><a href>Skype</a></li>
+                </ul>
+            </div>
+            <input name="instant" type="text" class="form-control">
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Social networks:</label>
+        <div class="input-group">
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Twitter <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li><a href>Twitter</a></li>
+                    <li><a href>Facebook</a></li>
+                    <li><a href>Linked in</a></li>
+                    <li><a href>MySpace</a></li>
+                </ul>
+            </div>
+            <input name="social" type="text" class="form-control">
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Address</label>
+        <input name="instant" type="text" class="form-control">
+    </div>
+
+
+    <button type="button" class="btn btn-default">Save</button>
+    <span>{{message}}</span>
+</form>
