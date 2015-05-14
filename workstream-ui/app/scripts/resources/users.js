@@ -13,6 +13,10 @@ angular.module('resources.users', ['env'])
             },
             getInfo: {
                 url: homeUrl + '/info'
+            },
+            setInfo: {
+                url: homeUrl + '/info',
+                method: 'PATCH'
             }
         });
 

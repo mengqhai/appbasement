@@ -21,19 +21,25 @@ angular.module('controllers.account', ['resources.users', 'env'])
             });
         }
         $scope.canUpdate = function (ngFormController) {
-            return !ngFormController.$dirty || ngFormController.$invalid;
+            return (ngFormController.$dirty && !ngFormController.$invalid);
         }
     }])
     .controller('AccountInfoController', ['$scope', 'Users', 'envVars', function ($scope, Users, envVars) {
         $scope.info = Users.getInfo({userIdBase64: envVars.getCurrentUserIdBase64()});
         $scope.instantType = 'QQ';
         $scope.socialType = 'Twitter';
-        $scope.setInstantType = function (type) {
-            $scope.instantType = type;
+        var subTypeChange = false;
+        $scope.setMainSubType = function (mainType, subType) {
+            var oldType = $scope[mainType + 'Type'];
+            $scope[mainType + 'Type'] = subType;
+            $scope.info[mainType + '.' + $scope[mainType + 'Type']] = $scope[mainType];
+            $scope.info[mainType + '.' + oldType] = null; // make sure the old value-key can be deleted
+            subTypeChange = true;
         }
         $scope.setSocialType = function (type) {
             $scope.socialType = type;
         }
+
         $scope.info.$promise.then(function () {
             for (var key in $scope.info) {
                 if (key.indexOf('instant.') === 0) {
@@ -46,5 +52,36 @@ angular.module('controllers.account', ['resources.users', 'env'])
             }
         });
 
+        $scope.canUpdate = function (ngFormController) {
+            return ngFormController.$dirty || subTypeChange;
+        }
 
+
+        $scope.update = function (ngFormController) {
+            var patch = {};
+            for (var key in $scope.info) {
+                if (key.indexOf('$') !== 0 && ngFormController[key]
+                    && ngFormController[key].$dirty) {
+                    patch[key] = $scope.info[key];
+                } else if (key.indexOf('instant.') === 0) {
+                    patch[key] = $scope.info[key];
+                } else if (key.indexOf('social.') === 0) {
+                    patch[key] = $scope.info[key];
+                }
+            }
+
+            // for newly set instant/social values
+            if (ngFormController.instant.$dirty) {
+                var key ='instant.' + $scope.instantType;
+                patch[key] = $scope.instant;
+            }
+            if (ngFormController.social.$dirty) {
+                var key ='social.' + $scope.socialType;
+                patch[key] = $scope.social;
+            }
+            //console.log(patch);
+            Users.setInfo({userIdBase64: envVars.getCurrentUserIdBase64()}, patch).$promise.then(function () {
+                $scope.message = 'Profile information updated.';
+            });
+        }
     }]);

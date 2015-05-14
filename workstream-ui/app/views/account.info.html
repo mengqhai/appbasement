@@ -13,11 +13,11 @@
             <div class="input-group-btn">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{instantType}} <span class="caret"></span></button>
                 <ul class="dropdown-menu">
-                    <li><a href ng-click="setInstantType('AIM')">AIM</a></li>
-                    <li><a href ng-click="setInstantType('ICQ')">ICQ</a></li>
-                    <li><a href ng-click="setInstantType('QQ')">QQ</a></li>
-                    <li><a href ng-click="setInstantType('MSN')">MSN</a></li>
-                    <li><a href ng-click="setInstantType('Skype')">Skype</a></li>
+                    <li><a href ng-click="setMainSubType('instant', 'AIM')">AIM</a></li>
+                    <li><a href ng-click="setMainSubType('instant', 'ICQ')">ICQ</a></li>
+                    <li><a href ng-click="setMainSubType('instant', 'QQ')">QQ</a></li>
+                    <li><a href ng-click="setMainSubType('instant', 'MSN')">MSN</a></li>
+                    <li><a href ng-click="setMainSubType('instant', 'Skype')">Skype</a></li>
                 </ul>
             </div>
             <input name="instant" type="text" class="form-control" ng-model="instant">
@@ -29,10 +29,10 @@
             <div class="input-group-btn">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{socialType}} <span class="caret"></span></button>
                 <ul class="dropdown-menu">
-                    <li><a href ng-click="setSocialType('Twitter')">Twitter</a></li>
-                    <li><a href ng-click="setSocialType('Facebook')">Facebook</a></li>
-                    <li><a href ng-click="setSocialType('Linked in')">Linked in</a></li>
-                    <li><a href ng-click="setSocialType('MySpace')">MySpace</a></li>
+                    <li><a href ng-click="setMainSubType('social', 'Twitter')">Twitter</a></li>
+                    <li><a href ng-click="setMainSubType('social', 'Facebook')">Facebook</a></li>
+                    <li><a href ng-click="setMainSubType('social', 'Linked in')">Linked in</a></li>
+                    <li><a href ng-click="setMainSubType('social', 'MySpace')">MySpace</a></li>
                 </ul>
             </div>
             <input name="social" type="text" class="form-control" ng-model="social">
@@ -44,6 +44,6 @@
     </div>
 
 
-    <button type="button" class="btn btn-default">Save</button>
-    <span>{{info | json}}</span>
+    <button type="button" class="btn btn-default" ng-disabled="!canUpdate(infoForm)" ng-click="update(infoForm)">Save</button>
+    <span>{{info | json}}  {{message}}</span>
 </form>

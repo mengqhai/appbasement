@@ -7,6 +7,6 @@
         <label>Email:</label>
         <input name="email" type="email" class="form-control" ng-model="user.email" required>
     </div>
-    <button type="button" class="btn btn-default" ng-click="update(accountForm)" ng-disabled="canUpdate(accountForm)">Update</button>
+    <button type="button" class="btn btn-default" ng-click="update(accountForm)" ng-disabled="!canUpdate(accountForm)">Update</button>
     <span>{{message}}</span>
 </form>
