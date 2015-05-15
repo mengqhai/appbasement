@@ -23,6 +23,7 @@ angular
         'controllers.login',
         'directives.sidebar',
         'directives.datepicker',
+        'directives.filemodel',
         'resources.users',
         'controllers.currentUser',
         'controllers.sideOrg',
@@ -101,7 +102,8 @@ angular
         });
         $stateProvider.state('account.pic', {
             url: '/pic',
-            templateUrl: 'views/account.pic.html'
+            templateUrl: 'views/account.pic.html',
+            controller: 'AccountPicController'
         });
         $stateProvider.state('account.password', {
             url: '/password',

@@ -126,7 +126,7 @@ angular.module('env', ['LocalStorageModule'])
 
         return envCache;
     }])
-    .run(['$rootScope', 'envVars', 'envCache', function ($rootScope, envVars, envCache) {
+    .run(['$rootScope', 'envVars', 'envCache', 'envConstants', function ($rootScope, envVars, envCache, envConstants) {
         $rootScope.isLoggedIn = envVars.isLoggedIn;
         $rootScope.getCurrentUser = envVars.getCurrentUser;
         $rootScope.getCurrentUserId = envVars.getCurrentUserId;
@@ -141,6 +141,15 @@ angular.module('env', ['LocalStorageModule'])
         $rootScope.getMyProjects = envCache.getMyProjects;
         $rootScope.getOrgUsers = envCache.getOrgUsers;
         $rootScope.initCache = envCache.initAll;
+
+        // User's avatar pic
+        $rootScope.getUserPicUrl = function (userId) {
+            return envConstants.REST_BASE + '/users/' + btoa(userId) + '/picture'; //?api_key=' + envVars.getApiKey();
+        }
+        $rootScope.userPicUrl = $rootScope.getUserPicUrl(envVars.getCurrentUser().id);
+        $rootScope.$on('user.pic.update', function() {
+            $rootScope.userPicUrl = $rootScope.userPicUrl = $rootScope.getUserPicUrl(envVars.getCurrentUser().id) + "?" + new Date().getTime();
+        });
 
         $rootScope.$on('projects.create', function(event, project) {
             envCache.loadProjectsForOrg({id:project.orgId});

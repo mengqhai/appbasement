@@ -1,3 +1,16 @@
 <div>
-    Picture
+    <div>
+        <img class="media-object img-rounded" ng-src="{{userPicUrl}}" err-src="images/yeoman.png" width="130" height="130">
+    </div>
+    <h4>
+        Change picture
+    </h4>
+    <p>
+        The recommended size is 250x250, bigger images will be resized. Smaller too.
+    </p>
+    <form name="picForm">
+        <input type="file" file-model="picFile" required>
+        <button ng-click="uploadFile()" class="btn btn-default" ng-disabled="!canUpload(picForm)">Upload</button>
+    </form>
+
 </div>

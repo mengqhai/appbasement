@@ -36,7 +36,7 @@
         <div class="well" ng-if="isLoggedIn()">
             <div class="row">
                 <div class="col-md-4" ng-if="getCurrentUser().pictureSet">
-                    <img ng-src="{{getCurrentUserPicUrl()}}" class="img-rounded" width="60" height="60"/>
+                    <img ng-src="{{userPicUrl}}" class="img-rounded" width="60" height="60"/>
                 </div>
                 <div class="col-md-4">
                     <div class="row">{{getCurrentUser().id}}</div>

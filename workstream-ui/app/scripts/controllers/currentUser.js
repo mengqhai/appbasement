@@ -6,7 +6,4 @@ angular.module('controllers.currentUser', ['env', 'resources.users'])
         $scope.getCurrentUser = function () {
             return envVars.getCurrentUser();
         };
-        $scope.getCurrentUserPicUrl = function() {
-            return Users.getUserPicUrl(envVars.getCurrentUser().id);
-        }
     }]);

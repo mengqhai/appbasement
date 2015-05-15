@@ -72,16 +72,29 @@ angular.module('controllers.account', ['resources.users', 'env'])
 
             // for newly set instant/social values
             if (ngFormController.instant.$dirty) {
-                var key ='instant.' + $scope.instantType;
+                var key = 'instant.' + $scope.instantType;
                 patch[key] = $scope.instant;
             }
             if (ngFormController.social.$dirty) {
-                var key ='social.' + $scope.socialType;
+                var key = 'social.' + $scope.socialType;
                 patch[key] = $scope.social;
             }
             //console.log(patch);
             Users.setInfo({userIdBase64: envVars.getCurrentUserIdBase64()}, patch).$promise.then(function () {
                 $scope.message = 'Profile information updated.';
+            });
+        }
+    }])
+    .controller('AccountPicController', ['$scope', 'Users', 'envVars', '$rootScope', function ($scope, Users, envVars, $rootScope) {
+        $scope.currentUserId = envVars.getCurrentUserId();
+        $scope.canUpload = function (ngFormController) {
+            //console.log(!ngFormController.$invalid && ngFormController.$dirty);
+            // http://stackoverflow.com/questions/16207202/required-attribute-not-working-with-file-input-in-angular-js
+            return $scope.picFile !== undefined;
+        }
+        $scope.uploadFile = function () {
+            Users.updatePic($scope.currentUserId, $scope.picFile).success(function () {
+                $rootScope.$emit('user.pic.update');
             });
         }
     }]);
