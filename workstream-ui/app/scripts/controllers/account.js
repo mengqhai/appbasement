@@ -98,17 +98,25 @@ angular.module('controllers.account', ['resources.users', 'env'])
             });
         }
     }])
-    .controller('AccountPasswordController', ['$scope', function ($scope) {
+    .controller('AccountPasswordController', ['$scope', 'Users', 'envVars', function ($scope, Users, envVars) {
         $scope.canUpdate = function(ngFormController) {
-            if (!$scope.password || !$scope.confirmation) {
+            if (!$scope.password || !$scope.confirmation || ngFormController.$invalid) {
                 return false;
             }
             var eq = $scope.password == $scope.confirmation;
             if (!eq) {
-                $scope.message = 'Password does not match';
+                $scope.validateError = 'Password does not match';
             } else {
-                $scope.message = '';
+                $scope.validateError = '';
             }
             return eq;
+        }
+        $scope.update = function(ngFormController) {
+            var patch = {
+                password: $scope.password
+            };
+            Users.patch({userIdBase64: envVars.getCurrentUserIdBase64()}, patch).$promise.then(function() {
+                $scope.message = 'Password updated';
+            })
         }
     }]);

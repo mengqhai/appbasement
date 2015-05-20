@@ -98,7 +98,7 @@ angular.module('env', ['LocalStorageModule'])
             var projects = Orgs.getProjectsInOrg({orgId: org.id});
             orgProjects[org.id] = projects;
             projects.$promise.then(function () {
-                var temp = myProjects.filter(function(value,index, array) {
+                var temp = myProjects.filter(function (value, index, array) {
                     if (value.orgId == org.id) {
                         return false;
                     } else {
@@ -146,21 +146,28 @@ angular.module('env', ['LocalStorageModule'])
         $rootScope.getUserPicUrl = function (userId) {
             return envConstants.REST_BASE + '/users/' + btoa(userId) + '/picture'; //?api_key=' + envVars.getApiKey();
         }
-        $rootScope.userPicUrl = $rootScope.getUserPicUrl(envVars.getCurrentUser().id);
-        $rootScope.$on('user.pic.update', function() {
+
+        var getUserPicUrl = function () {
+            var currentUser = envVars.getCurrentUser();
+            $rootScope.userPicUrl = (currentUser ? $rootScope.getUserPicUrl(currentUser.id) : null);
+            return $rootScope.userPicUrl;
+        }
+        getUserPicUrl();
+        $rootScope.$on('user.pic.update', function () {
             $rootScope.userPicUrl = $rootScope.userPicUrl = $rootScope.getUserPicUrl(envVars.getCurrentUser().id) + "?" + new Date().getTime();
         });
 
-        $rootScope.$on('projects.create', function(event, project) {
-            envCache.loadProjectsForOrg({id:project.orgId});
+        $rootScope.$on('projects.create', function (event, project) {
+            envCache.loadProjectsForOrg({id: project.orgId});
             //envCache.initAll();
         });
 
         $rootScope.$on('login', function () {
             envCache.initAll();
+            getUserPicUrl();
         });
 
-        $rootScope.$on('logout', function() {
+        $rootScope.$on('logout', function () {
             envCache.clearAll();
         });
     }]);
