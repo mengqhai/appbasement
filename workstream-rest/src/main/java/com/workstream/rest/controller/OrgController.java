@@ -5,6 +5,7 @@ import static com.workstream.rest.utils.RestUtils.decodeUserId;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -110,10 +111,24 @@ public class OrgController {
 
 	@ApiOperation(value = "Get my organizations", notes = "Only returns the organizations that the current user has joined")
 	@RequestMapping(method = RequestMethod.GET)
-	public List<OrgResponse> getMyOrgs() throws AuthenticationNotSetException {
+	public List<OrgResponse> getMyOrgs(
+			@RequestParam(defaultValue = "false") boolean administratedOnly)
+			throws AuthenticationNotSetException {
 		UserX userX = core.getAuthUserX();
 		Collection<Organization> orgList = core.getOrgService()
 				.filterOrg(userX);
+		if (administratedOnly) {
+			Iterator<Organization> iter = orgList.iterator();
+			while (iter.hasNext()) {
+				Organization org = iter.next();
+				List<Group> groups = core.getUserService().filterGroupByUser(
+						userX.getUserId(), GroupType.ADMIN, org.getId());
+				if (groups.isEmpty()) {
+					iter.remove();
+				}
+			}
+		}
+
 		List<OrgResponse> resultList = InnerWrapperObj.valueOf(orgList,
 				OrgResponse.class);
 		return resultList;
