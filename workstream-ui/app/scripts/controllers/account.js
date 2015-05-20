@@ -97,4 +97,18 @@ angular.module('controllers.account', ['resources.users', 'env'])
                 $rootScope.$emit('user.pic.update');
             });
         }
+    }])
+    .controller('AccountPasswordController', ['$scope', function ($scope) {
+        $scope.canUpdate = function(ngFormController) {
+            if (!$scope.password || !$scope.confirmation) {
+                return false;
+            }
+            var eq = $scope.password == $scope.confirmation;
+            if (!eq) {
+                $scope.message = 'Password does not match';
+            } else {
+                $scope.message = '';
+            }
+            return eq;
+        }
     }]);

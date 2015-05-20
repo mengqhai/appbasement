@@ -107,7 +107,8 @@ angular
         });
         $stateProvider.state('account.password', {
             url: '/password',
-            templateUrl: 'views/account.password.html'
+            templateUrl: 'views/account.password.html',
+            controller: 'AccountPasswordController'
         });
         $stateProvider.state('orgSettings', {
             url: '/orgSettings',
