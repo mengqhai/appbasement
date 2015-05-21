@@ -118,7 +118,8 @@ angular
         });
         $stateProvider.state('orgSettings.general', {
             url: '/orgSettings/{orgId}/general',
-            templateUrl: 'views/orgSettings.general.html'
+            templateUrl: 'views/orgSettings.general.html',
+            controller: 'OrgSettingsGeneralController'
         });
         $stateProvider.state('orgSettings.projects', {
             url: '/orgSettings/{orgId}/projects',

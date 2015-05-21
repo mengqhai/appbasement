@@ -1,3 +1,17 @@
-<div>
-    General
-</div>
+<form name="generalForm" style="max-width: 500px">
+    <h3>General</h3>
+    <div class="form-group">
+        <label>Name:</label>
+        <input name="name" type="text" class="form-control" ng-model="org.name" required>
+    </div>
+    <div class="form-group">
+        <label>Identifier:</label>
+        <input name="identifier" type="text" class="form-control" ng-model="org.identifier" required>
+    </div>
+    <div class="form-group">
+        <label>Description:</label>
+        <textarea name="description" type="text" class="form-control" rows="5" ng-model="org.description"></textarea>
+    </div>
+    <button type="button" class="btn btn-default" ng-click="update(generalForm)" ng-disabled="!canUpdate(generalForm)">Update</button>
+    <span>{{message}}</span>
+</form>

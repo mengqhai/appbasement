@@ -46,6 +46,10 @@ angular.module('resources.orgs', ['env', 'resources.users'])
                         })
                     }
                 }
+            },
+            patch: {
+                method: 'PATCH',
+                url: envConstants.REST_BASE + '/orgs/:orgId'
             }
         });
 
