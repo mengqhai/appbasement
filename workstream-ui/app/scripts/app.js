@@ -31,6 +31,7 @@ angular
         'controllers.tasks',
         'controllers.projects',
         'controllers.account',
+        'controllers.orgSettings',
         'http-auth-interceptor',
         'xeditable'
     ])
@@ -112,8 +113,21 @@ angular
         });
         $stateProvider.state('orgSettings', {
             url: '/orgSettings',
-            templateUrl: 'views/orgSettings.html'
+            templateUrl: 'views/orgSettings.html',
+            controller: 'OrgSettingsController'
         });
+        $stateProvider.state('orgSettings.general', {
+            url: '/orgSettings/{orgId}/general',
+            templateUrl: 'views/orgSettings.general.html'
+        });
+        $stateProvider.state('orgSettings.projects', {
+            url: '/orgSettings/{orgId}/projects',
+            templateUrl: 'views/orgSettings.projects.html'
+        });
+        $stateProvider.state('orgSettings.members', {
+            url: '/orgSettings/{orgId}/members',
+            templateUrl: 'views/orgSettings.members.html'
+        })
 
         $urlRouterProvider.otherwise('/');
 

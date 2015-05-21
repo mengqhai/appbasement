@@ -16,10 +16,18 @@ angular.module('resources.orgs', ['env', 'resources.users'])
                         for (var i = 0; i < response.resource.length; i++) {
                             var org = response.resource[i];
                             OrgCache.put(org.id, org);
-                        };
+                        }
+                        ;
                         OrgCache.put(myKey, response.resource);
                         return response;
                     }
+                }
+            },
+            getMyAdminOrgs: {
+                method: 'GET',
+                isArray: true ,
+                params: {
+                    administratedOnly: true
                 }
             },
             getProjectsInOrg: {
@@ -58,7 +66,7 @@ angular.module('resources.orgs', ['env', 'resources.users'])
             }
             return org;
         };
-        Orgs.getMyOrgsWithCache = function() {
+        Orgs.getMyOrgsWithCache = function () {
             var myOrgs = OrgCache.get(myKey);
             if (!myOrgs) {
                 myOrgs = Orgs.getMyOrgs();

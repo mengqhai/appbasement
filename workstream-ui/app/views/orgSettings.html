@@ -1,3 +1,24 @@
 <div>
     <h1>Organization Settings</h1>
+
+    <div class="row">
+        <accordion class="col-md-2">
+            <accordion-group ng-repeat="org in myAdminOrgs" heading="{{org.name}}" close-others="oneAtATime">
+                <header class="list-group">
+                    <h4>
+                        <a href class="list-group-item" ui-sref="orgSettings.general({orgId: org.id})"
+                           ui-sref-active="active">General</a>
+                        <a href class="list-group-item" ui-sref="orgSettings.projects({orgId: org.id})"
+                           ui-sref-active="active">Projects</a>
+                        <a href class="list-group-item" ui-sref="orgSettings.members({orgId: org.id})"
+                           ui-sref-active="active">Members</a>
+                    </h4>
+                </header>
+            </accordion-group>
+        </accordion>
+
+        <div class="col-md-10">
+            <div ui-view></div>
+        </div>
+    </div>
 </div>
