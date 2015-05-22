@@ -1,3 +1,13 @@
 <div>
-    Members
+    <h3>Members</h3>
+    <div class="panel panel-default" ng-repeat="group in groups">
+        <div class="panel-heading">
+            <h4 class="panel-title">{{group.name}}</h4>
+        </div>
+        <div class="panel-body">
+            <button class="btn btn-default" ng-repeat="user in groupMembers[group.groupId]">
+                <img ng-src="{{getUserPicUrl(user.id)}}" class="img-rounded" width="30" height="30" ng-if="user.pictureSet"/> {{user.firstName}}
+            </button>
+        </div>
+    </div>
 </div>

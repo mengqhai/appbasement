@@ -47,6 +47,11 @@ angular.module('resources.orgs', ['env', 'resources.users'])
                     }
                 }
             },
+            getGroupsInOrg: {
+                url: envConstants.REST_BASE + '/orgs/:orgId/groups',
+                method: 'GET',
+                isArray: true
+            },
             patch: {
                 method: 'PATCH',
                 url: envConstants.REST_BASE + '/orgs/:orgId'

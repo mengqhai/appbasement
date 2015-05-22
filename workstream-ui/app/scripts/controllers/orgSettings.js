@@ -17,8 +17,19 @@ angular.module('controllers.orgSettings', [])
                 }
             }
             Orgs.patch({orgId: $stateParams.orgId}, patch).$promise.then(function () {
-                $scope.message = 'Organization updated.'
+                $scope.message = 'Organization updated.';
+                ngFormController.$setPristine();
             })
         }
 
+    }])
+    .controller('OrgSettingsMembersController', ['$scope', 'Orgs', 'Groups', 'Users', '$stateParams', function ($scope, Orgs, Groups, Users, $stateParams) {
+        $scope.groups = Orgs.getGroupsInOrg({orgId: $stateParams.orgId});
+        $scope.groupMembers = {};
+        $scope.groups.$promise.then(function () {
+            for (var i = 0; i < $scope.groups.length; i++) {
+                $scope.groupMembers[$scope.groups[i].groupId] = Groups.getMembers({groupId: $scope.groups[i].groupId});
+            }
+        });
+        $scope.getUserPicUrl = Users.getUserPicUrl;
     }]);

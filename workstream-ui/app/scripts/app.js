@@ -25,6 +25,7 @@ angular
         'directives.datepicker',
         'directives.filemodel',
         'resources.users',
+        'resources.groups',
         'controllers.currentUser',
         'controllers.sideOrg',
         'controllers.sideCreate',
@@ -127,7 +128,8 @@ angular
         });
         $stateProvider.state('orgSettings.members', {
             url: '/orgSettings/{orgId}/members',
-            templateUrl: 'views/orgSettings.members.html'
+            templateUrl: 'views/orgSettings.members.html',
+            controller: 'OrgSettingsMembersController'
         })
 
         $urlRouterProvider.otherwise('/');
