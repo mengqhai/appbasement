@@ -1,3 +1,19 @@
 <div>
-    group
+    <div class="modal-header">
+        <h4>Edit Group</h4>
+    </div>
+    <div class="modal-body">
+        <form name="groupForm">
+            <div class="form-group">
+                <label>Name:</label>
+                <input name="name" type="text" class="form-control" ng-model="group.name" required>
+            </div>
+            <div class="form-group">
+                <label>Description:</label>
+                <textarea name="description" type="text" class="form-control" rows="5" ng-model="group.description"></textarea>
+            </div>
+            <button type="button" class="btn btn-default" ng-click="update(groupForm)" ng-disabled="!canUpdate(groupForm)">Update</button>
+            <span>{{message}}</span>
+        </form>
+    </div>
 </div>

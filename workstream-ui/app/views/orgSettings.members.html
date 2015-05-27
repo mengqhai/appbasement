@@ -5,11 +5,11 @@
         <div class="panel-heading">
             <h4 class="panel-title">{{group.name}}
                 <span class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <button class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
-                        <li role="presentation"><a role="menuitem" href>Edit</a></li>
+                        <li role="presentation"><a role="menuitem" href ng-click="openGroupDialog(group)">Edit</a></li>
                         <li role="presentation"><a role="menuitem" href>Add member</a></li>
                     </ul>
                 </span>

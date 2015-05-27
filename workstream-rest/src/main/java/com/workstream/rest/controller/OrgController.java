@@ -5,6 +5,7 @@ import static com.workstream.rest.utils.RestUtils.decodeUserId;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.exception.ResourceNotFoundException;
+import com.workstream.core.model.GroupX;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.Project;
 import com.workstream.core.model.UserX;
@@ -175,10 +177,24 @@ public class OrgController {
 			+ "that belong to the given organization.")
 	@RequestMapping(method = RequestMethod.GET, value = "/{id:\\d+}/groups")
 	@PreAuthorize("isAuthInOrg(#orgId)")
-	public List<GroupResponse> getUserGroups(@PathVariable("id") Long orgId) {
+	public List<GroupResponse> getUserGroups(
+			@PathVariable("id") Long orgId,
+			@RequestParam(value = "withDetails", defaultValue = "false") boolean withDetails) {
 		List<Group> groups = core.getUserService().filterGroup(orgId);
 		List<GroupResponse> respList = InnerWrapperObj.valueOf(groups,
 				GroupResponse.class);
+		if (withDetails && !groups.isEmpty()) {
+			Collection<GroupX> groupXList = core.getUserService()
+					.filterGroupXByOrgId(orgId);
+			Map<String, GroupX> groupXMap = new HashMap<>();
+			for (GroupX groupX : groupXList) {
+				groupXMap.put(groupX.getGroupId(), groupX);
+			}
+			for (GroupResponse resp : respList) {
+				GroupX groupX = groupXMap.get(resp.getGroupId());
+				resp.setGroupX(groupX);
+			}
+		}
 		return respList;
 	}
 

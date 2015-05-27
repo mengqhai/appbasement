@@ -255,6 +255,11 @@ public class UserService {
 		return groupDao.filterFor(org);
 	}
 
+	public Collection<GroupX> filterGroupXByOrgId(Long orgId) {
+		Organization org = orgDao.getReference(orgId);
+		return filterGroupX(org);
+	}
+
 	public void updateGroup(String groupId, Map<String, Object> props)
 			throws BeanPropertyException {
 		Group group = getGroup(groupId);

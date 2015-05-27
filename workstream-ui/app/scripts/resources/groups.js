@@ -7,6 +7,10 @@ angular.module('resources.groups', ['env'])
             getMembers: {
                 url: homeUrl + '/users',
                 isArray: true
+            },
+            patch: {
+                method: 'PATCH',
+                url: homeUrl
             }
         });
         return Groups;

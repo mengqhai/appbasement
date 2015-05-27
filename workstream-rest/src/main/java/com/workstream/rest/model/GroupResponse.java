@@ -25,6 +25,10 @@ public class GroupResponse extends InnerWrapperObj<Group> {
 		this.group = inner;
 	}
 
+	public void setGroupX(GroupX groupX) {
+		this.groupX = groupX;
+	}
+
 	public String getGroupId() {
 		return group.getId();
 	}

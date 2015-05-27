@@ -1,4 +1,4 @@
-angular.module('controllers.orgSettings', [])
+angular.module('controllers.orgSettings', ['controllers.groups'])
     .controller('OrgSettingsController', ['$scope', 'Orgs', function ($scope, Orgs) {
         $scope.myAdminOrgs = Orgs.getMyAdminOrgs();
     }])
@@ -23,13 +23,31 @@ angular.module('controllers.orgSettings', [])
         }
 
     }])
-    .controller('OrgSettingsMembersController', ['$scope', 'Orgs', 'Groups', 'Users', '$stateParams', function ($scope, Orgs, Groups, Users, $stateParams) {
-        $scope.groups = Orgs.getGroupsInOrg({orgId: $stateParams.orgId});
-        $scope.groupMembers = {};
-        $scope.groups.$promise.then(function () {
-            for (var i = 0; i < $scope.groups.length; i++) {
-                $scope.groupMembers[$scope.groups[i].groupId] = Groups.getMembers({groupId: $scope.groups[i].groupId});
-            }
-        });
-        $scope.getUserPicUrl = Users.getUserPicUrl;
-    }]);
+    .controller('OrgSettingsMembersController', ['$scope', 'Orgs', 'Groups', 'Users', '$stateParams', '$modal',
+        function ($scope, Orgs, Groups, Users, $stateParams, $modal) {
+            $scope.groups = Orgs.getGroupsInOrg({orgId: $stateParams.orgId, withDetails: true});
+            $scope.groupMembers = {};
+            $scope.groups.$promise.then(function () {
+                for (var i = 0; i < $scope.groups.length; i++) {
+                    $scope.groupMembers[$scope.groups[i].groupId] = Groups.getMembers({groupId: $scope.groups[i].groupId});
+                }
+            });
+            $scope.getUserPicUrl = Users.getUserPicUrl;
+            var groupDialog = null;
+            $scope.openGroupDialog = function(group) {
+                groupDialog = $modal.open({
+                    templateUrl: 'views/groupForm.html',
+                    controller: 'GroupFormController',
+                    resolve: {
+                        group: function() {
+                            return group;
+                        }
+                    }
+                });
+            };
+            $scope.closeDialog = function () {
+                if (groupDialog) {
+                    groupDialog.dismiss('closeGroupDialog');
+                }
+            };
+        }]);
