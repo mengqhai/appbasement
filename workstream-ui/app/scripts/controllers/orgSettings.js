@@ -34,12 +34,12 @@ angular.module('controllers.orgSettings', ['controllers.groups'])
             });
             $scope.getUserPicUrl = Users.getUserPicUrl;
             var groupDialog = null;
-            $scope.openGroupDialog = function(group) {
+            $scope.openGroupDialog = function (group) {
                 groupDialog = $modal.open({
                     templateUrl: 'views/groupForm.html',
                     controller: 'GroupFormController',
                     resolve: {
-                        group: function() {
+                        group: function () {
                             return group;
                         }
                     }
@@ -48,6 +48,25 @@ angular.module('controllers.orgSettings', ['controllers.groups'])
             $scope.closeDialog = function () {
                 if (groupDialog) {
                     groupDialog.dismiss('closeGroupDialog');
+                }
+            };
+
+            var getAddToList = function (user) {
+                var myGroups = []; //angular.extend([], $scope.groups);
+                for (var i = 0; i < $scope.groups; i++) {
+                    var group = $scope.groups[i];
+                    var groupId = group.groupId;
+                    var members = $scope.groupMembers[groupId];
+                    if (members.indexOf(user) !== -1) {
+                        myGroups.add(group);
+                    }
+                }
+                console.log(myGroups);
+                return myGroups;
+            };
+            $scope.userMenuToggled = function(open, user) {
+                if (open) {
+                    $scope.myAddToList = getAddToList(user);
                 }
             };
         }]);
