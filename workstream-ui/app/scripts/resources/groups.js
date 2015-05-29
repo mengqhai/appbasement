@@ -11,6 +11,10 @@ angular.module('resources.groups', ['env'])
             patch: {
                 method: 'PATCH',
                 url: homeUrl
+            },
+            deleteMember: {
+                method: 'DELETE',
+                url: homeUrl+'/users/:userIdBase64'
             }
         });
         return Groups;

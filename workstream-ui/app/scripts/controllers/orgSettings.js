@@ -52,21 +52,30 @@ angular.module('controllers.orgSettings', ['controllers.groups'])
             };
 
             var getAddToList = function (user) {
-                var myGroups = []; //angular.extend([], $scope.groups);
-                for (var i = 0; i < $scope.groups; i++) {
+                var availableGroups = []; //angular.extend([], $scope.groups);
+                for (var i = 0; i < $scope.groups.length; i++) {
                     var group = $scope.groups[i];
                     var groupId = group.groupId;
                     var members = $scope.groupMembers[groupId];
-                    if (members.indexOf(user) !== -1) {
-                        myGroups.add(group);
+                    if (members.indexOf(user) === -1) {
+                        availableGroups.push(group);
                     }
                 }
-                console.log(myGroups);
-                return myGroups;
+                console.log(availableGroups);
+                return availableGroups;
             };
-            $scope.userMenuToggled = function(open, user) {
+            $scope.userMenuToggled = function (open, user) {
                 if (open) {
                     $scope.myAddToList = getAddToList(user);
                 }
             };
+
+            $scope.deleteGroupMember = function (group, user) {
+                Groups.deleteMember({groupId: group.groupId, userIdBase64: btoa(user.id)}).$promise.then(function () {
+                    console.log('deleted user ' + user.id + ' from group ' + group.groupId);
+                    var members = $scope.groupMembers[group.groupId];
+                    var idx = members.indexOf(user);
+                    members.splice(idx, 1);
+                });
+            }
         }]);
