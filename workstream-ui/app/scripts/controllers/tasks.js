@@ -127,7 +127,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                 });
             }
 
-            $scope.project = $scope.getProject(task.projectId);
+            //$scope.project = $scope.getProject(task.projectId);
             //$scope.myProjects = $scope.getMyProjects();
             $scope.onSelectProject = function (project) {
                 $scope.updateTask('projectId', project.id).then(function (success) {
