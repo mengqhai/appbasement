@@ -32,4 +32,15 @@
 
         </div>
     </div>
+
+    <div class="btn-group" dropdown on-toggle="userMenuToggled(open, user)"  ng-repeat="user in ungroupedUsers">
+        <button class="btn btn-default dropdown-toggle" dropdown-toggle>
+            <img ng-src="{{getUserPicUrl(user.id)}}" class="img-rounded" width="30" height="30"
+                 ng-if="user.pictureSet"/> {{user.firstName}}
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li role="presentation" ng-repeat="otherGroup in myAddToList"><a role="menuitem" href>Add to group {{otherGroup.name}}</a></li>
+        </ul>
+    </div>
 </div>

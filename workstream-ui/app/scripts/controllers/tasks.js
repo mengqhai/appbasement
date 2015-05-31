@@ -112,8 +112,11 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                 firstName: 'Unassigned'
             }
             $scope.assignee = task.assignee ? Users.getWithCache({userIdBase64: btoa(task.assignee)}) : unassigned;
-            $scope.userList = $scope.getOrgUsers(task.orgId).slice();
-            $scope.userList.push(unassigned);
+            if (task.orgId) {
+                $scope.userList = $scope.getOrgUsers(task.orgId).slice();
+                $scope.userList.push(unassigned);
+            }
+
             $scope.assigneeError = null;
             $scope.changeAssignee = function (newAssignee) {
                 $scope.updateTask('assignee', newAssignee.id).then(function (success) {

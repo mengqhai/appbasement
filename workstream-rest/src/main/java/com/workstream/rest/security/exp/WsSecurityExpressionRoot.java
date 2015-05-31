@@ -87,7 +87,7 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 
 	public boolean isAuthInOrgForTask(String taskId) {
 		String orgId = getOrgIdFromTask(taskId);
-		if (orgId == null) {
+		if (orgId == null || orgId.isEmpty()) {
 			return true; // system task
 		}
 		return isAuthInOrg(orgId);
@@ -95,7 +95,7 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 
 	public boolean isAuthInOrgForProcess(String processId) {
 		String orgId = getOrgIdFromProcess(processId);
-		if (orgId == null) {
+		if (orgId == null || orgId.isEmpty()) {
 			return true; // system process
 		}
 		return isAuthInOrg(orgId);

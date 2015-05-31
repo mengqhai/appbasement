@@ -68,6 +68,10 @@ angular.module('resources.orgs', ['env', 'resources.users'])
         }
 
         Orgs.getWithCache = function (param) {
+            if (!param.orgId) {
+                return undefined;
+            }
+
             var org = OrgCache.get(param.orgId);
             if (!org) {
                 org = Orgs.get(param);
