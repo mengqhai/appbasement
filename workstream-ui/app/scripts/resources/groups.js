@@ -15,6 +15,10 @@ angular.module('resources.groups', ['env'])
             deleteMember: {
                 method: 'DELETE',
                 url: homeUrl+'/users/:userIdBase64'
+            },
+            addMember: {
+                method: 'PUT',
+                url: homeUrl+'/users/:userIdBase64'
             }
         });
         return Groups;

@@ -28,7 +28,8 @@ angular.module('controllers.orgSettings', ['controllers.groups'])
             $scope.groups = Orgs.getGroupsInOrg({orgId: $stateParams.orgId, withDetails: true});
             $scope.groupMembers = {};
             $scope.ungroupedUsers = Orgs.getUsersInOrg({orgId: $stateParams.orgId});
-            $scope.groups.$promise.then(function () {
+
+            var updateUngroupedUsers = function() {
                 for (var i = 0; i < $scope.groups.length; i++) {
                     var theMembers = Groups.getMembers({groupId: $scope.groups[i].groupId});
                     $scope.groupMembers[$scope.groups[i].groupId] = theMembers;
@@ -48,6 +49,9 @@ angular.module('controllers.orgSettings', ['controllers.groups'])
                         }
                     })
                 }
+            }
+            $scope.groups.$promise.then(function () {
+                updateUngroupedUsers();
             });
             $scope.getUserPicUrl = Users.getUserPicUrl;
             var groupDialog = null;
@@ -87,7 +91,6 @@ angular.module('controllers.orgSettings', ['controllers.groups'])
                     }
 
                 }
-                console.log(availableGroups);
                 return availableGroups;
             };
             $scope.userMenuToggled = function (open, user) {
@@ -103,5 +106,12 @@ angular.module('controllers.orgSettings', ['controllers.groups'])
                     var idx = members.indexOf(user);
                     members.splice(idx, 1);
                 });
+            };
+            $scope.addGroupMember = function(group, user) {
+                Groups.addMember({groupId: group.groupId, userIdBase64: btoa(user.id)}).$promise.then(function() {
+                    console.log('added user '+user.id+' to group '+group.groupId);
+                    updateUngroupedUsers();
+                })
             }
+
         }]);
