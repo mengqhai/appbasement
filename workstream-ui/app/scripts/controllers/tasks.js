@@ -25,6 +25,10 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             }
             $scope.createdByMeCount = Tasks.countCreatedByMe();
         });
+        $scope.$on('tasks.claim', function(event, task) {
+            $scope.myTaskCount.v++;
+            $scope.candidateTaskCount.v--;
+        });
 
         //$scope.loadCounts();
     }])
@@ -68,6 +72,11 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                     }
                 });
                 $scope.$on('tasks.delete', function (event, task) {
+                    removeTask(task);
+                });
+                break;
+            case '_myCandidate':
+                $scope.$on('tasks.claim', function(event, task) {
                     removeTask(task);
                 });
                 break;
@@ -173,6 +182,17 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                 }, function (error) {
                     $scope.deleteError = error;
                 });
+            }
+
+            // for process tasks, claim the task
+            $scope.claim = function() {
+                Tasks.claim({taskId:task.id}, null, function() {
+                    console.log('Claimed task '+task.id);
+                    if ($modalInstance) {
+                        $scope.$emit('tasks.claim', task);
+                        $modalInstance.close();
+                    };
+                })
             }
         }])
     .controller('TaskCreateFormController', ['$scope', 'Tasks', '$modalInstance', '$rootScope', function ($scope, Tasks, $modalInstance, $rootScope) {

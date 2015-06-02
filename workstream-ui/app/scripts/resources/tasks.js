@@ -45,6 +45,10 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
             save: {
                 method: 'POST',
                 url: envConstants.REST_BASE + '/projects/:projectId/tasks'
+            },
+            claim: {
+                method: 'PUT',
+                url: homeUrl + '/:taskId/_claim'
             }
         });
 
