@@ -125,7 +125,8 @@ angular
         });
         $stateProvider.state('orgSettings.projects', {
             url: '/orgSettings/{orgId}/projects',
-            templateUrl: 'views/orgSettings.projects.html'
+            templateUrl: 'views/orgSettings.projects.html',
+            controller: 'OrgSettingsProjectsController'
         });
         $stateProvider.state('orgSettings.members', {
             url: '/orgSettings/{orgId}/members',

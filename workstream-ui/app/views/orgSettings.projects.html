@@ -1,3 +1,5 @@
 <div>
-    Projects
+    <div class="list-group">
+        <a href class="list-group-item" ng-repeat="project in projects" ui-sref="project({projectId: project.id})">{{project.name}}</a>
+    </div>
 </div>

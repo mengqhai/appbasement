@@ -118,4 +118,7 @@ angular.module('controllers.orgSettings', ['controllers.groups'])
                 })
             }
 
-        }]);
+        }])
+    .controller('OrgSettingsProjectsController', ['$scope', 'Orgs', '$stateParams', function($scope, Orgs, $stateParams) {
+        $scope.projects = Orgs.getProjectsInOrg({orgId: $stateParams.orgId});
+    }]);
