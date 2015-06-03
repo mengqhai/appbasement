@@ -84,11 +84,39 @@
             </ui-select>
             <span>{{projectError}}</span>
         </div>
+
+        <!-- Task form for process tasks -->
+        <div ng-if="task.processInstanceId" ng-controller="TaskProcessFormController" task-id="task.id" class="well well-sm">
+            <div ng-repeat="field in formDef.formProperties" class="input-group input-group-sm">
+                <span class="input-group-addon">{{field.id}}</span>
+
+                <!-- For Boolean -->
+                <span class="form-control" ng-if="field.type.name=='boolean'">
+                    <!-- https://coderwall.com/p/ybbopq/use-ng-value-for-ng-model-with-boolean-values -->
+                        <label >
+                            <input type="radio" name="{{field.id}}" ng-value="true"
+                                   ng-model="formObj[field.id]">Yes
+                        </label>
+                        <label >
+                            <input type="radio" name="{{field.id}}" ng-value="false"
+                                    ng-model="formObj[field.id]">No
+                        </label>
+                </span>
+            </div>
+            <pre>{{formObj | json}}</pre>
+            <div>
+                <button class="btn btn-sm btn-default">Complete</button>
+            </div>
+        </div>
+
+        <!-- Task buttons -->
         <div>
             <button class="btn btn-danger" ng-click="delete()">Delete</button><span>{{deleteError}}</span>
             <button class="btn btn-warning" ng-if="task.processInstanceId && !task.assignee" ng-click="claim()">Claim</button>
         </div>
 
+
+        <!-- Task events -->
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="media" ng-repeat="event in events">

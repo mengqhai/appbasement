@@ -49,6 +49,10 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
             claim: {
                 method: 'PUT',
                 url: homeUrl + '/:taskId/_claim'
+            },
+            getFormDef: {
+                method: 'GET',
+                url: homeUrl + '/:taskId/form'
             }
         });
 

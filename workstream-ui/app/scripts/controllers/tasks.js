@@ -195,6 +195,25 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                 })
             }
         }])
+    .controller('TaskProcessFormController', ['$scope', 'Tasks', function($scope, Tasks) {
+        var taskId = $scope.task.id; // get task id from parent
+        $scope.formDef = Tasks.getFormDef({taskId: taskId});
+        $scope.formObj = {};
+        $scope.formDef.$promise.then(function(def) {
+            for (var i=0; i<def.formProperties.length;i++) {
+                var field = def.formProperties[i];
+                var value;
+                switch (field.type.name) {
+                    case 'boolean':
+                        value = (field.value === 'true');
+                        break;
+                    default:
+                        value = field.value;
+                }
+                $scope.formObj[field.id] = value;
+            }
+        })
+    }])
     .controller('TaskCreateFormController', ['$scope', 'Tasks', '$modalInstance', '$rootScope', function ($scope, Tasks, $modalInstance, $rootScope) {
         var task = {};
         $scope.task = task;
