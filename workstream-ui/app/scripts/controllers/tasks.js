@@ -30,7 +30,11 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             $scope.candidateTaskCount.v--;
         });
         $scope.$on('tasks.complete', function (event, task) {
-            $scope.myTaskCount.v--;
+            // $scope.myTaskCount.v--;
+            if (task.assignee === $scope.getCurrentUserId()) {
+                $scope.myTaskCount = Tasks.countMyTasks();
+            }
+            $scope.createdByMeCount = Tasks.countCreatedByMe();
         });
 
         //$scope.loadCounts();
@@ -179,7 +183,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             };
 
 
-            var closeDialog = function() {
+            var closeDialog = function () {
                 if ($modalInstance) {
                     $modalInstance.close();
                 }
@@ -200,6 +204,14 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                 Tasks.claim({taskId: task.id}, null, function () {
                     console.log('Claimed task ' + task.id);
                     $scope.$emit('tasks.claim', task);
+                    closeDialog();
+                })
+            }
+
+            $scope.complete = function () {
+                Tasks.complete({taskId: task.id}, null, function () {
+                    console.log('Completed task ' + task.id);
+                    $scope.$emit('tasks.complete', task);
                     closeDialog();
                 })
             }

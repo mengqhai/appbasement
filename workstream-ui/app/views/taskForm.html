@@ -113,6 +113,8 @@
         <div>
             <button class="btn btn-danger" ng-click="delete()">Delete</button><span>{{deleteError}}</span>
             <button class="btn btn-warning" ng-if="task.processInstanceId && !task.assignee" ng-click="claim()">Claim</button>
+            <button class="btn btn-default" ng-if="!task.processInstanceId && task.assignee=== getCurrentUserId()"
+                    ng-click="complete()">Complete</button>
         </div>
 
 

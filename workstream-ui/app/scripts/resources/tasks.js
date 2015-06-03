@@ -57,6 +57,10 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
             completeForm: {
                 method: 'PUT',
                 url: homeUrl + '/:taskId/form'
+            },
+            complete: {
+                method: 'PUT',
+                url: homeUrl + '/:taskId/_complete'
             }
         });
 
