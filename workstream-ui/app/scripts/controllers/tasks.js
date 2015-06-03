@@ -25,9 +25,12 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             }
             $scope.createdByMeCount = Tasks.countCreatedByMe();
         });
-        $scope.$on('tasks.claim', function(event, task) {
+        $scope.$on('tasks.claim', function (event, task) {
             $scope.myTaskCount.v++;
             $scope.candidateTaskCount.v--;
+        });
+        $scope.$on('tasks.complete', function (event, task) {
+            $scope.myTaskCount.v--;
         });
 
         //$scope.loadCounts();
@@ -63,6 +66,9 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                         removeTask(task);
                     }
                 });
+                $scope.$on('tasks.complete', function (event, task) {
+                    removeTask(task);
+                });
                 break;
             case '_createdByMe':
                 $scope.filterEx.creator = $scope.getCurrentUserId();
@@ -76,7 +82,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                 });
                 break;
             case '_myCandidate':
-                $scope.$on('tasks.claim', function(event, task) {
+                $scope.$on('tasks.claim', function (event, task) {
                     removeTask(task);
                 });
                 break;
@@ -142,8 +148,8 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                 $scope.updateTask('projectId', project.id).then(function (success) {
                     $scope.task.projectId = project.id;
                     $scope.task.orgId = project.orgId;
-                }, function(error) {
-                    $scope.projectError=error;
+                }, function (error) {
+                    $scope.projectError = error;
                 })
             }
 
@@ -172,35 +178,43 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                 return $scope.updateTask('dueDate', newValue);
             };
 
+
+            var closeDialog = function() {
+                if ($modalInstance) {
+                    $modalInstance.close();
+                }
+            }
+
             // for delete
             $scope.delete = function () {
                 Tasks.delete({taskId: task.id}, function (response) {
-                    if ($modalInstance) {
-                        $scope.$emit('tasks.delete', task);
-                        $modalInstance.close();
-                    }
+                    $scope.$emit('tasks.delete', task);
+                    closeDialog();
                 }, function (error) {
                     $scope.deleteError = error;
                 });
             }
 
             // for process tasks, claim the task
-            $scope.claim = function() {
-                Tasks.claim({taskId:task.id}, null, function() {
-                    console.log('Claimed task '+task.id);
-                    if ($modalInstance) {
-                        $scope.$emit('tasks.claim', task);
-                        $modalInstance.close();
-                    };
+            $scope.claim = function () {
+                Tasks.claim({taskId: task.id}, null, function () {
+                    console.log('Claimed task ' + task.id);
+                    $scope.$emit('tasks.claim', task);
+                    closeDialog();
                 })
             }
+
+
+            $scope.$on('tasks.complete', closeDialog);
+            $scope.$on('tasks.claim', closeDialog);
         }])
-    .controller('TaskProcessFormController', ['$scope', 'Tasks', function($scope, Tasks) {
+    .controller('TaskProcessFormController', ['$scope', 'Tasks', function ($scope, Tasks) {
+        var task = $scope.task;
         var taskId = $scope.task.id; // get task id from parent
         $scope.formDef = Tasks.getFormDef({taskId: taskId});
         $scope.formObj = {};
-        $scope.formDef.$promise.then(function(def) {
-            for (var i=0; i<def.formProperties.length;i++) {
+        $scope.formDef.$promise.then(function (def) {
+            for (var i = 0; i < def.formProperties.length; i++) {
                 var field = def.formProperties[i];
                 var value;
                 switch (field.type.name) {
@@ -213,6 +227,11 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                 $scope.formObj[field.id] = value;
             }
         })
+        $scope.completeForm = function () {
+            Tasks.completeForm({taskId: taskId}, $scope.formObj).$promise.then(function () {
+                $scope.$emit('tasks.complete', task);
+            });
+        }
     }])
     .controller('TaskCreateFormController', ['$scope', 'Tasks', '$modalInstance', '$rootScope', function ($scope, Tasks, $modalInstance, $rootScope) {
         var task = {};

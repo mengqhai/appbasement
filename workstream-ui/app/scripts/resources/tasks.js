@@ -53,6 +53,10 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
             getFormDef: {
                 method: 'GET',
                 url: homeUrl + '/:taskId/form'
+            },
+            completeForm: {
+                method: 'PUT',
+                url: homeUrl + '/:taskId/form'
             }
         });
 
