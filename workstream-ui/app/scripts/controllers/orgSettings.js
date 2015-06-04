@@ -74,6 +74,23 @@ angular.module('controllers.orgSettings', ['controllers.groups'])
                 }
             };
 
+            $scope.openGroupCreateDialog = function() {
+                $modal.open({
+                    templateUrl: 'views/groupCreateForm.html',
+                    controller: 'GroupCreateFormController',
+                    resolve: {
+                        orgId: function() {
+                            return $stateParams.orgId;
+                        }
+                    },
+                    scope: $scope
+                })
+            };
+            $scope.$on('groups.create', function(event, group) {
+                $scope.groups.push(group);
+                $scope.groupMembers[group.groupId] = [];
+            })
+
             var getAddToList = function (user) {
                 var availableGroups = []; //angular.extend([], $scope.groups);
                 for (var i = 0; i < $scope.groups.length; i++) {

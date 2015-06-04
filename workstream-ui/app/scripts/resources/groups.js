@@ -19,6 +19,10 @@ angular.module('resources.groups', ['env'])
             addMember: {
                 method: 'PUT',
                 url: homeUrl+'/users/:userIdBase64'
+            },
+            save: {
+                method: 'POST',
+                url: envConstants.REST_BASE + '/orgs/:orgId/groups'
             }
         });
         return Groups;

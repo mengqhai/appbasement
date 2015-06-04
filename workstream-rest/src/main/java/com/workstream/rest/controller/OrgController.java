@@ -210,7 +210,8 @@ public class OrgController {
 		}
 		Group group = core.createGroupInOrg(orgId, groupReq.getName(),
 				groupReq.getDescription());
-		GroupResponse resp = new GroupResponse(group);
+		GroupX groupX = core.getUserService().getGroupX(group.getId());
+		GroupResponse resp = new GroupResponse(group, groupX);
 		return resp;
 	}
 

@@ -1,5 +1,15 @@
 <div>
-    <h3>Members</h3>
+    <h3>Members
+        <span class="dropdown">
+            <button class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li role="presentation"><a role="menuitem" href ng-click="openGroupCreateDialog()">New Group</a></li>
+            </ul>
+        </span>
+
+    </h3>
 
     <div class="panel panel-default" ng-repeat="group in groups">
         <div class="panel-heading">
@@ -17,30 +27,36 @@
 
         </div>
         <div class="panel-body">
-            <div class="btn-group" dropdown on-toggle="userMenuToggled(open, user)"  ng-repeat="user in groupMembers[group.groupId]">
+            <div class="btn-group" dropdown on-toggle="userMenuToggled(open, user)"
+                 ng-repeat="user in groupMembers[group.groupId]">
                 <button class="btn btn-default dropdown-toggle" dropdown-toggle>
                     <img ng-src="{{getUserPicUrl(user.id)}}" class="img-rounded" width="30" height="30"
                          ng-if="user.pictureSet"/> {{user.firstName}}
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
-                    <li role="presentation"><a role="menuitem" href ng-click="deleteGroupMember(group, user)">Remove from group</a></li>
+                    <li role="presentation"><a role="menuitem" href ng-click="deleteGroupMember(group, user)">Remove
+                        from group</a></li>
                     <li class="divider" ng-if="myAddToList.length>0"></li>
-                    <li role="presentation" ng-repeat="otherGroup in myAddToList"><a role="menuitem" href ng-click="addGroupMember(otherGroup, user)">Add to group {{otherGroup.name}}</a></li>
+                    <li role="presentation" ng-repeat="otherGroup in myAddToList"><a role="menuitem" href
+                                                                                     ng-click="addGroupMember(otherGroup, user)">Add
+                        to group {{otherGroup.name}}</a></li>
                 </ul>
             </div>
 
         </div>
     </div>
 
-    <div class="btn-group" dropdown on-toggle="userMenuToggled(open, user)"  ng-repeat="user in ungroupedUsers">
+    <div class="btn-group" dropdown on-toggle="userMenuToggled(open, user)" ng-repeat="user in ungroupedUsers">
         <button class="btn btn-default dropdown-toggle" dropdown-toggle>
             <img ng-src="{{getUserPicUrl(user.id)}}" class="img-rounded" width="30" height="30"
                  ng-if="user.pictureSet"/> {{user.firstName}}
             <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
-            <li role="presentation" ng-repeat="otherGroup in myAddToList"><a role="menuitem" href ng-click="addGroupMember(otherGroup, user)">Add to group {{otherGroup.name}}</a></li>
+            <li role="presentation" ng-repeat="otherGroup in myAddToList"><a role="menuitem" href
+                                                                             ng-click="addGroupMember(otherGroup, user)">Add
+                to group {{otherGroup.name}}</a></li>
         </ul>
     </div>
 </div>
