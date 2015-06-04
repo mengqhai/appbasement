@@ -27,7 +27,7 @@ angular.module('controllers.orgSettings', ['controllers.groups'])
         function ($scope, Orgs, Groups, Users, $stateParams, $modal) {
             $scope.groups = Orgs.getGroupsInOrg({orgId: $stateParams.orgId, withDetails: true});
             $scope.groupMembers = {};
-            var initUngroupedUsers = function() {
+            var initUngroupedUsers = function () {
                 $scope.ungroupedUsers = Orgs.getUsersInOrg({orgId: $stateParams.orgId});
             };
             initUngroupedUsers();
@@ -74,19 +74,19 @@ angular.module('controllers.orgSettings', ['controllers.groups'])
                 }
             };
 
-            $scope.openGroupCreateDialog = function() {
+            $scope.openGroupCreateDialog = function () {
                 $modal.open({
                     templateUrl: 'views/groupCreateForm.html',
                     controller: 'GroupCreateFormController',
                     resolve: {
-                        orgId: function() {
+                        orgId: function () {
                             return $stateParams.orgId;
                         }
                     },
                     scope: $scope
                 })
             };
-            $scope.$on('groups.create', function(event, group) {
+            $scope.$on('groups.create', function (event, group) {
                 $scope.groups.push(group);
                 $scope.groupMembers[group.groupId] = [];
             })
@@ -133,9 +133,17 @@ angular.module('controllers.orgSettings', ['controllers.groups'])
                     console.log('added user ' + user.id + ' to group ' + group.groupId);
                     updateUngroupedUsers();
                 })
+            };
+            $scope.deleteGroup = function (group) {
+                Groups.delete({groupId: group.groupId}).$promise.then(function () {
+                    var index = $scope.groups.indexOf(group);
+                    $scope.groups.splice(index, 1);
+                    delete $scope.groupMembers[group.groupId];
+                    console.log('Group deleted: ' + group.groupId);
+                })
             }
 
         }])
-    .controller('OrgSettingsProjectsController', ['$scope', 'Orgs', '$stateParams', function($scope, Orgs, $stateParams) {
+    .controller('OrgSettingsProjectsController', ['$scope', 'Orgs', '$stateParams', function ($scope, Orgs, $stateParams) {
         $scope.projects = Orgs.getProjectsInOrg({orgId: $stateParams.orgId});
     }]);

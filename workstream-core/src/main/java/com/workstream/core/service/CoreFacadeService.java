@@ -314,6 +314,14 @@ public class CoreFacadeService {
 		projSer.deleteProject(proj);
 	}
 
+	public void removeGroup(String groupId) {
+		GroupX groupX = uSer.getGroupX(groupId);
+		if (groupX == null) {
+			throw new ResourceNotFoundException("No such group");
+		}
+		uSer.removeGroup(groupX);
+	}
+
 	/**
 	 * With additional logic the check the new assignee
 	 * 

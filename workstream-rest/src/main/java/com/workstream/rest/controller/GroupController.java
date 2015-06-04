@@ -69,6 +69,13 @@ public class GroupController {
 		return new GroupResponse(group, groupX);
 	}
 
+	@ApiOperation(value = "Delete the group")
+	@RequestMapping(value = "/{groupId:\\d+\\|\\d+}", method = RequestMethod.DELETE)
+	@PreAuthorize("isAuthInOrgForGroup(#groupId)")
+	public void removeGroup(@PathVariable("groupId") String groupId) {
+		core.removeGroup(groupId);
+	}
+
 	@ApiOperation(value = "Get user list for a given group", notes = "The list doesn't contain detailed information like createdAt.")
 	@RequestMapping(value = "/{groupId:\\d+\\|\\d+}/users", method = RequestMethod.GET)
 	@PreAuthorize("isAuthInOrgForGroup(#groupId)")
