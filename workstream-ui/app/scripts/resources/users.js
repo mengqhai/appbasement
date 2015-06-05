@@ -17,6 +17,10 @@ angular.module('resources.users', ['env'])
             setInfo: {
                 url: homeUrl + '/info',
                 method: 'PATCH'
+            },
+            create: {
+                url: envConstants.REST_BASE + '/users',
+                method: 'POST'
             }
         });
 

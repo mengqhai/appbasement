@@ -142,6 +142,15 @@ angular.module('env', ['LocalStorageModule'])
         $rootScope.getOrgUsers = envCache.getOrgUsers;
         $rootScope.initCache = envCache.initAll;
 
+        $rootScope.getRandom = function() {
+            return Math.random();
+        }
+        $rootScope.getCaptchaUrl = function() {
+            return envConstants.REST_BASE+'/captcha?hash='+Math.random();
+        }
+
+        $rootScope.captchaUrl = envConstants.REST_BASE+'/captcha';
+
         // User's avatar pic
         $rootScope.getUserPicUrl = function (userId) {
             return envConstants.REST_BASE + '/users/' + btoa(userId) + '/picture'; //?api_key=' + envVars.getApiKey();

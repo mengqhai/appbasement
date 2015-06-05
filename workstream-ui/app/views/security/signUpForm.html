@@ -1,0 +1,33 @@
+<form name="signUpForm" class="form-horizontal" novalidate>
+    <div class="modal-header">
+        <h4>Sign up</h4>
+    </div>
+    <div class="modal-body">
+        <fieldset>
+            <label>Username:</label>
+            <input name="id" type="text" class="form-control" ng-model="user.id" required autofocus>
+            <label>Password:</label>
+            <input name="password" type="password" class="form-control" ng-model="user.password" required autocomplete="off">
+            <label>Confirmation</label>
+            <input name="confirmation" type="password" class="form-control" ng-model="confirmation" required>
+            <label>Email:</label>
+            <input name="email" type="email" class="form-control" ng-model="user.email" required>
+            <label>Name:</label>
+            <input name="name" type="text" class="form-control" ng-model="user.firstName" required>
+            <label>Captcha:</label>
+            <a href ng-click="updateCaptcha()">
+                <img ng-src="{{captchaUrl}}?hash={{hash}}&api_key={{tempKey}}" width="270" height="60"/>
+            </a>
+            <input name="captcha" type="text" class="form-control" ng-model="captcha" required>
+        </fieldset>
+        <pre>{{user | json}}</pre>
+    </div>
+    <div class="alert alert-danger" ng-show="error">
+        {{error}}
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="signUp(signUpForm)" ng-disabled="!canSignUp(signUpForm)">Submit</button>
+        <button class="btn clear" ng-click="clearForm()">Clear</button>
+        <button class="btn btn-warning" ng-click="cancelSignUp()">Cancel</button>
+    </div>
+</form>

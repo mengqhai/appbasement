@@ -57,6 +57,7 @@
         </div>
         <div ng-controller="LoginDialogController as login">
             <button ng-show="!isLoggedIn()" class="btn btn-default" ng-click="open()">Login</button>
+            <button ng-show="!isLoggedIn()" class="btn btn-default" ng-click="openSignUpDialog()">Sign up</button>
             <button ng-show="isLoggedIn()" class="btn btn-default" ng-click="logout()">Logout</button>
         </div>
     </div>

@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.bootstrap.tpls', 'services.security'])
+angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.bootstrap.tpls', 'services.security',
+        'resources.users'])
     .controller('LoginFormController', ['$scope', 'loginService', '$modalInstance', function ($scope, loginService, $modalInstance) {
         $scope.user = {}; // model for the form
         $scope.authError = null; // error message
@@ -44,42 +45,42 @@ angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.b
             }
         };
     }])
-    .controller('LoginDialogController', ['$modal', '$scope', 'loginService', 'authService', 'envVars','$timeout',
+    .controller('LoginDialogController', ['$modal', '$scope', 'loginService', 'authService', 'envVars', '$timeout',
         function ($modal, $scope, loginService, authService, envVars, $timeout) {
-        var dialog = null;
-        $scope.open = function () {
-            if (dialog) {
-                // dialog already opened
-                return;
-            }
-            dialog = $modal.open({
-                templateUrl: 'views/security/loginForm.html',
-                controller: 'LoginFormController',
-                size: 'md',
-                scope: $scope
-            });
-
-            dialog.result.then(function (data) {
-                dialog = null;
-                //queue.retryAll();
-                // see https://github.com/witoldsz/angular-http-auth
-                authService.loginConfirmed(data, function(config) {
-                    config.params.api_key = data.apiToken;
-                    return config;
+            var dialog = null;
+            $scope.open = function () {
+                if (dialog) {
+                    // dialog already opened
+                    return;
+                }
+                dialog = $modal.open({
+                    templateUrl: 'views/security/loginForm.html',
+                    controller: 'LoginFormController',
+                    size: 'md',
+                    scope: $scope
                 });
-                $scope.$emit('login');
-                $scope.authReason = null;
-            }, function () {
-                dialog = null;
-                //queue.cancelAll();
-                $scope.authReason = null;
-            });
-        };
 
-        $scope.$on('event:auth-loginRequired', function (event) {
-            $scope.authReason = 'You need to log in to perform the action.';
-            $scope.open();
-        });
+                dialog.result.then(function (data) {
+                    dialog = null;
+                    //queue.retryAll();
+                    // see https://github.com/witoldsz/angular-http-auth
+                    authService.loginConfirmed(data, function (config) {
+                        config.params.api_key = data.apiToken;
+                        return config;
+                    });
+                    $scope.$emit('login');
+                    $scope.authReason = null;
+                }, function () {
+                    dialog = null;
+                    //queue.cancelAll();
+                    $scope.authReason = null;
+                });
+            };
+
+            $scope.$on('event:auth-loginRequired', function (event) {
+                $scope.authReason = 'You need to log in to perform the action.';
+                $scope.open();
+            });
 
 //        queue.onItemAddedCallbacks.push(function (retryItem) {
 //            if (queue.hasMore()) {
@@ -87,8 +88,49 @@ angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.b
 //            }
 //        });
 
-        $scope.logout = function () {
-            loginService.logout();
-            $scope.$emit('logout');
-        };
-    }]);
+            $scope.logout = function () {
+                loginService.logout();
+                $scope.$emit('logout');
+            };
+
+
+            /** For Sign up button **/
+            $scope.openSignUpDialog = function () {
+                $modal.open({
+                    templateUrl: 'views/security/signUpForm.html',
+                    controller: 'SignUpFormController',
+                    size: 'sm',
+                    scope: $scope
+                });
+            }
+        }])
+    .controller('SignUpFormController', ['$scope', 'Users', '$modalInstance',
+        function ($scope, Users, $modalInstance) {
+            $scope.hash = Math.random();
+            $scope.updateCaptcha = function() {
+                $scope.hash = Math.random();
+            };
+            $scope.tempKey = Math.random();
+            $scope.user = {};
+            $scope.clearForm = function () {
+                $scope.user = {};
+            };
+            $scope.cancelSignUp = function () {
+                $modalInstance && $modalInstance.close();
+            }
+            $scope.canSignUp = function (ngFormController) {
+                var eq = ($scope.confirmation === $scope.user.password);
+                return (ngFormController.$dirty && !ngFormController.$invalid && eq);
+            }
+            $scope.signUp = function (ngFormController) {
+                Users.create({captcha: $scope.captcha}, $scope.user, function(user) {
+                    console.log(user);
+                    $modalInstance.close();
+                }, function(response) {
+                    if (response.data) {
+                        $scope.error = response.data.message;
+                    }
+                    console.log(response.data);
+                })
+            }
+        }]);
