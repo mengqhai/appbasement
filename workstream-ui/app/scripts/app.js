@@ -33,6 +33,7 @@ angular
         'controllers.projects',
         'controllers.account',
         'controllers.orgSettings',
+        'controllers.orgs',
         'controllers.groups',
         'http-auth-interceptor',
         'xeditable'

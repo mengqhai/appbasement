@@ -10,7 +10,8 @@ angular.module('controllers.sideCreate', ['controllers.tasks', 'controllers.proj
             templateUrl: 'views/taskCreateForm.html',
             controller: 'TaskCreateFormController',
             scope: $scope
-        };
+        }
+
         $scope.openTaskDialog = function () {
             dialog = $modal.open(taskCfg)
         };
@@ -22,4 +23,5 @@ angular.module('controllers.sideCreate', ['controllers.tasks', 'controllers.proj
                 dialog.dismiss('cancelCreateTask');
             }
         };
+
     }])

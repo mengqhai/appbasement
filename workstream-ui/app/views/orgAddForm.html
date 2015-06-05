@@ -1,0 +1,41 @@
+<form name="addOrgForm" class="form-horizontal" novalidate autocomplete="off">
+    <div class="modal-header">
+        <h4>Add an organization by
+            <div class="btn-group">
+                <label class="btn btn-primary" ng-model="addBy" btn-radio="'create'">Create</label>
+                <label class="btn btn-primary" ng-model="addBy" btn-radio="'join'">Join</label>
+            </div>
+        </h4>
+    </div>
+
+    <div class="modal-body">
+        <!-- create a new org -->
+        <div ng-if="addBy === 'create'">
+            <fieldset>
+                <label>Name</label>
+                <input name="orgName" class="form-control" type="text" ng-model="org.name" required autofocus>
+                <label>Identifier</label>
+                <input name="orgIdentifier" class="form-control" type="text" ng-model="org.identifier" required>
+                <label>Description</label>
+                <textarea class="form-control" rows="3" ng-model="org.description">
+
+                </textarea>
+                <pre>{{org | json}}</pre>
+            </fieldset>
+        </div>
+
+        <!-- join an org -->
+        <div ng-if="addBy === 'join'" class="input-group">
+            <input name="searchIdentifier" class="form-control" type="text" ng-model="identifier" required placeholder="Search by identifier...">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button">Search</button>
+             </span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-if="addBy === 'create'" ng-click="create()" ng-disabled="">Create</button>
+        <button class="btn btn-primary" ng-if="addBy === 'join'" ng-click="join()" ng-disabled="">Join</button>
+        <button class="btn clear" ng-click="clearForm()">Clear</button>
+        <button class="btn btn-warning" ng-click="cancelLogin()">Cancel</button>
+    </div>
+</form>
