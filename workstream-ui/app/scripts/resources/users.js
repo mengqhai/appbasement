@@ -24,6 +24,15 @@ angular.module('resources.users', ['env'])
             }
         });
 
+        Users.create = function(user, captcha) {
+            return $http.post(envConstants.REST_BASE + '/users?captcha='+captcha, user, {
+                withCredentials: true
+                // to send the JSESSIONID that we used to get the captcha image
+                // otherwise the user won't be able to get the captcha string by
+                // looking at another session
+            });
+        }
+
         Users.getUserPicUrl = function (userId) {
             return envConstants.REST_BASE + '/users/' + btoa(userId) + '/picture'; //?api_key=' + envVars.getApiKey();
         }

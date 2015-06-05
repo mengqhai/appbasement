@@ -16,7 +16,7 @@
             <input name="name" type="text" class="form-control" ng-model="user.firstName" required>
             <label>Captcha:</label>
             <a href ng-click="updateCaptcha()">
-                <img ng-src="{{captchaUrl}}?hash={{hash}}&api_key={{tempKey}}" width="270" height="60"/>
+                <img ng-src="{{captchaUrl}}?hash={{hash}}" width="270" height="60"/>
             </a>
             <input name="captcha" type="text" class="form-control" ng-model="captcha" required>
         </fieldset>
@@ -24,6 +24,9 @@
     </div>
     <div class="alert alert-danger" ng-show="error">
         {{error}}
+    </div>
+    <div class="alert alert-success" ng-show="message">
+        {{message}}
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary" ng-click="signUp(signUpForm)" ng-disabled="!canSignUp(signUpForm)">Submit</button>

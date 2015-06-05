@@ -104,13 +104,12 @@ angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.b
                 });
             }
         }])
-    .controller('SignUpFormController', ['$scope', 'Users', '$modalInstance',
-        function ($scope, Users, $modalInstance) {
+    .controller('SignUpFormController', ['$scope', 'Users', '$modalInstance', '$timeout', 'loginService',
+        function ($scope, Users, $modalInstance, $timeout, loginService) {
             $scope.hash = Math.random();
-            $scope.updateCaptcha = function() {
+            $scope.updateCaptcha = function () {
                 $scope.hash = Math.random();
             };
-            $scope.tempKey = Math.random();
             $scope.user = {};
             $scope.clearForm = function () {
                 $scope.user = {};
@@ -123,14 +122,26 @@ angular.module('controllers.login', ['ui.bootstrap', 'ui.bootstrap.modal', 'ui.b
                 return (ngFormController.$dirty && !ngFormController.$invalid && eq);
             }
             $scope.signUp = function (ngFormController) {
-                Users.create({captcha: $scope.captcha}, $scope.user, function(user) {
+                Users.create($scope.user, $scope.captcha).success(function (user) {
                     console.log(user);
-                    $modalInstance.close();
-                }, function(response) {
-                    if (response.data) {
-                        $scope.error = response.data.message;
-                    }
-                    console.log(response.data);
-                })
+                    $scope.message = 'User successfully signed up, logging in...';
+                    function login() {
+                        loginService.login($scope.user.id, $scope.user.password).success(function (success) {
+                            $scope.message = 'Successfully logged in';
+                            $modalInstance.close();
+                        }).error(function(error) {
+                                if (error.message) {
+                                    $scope.error = error.message;
+                                }
+                            })
+                    };
+                    $timeout(login, 3000);
+
+                }).error(function (error) {
+                        if (error.message) {
+                            $scope.error = error.message;
+                        }
+                        console.log(error);
+                    });
             }
         }]);
