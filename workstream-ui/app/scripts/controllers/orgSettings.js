@@ -29,6 +29,7 @@ angular.module('controllers.orgSettings', ['controllers.groups'])
             $scope.groupMembers = {};
             var initUngroupedUsers = function () {
                 $scope.ungroupedUsers = Orgs.getUsersInOrg({orgId: $stateParams.orgId});
+                return $scope.ungroupedUsers;
             };
             initUngroupedUsers();
             var updateUngroupedUsers = function () {
@@ -124,8 +125,7 @@ angular.module('controllers.orgSettings', ['controllers.groups'])
 //                    var members = $scope.groupMembers[group.groupId];
 //                    var idx = members.indexOf(user);
 //                    members.splice(idx, 1);
-                    initUngroupedUsers();
-                    updateUngroupedUsers();
+                    initUngroupedUsers().$promise.then(updateUngroupedUsers);
                 });
             };
             $scope.addGroupMember = function (group, user) {

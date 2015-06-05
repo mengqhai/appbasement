@@ -13,7 +13,8 @@
 
     <div class="panel panel-default" ng-repeat="group in groups">
         <div class="panel-heading">
-            <h4 class="panel-title">{{group.name}}
+            <h4 class="panel-title">
+                <span tooltip="{{group.description}}">{{group.name}}</span>
                 <span class="dropdown">
                     <button class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
                         <span class="caret"></span>
@@ -48,16 +49,23 @@
         </div>
     </div>
 
-    <div class="btn-group" dropdown on-toggle="userMenuToggled(open, user)" ng-repeat="user in ungroupedUsers">
-        <button class="btn btn-default dropdown-toggle" dropdown-toggle>
-            <img ng-src="{{getUserPicUrl(user.id)}}" class="img-rounded" width="30" height="30"
-                 ng-if="user.pictureSet"/> {{user.firstName}}
-            <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu" role="menu">
-            <li role="presentation" ng-repeat="otherGroup in myAddToList"><a role="menuitem" href
-                                                                             ng-click="addGroupMember(otherGroup, user)">Add
-                to group {{otherGroup.name}}</a></li>
-        </ul>
-    </div>
+
+    <!-- Ungrouped Users-->
+    <accordion>
+        <accordion-group heading="Users that belongs to no group">
+            <div class="btn-group" dropdown on-toggle="userMenuToggled(open, user)" ng-repeat="user in ungroupedUsers">
+                <button class="btn btn-default dropdown-toggle" dropdown-toggle>
+                    <img ng-src="{{getUserPicUrl(user.id)}}" class="img-rounded" width="30" height="30"
+                         ng-if="user.pictureSet"/> {{user.firstName}}
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li role="presentation" ng-repeat="otherGroup in myAddToList"><a role="menuitem" href
+                                                                                     ng-click="addGroupMember(otherGroup, user)">Add
+                        to group {{otherGroup.name}}</a></li>
+                </ul>
+            </div>
+        </accordion-group>
+    </accordion>
+
 </div>
