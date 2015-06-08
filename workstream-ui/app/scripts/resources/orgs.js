@@ -55,6 +55,18 @@ angular.module('resources.orgs', ['env', 'resources.users'])
             patch: {
                 method: 'PATCH',
                 url: envConstants.REST_BASE + '/orgs/:orgId'
+            },
+            create: {
+                method: 'POST',
+                url: envConstants.REST_BASE + '/orgs'
+            },
+            findByIdentifier: {
+                method: 'GET',
+                url: envConstants.REST_BASE + '/orgs/byIdentifier'
+            },
+            join: {
+                method: 'PUT',
+                url: envConstants.REST_BASE + '/orgs/:orgId/users'
             }
         });
 

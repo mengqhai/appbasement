@@ -105,7 +105,8 @@
             </div>
             <pre>{{formObj | json}}</pre>
             <div>
-                <button class="btn btn-sm btn-default" ng-click="completeForm()">Complete</button>
+                <button class="btn btn-sm btn-default" ng-click="completeForm()"
+                        ng-disabled="!task.assignee || (getCurrentUserId() !== task.assignee)">Complete</button>
             </div>
         </div>
 
