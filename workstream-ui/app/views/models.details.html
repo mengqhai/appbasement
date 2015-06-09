@@ -1,0 +1,17 @@
+<div>
+    <h2>{{model.name}}</h2>
+    <p><span class="glyphicon glyphicon-duplicate"></span> Version: {{model.version}}  <span class="glyphicon glyphicon-time"></span> Last update: {{model.lastUpdateTime | date}}</p>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <img ng-src="{{getDiagramUrl()}}">
+        </div>
+    </div>
+    <accordion>
+        <accordion-group heading="Revision history" is-open="revisionState.isOpen">
+            <div ng-repeat="revision in revisions">
+                <img ng-src="{{getUserPicUrl(revision.userId)}}" class="img-rounded" width="30" height="30">{{revision.userId}} {{revision.action}}d at {{revision.createdAt | date: 'medium'}}
+            </div>
+        </accordion-group>
+    </accordion>
+    {{revisionState.isOpen}}
+</div>

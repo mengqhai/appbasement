@@ -4,30 +4,28 @@
             Create <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
-            <li><a href ng-click="openTaskDialog()">Task</a> </li>
+            <li><a href ng-click="openTaskDialog()"><span class="glyphicon glyphicon-check"></span> Task</a> </li>
             <li class="divider"></li>
-            <li><a href ng-click="openProjectDialog()">Project</a> </li>
+            <li><a href ng-click="openProjectDialog()"><span class="glyphicon glyphicon-lock"></span> Project</a> </li>
         </ul>
     </div>
 
 
     <div class="list-group">
-        <a class="list-group-item" ui-sref-active="active" ui-sref="tasks">Task</a>
-        <a href="#/processes" class="list-group-item" ui-sref-active="active">Process</a>
+        <a class="list-group-item" ui-sref-active="active"><span class="glyphicon glyphicon-dashboard"></span>  Dashboard</a>
+        <a class="list-group-item" ui-sref-active="active" ui-sref="tasks"><span class="glyphicon glyphicon-check"></span> Task</a>
+        <a href="#/processes" class="list-group-item" ui-sref-active="active"><span class="glyphicon glyphicon-retweet"></span> Process</a>
     </div>
 
     <div ng-controller="SideOrgController" ng-if="isLoggedIn()">
         <accordion close-others="oneAtATime">
             <accordion-group ng-repeat="org in getMyOrgs()" heading="{{org.name}}">
-                <ul class="list-group">
-                    <li class="list-group-item" ng-repeat="p in getOrgProjects(org.id)">
-                        <a ui-sref="project({projectId: p.id})">{{p.name}}</a>
-                    </li>
-                </ul>
-                <hr/>
-                <ul class="list-group">
-                    <li class="list-group-item" ng-repeat="user in getOrgUsers(org.id)">{{user.firstName}}</li>
-                </ul>
+                <div class="list-group">
+                    <a ui-sref="project({projectId: p.id})" ui-sref-active="active" class="list-group-item"
+                       ng-repeat="p in getOrgProjects(org.id)"><span class="glyphicon glyphicon-briefcase"></span> {{p.name}}</a>
+                    <a  ui-sref-active="active" class="list-group-item"><span class="glyphicon glyphicon-open-file"></span> Process Templates</a>
+                    <a  ui-sref-active="active" class="list-group-item"  ui-sref="models({orgId:org.id})"><span class="glyphicon glyphicon-pencil"></span> Process Models</a>
+                </div>
             </accordion-group>
         </accordion>
     </div>

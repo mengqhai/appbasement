@@ -25,12 +25,15 @@ angular
         'directives.datepicker',
         'directives.filemodel',
         'resources.users',
+        'resources.orgs',
         'resources.groups',
+        'resources.models',
         'controllers.currentUser',
         'controllers.sideOrg',
         'controllers.sideCreate',
         'controllers.tasks',
         'controllers.projects',
+        'controllers.models',
         'controllers.account',
         'controllers.orgSettings',
         'controllers.orgs',
@@ -90,6 +93,20 @@ angular
             templateUrl: 'views/project.tasks.html',
             controller: 'ProjectTaskListController'
         });
+        $stateProvider.state('models', {
+            url: '/orgs/{orgId}/models',
+            templateUrl: 'views/models.html',
+            controller: 'ModelListController',
+            resolve: {
+                models: ['Orgs', '$stateParams', function(Orgs, $stateParams) {
+                    return Orgs.getModelsInOrg({orgId: $stateParams.orgId});
+            }]}
+        })
+        $stateProvider.state('models.details', {
+            url: '/{modelId}',
+            templateUrl: 'views/models.details.html',
+            controller: 'ModelDetailsController'
+        })
         $stateProvider.state('account', {
             url: '/account',
             templateUrl: 'views/account.html'

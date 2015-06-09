@@ -156,10 +156,14 @@ angular.module('env', ['LocalStorageModule'])
             return envConstants.REST_BASE + '/users/' + btoa(userId) + '/picture'; //?api_key=' + envVars.getApiKey();
         }
 
-        var getUserPicUrl = function () {
-            var currentUser = envVars.getCurrentUser();
-            $rootScope.userPicUrl = (currentUser ? $rootScope.getUserPicUrl(currentUser.id) : null);
-            return $rootScope.userPicUrl;
+        var getUserPicUrl = function (userId) {
+            if (!userId) {
+                var currentUser = envVars.getCurrentUser();
+                $rootScope.userPicUrl = (currentUser ? $rootScope.getUserPicUrl(currentUser.id) : null);
+                return $rootScope.userPicUrl;
+            } else {
+                return envConstants.REST_BASE + '/users/' + btoa(userId) + '/picture';
+            }
         }
         getUserPicUrl();
         $rootScope.$on('user.pic.update', function () {

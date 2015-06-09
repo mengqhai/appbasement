@@ -1,0 +1,14 @@
+<header>
+    <h1>Models</h1>
+</header>
+<div class="row">
+    <aside class="col-md-3">
+        <div class="list-group">
+            <a class="list-group-item" ng-repeat="model in models" ui-sref="models.details({modelId: model.id})"
+                    ui-sref-active="active">{{model.name}}</a>
+        </div>
+    </aside>
+    <div class="col-md-9">
+        <div ui-view></div>
+    </div>
+</div>

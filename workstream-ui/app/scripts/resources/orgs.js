@@ -67,6 +67,11 @@ angular.module('resources.orgs', ['env', 'resources.users'])
             join: {
                 method: 'PUT',
                 url: envConstants.REST_BASE + '/orgs/:orgId/users'
+            },
+            getModelsInOrg: {
+                url: envConstants.REST_BASE + '/orgs/:orgId/templatemodels',
+                method: 'GET',
+                isArray: true
             }
         });
 
