@@ -10,5 +10,11 @@ angular.module('resources.models', ['env'])
                 isArray: true
             }
         });
+        Models.getDiagramUrl = function(modelId) {
+            if (!modelId) {
+                return null;
+            }
+            return envConstants.REST_BASE + '/templatemodels/'+modelId+'/diagram?api_key=' + envVars.getApiKey();
+        }
         return Models;
     }])

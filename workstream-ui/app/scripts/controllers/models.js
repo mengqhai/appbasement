@@ -20,11 +20,11 @@ angular.module('controllers.models', ['resources.models', 'resources.orgs'])
             models.$promise.then(getModel)
         }
 
-        $scope.getDiagramUrl = function() {
+        $scope.getDiagramUrl = function(modelId) {
             if (!$scope.model) {
                  return null;
             }
-            return envConstants.REST_BASE + '/templatemodels/'+$scope.model.id+'/diagram';
+            return Models.getDiagramUrl(modelId);
         }
 
         $scope.revisionState = {
