@@ -8,6 +8,10 @@ angular.module('resources.models', ['env'])
                 method: 'GET',
                 url: homeUrl + '/revisions',
                 isArray: true
+            },
+            getJson: {
+                method: 'GET',
+                url: homeUrl + '/workflow'
             }
         });
         Models.getDiagramUrl = function(modelId) {

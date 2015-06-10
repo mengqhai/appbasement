@@ -2,20 +2,38 @@
     <h2>{{model.name}}</h2>
     <p><span class="glyphicon glyphicon-duplicate"></span> Version: {{model.version}}  <span class="glyphicon glyphicon-time"></span> Last update: {{model.lastUpdateTime | date}}</p>
     <div>
-        <button class="btn btn-default" style="min-width: 100px"><span class="glyphicon glyphicon-edit"></span> Edit</button>
+        <button class="btn btn-default" style="min-width: 100px" ng-click="toggleEdit($event)"><span class="glyphicon glyphicon-edit"></span> Edit</button>
         <button class="btn btn-default" style="min-width: 100px"><span class="glyphicon glyphicon-remove"></span> Delete</button>
         <button class="btn btn-default" style="min-width: 100px"><span class="glyphicon glyphicon-cog"></span> Deploy</button>
     </div>
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <img ng-src="{{getDiagramUrl(model.id)}}">
+
+    <!-- details viewer -->
+    <div ng-show="!editState.isOpen">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <img ng-src="{{getDiagramUrl(model.id)}}">
+            </div>
+        </div>
+        <accordion>
+            <accordion-group heading="Revision history" is-open="revisionState.isOpen">
+                <div ng-repeat="revision in revisions">
+                    <img ng-src="{{getUserPicUrl(revision.userId)}}" class="img-rounded" width="30" height="30">{{revision.userId}} {{revision.action}}d at {{revision.createdAt | date: 'medium'}}
+                </div>
+            </accordion-group>
+        </accordion>
+    </div>
+
+    <div ng-if="editState.isOpen">
+        <div ng-controller="ModelEditorController">
+            <form name="modelForm">
+                <div>
+                    <label>Name:</label>
+                    <input type="text" class="form-control" ng-model="editorModel.name">
+                    <label>Json:</label>
+                    <textarea name="about" type="text" class="form-control" rows="10">{{modelJson | json}}</textarea>
+                </div>
+            </form>
         </div>
     </div>
-    <accordion>
-        <accordion-group heading="Revision history" is-open="revisionState.isOpen">
-            <div ng-repeat="revision in revisions">
-                <img ng-src="{{getUserPicUrl(revision.userId)}}" class="img-rounded" width="30" height="30">{{revision.userId}} {{revision.action}}d at {{revision.createdAt | date: 'medium'}}
-            </div>
-        </accordion-group>
-    </accordion>
+
 </div>

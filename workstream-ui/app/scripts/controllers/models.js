@@ -35,4 +35,16 @@ angular.module('controllers.models', ['resources.models', 'resources.orgs'])
                 $scope.revisions = Models.getRevisions({modelId: $scope.model.id});
             }
         })
+
+        /** For editing the model **/
+        $scope.editState = {
+            isOpen: false
+        }
+        $scope.toggleEdit = function(event) {
+            $scope.editState.isOpen = !$scope.editState.isOpen;
+        }
+    }])
+    .controller('ModelEditorController', ['$scope', 'Models', function($scope, Models) {
+        $scope.editorModel = Models.get({modelId: $scope.model.id});
+        $scope.modelJson = Models.getJson({modelId: $scope.model.id});
     }])
