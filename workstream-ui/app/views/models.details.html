@@ -1,21 +1,31 @@
-<div>
+<div ng-show="model">
     <h2>{{model.name}}</h2>
     <p><span class="glyphicon glyphicon-duplicate"></span> Version: {{model.version}}  <span class="glyphicon glyphicon-time"></span> Last update: {{model.lastUpdateTime | date}}</p>
     <div>
         <button class="btn btn-default" style="min-width: 100px" ng-click="toggleEdit($event)"><span class="glyphicon glyphicon-edit"></span> Edit</button>
-        <button class="btn btn-default" style="min-width: 100px"><span class="glyphicon glyphicon-remove"></span> Delete</button>
+        <button class="btn btn-default" style="min-width: 100px" btn-checkbox ng-model="stateObj.isDeleteConfirmOpen"><span class="glyphicon glyphicon-remove"></span> Delete</button>
         <button class="btn btn-default" style="min-width: 100px"><span class="glyphicon glyphicon-cog"></span> Deploy</button>
     </div>
 
+    <!-- delete confirmation -->
+    <div ng-if="stateObj.isDeleteConfirmOpen" class="panel panel-danger">
+        <div class="panel-body">
+            <div>Are you sure that you would like to delete the model {{model.name}}?</div>
+            <button class="btn btn-danger" ng-click="deleteModel()">Yes</button>
+            <button class="btn btn-default" ng-click="stateObj.isDeleteConfirmOpen=false">No</button>
+        </div>
+
+    </div>
+
     <!-- details viewer -->
-    <div ng-show="!editState.isOpen">
+    <div ng-show="!stateObj.isEditorOpen">
         <div class="panel panel-default">
             <div class="panel-body">
                 <img ng-src="{{getDiagramUrl(model.id)}}">
             </div>
         </div>
         <accordion>
-            <accordion-group heading="Revision history" is-open="revisionState.isOpen">
+            <accordion-group heading="Revision history" is-open="stateObj.isRevisionOpen">
                 <div ng-repeat="revision in revisions">
                     <img ng-src="{{getUserPicUrl(revision.userId)}}" class="img-rounded" width="30" height="30">{{revision.userId}} {{revision.action}}d at {{revision.createdAt | date: 'medium'}}
                 </div>
@@ -23,7 +33,8 @@
         </accordion>
     </div>
 
-    <div ng-if="editState.isOpen">
+    <!-- Editor -->
+    <div ng-if="stateObj.isEditorOpen">
         <div ng-controller="ModelEditorController">
             <form name="modelForm">
                 <div>
@@ -35,5 +46,6 @@
             </form>
         </div>
     </div>
+
 
 </div>

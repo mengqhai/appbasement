@@ -1,9 +1,9 @@
 angular.module('controllers.models', ['resources.models', 'resources.orgs'])
-    .controller('ModelListController', ['$scope', 'Orgs', '$stateParams', 'models', function ($scope, Orgs, $stateParams, models) {
+    .controller('ModelListController', ['$scope', 'Orgs', '$stateParams', 'models', '$state', function ($scope, Orgs, $stateParams, models, $state) {
         //$scope.models = Orgs.getModelsInOrg({orgId: $stateParams.orgId});
         $scope.models = models; // from state resolve
     }])
-    .controller('ModelDetailsController', ['$scope', 'envConstants', '$stateParams', 'Models', 'models', function ($scope, envConstants, $stateParams, Models, models) {
+    .controller('ModelDetailsController', ['$scope', 'envConstants', '$stateParams', '$state', 'Models', 'models', function ($scope, envConstants, $stateParams, $state, Models, models) {
         function getModel(models) {
             for (i = 0; i < models.length; i++) {
                 var model = models[i];
@@ -27,21 +27,31 @@ angular.module('controllers.models', ['resources.models', 'resources.orgs'])
             return Models.getDiagramUrl(modelId);
         }
 
-        $scope.revisionState = {
-            isOpen:false
+        $scope.stateObj = {
+            isRevisionOpen:false,
+            isDeleteConfirmOpen: false,
+            isEditorOpen: false
         }
-        $scope.$watch('revisionState.isOpen', function(newValue, oldValue) {
+        $scope.$watch('stateObj.isRevisionOpen', function(newValue, oldValue) {
             if (newValue === true && !$scope.revisions && $scope.model) {
                 $scope.revisions = Models.getRevisions({modelId: $scope.model.id});
             }
         })
 
         /** For editing the model **/
-        $scope.editState = {
-            isOpen: false
-        }
         $scope.toggleEdit = function(event) {
-            $scope.editState.isOpen = !$scope.editState.isOpen;
+            $scope.stateObj.isEditorOpen = !$scope.stateObj.isEditorOpen;
+        }
+
+        /** delete the model **/
+        $scope.deleteModel = function() {
+            Models.delete({modelId: $scope.model.id}, function() {
+                //$scope.$emit('models.delete', $scope.model);
+                $state.reload().then(function() {
+                    $state.go('^');
+                });
+                $scope.model = null;
+            });
         }
     }])
     .controller('ModelEditorController', ['$scope', 'Models', function($scope, Models) {
