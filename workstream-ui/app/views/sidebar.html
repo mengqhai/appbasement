@@ -23,7 +23,7 @@
                 <div class="list-group">
                     <a ui-sref="project({projectId: p.id})" ui-sref-active="active" class="list-group-item"
                        ng-repeat="p in getOrgProjects(org.id)"><span class="glyphicon glyphicon-briefcase"></span> {{p.name}}</a>
-                    <a  ui-sref-active="active" class="list-group-item"><span class="glyphicon glyphicon-open-file"></span> Process Templates</a>
+                    <a  ui-sref-active="active" class="list-group-item" ui-sref="templates({orgId:org.id})"><span class="glyphicon glyphicon-open-file"></span> Process Templates</a>
                     <a  ui-sref-active="active" class="list-group-item"  ui-sref="models({orgId:org.id})"><span class="glyphicon glyphicon-pencil"></span> Process Models</a>
                 </div>
             </accordion-group>

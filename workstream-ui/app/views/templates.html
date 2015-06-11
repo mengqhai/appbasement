@@ -1,0 +1,14 @@
+<header>
+    <h1>Process Templates</h1>
+</header>
+<div  class="row">
+    <aside class="col-md-3">
+        <div class="list-group">
+            <a class="list-group-item" ng-repeat="template in templates" ui-sref="templates.details({templateId: template.id})"
+               ui-sref-active="active">{{template.name}}</a>
+        </div>
+    </aside>
+    <div class="col-md-9">
+        <div ui-view></div>
+    </div>
+</div>

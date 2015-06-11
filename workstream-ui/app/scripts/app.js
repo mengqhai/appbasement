@@ -34,6 +34,7 @@ angular
         'controllers.tasks',
         'controllers.projects',
         'controllers.models',
+        'controllers.templates',
         'controllers.account',
         'controllers.orgSettings',
         'controllers.orgs',
@@ -106,6 +107,16 @@ angular
             url: '/{modelId}',
             templateUrl: 'views/models.details.html',
             controller: 'ModelDetailsController'
+        })
+        $stateProvider.state('templates', {
+            url: '/orgs/{orgId}/templates',
+            templateUrl: 'views/templates.html',
+            controller: 'TemplateListController',
+            resolve: {
+                templates: ['Orgs', '$stateParams', function(Orgs, $stateParams) {
+                    return Orgs.getTemplatesInOrg({orgId: $stateParams.orgId});
+                }]
+            }
         })
         $stateProvider.state('account', {
             url: '/account',

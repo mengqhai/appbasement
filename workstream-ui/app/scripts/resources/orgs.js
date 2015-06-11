@@ -72,6 +72,11 @@ angular.module('resources.orgs', ['env', 'resources.users'])
                 url: envConstants.REST_BASE + '/orgs/:orgId/templatemodels',
                 method: 'GET',
                 isArray: true
+            },
+            getTemplatesInOrg: {
+                url: envConstants.REST_BASE + '/orgs/:orgId/templates',
+                method: 'GET',
+                isArray: true
             }
         });
 
