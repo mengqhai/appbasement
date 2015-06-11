@@ -12,6 +12,15 @@ angular.module('resources.models', ['env'])
             getJson: {
                 method: 'GET',
                 url: homeUrl + '/workflow'
+            },
+            deploy: {
+                method: 'POST',
+                url: homeUrl + '/templates'
+            },
+            getTemplates: {
+                method: 'GET',
+                url: homeUrl + '/templates',
+                isArray: true
             }
         });
         Models.getDiagramUrl = function(modelId) {

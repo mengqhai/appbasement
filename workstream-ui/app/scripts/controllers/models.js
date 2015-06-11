@@ -30,8 +30,11 @@ angular.module('controllers.models', ['resources.models', 'resources.orgs'])
         $scope.stateObj = {
             isRevisionOpen:false,
             isDeleteConfirmOpen: false,
-            isEditorOpen: false
+            isDeployConfirmOpen: false,
+            isEditorOpen: false,
+            isTemplatesOpen: false
         }
+        /** Revision history **/
         $scope.$watch('stateObj.isRevisionOpen', function(newValue, oldValue) {
             if (newValue === true && !$scope.revisions && $scope.model) {
                 $scope.revisions = Models.getRevisions({modelId: $scope.model.id});
@@ -53,6 +56,27 @@ angular.module('controllers.models', ['resources.models', 'resources.orgs'])
                 $scope.model = null;
             });
         }
+
+        /** deploy the model **/
+        $scope.deployModel = function() {
+            Models.deploy({modelId: $scope.model.id}, null, function(template) {
+                console.log(template);
+                $scope.stateObj.isDeployConfirmOpen = false;
+                loadTemplates();
+                $scope.stateObj.isTemplatesOpen = true;
+            })
+        }
+
+        /** Deployed templates **/
+        function loadTemplates() {
+            $scope.templates = Models.getTemplates({modelId: $scope.model.id});
+        }
+        $scope.$watch('stateObj.isTemplatesOpen', function(newValue, oldValue) {
+            if (newValue === true && !$scope.templates && $scope.model) {
+                loadTemplates();
+            }
+        })
+
     }])
     .controller('ModelEditorController', ['$scope', 'Models', function($scope, Models) {
         $scope.editorModel = Models.get({modelId: $scope.model.id});

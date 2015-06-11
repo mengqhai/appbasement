@@ -3,8 +3,8 @@
     <p><span class="glyphicon glyphicon-duplicate"></span> Version: {{model.version}}  <span class="glyphicon glyphicon-time"></span> Last update: {{model.lastUpdateTime | date}}</p>
     <div>
         <button class="btn btn-default" style="min-width: 100px" ng-click="toggleEdit($event)"><span class="glyphicon glyphicon-edit"></span> Edit</button>
-        <button class="btn btn-default" style="min-width: 100px" btn-checkbox ng-model="stateObj.isDeleteConfirmOpen"><span class="glyphicon glyphicon-remove"></span> Delete</button>
-        <button class="btn btn-default" style="min-width: 100px"><span class="glyphicon glyphicon-cog"></span> Deploy</button>
+        <button class="btn btn-danger" style="min-width: 100px" btn-checkbox ng-model="stateObj.isDeleteConfirmOpen"><span class="glyphicon glyphicon-remove"></span> Delete</button>
+        <button class="btn btn-default" style="min-width: 100px" btn-checkbox ng-model="stateObj.isDeployConfirmOpen"><span class="glyphicon glyphicon-cog"></span> Deploy</button>
     </div>
 
     <!-- delete confirmation -->
@@ -14,7 +14,15 @@
             <button class="btn btn-danger" ng-click="deleteModel()">Yes</button>
             <button class="btn btn-default" ng-click="stateObj.isDeleteConfirmOpen=false">No</button>
         </div>
+    </div>
 
+    <!-- deploy confirmation -->
+    <div ng-if="stateObj.isDeployConfirmOpen" class="panel panel-danger">
+        <div class="panel-body">
+            <div>Are you sure that you would like to deploy the model {{model.name}}?</div>
+            <button class="btn btn-danger" ng-click="deployModel()">Yes</button>
+            <button class="btn btn-default" ng-click="stateObj.isDeployConfirmOpen=false">No</button>
+        </div>
     </div>
 
     <!-- details viewer -->
@@ -28,6 +36,13 @@
             <accordion-group heading="Revision history" is-open="stateObj.isRevisionOpen">
                 <div ng-repeat="revision in revisions">
                     <img ng-src="{{getUserPicUrl(revision.userId)}}" class="img-rounded" width="30" height="30">{{revision.userId}} {{revision.action}}d at {{revision.createdAt | date: 'medium'}}
+                </div>
+            </accordion-group>
+            <!-- deployed templates list -->
+            <accordion-group heading="Deployed templates" is-open="stateObj.isTemplatesOpen">
+                <div class="list-group">
+                    <a class="list-group-item" ng-repeat="template in templates" ng-class="{ 'list-group-item-success': $first}"
+                            href>{{template.name}} Version {{template.version}}</a>
                 </div>
             </accordion-group>
         </accordion>
