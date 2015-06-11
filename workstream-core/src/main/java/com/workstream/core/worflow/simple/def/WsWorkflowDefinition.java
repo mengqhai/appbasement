@@ -70,7 +70,7 @@ public class WsWorkflowDefinition extends WorkflowDefinition {
 		return super.getParameters();
 	}
 
-	@JsonIgnore
+	// @JsonIgnore
 	@Override
 	public void setName(String name) {
 		super.setName(name);
