@@ -118,6 +118,11 @@ angular
                 }]
             }
         })
+        $stateProvider.state('templates.details', {
+            url: '/{templateId}',
+            templateUrl: 'views/templates.details.html',
+            controller: 'TemplateDetailsController'
+        });
         $stateProvider.state('account', {
             url: '/account',
             templateUrl: 'views/account.html'

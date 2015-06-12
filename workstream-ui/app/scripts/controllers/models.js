@@ -2,6 +2,7 @@ angular.module('controllers.models', ['resources.models', 'resources.orgs'])
     .controller('ModelListController', ['$scope', 'Orgs', '$stateParams', 'models', '$state', function ($scope, Orgs, $stateParams, models, $state) {
         //$scope.models = Orgs.getModelsInOrg({orgId: $stateParams.orgId});
         $scope.models = models; // from state resolve
+        $scope.orgId = $stateParams.orgId;
     }])
     .controller('ModelDetailsController', ['$scope', 'envConstants', '$stateParams', '$state', 'Models', 'models', function ($scope, envConstants, $stateParams, $state, Models, models) {
         function getModel(models) {

@@ -5,7 +5,7 @@
     <aside class="col-md-3">
         <div class="list-group">
             <a class="list-group-item" ng-repeat="template in templates" ui-sref="templates.details({templateId: template.id})"
-               ui-sref-active="active">{{template.name}}</a>
+               ui-sref-active="active">{{template.name}}<span ng-if="!template.name">{{template.id}}</span>  <span class="label label-default">v{{template.version}}</span></a>
         </div>
     </aside>
     <div class="col-md-9">

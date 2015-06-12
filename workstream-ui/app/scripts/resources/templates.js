@@ -6,5 +6,8 @@ angular.module('resources.templates', ['env'])
         }, {
 
         });
+        Templates.getDiagramUrl = function (templateId) {
+            return envConstants.REST_BASE + '/templates/' + templateId + '/diagram?api_key='+envVars.getApiKey();
+        }
         return Templates;
     }])

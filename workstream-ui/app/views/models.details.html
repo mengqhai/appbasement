@@ -42,7 +42,7 @@
             <accordion-group heading="Deployed templates" is-open="stateObj.isTemplatesOpen">
                 <div class="list-group">
                     <a class="list-group-item" ng-repeat="template in templates" ng-class="{ 'list-group-item-success': $first}"
-                            href>{{template.name}} Version {{template.version}}</a>
+                            href ui-sref="templates.details({templateId: template.id, orgId: orgId})">{{template.name}} Version {{template.version}}</a>
                 </div>
             </accordion-group>
         </accordion>

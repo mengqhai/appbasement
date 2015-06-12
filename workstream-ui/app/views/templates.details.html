@@ -1,0 +1,24 @@
+<div>
+    <h2>{{template.name}}<span ng-if="!template.name">{{template.id}}</span></h2>
+    <p><span class="glyphicon glyphicon-duplicate"></span> Version: {{template.version}}</p>
+    <div>
+        <button class="btn btn-default" style="min-width: 100px" ng-click="startToggle($event)"><span class="glyphicon glyphicon-play-circle"></span> Start</button>
+        <button class="btn btn-danger" style="min-width: 100px" ng-click="undeployToggle($event)"><span class="glyphicon glyphicon-remove"></span> Undeploy</button>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <img ng-src="{{getDiagramUrl(template.id)}}">
+        </div>
+    </div>
+    <accordion>
+        <accordion-group heading="Running Processes" is-open="stateObj.isProcessesOpen">
+            <div ng-repeat="process in processes">
+
+            </div>
+        </accordion-group>
+        <accordion-group heading="Model" is-open="stateObj.isModelOpen">
+
+        </accordion-group>
+    </accordion>
+</div>
