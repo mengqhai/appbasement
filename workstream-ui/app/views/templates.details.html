@@ -2,8 +2,19 @@
     <h2>{{template.name}}<span ng-if="!template.name">{{template.id}}</span></h2>
     <p><span class="glyphicon glyphicon-duplicate"></span> Version: {{template.version}}</p>
     <div>
-        <button class="btn btn-default" style="min-width: 100px" ng-click="startToggle($event)"><span class="glyphicon glyphicon-play-circle"></span> Start</button>
-        <button class="btn btn-danger" style="min-width: 100px" ng-click="undeployToggle($event)"><span class="glyphicon glyphicon-remove"></span> Undeploy</button>
+        <button class="btn btn-default" style="min-width: 100px" ng-click="startToggle($event)">
+            <span class="glyphicon glyphicon-play-circle"></span> Start</button>
+        <button class="btn btn-danger" style="min-width: 100px" ng-click="undeployToggle($event)" btn-checkbox ng-model="stateObj.isUndeployConfirmOpen">
+            <span class="glyphicon glyphicon-remove"></span> Undeploy</button>
+    </div>
+
+    <!-- undeploy confirm -->
+    <div ng-if="stateObj.isUndeployConfirmOpen" class="panel panel-danger">
+        <div class="panel-body">
+            <div>Are you sure that you would like to undeploy template {{template.name}}(version {{template.version}})?</div>
+            <button class="btn btn-danger" ng-click="undeployTemplate()">Yes</button>
+            <button class="btn btn-default" ng-click="stateObj.isUndeployConfirmOpen=false">No</button>
+        </div>
     </div>
 
     <div class="panel panel-default">
