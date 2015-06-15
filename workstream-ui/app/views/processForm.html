@@ -1,0 +1,18 @@
+<div>
+    <div ng-repeat="field in formDef.formProperties" class="input-group input-group-sm">
+        <span class="input-group-addon">{{field.id}}</span>
+
+        <!-- For Boolean -->
+                <span class="form-control" ng-if="field.type.name=='boolean'">
+                    <!-- https://coderwall.com/p/ybbopq/use-ng-value-for-ng-model-with-boolean-values -->
+                        <label >
+                            <input type="radio" name="{{field.id}}" ng-value="true"
+                                   ng-model="formObj[field.id]">Yes
+                        </label>
+                        <label >
+                            <input type="radio" name="{{field.id}}" ng-value="false"
+                                   ng-model="formObj[field.id]">No
+                        </label>
+                </span>
+    </div>
+</div>

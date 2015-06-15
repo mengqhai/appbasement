@@ -1,4 +1,4 @@
-angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable', 'ui.select', 'directives.errorsrc'])
+angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable', 'ui.select', 'directives.errorsrc', 'directives.processForm'])
     .controller('TasksController', ['$scope', 'Tasks', function ($scope, Tasks) {
         $scope.myTaskCount = 0;
         $scope.createdByMeCount = 0;
@@ -219,32 +219,16 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
 
             $scope.$on('tasks.complete', closeDialog);
             $scope.$on('tasks.claim', closeDialog);
-        }])
-    .controller('TaskProcessFormController', ['$scope', 'Tasks', function ($scope, Tasks) {
-        var task = $scope.task;
-        var taskId = $scope.task.id; // get task id from parent
-        $scope.formDef = Tasks.getFormDef({taskId: taskId});
-        $scope.formObj = {};
-        $scope.formDef.$promise.then(function (def) {
-            for (var i = 0; i < def.formProperties.length; i++) {
-                var field = def.formProperties[i];
-                var value;
-                switch (field.type.name) {
-                    case 'boolean':
-                        value = (field.value === 'true');
-                        break;
-                    default:
-                        value = field.value;
-                }
-                $scope.formObj[field.id] = value;
+
+            /** for process form **/
+            $scope.formDef = Tasks.getFormDef({taskId: task.id});
+            $scope.formObj = {};
+            $scope.completeForm = function () {
+                Tasks.completeForm({taskId: task.id}, $scope.formObj).$promise.then(function () {
+                    $scope.$emit('tasks.complete', task);
+                });
             }
-        })
-        $scope.completeForm = function () {
-            Tasks.completeForm({taskId: taskId}, $scope.formObj).$promise.then(function () {
-                $scope.$emit('tasks.complete', task);
-            });
-        }
-    }])
+        }])
     .controller('TaskCreateFormController', ['$scope', 'Tasks', '$modalInstance', '$rootScope', function ($scope, Tasks, $modalInstance, $rootScope) {
         var task = {};
         $scope.task = task;

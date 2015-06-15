@@ -86,36 +86,18 @@
         </div>
 
         <!-- Task form for process tasks -->
-        <div ng-if="task.processInstanceId" ng-controller="TaskProcessFormController" task-id="task.id" class="well well-sm">
-            <div ng-repeat="field in formDef.formProperties" class="input-group input-group-sm">
-                <span class="input-group-addon">{{field.id}}</span>
 
-                <!-- For Boolean -->
-                <span class="form-control" ng-if="field.type.name=='boolean'">
-                    <!-- https://coderwall.com/p/ybbopq/use-ng-value-for-ng-model-with-boolean-values -->
-                        <label >
-                        <input type="radio" name="{{field.id}}" ng-value="true"
-                                   ng-model="formObj[field.id]">Yes
-                        </label>
-                        <label >
-                            <input type="radio" name="{{field.id}}" ng-value="false"
-                                    ng-model="formObj[field.id]">No
-                        </label>
-                </span>
-            </div>
-            <pre>{{formObj | json}}</pre>
-            <div>
-                <button class="btn btn-sm btn-default" ng-click="completeForm()"
-                        ng-disabled="!task.assignee || (getCurrentUserId() !== task.assignee)">Complete</button>
-            </div>
-        </div>
-
+        <process-form form-def="formDef" form-obj="formObj" ng-if="task.processInstanceId">
+        </process-form>
+        <pre>{{formObj | json}}</pre>
         <!-- Task buttons -->
         <div>
             <button class="btn btn-danger" ng-click="delete()">Delete</button><span>{{deleteError}}</span>
             <button class="btn btn-warning" ng-if="task.processInstanceId && !task.assignee" ng-click="claim()">Claim</button>
-            <button class="btn btn-default" ng-if="!task.processInstanceId && task.assignee=== getCurrentUserId()"
-                    ng-click="complete()">Complete</button>
+            <span ng-if="task.assignee=== getCurrentUserId()" ng-switch="!task.processInstanceId">
+                <button class="btn btn-success" ng-switch-when="true" ng-click="complete()">Complete</button>
+                <button class="btn btn-warning" ng-switch-when="false" ng-click="completeForm()">Complete</button>
+            </span>
         </div>
 
 
