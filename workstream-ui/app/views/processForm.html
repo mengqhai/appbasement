@@ -1,18 +1,37 @@
 <div>
     <div ng-repeat="field in formDef.formProperties" class="input-group input-group-sm">
-        <span class="input-group-addon">{{field.id}}</span>
+        <span class="input-group-addon" style="min-width: 160px">{{field.displayName}}
+            <span ng-if="!field.displayName">{{field.name}}</span>
+            <span ng-if="!field.displayName && !field.name">{{field.id}}</span>
+        </span>
 
-        <!-- For Boolean -->
-                <span class="form-control" ng-if="field.type.name=='boolean'">
-                    <!-- https://coderwall.com/p/ybbopq/use-ng-value-for-ng-model-with-boolean-values -->
-                        <label >
-                            <input type="radio" name="{{field.id}}" ng-value="true"
-                                   ng-model="formObj[field.id]">Yes
-                        </label>
-                        <label >
-                            <input type="radio" name="{{field.id}}" ng-value="false"
-                                   ng-model="formObj[field.id]">No
-                        </label>
-                </span>
+        <span ng-switch="field.type.name">
+            <span ng-switch-default>
+                <input type="text" name="{{field.id}}" class="form-control" ng-model="formObj[field.id]" ng-required="field.required">
+            </span>
+            <!-- For Boolean -->
+            <span class="form-control" ng-switch-when="boolean">
+                <!-- https://coderwall.com/p/ybbopq/use-ng-value-for-ng-model-with-boolean-values -->
+                <label >
+                    <input type="radio" name="{{field.id}}" ng-value="true"
+                           ng-model="formObj[field.id]">Yes
+                </label>
+                <label >
+                    <input type="radio" name="{{field.id}}" ng-value="false"
+                           ng-model="formObj[field.id]">No
+                </label>
+            </span>
+
+            <!-- For Long -->
+            <span ng-switch-when="long">
+                <input type="number" name="{{field.id}}" class="form-control" ng-model="formObj[field.id]" ng-required="field.required">
+            </span>
+
+            <span ng-switch-when="date">
+                <input type="datetime" name="{{field.id}}" class="form-control" ng-model="formObj[field.id]" ng-required="field.required">
+            </span>
+
+        </span>
+
     </div>
 </div>

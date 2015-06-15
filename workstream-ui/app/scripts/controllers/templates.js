@@ -30,8 +30,25 @@ angular.module('controllers.templates', ['resources.templates', 'resources.model
 
             $scope.stateObj = {
                 isUndeployConfirmOpen: false,
-                isModelOpen: false
+                isModelOpen: false,
+                isStartOpen: false
             };
+
+            /** start a process **/
+            $scope.formObj = {};
+            $scope.$watch('stateObj.isStartOpen', function(newValue, oldValue) {
+                if (newValue) {
+                    $scope.formDef = Templates.getFormDef({templateId: $scope.template.id});
+                }
+            });
+            $scope.canStart = function(ngFormController) {
+                return ngFormController.$valid;
+            }
+            $scope.startProcess = function() {
+                Templates.startByForm({templateId: $scope.template.id}, $scope.formObj, function(process) {
+                    console.log(process);
+                });
+            }
 
             /** undeploy **/
             $scope.undeployTemplate = function () {

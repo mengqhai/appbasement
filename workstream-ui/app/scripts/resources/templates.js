@@ -4,10 +4,17 @@ angular.module('resources.templates', ['env'])
         var Templates = $resource(homeUrl, {
             api_key: envVars.getApiKey
         }, {
-
+            getFormDef: {
+                method: 'GET',
+                url: homeUrl + '/form'
+            },
+            startByForm: {
+                method: 'POST',
+                url: homeUrl + '/form'
+            }
         });
         Templates.getDiagramUrl = function (templateId) {
-            return envConstants.REST_BASE + '/templates/' + templateId + '/diagram?api_key='+envVars.getApiKey();
+            return envConstants.REST_BASE + '/templates/' + templateId + '/diagram?api_key=' + envVars.getApiKey();
         }
         return Templates;
     }])
