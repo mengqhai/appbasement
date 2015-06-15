@@ -1,9 +1,9 @@
-angular.module('controllers.templates', ['resources.templates'])
+angular.module('controllers.templates', ['resources.templates', 'resources.models'])
     .controller('TemplateListController', ['$scope', 'Templates', 'Orgs', 'templates', function ($scope, Templates, Orgs, templates) {
         $scope.templates = templates;
     }])
-    .controller('TemplateDetailsController', ['$scope', '$stateParams', 'templates', 'Templates', '$state',
-        function ($scope, $stateParams, templates, Templates, $state) {
+    .controller('TemplateDetailsController', ['$scope', '$stateParams', 'templates', 'Templates', 'Models', '$state',
+        function ($scope, $stateParams, templates, Templates, Models, $state) {
             function getTemplate(templates) {
                 for (i = 0; i < templates.length; i++) {
                     var template = templates[i];
@@ -29,7 +29,8 @@ angular.module('controllers.templates', ['resources.templates'])
             }
 
             $scope.stateObj = {
-                isUndeployConfirmOpen: false
+                isUndeployConfirmOpen: false,
+                isModelOpen: false
             };
 
             /** undeploy **/
@@ -41,4 +42,22 @@ angular.module('controllers.templates', ['resources.templates'])
                     $scope.template = null;
                 });
             }
+
+            function loadModel (templateId) {
+                if (!templateId) {
+                    return;
+                }
+                var startIdx = 6;
+                var endIdx = templateId.indexOf(':');
+                var modelId = templateId.substring(startIdx, endIdx);
+                if (!$scope.model) {
+                    $scope.model = Models.get({modelId: modelId});
+                    return $scope.model;
+                }
+            }
+            $scope.$watch('stateObj.isModelOpen', function(newValue, oldValue) {
+                if (newValue) {
+                    loadModel($scope.template.id);
+                }
+            })
         }]);

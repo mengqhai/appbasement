@@ -29,7 +29,7 @@
             </div>
         </accordion-group>
         <accordion-group heading="Model" is-open="stateObj.isModelOpen">
-
+            <a ui-sref="models.details({orgId: model.orgId, modelId: model.id})">{{model.name}}</a>
         </accordion-group>
     </accordion>
 </div>
