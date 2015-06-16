@@ -35,7 +35,15 @@
         <accordion>
             <accordion-group heading="Revision history" is-open="stateObj.isRevisionOpen">
                 <div ng-repeat="revision in revisions">
-                    <img ng-src="{{getUserPicUrl(revision.userId)}}" class="img-rounded" width="30" height="30">{{revision.userId}} {{revision.action}}d at {{revision.createdAt | date: 'medium'}}
+                    <div class="media-left">
+                        <img ng-src="{{getUserPicUrl(revision.userId)}}" class="img-rounded" width="45" height="45">
+                    </div>
+                    <div class="media-body">
+                        <p>{{revision.comment}}</p>
+                        <div class="media-heading"><span class="glyphicon" ng-class="{'glyphicon-pencil': revision.action==='Edit', 'glyphicon glyphicon-plus': revision.action==='Create'}"></span>
+                            by {{revision.userId}} at {{revision.createdAt | date: 'medium'}}</div>
+                    </div>
+                    <hr ng-if="!$last"/>
                 </div>
             </accordion-group>
             <!-- deployed templates list -->

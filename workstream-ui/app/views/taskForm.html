@@ -112,7 +112,7 @@
                     </div>
                     <div class="media-body">
                         <p>{{event.message}}</p>
-                        <div class="media-heading">{{event.userId}} at {{event.time | date}}</div>
+                        <div class="media-heading">{{event.userId}} at {{event.time | date: 'medium'}}</div>
                     </div>
                     <hr ng-if="!$last"/>
                 </div>
