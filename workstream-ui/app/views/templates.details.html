@@ -14,6 +14,7 @@
             <div>Are you sure that you would like to undeploy template {{template.name}}(version {{template.version}})?</div>
             <button class="btn btn-danger" ng-click="undeployTemplate()">Yes</button>
             <button class="btn btn-default" ng-click="stateObj.isUndeployConfirmOpen=false">No</button>
+            <span>{{undeployMessage}}</span>
         </div>
     </div>
 

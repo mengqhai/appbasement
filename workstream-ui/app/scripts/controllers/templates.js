@@ -98,8 +98,17 @@ angular.module('controllers.templates', ['resources.templates', 'resources.model
                         $state.go('^');
                     });
                     $scope.template = null;
+                }, function(error) {
+                    if (error.data) {
+                        $scope.undeployMessage = error.data.message;
+                    }
                 });
             }
+            $scope.$watch('stateObj.isUndeployConfirmOpen', function(newValue, oldValue) {
+                if(newValue) {
+                    $scope.undeployMessage = null;
+                }
+            })
 
             function loadModel(templateId) {
                 if (!templateId) {
