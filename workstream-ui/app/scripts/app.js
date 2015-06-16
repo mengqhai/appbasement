@@ -35,6 +35,7 @@ angular
         'controllers.projects',
         'controllers.models',
         'controllers.templates',
+        'controllers.processes',
         'controllers.account',
         'controllers.orgSettings',
         'controllers.orgs',
@@ -82,7 +83,8 @@ angular
             });
         $stateProvider.state('processes', {
             url: '/processes',
-            templateUrl: 'views/processes.html'
+            templateUrl: 'views/processes.html',
+            controller: 'ProcessListController'
         });
         $stateProvider.state('project', {
             url: '/project/{projectId}',
