@@ -11,6 +11,11 @@ angular.module('resources.templates', ['env'])
             startByForm: {
                 method: 'POST',
                 url: homeUrl + '/form'
+            },
+            getProcesses: {
+                method: 'GET',
+                url: homeUrl + '/processes',
+                isArray: true
             }
         });
         Templates.getDiagramUrl = function (templateId) {

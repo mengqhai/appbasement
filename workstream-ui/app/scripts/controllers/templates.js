@@ -31,24 +31,41 @@ angular.module('controllers.templates', ['resources.templates', 'resources.model
             $scope.stateObj = {
                 isUndeployConfirmOpen: false,
                 isModelOpen: false,
+                isProcessesOpen: false,
                 isStartOpen: false
             };
 
             /** start a process **/
             $scope.formObj = {};
-            $scope.$watch('stateObj.isStartOpen', function(newValue, oldValue) {
+            $scope.$watch('stateObj.isStartOpen', function (newValue, oldValue) {
                 if (newValue) {
                     $scope.formDef = Templates.getFormDef({templateId: $scope.template.id});
+                    $scope.startMessage = null;
                 }
             });
-            $scope.canStart = function(ngFormController) {
+            $scope.canStart = function (ngFormController) {
                 return ngFormController.$valid;
             }
-            $scope.startProcess = function() {
-                Templates.startByForm({templateId: $scope.template.id}, $scope.formObj, function(process) {
-                    console.log(process);
+            $scope.startProcess = function () {
+                Templates.startByForm({templateId: $scope.template.id}, $scope.formObj, function (process) {
+                    if (process.ended) {
+                        $scope.startMessage = 'Process ' + process.id + ' is started and soon ended.';
+                    } else {
+                        $scope.stateObj.isProcessesOpen = true;
+                        $scope.stateObj.isStartOpen = false;
+                        loadProcesses();
+                    }
                 });
             }
+            function loadProcesses() {
+                $scope.processes = Templates.getProcesses({templateId: $scope.template.id});
+            }
+
+            $scope.$watch('stateObj.isProcessesOpen', function (newValue, oldValue) {
+                if (newValue && !$scope.processes) {
+                    loadProcesses();
+                }
+            })
 
             /** undeploy **/
             $scope.undeployTemplate = function () {
@@ -60,7 +77,7 @@ angular.module('controllers.templates', ['resources.templates', 'resources.model
                 });
             }
 
-            function loadModel (templateId) {
+            function loadModel(templateId) {
                 if (!templateId) {
                     return;
                 }
@@ -72,7 +89,8 @@ angular.module('controllers.templates', ['resources.templates', 'resources.model
                     return $scope.model;
                 }
             }
-            $scope.$watch('stateObj.isModelOpen', function(newValue, oldValue) {
+
+            $scope.$watch('stateObj.isModelOpen', function (newValue, oldValue) {
                 if (newValue) {
                     loadModel($scope.template.id);
                 }

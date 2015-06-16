@@ -384,11 +384,19 @@ public class ProcessService extends TaskCapable {
 					.getProcessDefinition(processDefinitionId);
 			ProcessInstance p = forSer.submitStartFormData(processDefinitionId,
 					properties);
-
-			ruSer.setProcessInstanceName(p.getProcessInstanceId(),
-					def.getName());
 			log.debug("Process instance created id={} for template {}",
 					p.getId(), processDefinitionId);
+
+			if (!p.isEnded()) {
+				ruSer.setProcessInstanceName(p.getProcessInstanceId(),
+						def.getName());
+			} else {
+				log.debug(
+						"Process instance {} seems already finished, and no longer exist in runtime service. (We've no chance to set its name.)",
+						p.getProcessInstanceId());
+				return p;
+			}
+
 			// information not complete, so refetch it again
 			p = this.getProcess(p.getProcessInstanceId());
 			return p;

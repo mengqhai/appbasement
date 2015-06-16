@@ -26,6 +26,7 @@
             <pre>{{formObj | json}}</pre>
             <div>
                 <button class="btn btn-warning" ng-click="startProcess()" ng-disabled="!canStart(processStartForm)">Start</button>
+                <span>{{startMessage}}</span>
             </div>
         </div>
     </div>
@@ -37,8 +38,13 @@
     </div>
     <accordion>
         <accordion-group heading="Running Processes" is-open="stateObj.isProcessesOpen">
-            <div ng-repeat="process in processes">
-
+            <span ng-if="!processes || processes.length===0">
+                The template has no running process.
+            </span>
+            <div class="list-group">
+                <a class="list-group-item" ng-repeat="process in processes" >{{process.name}} (id:{{process.id}})
+                <span class="label label-info">{{process.activityId}}</span>
+                </a>
             </div>
         </accordion-group>
         <accordion-group heading="Model" is-open="stateObj.isModelOpen">
