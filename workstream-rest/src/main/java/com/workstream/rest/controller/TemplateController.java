@@ -103,8 +103,8 @@ public class TemplateController {
 		}
 	}
 
-	@ApiOperation(value = "Get the BPMN xml of a template", produces = MediaType.APPLICATION_XML_VALUE)
-	@RequestMapping(value = "/{id}/bpmn", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
+	@ApiOperation(value = "Get the BPMN xml of a template")
+	@RequestMapping(value = "/{id}/bpmn", method = RequestMethod.GET)
 	@ResponseBody
 	@PreAuthorize("isAuthInOrgForTemplate(#templateId)")
 	public void getTemplateBpmn(@PathVariable("id") String templateId,

@@ -64,8 +64,32 @@ angular.module('controllers.templates', ['resources.templates', 'resources.model
             $scope.$watch('stateObj.isProcessesOpen', function (newValue, oldValue) {
                 if (newValue && !$scope.processes) {
                     loadProcesses();
+                    $scope.activities = {};
+                    Templates.getBpmn({templateId: $scope.template.id}).then(function(response) {
+                        var bpmn = response.data; // in xml format
+                        var userTasks = $(bpmn).find('usertask');
+                        userTasks.each(function(idx, userTask) {
+                            var elem = $(userTask);
+                            var task = {
+                                id: elem.attr('id'),
+                                name: elem.attr('name'),
+                                assignee: elem.attr('activiti:assignee')
+                            }
+                            $scope.activities[task.id] = task;
+                        })
+                    });
                 }
             })
+            $scope.getActivityName = function(activityId) {
+                if (!activityId) {
+                    return null;
+                }
+                if ($scope.activities[activityId]) {
+                    return $scope.activities[activityId].name;
+                } else {
+                    return null;
+                }
+            }
 
             /** undeploy **/
             $scope.undeployTemplate = function () {

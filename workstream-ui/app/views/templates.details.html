@@ -43,7 +43,7 @@
             </span>
             <div class="list-group">
                 <a class="list-group-item" ng-repeat="process in processes" >{{process.name}} (id:{{process.id}})
-                <span class="label label-info">{{process.activityId}}</span>
+                <span class="label label-info">{{getActivityName(process.activityId)}}</span>
                 </a>
             </div>
         </accordion-group>
