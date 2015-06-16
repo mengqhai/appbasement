@@ -57,14 +57,13 @@ angular.module('controllers.templates', ['resources.templates', 'resources.model
                     }
                 });
             }
-            function loadProcesses() {
-                $scope.processes = Templates.getProcesses({templateId: $scope.template.id});
+            function loadProcesses(onSuccess) {
+                $scope.processes = Templates.getProcesses({templateId: $scope.template.id}, onSuccess);
             }
-
+            $scope.activities = {};
             $scope.$watch('stateObj.isProcessesOpen', function (newValue, oldValue) {
                 if (newValue && !$scope.processes) {
                     loadProcesses();
-                    $scope.activities = {};
                     Templates.getBpmn({templateId: $scope.template.id}).then(function(response) {
                         var bpmn = response.data; // in xml format
                         var userTasks = $(bpmn).find('usertask');
@@ -80,16 +79,6 @@ angular.module('controllers.templates', ['resources.templates', 'resources.model
                     });
                 }
             })
-            $scope.getActivityName = function(activityId) {
-                if (!activityId) {
-                    return null;
-                }
-                if ($scope.activities[activityId]) {
-                    return $scope.activities[activityId].name;
-                } else {
-                    return null;
-                }
-            }
 
             /** undeploy **/
             $scope.undeployTemplate = function () {
