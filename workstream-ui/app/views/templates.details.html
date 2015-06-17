@@ -43,7 +43,7 @@
                 The template has no running process.
             </span>
             <div class="list-group">
-                <a class="list-group-item" ng-repeat="process in processes" >{{process.name}} (id:{{process.id}})
+                <a class="list-group-item" ng-repeat="process in processes" ui-sref="processes.details({processId: process.id})">{{process.name}} (id:{{process.id}})
                 <span class="label label-info">{{activities[process.activityId].name}}</span>
                 </a>
             </div>

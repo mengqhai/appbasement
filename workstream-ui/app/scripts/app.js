@@ -86,6 +86,11 @@ angular
             templateUrl: 'views/processes.html',
             controller: 'ProcessListController'
         });
+        $stateProvider.state('processes.details', {
+            url: '/{processId}',
+            templateUrl: 'views/processes.details.html',
+            controller: 'ProcessDetailsController'
+        });
         $stateProvider.state('project', {
             url: '/project/{projectId}',
             templateUrl: 'views/project.html',

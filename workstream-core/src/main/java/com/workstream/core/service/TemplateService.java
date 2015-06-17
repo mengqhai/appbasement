@@ -10,7 +10,6 @@ import java.util.zip.ZipInputStream;
 
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.engine.ManagementService;
-import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.repository.Deployment;
@@ -19,7 +18,6 @@ import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ModelQuery;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
-import org.activiti.image.ProcessDiagramGenerator;
 import org.activiti.workflow.simple.converter.WorkflowDefinitionConversion;
 import org.activiti.workflow.simple.converter.WorkflowDefinitionConversionFactory;
 import org.activiti.workflow.simple.definition.WorkflowDefinition;
@@ -64,10 +62,7 @@ public class TemplateService {
 	private WsSimpleWorkflowJsonConverter jsonCon;
 
 	@Autowired
-	private ProcessDiagramGenerator diagramGenerator;
-
-	@Autowired
-	private ProcessEngineConfiguration peCfg;
+	private DiagramService diagramService;
 
 	@Autowired
 	private ManagementService mgmtService;
@@ -312,13 +307,9 @@ public class TemplateService {
 			// when deserializing the byte[] back to object
 
 			// create and save the process diagram
-			InputStream diaIn = diagramGenerator.generateDiagram(
-					con.getBpmnModel(), "png", peCfg.getActivityFontName(),
-					peCfg.getLabelFontName(), peCfg.getClassLoader());
-			// InputStream diaIn = diagramGenerator.generateDiagram(
-			// con.getBpmnModel(), "png", "sansserif", "sansserif",
-			// peCfg.getClassLoader());
-			// to support chinese
+			InputStream diaIn = diagramService.generateProcessDiagram(con
+					.getBpmnModel());
+
 			// after this the ModelEntity's sourceId and sourceExtraId are set
 			// to null
 

@@ -1,14 +1,18 @@
 package com.workstream.rest.controller;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Attachment;
 import org.activiti.engine.task.Task;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +26,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.AttempBadStateException;
 import com.workstream.core.exception.BadArgumentException;
+import com.workstream.core.exception.BytesNotFoundException;
 import com.workstream.core.exception.DataPersistException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.CoreEvent.TargetType;
@@ -63,6 +69,34 @@ public class ProcessController {
 			throw new ResourceNotFoundException("No such process, archived?");
 		}
 		return new ProcessResponse(pi);
+	}
+
+	@ApiOperation(value = "Retrieve the archive entry of a running process")
+	@RequestMapping(value = "/{id}/archive", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForProcess(#processId)")
+	public ArchProcessResponse getProcessArchive(
+			@PathVariable("id") String processId) {
+		HistoricProcessInstance arch = core.getProcessService().getHiProcess(
+				processId);
+		return new ArchProcessResponse(arch);
+	}
+
+	@ApiOperation(value = "Retrieve the diagram of a running process", produces = MediaType.IMAGE_PNG_VALUE)
+	@RequestMapping(value = "/{id}/diagram", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+	@PreAuthorize("isAuthInOrgForProcess(#processId)")
+	public void getProcessDiagram(@PathVariable("id") String processId,
+			@ApiIgnore HttpServletResponse response) {
+		InputStream is = core.getProcessService().generateProcessDiagram(
+				processId);
+		if (is == null) {
+			throw new ResourceNotFoundException("No such process, archived?");
+		}
+		try {
+			IOUtils.copy(is, response.getOutputStream());
+			response.setContentType(MediaType.IMAGE_PNG_VALUE);
+		} catch (IOException e) {
+			throw new BytesNotFoundException(e.getMessage(), e);
+		}
 	}
 
 	@ApiOperation(value = "Delete a running process")

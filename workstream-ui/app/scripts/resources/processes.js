@@ -13,7 +13,14 @@ angular.module('resources.processes', ['env'])
                 method: 'GET',
                 url: envConstants.REST_BASE + '/processes/_involvedMe',
                 isArray: true
+            },
+            getArchive: {
+                method: 'GET',
+                url: homeUrl + '/archive'
             }
         })
+        Processes.getDiagramUrl = function (processId) {
+            return envConstants.REST_BASE + '/processes/' + processId + '/diagram?api_key=' + envVars.getApiKey();
+        }
         return Processes;
     }])

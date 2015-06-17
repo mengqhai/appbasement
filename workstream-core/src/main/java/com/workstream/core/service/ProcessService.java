@@ -1,5 +1,6 @@
 package com.workstream.core.service;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.ActivitiIllegalArgumentException;
 import org.activiti.engine.ActivitiObjectNotFoundException;
@@ -59,6 +61,9 @@ public class ProcessService extends TaskCapable {
 
 	@Autowired
 	private RepositoryService repoSer;
+
+	@Autowired
+	private DiagramService diagramService;
 
 	public enum UserProcessRole {
 		STARTER, INVOLVED
@@ -168,6 +173,30 @@ public class ProcessService extends TaskCapable {
 	public ProcessInstance getProcessWithVars(String id) {
 		return ruSer.createProcessInstanceQuery().processInstanceId(id)
 				.includeProcessVariables().singleResult();
+	}
+
+	/**
+	 * Generate the process diagram for a running process instance
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public InputStream generateProcessDiagram(String id) {
+		// http://forums.activiti.org/content/process-diagram-highlighting-current-process
+		// http://forums.activiti.org/content/api-fetch-diagram-process-instance
+		// maybe the activiti-diagram-rest-5.16.4.jar can also be referred to
+		// (for example, how to find out highlighted flows, etc)
+		ProcessInstance instance = getProcess(id);
+		if (instance == null) {
+			return null; // no such process, should be archived
+		}
+		// assuming the process definition has graphical notation defined
+		// (pde.isGraphicalNotationDefined())
+		BpmnModel bpmnModel = repoSer.getBpmnModel(instance
+				.getProcessDefinitionId());
+		InputStream stream = diagramService.generateProcessDiagram(bpmnModel,
+				ruSer.getActiveActivityIds(id));
+		return stream;
 	}
 
 	public HistoricProcessInstance getHiProcess(String processInstanceId) {

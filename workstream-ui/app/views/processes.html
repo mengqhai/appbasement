@@ -5,10 +5,12 @@
     <aside class="col-md-3">
         <accordion>
             <accordion-group heading="Started by me" is-open='stateObj.isStartedByMeOpen' class="list-group">
-                <a class="list-group-item" ng-repeat="process in startedByMe">{{process.name}}<span  ng-if="!process.name">{{process.id}}</span></a>
+                <a class="list-group-item" ng-repeat="process in startedByMe" ui-sref="processes.details({processId: process.id})"
+                   ui-sref-active="active">{{process.name}}<span  ng-if="!process.name">{{process.id}}</span></a>
             </accordion-group>
             <accordion-group heading="Involves me" is-open='stateObj.isInvolvesMeOpen' class="list-group">
-                <a class="list-group-item" ng-repeat="process in involvesMe">{{process.name}}<span ng-if="!process.name">{{process.id}}</span></a>
+                <a class="list-group-item" ng-repeat="process in involvesMe"  ui-sref="processes.details({processId: process.id})"
+                   ui-sref-active="active">{{process.name}}<span ng-if="!process.name">{{process.id}}</span></a>
             </accordion-group>
         </accordion>
     </aside>
