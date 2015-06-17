@@ -119,7 +119,8 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             //$scope.myOrgs = Orgs.getMyOrgsWithCache();
 
             // for events/comments
-            $scope.events = Tasks.getEvents({taskId: task.id});
+            var eventsGetter = task.endTime ? Tasks.getArchEvents : Tasks.getEvents
+            $scope.events = eventsGetter({taskId: task.id});
             $scope.getUserPicUrl = Users.getUserPicUrl;
             $scope.updateTask = function (key, value) {
                 return Tasks.xedit($scope.task.id, key, value);
@@ -188,6 +189,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                     $modalInstance.close();
                 }
             }
+            $scope.closeDialog = closeDialog;
 
             // for delete
             $scope.delete = function () {
@@ -221,12 +223,16 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             $scope.$on('tasks.claim', closeDialog);
 
             /** for process form **/
-            $scope.formDef = Tasks.getFormDef({taskId: task.id});
-            $scope.formObj = {};
-            $scope.completeForm = function () {
-                Tasks.completeForm({taskId: task.id}, $scope.formObj).$promise.then(function () {
-                    $scope.$emit('tasks.complete', task);
-                });
+            if (!task.endTime) {
+                $scope.formDef = Tasks.getFormDef({taskId: task.id});
+                $scope.formObj = {};
+                $scope.completeForm = function () {
+                    Tasks.completeForm({taskId: task.id}, $scope.formObj).$promise.then(function () {
+                        $scope.$emit('tasks.complete', task);
+                    });
+                }
+            } else {
+                $scope.archForm = Tasks.getArchForm({taskId: task.id});
             }
         }])
     .controller('TaskCreateFormController', ['$scope', 'Tasks', '$modalInstance', '$rootScope', function ($scope, Tasks, $modalInstance, $rootScope) {

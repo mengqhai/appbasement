@@ -38,6 +38,10 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
                 url: homeUrl + '/:taskId/events',
                 isArray: true
             },
+            getArchEvents: {
+                url: envConstants.REST_BASE + '/archives/tasks/:taskId/events',
+                isArray: true
+            },
             patch: {
                 method: 'PATCH',
                 url: homeUrl + '/:taskId'
@@ -53,6 +57,11 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
             getFormDef: {
                 method: 'GET',
                 url: homeUrl + '/:taskId/form'
+            },
+            getArchForm: {
+                method: 'GET',
+                url: envConstants.REST_BASE + '/archives/tasks/:taskId/form',
+                isArray: true
             },
             completeForm: {
                 method: 'PUT',

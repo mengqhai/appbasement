@@ -32,6 +32,7 @@ angular.module('controllers.templates', ['resources.templates', 'resources.model
                 isUndeployConfirmOpen: false,
                 isModelOpen: false,
                 isProcessesOpen: false,
+                isActivitiesOpen: false,
                 isStartOpen: false
             };
 
@@ -60,25 +61,41 @@ angular.module('controllers.templates', ['resources.templates', 'resources.model
             function loadProcesses(onSuccess) {
                 $scope.processes = Templates.getProcesses({templateId: $scope.template.id}, onSuccess);
             }
+
             $scope.activities = {};
+            function parseActivities(bpmn) {
+                var userTasks = $(bpmn).find('usertask');
+                userTasks.each(function (idx, userTask) {
+                    var elem = $(userTask);
+                    var task = {
+                        id: elem.attr('id'),
+                        name: elem.attr('name'),
+                        assignee: elem.attr('activiti:assignee')
+                    }
+                    $scope.activities[task.id] = task;
+                })
+            }
+
+            function loadBpmnAndParse() {
+                if (Object.keys($scope.activities).length === 0) {
+                    // only do this once
+                    Templates.getBpmn({templateId: $scope.template.id}).then(function (response) {
+                        parseActivities(response.data);
+                    });
+                }
+            }
+            $scope.$watch('stateObj.isActivitiesOpen', function(newValue, oldValue) {
+                if (newValue) {
+                    loadBpmnAndParse();
+                }
+            })
             $scope.$watch('stateObj.isProcessesOpen', function (newValue, oldValue) {
                 if (newValue && !$scope.processes) {
                     loadProcesses();
-                    Templates.getBpmn({templateId: $scope.template.id}).then(function(response) {
-                        var bpmn = response.data; // in xml format
-                        var userTasks = $(bpmn).find('usertask');
-                        userTasks.each(function(idx, userTask) {
-                            var elem = $(userTask);
-                            var task = {
-                                id: elem.attr('id'),
-                                name: elem.attr('name'),
-                                assignee: elem.attr('activiti:assignee')
-                            }
-                            $scope.activities[task.id] = task;
-                        })
-                    });
+                    loadBpmnAndParse();
                 }
             })
+
 
             /** undeploy **/
             $scope.undeployTemplate = function () {
@@ -87,14 +104,14 @@ angular.module('controllers.templates', ['resources.templates', 'resources.model
                         $state.go('^');
                     });
                     $scope.template = null;
-                }, function(error) {
+                }, function (error) {
                     if (error.data) {
                         $scope.undeployMessage = error.data.message;
                     }
                 });
             }
-            $scope.$watch('stateObj.isUndeployConfirmOpen', function(newValue, oldValue) {
-                if(newValue) {
+            $scope.$watch('stateObj.isUndeployConfirmOpen', function (newValue, oldValue) {
+                if (newValue) {
                     $scope.undeployMessage = null;
                 }
             })

@@ -9,4 +9,20 @@
             <img ng-src="{{getDiagramUrl(process.id)}}">
         </div>
     </div>
+    <accordion>
+        <accordion-group heading="Tasks" is-open="stateObj.isTasksOpen">
+            <div class="list-group">
+                <a class="list-group-item" ng-repeat="archTask in archTasks"
+                   ng-class="{'list-group-item-success':!archTask.endTime}"
+                   href ng-click="openDialog(archTask)">
+                    <span class="glyphicon glyphicon-play" ng-if="!archTask.endTime"></span>
+                    <span class="glyphicon glyphicon-ok-sign" ng-if="archTask.endTime"></span>
+                    {{archTask.name}}
+                    <span class="pull-right">
+                        <span class="glyphicon glyphicon-user"></span>{{archTask.assignee}}
+                    </span>
+                </a>
+            </div>
+        </accordion-group>
+    </accordion>
 </div>

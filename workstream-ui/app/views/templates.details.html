@@ -38,6 +38,15 @@
         </div>
     </div>
     <accordion>
+        <accordion-group heading="Activities" is-open="stateObj.isActivitiesOpen">
+            <div class="list-group">
+                <a class="list-group-item" ng-repeat="activity in activities">{{activity.name}}
+                    <span class="pull-right">
+                        <span class="glyphicon glyphicon-user"></span>{{activity.assignee}}
+                    </span>
+                </a>
+            </div>
+        </accordion-group>
         <accordion-group heading="Running Processes" is-open="stateObj.isProcessesOpen">
             <span ng-if="!processes || processes.length===0">
                 The template has no running process.

@@ -17,6 +17,11 @@ angular.module('resources.processes', ['env'])
             getArchive: {
                 method: 'GET',
                 url: homeUrl + '/archive'
+            },
+            getArchiveTasks: {
+                method: 'GET',
+                url: envConstants.REST_BASE + '/archives/processes/:processId/tasks',
+                isArray: true
             }
         })
         Processes.getDiagramUrl = function (processId) {
