@@ -24,5 +24,9 @@
                 </a>
             </div>
         </accordion-group>
+        <accordion-group heading="Process Template">
+            <a ui-sref="templates.details({orgId: process.orgId, templateId: process.processDefinitionId})">{{process.processDefinitionName}}
+                <span class="label label-default">v{{process.processDefinitionVersion}}</span></a>
+        </accordion-group>
     </accordion>
 </div>
