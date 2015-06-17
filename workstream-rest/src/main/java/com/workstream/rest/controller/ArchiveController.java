@@ -8,6 +8,8 @@ import java.util.Map;
 import org.activiti.engine.history.HistoricFormProperty;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.task.Attachment;
+import org.activiti.engine.task.Event;
 import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -43,9 +45,6 @@ public class ArchiveController {
 
 	@Autowired
 	private CoreFacadeService core;
-
-	@Autowired
-	private TaskController taskCtrl;
 
 	@Autowired
 	private ProcessController processCtrl;
@@ -104,7 +103,8 @@ public class ArchiveController {
 	@PreAuthorize("isAuthInOrgForArchTask(#taskId)")
 	public List<EventResponse> getArchTaskEvents(
 			@PathVariable("id") String taskId) {
-		return taskCtrl.getTaskEvents(taskId);
+		List<Event> events = core.getProjectService().filterTaskEvent(taskId);
+		return InnerWrapperObj.valueOf(events, EventResponse.class);
 	}
 
 	@ApiOperation(value = "Retrieve the attachment list for a task")
@@ -112,7 +112,9 @@ public class ArchiveController {
 	@PreAuthorize("isAuthInOrgForArchTask(#taskId)")
 	public List<AttachmentResponse> getArchTaskAttachments(
 			@PathVariable("id") String taskId) {
-		return taskCtrl.getTaskAttachments(taskId);
+		List<Attachment> attachments = core.getAttachmentService()
+				.filterTaskAttachment(taskId);
+		return InnerWrapperObj.valueOf(attachments, AttachmentResponse.class);
 	}
 
 	@ApiOperation(value = "Retrieve the local variables for a task")
