@@ -89,26 +89,30 @@
         </div>
 
         <!-- Task form for process tasks -->
-        <div  ng-if="task.processInstanceId && !task.endTime">
-            <process-form form-def="formDef" form-obj="formObj">
-            </process-form>
-            <pre>{{formObj | json}}</pre>
-        </div>
-        <!-- Archived form data -->
-        <div ng-if="task.processInstanceId && task.endTime" class="list-group">
-              <span class="list-group-item" ng-repeat="formEntry in archForm">{{formEntry.propertyId}}:{{formEntry.propertyValue}}</span>
-        </div>
+        <form name="taskCompleteForm">
+            <div  ng-if="task.processInstanceId && !task.endTime">
 
-        <!-- Task buttons -->
-        <div>
-            <button class="btn btn-danger" ng-click="delete()">Delete</button><span>{{deleteError}}</span>
-            <button class="btn btn-warning" ng-if="task.processInstanceId && !task.assignee" ng-click="claim()">Claim</button>
-            <span ng-if="task.assignee=== getCurrentUserId()" ng-switch="!task.processInstanceId">
-                <button class="btn btn-success" ng-switch-when="true" ng-click="complete()">Complete</button>
-                <button class="btn btn-warning" ng-switch-when="false" ng-click="completeForm()">Complete</button>
-            </span>
-        </div>
+                    <process-form form-def="formDef" form-obj="formObj">
+                    </process-form>
 
+
+                <pre>{{formObj | json}}</pre>
+            </div>
+            <!-- Archived form data -->
+            <div ng-if="task.processInstanceId && task.endTime" class="list-group">
+                  <span class="list-group-item" ng-repeat="formEntry in archForm">{{formEntry.propertyId}}:{{formEntry.propertyValue}}</span>
+            </div>
+
+            <!-- Task buttons -->
+            <div>
+                <button class="btn btn-danger" ng-click="delete()">Delete</button><span>{{deleteError}}</span>
+                <button class="btn btn-warning" ng-if="task.processInstanceId && !task.assignee" ng-click="claim()">Claim</button>
+                <span ng-if="task.assignee=== getCurrentUserId()" ng-switch="!task.processInstanceId">
+                    <button class="btn btn-success" ng-switch-when="true" ng-click="complete()">Complete</button>
+                    <button class="btn btn-warning" ng-switch-when="false" ng-click="completeForm()" ng-disabled="taskCompleteForm.$invalid">Complete</button>
+                </span>
+            </div>
+        </form>
 
         <!-- Task events -->
         <div class="panel panel-default">

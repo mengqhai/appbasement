@@ -197,7 +197,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                     $scope.$emit('tasks.delete', task);
                     closeDialog();
                 }, function (error) {
-                    $scope.deleteError = error;
+                    $scope.deleteError = error.data.message;
                 });
             }
 
