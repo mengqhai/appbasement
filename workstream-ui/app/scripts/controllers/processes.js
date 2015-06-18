@@ -6,20 +6,36 @@ angular.module('controllers.processes', ['resources.templates', 'resources.proce
         }
         $scope.startedByMe = null;
         $scope.involvesMe = null;
+        function loadStartedByMe() {
+            $scope.startedByMe = Processes.getStartedByMe();
+            ;
+        }
+
+        function loadInvolvesMe() {
+            $scope.involvesMe = Processes.getInvolvesMe();
+        }
 
         $scope.$watch('stateObj.isStartedByMeOpen', function (newValue, oldValue) {
             if (newValue && !$scope.startedByMe) {
-                $scope.startedByMe = Processes.getStartedByMe();
+                loadStartedByMe();
             }
         })
         $scope.$watch('stateObj.isInvolvesMeOpen', function (newValue, oldValue) {
             if (newValue && !$scope.involvesMe) {
-                $scope.involvesMe = Processes.getInvolvesMe();
+                loadInvolvesMe();
+            }
+        })
+        $scope.$on('state.reload', function () {
+            if ($scope.startedByMe) {
+                loadStartedByMe();
+            }
+            if ($scope.involvesMe) {
+                loadInvolvesMe();
             }
         })
     }])
-    .controller('ProcessDetailsController', ['$scope', '$stateParams', 'Processes', '$modal',
-        function ($scope, $stateParams, Processes, $modal) {
+    .controller('ProcessDetailsController', ['$scope', '$stateParams', '$state', 'Processes', '$modal',
+        function ($scope, $stateParams, $state, Processes, $modal) {
             function getArchProcess(processId, archProcesses) {
                 for (var i = 0; i < archProcesses.length; i++) {
                     var archProcess = archProcesses[i];
@@ -29,23 +45,46 @@ angular.module('controllers.processes', ['resources.templates', 'resources.proce
                 }
             }
 
-            $scope.archProcess = Processes.getArchive({processId: $stateParams.processId});
-            $scope.process = Processes.get({processId: $stateParams.processId});
+            $scope.stateObj = {
+                isTasksOpen: false,
+                isDataOpen: false
+            }
+            function reloadProcess(onSuccess) {
+                if (!onSuccess) {
+                    onSuccess = function () {
+                    };
+                }
+                $scope.archProcess = Processes.getArchive({processId: $stateParams.processId});
+                $scope.process = Processes.get({processId: $stateParams.processId}, onSuccess, function (error) {
+                    if (error.status === 404);
+                    $scope.$emit('state.reload');
+                    $state.go('^');
+                });
+            }
+
+            reloadProcess();
+
+            var random = null;
             $scope.getDiagramUrl = function (processId) {
                 if (!processId) {
                     return null;
                 }
-                return Processes.getDiagramUrl(processId);
+                var url = Processes.getDiagramUrl(processId);
+                if (random) {
+                    url = url + '&random=' + random;
+                }
+                return url;
             }
 
             /** for tasks **/
-            $scope.stateObj = {
-                isTasksOpen: false
-            }
             $scope.archTasks = null;
+            function loadArchTasks() {
+                $scope.archTasks = Processes.getArchiveTasks({processId: $scope.process.id});
+            }
+
             $scope.$watch('stateObj.isTasksOpen', function (newValue, oldValue) {
                 if (newValue && !$scope.archTasks) {
-                    $scope.archTasks = Processes.getArchiveTasks({processId: $scope.process.id});
+                    loadArchTasks();
                 }
             })
             var dialog = null;
@@ -61,4 +100,35 @@ angular.module('controllers.processes', ['resources.templates', 'resources.proce
                     scope: $scope
                 })
             };
+
+            /** for data **/
+            $scope.vars = null;
+            $scope.varKeys = function () {
+                if ($scope.vars) {
+                    return Object.keys($scope.vars).filter(function (el) {
+                        return el.indexOf('$') !== 0;
+                    });
+                }
+            }
+            function loadVars() {
+                $scope.vars = Processes.getVars({processId: $scope.process.id});
+            }
+
+            $scope.$watch('stateObj.isDataOpen', function (newValue, oldValue) {
+                if (newValue && !$scope.vars) {
+                    loadVars();
+                }
+            })
+
+            $scope.$on('tasks.complete', function (event, task) {
+                reloadProcess(function () {
+                    if ($scope.vars) {
+                        loadVars();
+                    }
+                    if ($scope.archTasks) {
+                        loadArchTasks();
+                    }
+                });
+                random = Math.random();
+            })
         }]);

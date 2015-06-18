@@ -22,6 +22,10 @@ angular.module('resources.processes', ['env'])
                 method: 'GET',
                 url: envConstants.REST_BASE + '/archives/processes/:processId/tasks',
                 isArray: true
+            },
+            getVars: {
+                method: 'GET',
+                url: homeUrl + '/vars'
             }
         })
         Processes.getDiagramUrl = function (processId) {

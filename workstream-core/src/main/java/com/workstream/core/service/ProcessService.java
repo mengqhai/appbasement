@@ -308,6 +308,7 @@ public class ProcessService extends TaskCapable {
 			q.finished();
 			q.orderByProcessInstanceEndTime().desc();
 		} else {
+			q.unfinished();
 			q.orderByProcessInstanceStartTime().desc();
 		}
 		return q;

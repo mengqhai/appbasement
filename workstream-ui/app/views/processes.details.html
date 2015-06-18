@@ -10,6 +10,13 @@
         </div>
     </div>
     <accordion>
+        <accordion-group heading="Data" is-open="stateObj.isDataOpen">
+            <div class="list-group">
+                <a class="list-group-item" ng-repeat="key in varKeys()">
+                    {{key}}:{{vars[key]}}
+                </a>
+            </div>
+        </accordion-group>
         <accordion-group heading="Tasks" is-open="stateObj.isTasksOpen">
             <div class="list-group">
                 <a class="list-group-item" ng-repeat="archTask in archTasks"
