@@ -34,8 +34,8 @@ angular.module('controllers.processes', ['resources.templates', 'resources.proce
             }
         })
     }])
-    .controller('ProcessDetailsController', ['$scope', '$stateParams', '$state', 'Processes', '$modal',
-        function ($scope, $stateParams, $state, Processes, $modal) {
+    .controller('ProcessDetailsController', ['$scope', '$stateParams', '$state', 'Processes', '$modal', 'Templates', '$filter',
+        function ($scope, $stateParams, $state, Processes, $modal, Templates, $filter) {
             function getArchProcess(processId, archProcesses) {
                 for (var i = 0; i < archProcesses.length; i++) {
                     var archProcess = archProcesses[i];
@@ -114,11 +114,38 @@ angular.module('controllers.processes', ['resources.templates', 'resources.proce
                 $scope.vars = Processes.getVars({processId: $scope.process.id});
             }
 
+            $scope.formDef = {};
+            function parseFormProps(bpmn) {
+                var formProps = $(bpmn).find('activiti\\:formProperty');
+                formProps.each(function(idx, formProp) {
+                    var elem = $(formProp);
+                    $scope.formDef[elem.attr('id')] = {
+                        id: elem.attr('id'),
+                        name: elem.attr('name'),
+                        type: elem.attr('type')
+                    }
+                })
+            }
             $scope.$watch('stateObj.isDataOpen', function (newValue, oldValue) {
                 if (newValue && !$scope.vars) {
+                    Templates.getBpmn({templateId: $scope.process.processDefinitionId}).then(function (response) {
+                        // parse bpmn
+                        parseFormProps(response.data);
+                    });
                     loadVars();
                 }
             })
+            $scope.formatDataValue = function(key, value) {
+                var def = $scope.formDef[key];
+                if (!def) {
+                    return value;
+                }
+                if (def.type === 'date') {
+                    return $filter('date')(value, 'medium');
+                } else {
+                    return value;
+                }
+            }
 
             $scope.$on('tasks.complete', function (event, task) {
                 reloadProcess(function () {
