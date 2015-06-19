@@ -1,14 +1,24 @@
 <div>
     <div class="modal-header">
         <h4>
-            <span editable-text="task.name" onbeforesave = "updateTask('name', $data)" blur="submit" e-maxlength="30" e-minlength="1">{{task.name || 'empty'}}</span>
+            <span ng-switch="task.endTime===undefined">
+                <span ng-switch-when="true" editable-text="task.name" onbeforesave = "updateTask('name', $data)" blur="submit" e-maxlength="30" e-minlength="1">{{task.name || 'empty'}}</span>
+                <span ng-switch-default>
+                    {{task.name}} <span class="label label-primary">Archived</span>
+                </span>
+            </span>
+
             <button type="button" ng-click="closeDialog()" class="close" aria-label="Close" style="float: right;" e-maxlength="500"><span aria-hidden="true">&times;</span></button>
         </h4>
     </div>
 
     <div class="modal-body">
         <div>
-            <span editable-textarea="task.description" onbeforesave = "updateTask('description', $data)" e-rows="3" e-cols="70" blur="submit">{{task.description || 'empty'}}</span>
+            <span ng-switch="task.endTime===undefined">
+                <span ng-switch-when="true" editable-textarea="task.description" onbeforesave = "updateTask('description', $data)" e-rows="3" e-cols="70" blur="submit">{{task.description || 'click to add description'}}</span>
+                <span ng-switch-default>{{task.description}}</span>
+            </span>
+
         </div>
         <div>
             Created by {{task.creator}} on {{task.createTime|date}}
@@ -107,7 +117,7 @@
             <div>
                 <button class="btn btn-danger" ng-click="delete()">Delete</button><span>{{deleteError}}</span>
                 <button class="btn btn-warning" ng-if="task.processInstanceId && !task.assignee" ng-click="claim()">Claim</button>
-                <span ng-if="task.assignee=== getCurrentUserId()" ng-switch="!task.processInstanceId">
+                <span ng-if="task.assignee=== getCurrentUserId() && !task.endTime" ng-switch="!task.processInstanceId">
                     <button class="btn btn-success" ng-switch-when="true" ng-click="complete()">Complete</button>
                     <button class="btn btn-warning" ng-switch-when="false" ng-click="completeForm()" ng-disabled="taskCompleteForm.$invalid">Complete</button>
                 </span>

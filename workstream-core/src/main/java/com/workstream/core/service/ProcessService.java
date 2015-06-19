@@ -386,7 +386,7 @@ public class ProcessService extends TaskCapable {
 	protected HistoricTaskInstanceQuery prepareArchTaskQueryByProcess(
 			String processInstanceId) {
 		return hiSer.createHistoricTaskInstanceQuery().processInstanceId(
-				processInstanceId);
+				processInstanceId).orderByTaskCreateTime().desc();
 	}
 
 	public List<HistoricTaskInstance> filterArchTaskByProcess(
