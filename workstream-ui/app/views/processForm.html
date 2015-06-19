@@ -7,7 +7,13 @@
 
         <span ng-switch="field.type.name">
             <span ng-switch-default>
-                <input type="text" name="{{field.id}}" class="form-control" ng-model="formObj[field.id]" ng-required="field.required">
+                <textarea ng-if="formObj[field.id] && formObj[field.id].length>20"
+                        name="{{field.id}}" class="form-control" ng-model="formObj[field.id]" ng-required="field.required">
+                </textarea>
+
+                <input ng-if="!formObj[field.id] || formObj[field.id].length<=20"
+                       type="text" name="{{field.id}}" class="form-control" ng-model="formObj[field.id]" ng-required="field.required">
+
             </span>
             <!-- For Boolean -->
             <span class="form-control" ng-switch-when="boolean">
@@ -27,10 +33,15 @@
                 <input type="number" name="{{field.id}}" class="form-control" ng-model="formObj[field.id]" ng-required="field.required">
             </span>
 
-            <span ng-switch-when="date">
-                <input type="datetime" name="{{field.id}}" class="form-control" ng-model="formObj[field.id]" ng-required="field.required">
-            </span>
+            <!-- For date -->
+            <span ng-switch-when="date" class="input-group">
+                <input type="text" name="{{field.id}}" datepicker-popup="yyyy-MM-dd" is-open="stateObj[field.id]"
+                       class="form-control" ng-model="dateInternal[field.id]" ng-required="field.required">
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-click="$event.preventDefault();$event.stopPropagation();stateObj[field.id]=true"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
 
+            </span>
         </span>
 
     </div>

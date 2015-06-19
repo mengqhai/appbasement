@@ -30,6 +30,20 @@ angular.module('directives.processForm', [])
                 } else {
                     initForm(scope.formDef)
                 }
+
+                scope.stateObj = {};
+                scope.dateInternal = {};
+                scope.$watch('dateInternal', function(newValue, oldValue) {
+                    Object.keys(newValue).forEach(function(key) {
+                        if (newValue[key]) {
+                            var date = newValue[key];
+                            scope.formObj[key] = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+(date.getDate()) + ' 00:00:00';
+                        } else {
+                            delete scope.formObj[key];
+                            //scope.formObj[key] = null;
+                        }
+                    });
+                }, true)
             }
         }
         return def;
