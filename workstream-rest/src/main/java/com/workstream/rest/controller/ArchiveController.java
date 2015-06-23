@@ -65,6 +65,73 @@ public class ArchiveController {
 		return respList;
 	}
 
+	@ApiOperation(value = "Query the tasks assigned to the current user")
+	@RequestMapping(value = "/tasks/_my", method = RequestMethod.GET)
+	public List<ArchTaskResponse> getMyAssigneeTasks(
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
+		String userId = core.getAuthUserId();
+		List<HistoricTaskInstance> tasks = core
+				.getProjectService()
+				.filterArchTaskByUser(UserTaskRole.ASSIGNEE, userId, first, max);
+		List<ArchTaskResponse> respList = InnerWrapperObj.valueOf(tasks,
+				ArchTaskResponse.class);
+		return respList;
+	}
+
+	@ApiOperation(value = "Count the tasks assigned to the current user")
+	@RequestMapping(value = "/tasks/_my/_count", method = RequestMethod.GET)
+	public SingleValueResponse countMyAssigneeTasks() {
+		String userId = core.getAuthUserId();
+		long count = core.getProjectService().countArchTaskByUser(
+				UserTaskRole.ASSIGNEE, userId);
+		return new SingleValueResponse(count);
+	}
+
+	@ApiOperation(value = "Query the tasks created by the current user")
+	@RequestMapping(value = "/tasks/_createdByMe", method = RequestMethod.GET)
+	public List<ArchTaskResponse> getMyCreatorTasks(
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
+		String userId = core.getAuthUserId();
+		List<HistoricTaskInstance> tasks = core.getProjectService()
+				.filterArchTaskByCreator(userId, first, max);
+		List<ArchTaskResponse> respList = InnerWrapperObj.valueOf(tasks,
+				ArchTaskResponse.class);
+		return respList;
+	}
+
+	@ApiOperation(value = "Count the tasks created by the current user")
+	@RequestMapping(value = "/tasks/_createdByMe/_count", method = RequestMethod.GET)
+	public SingleValueResponse countMyCreatorTasks() {
+		String userId = core.getAuthUserId();
+		long count = core.getProjectService().countArchTaskByUser(
+				UserTaskRole.CREATOR, userId);
+		return new SingleValueResponse(count);
+	}
+
+	@ApiOperation(value = "Query the candidate tasks of the current user")
+	@RequestMapping(value = "/tasks/_myCandidate", method = RequestMethod.GET)
+	public List<ArchTaskResponse> getMyCandidateTasks(
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
+		String userId = core.getAuthUserId();
+		List<HistoricTaskInstance> tasks = core.getProjectService()
+				.filterArchTaskByCandidateUser(userId, first, max);
+		List<ArchTaskResponse> respList = InnerWrapperObj.valueOf(tasks,
+				ArchTaskResponse.class);
+		return respList;
+	}
+
+	@ApiOperation(value = "Count the candidate tasks of the current user")
+	@RequestMapping(value = "/tasks/_myCandidate/_count", method = RequestMethod.GET)
+	public SingleValueResponse countMyCandidateTasks() {
+		String userId = core.getAuthUserId();
+		long count = core.getProjectService().countArchTaskByUser(
+				UserTaskRole.CANDIDATE, userId);
+		return new SingleValueResponse(count);
+	}
+
 	@ApiOperation(value = "Count the tasks by user role and userId", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(value = "/tasks/_count", method = RequestMethod.GET)
 	@PreAuthorize("principal == decodeUserId(#userIdBase64)")

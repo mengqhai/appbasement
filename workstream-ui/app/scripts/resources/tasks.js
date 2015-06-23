@@ -4,6 +4,7 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
             api_key: envVars.getApiKey
         };
         var homeUrl = envConstants.REST_BASE + '/tasks';
+        var archHomeUrl = envConstants.REST_BASE + '/archives/tasks';
         var Tasks = $resource(homeUrl + '/:taskId', paramDefault, {
             getMyTasks: {
                 url: homeUrl + '/_my',
@@ -12,12 +13,18 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
             countMyTasks: {
                 url: homeUrl + '/_my/_count'
             },
+            countArchMyTasks: {
+                url: archHomeUrl + '/_my/_count'
+            },
             getCreatedByMe: {
                 url: homeUrl + '/_createdByMe',
                 isArray: true
             },
             countCreatedByMe: {
                 url: homeUrl + '/_createdByMe/_count'
+            },
+            countArchCreatedByMe: {
+                url: archHomeUrl + '/_createdByMe/_count'
             },
             getMyCandidateTasks: {
                 url: homeUrl + '/_myCandidate',
@@ -26,8 +33,15 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
             countMyCandidateTasks: {
                 url: homeUrl + '/_myCandidate/_count'
             },
+            countArchMyCandidateTasks: {
+                url: archHomeUrl + '/_myCandidate/_count'
+            },
             getByListType: {
                 url: homeUrl + '/:type',
+                isArray: true
+            },
+            getArchByListType: {
+                url: archHomeUrl + '/:type',
                 isArray: true
             },
             getComments: {
@@ -83,6 +97,24 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
             dataObj[key] = value;
             var task = Tasks.patch({taskId: taskId}, dataObj);
             return xPromise.xeditablePromise(task);
+        }
+
+        Tasks.createLoader = function(status) {
+            if (status !== 'archived') {
+                return {
+                    countMyTasks: Tasks.countMyTasks,
+                    countCreatedByMe: Tasks.countCreatedByMe,
+                    countMyCandidateTasks: Tasks.countMyCandidateTasks,
+                    getByListType: Tasks.getByListType
+                };
+            } else {
+                return {
+                    countMyTasks: Tasks.countArchMyTasks,
+                    countCreatedByMe: Tasks.countArchCreatedByMe,
+                    countMyCandidateTasks: Tasks.countArchMyCandidateTasks,
+                    getByListType: Tasks.getArchByListType
+                };
+            }
         }
         return Tasks;
     }]);

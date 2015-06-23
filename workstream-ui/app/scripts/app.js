@@ -72,12 +72,12 @@ angular
             controller: 'AboutCtrl'
         });
         $stateProvider.state('tasks', {
-            url: '/tasks',
+            url: '/tasks/{status:active|archived}',
             templateUrl: 'views/tasks.html',
             controller: 'TasksController'
         })
             .state('tasks.list', {
-                url: '/{listType:_my|_createdByMe|_myCandidate}',
+                url: '/{listType:_my|_createdByMe|_myCandidate}/',
                 templateUrl: 'views/tasks.list.html',
                 controller: 'TaskListController'
             });

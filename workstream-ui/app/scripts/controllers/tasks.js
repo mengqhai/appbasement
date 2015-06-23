@@ -1,29 +1,32 @@
 angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable', 'ui.select', 'directives.errorsrc', 'directives.processForm'])
-    .controller('TasksController', ['$scope', 'Tasks', function ($scope, Tasks) {
+    .controller('TasksController', ['$scope', 'Tasks', '$stateParams', function ($scope, Tasks, $stateParams) {
         $scope.myTaskCount = 0;
         $scope.createdByMeCount = 0;
         $scope.candidateTaskCount = 0;
 
+        $scope.status = $stateParams.status ? $stateParams.status : 'active';
+        var loader = Tasks.createLoader($scope.status);
+
         $scope.loadCounts = function () {
-            $scope.myTaskCount = Tasks.countMyTasks();
-            $scope.createdByMeCount = Tasks.countCreatedByMe();
-            $scope.candidateTaskCount = Tasks.countMyCandidateTasks();
+            $scope.myTaskCount = loader.countMyTasks();
+            $scope.createdByMeCount = loader.countCreatedByMe();
+            $scope.candidateTaskCount = loader.countMyCandidateTasks();
         }
 
         $scope.$on('tasks.update.assignee', function (event, newAssignee) {
-            $scope.myTaskCount = Tasks.countMyTasks();
+            $scope.myTaskCount = loader.countMyTasks();
         });
         $scope.$on('tasks.create', function (event, task) {
             if (task.assignee === $scope.getCurrentUserId()) {
-                $scope.myTaskCount = Tasks.countMyTasks();
+                $scope.myTaskCount = loader.countMyTasks();
             }
-            $scope.createdByMeCount = Tasks.countCreatedByMe();
+            $scope.createdByMeCount = loader.countCreatedByMe();
         });
         $scope.$on('tasks.delete', function (event, task) {
             if (task.assignee === $scope.getCurrentUserId()) {
-                $scope.myTaskCount = Tasks.countMyTasks();
+                $scope.myTaskCount = loader.countMyTasks();
             }
-            $scope.createdByMeCount = Tasks.countCreatedByMe();
+            $scope.createdByMeCount = loader.countCreatedByMe();
         });
         $scope.$on('tasks.claim', function (event, task) {
             $scope.myTaskCount.v++;
@@ -32,18 +35,19 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
         $scope.$on('tasks.complete', function (event, task) {
             // $scope.myTaskCount.v--;
             if (task.assignee === $scope.getCurrentUserId()) {
-                $scope.myTaskCount = Tasks.countMyTasks();
+                $scope.myTaskCount = loader.countMyTasks();
             }
-            $scope.createdByMeCount = Tasks.countCreatedByMe();
+            $scope.createdByMeCount = loader.countCreatedByMe();
         });
 
         //$scope.loadCounts();
     }])
     .controller('TaskListController', ['$scope', 'Tasks', '$stateParams', '$modal', function ($scope, Tasks, $stateParams, $modal) {
+        var loader = Tasks.createLoader($scope.status);
         $scope.params = $stateParams;
         $scope.tasks = [];
         $scope.loadByType = function () {
-            $scope.tasks = Tasks.getByListType({type: $stateParams.listType});
+            $scope.tasks = loader.getByListType({type: $stateParams.listType});
         };
         $scope.loadByType();
 
@@ -132,7 +136,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                 firstName: 'Unassigned'
             }
             $scope.assignee = task.assignee ? Users.getWithCache({userIdBase64: btoa(task.assignee)}) : unassigned;
-            if (task.orgId) {
+            if (task.orgId && !task.endTime) {
                 $scope.userList = $scope.getOrgUsers(task.orgId).slice();
                 $scope.userList.push(unassigned);
             }
@@ -147,7 +151,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                 });
             }
 
-            //$scope.project = $scope.getProject(task.projectId);
+            $scope.project = $scope.getProject(task.projectId);
             //$scope.myProjects = $scope.getMyProjects();
             $scope.onSelectProject = function (project) {
                 $scope.updateTask('projectId', project.id).then(function (success) {
