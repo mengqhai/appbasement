@@ -65,12 +65,12 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             case '_my':
                 $scope.filterEx.assignee = $scope.getCurrentUserId();
                 $scope.$on('tasks.create', function (event, task) {
-                    if (task.assignee === $scope.getCurrentUserId()) {
+                    if (task.assignee === $scope.getCurrentUserId() && $scope.status==='active') {
                         $scope.tasks.splice(0, 0, task);
                     }
                 });
                 $scope.$on('tasks.delete', function (event, task) {
-                    if (task.assignee === $scope.getCurrentUserId()) {
+                    if (task.assignee === $scope.getCurrentUserId() && $scope.status==='active') {
                         removeTask(task);
                     }
                 });
@@ -81,7 +81,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             case '_createdByMe':
                 $scope.filterEx.creator = $scope.getCurrentUserId();
                 $scope.$on('tasks.create', function (event, task) {
-                    if (task.creator === $scope.getCurrentUserId()) {
+                    if (task.creator === $scope.getCurrentUserId() && $scope.status==='active') {
                         $scope.tasks.splice(0, 0, task);
                     }
                 });
