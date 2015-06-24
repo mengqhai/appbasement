@@ -1,9 +1,12 @@
 <div>
     <h2>{{process.name}}<span ng-if="!process.name">{{process.id}}</span>
+    </h2>
+    <p>
         <span class="label label-primary" ng-if="process.endTime">
             Archived
         </span>
-    </h2>
+        <span class="label label-default">{{getOrg(process.orgId).name}}</span>
+    </p>
     <p><span class="glyphicon glyphicon-time"></span> Started at: {{archProcess.startTime | date: 'medium'}}
         <span class="glyphicon glyphicon-user"></span> Starter: {{archProcess.startUserId}}
     </p>
