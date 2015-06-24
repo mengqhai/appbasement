@@ -71,7 +71,7 @@ angular.module('resources.processes', ['env'])
             else {
                 return {
                     getStartedByMe: Processes.getArchStartedByMe,
-                    getInvolvesMe: Processes.getArchStartedByMe,
+                    getInvolvesMe: Processes.getArchInvolvesMe,
                     countStartedByMe: Processes.countArchStartedByMe,
                     countInvolvesMe: Processes.countArchInvolvesMe,
                     get: Processes.getArchive,
