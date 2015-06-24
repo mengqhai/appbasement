@@ -6,13 +6,18 @@ angular.module('controllers.processes', ['resources.templates', 'resources.proce
         }
         $scope.startedByMe = null;
         $scope.involvesMe = null;
+
+
+        $scope.status = $stateParams.status ? $stateParams.status : 'active';
+        $scope.loader = Processes.createLoader($scope.status);
+        var loader = $scope.loader;
+
         function loadStartedByMe() {
-            $scope.startedByMe = Processes.getStartedByMe();
-            ;
+            $scope.startedByMe = loader.getStartedByMe();
         }
 
         function loadInvolvesMe() {
-            $scope.involvesMe = Processes.getInvolvesMe();
+            $scope.involvesMe = loader.getInvolvesMe();
         }
 
         $scope.$watch('stateObj.isStartedByMeOpen', function (newValue, oldValue) {
@@ -49,16 +54,18 @@ angular.module('controllers.processes', ['resources.templates', 'resources.proce
                 isTasksOpen: false,
                 isDataOpen: false
             }
+            var loader = $scope.loader; // from $parent
             function reloadProcess(onSuccess) {
                 if (!onSuccess) {
                     onSuccess = function () {
                     };
                 }
-                $scope.archProcess = Processes.getArchive({processId: $stateParams.processId});
-                $scope.process = Processes.get({processId: $stateParams.processId}, onSuccess, function (error) {
-                    if (error.status === 404);
-                    $scope.$emit('state.reload');
-                    $state.go('^');
+                $scope.archProcess = loader.getArchive({processId: $stateParams.processId});
+                $scope.process = loader.get({processId: $stateParams.processId}, onSuccess, function (error) {
+                    $state.go('processes.details', {
+                        status: 'archived',
+                        processId: $stateParams.processId
+                    })
                 });
             }
 
@@ -69,7 +76,7 @@ angular.module('controllers.processes', ['resources.templates', 'resources.proce
                 if (!processId) {
                     return null;
                 }
-                var url = Processes.getDiagramUrl(processId);
+                var url = loader.getDiagramUrl(processId);
                 if (random) {
                     url = url + '&random=' + random;
                 }
@@ -79,7 +86,7 @@ angular.module('controllers.processes', ['resources.templates', 'resources.proce
             /** for tasks **/
             $scope.archTasks = null;
             function loadArchTasks() {
-                $scope.archTasks = Processes.getArchiveTasks({processId: $scope.process.id});
+                $scope.archTasks = loader.getArchiveTasks({processId: $scope.process.id});
             }
 
             $scope.$watch('stateObj.isTasksOpen', function (newValue, oldValue) {
@@ -111,13 +118,13 @@ angular.module('controllers.processes', ['resources.templates', 'resources.proce
                 }
             }
             function loadVars() {
-                $scope.vars = Processes.getVars({processId: $scope.process.id});
+                $scope.vars = loader.getVars({processId: $scope.process.id});
             }
 
             $scope.formDef = {};
             function parseFormProps(bpmn) {
                 var formProps = $(bpmn).find('activiti\\:formProperty');
-                formProps.each(function(idx, formProp) {
+                formProps.each(function (idx, formProp) {
                     var elem = $(formProp);
                     $scope.formDef[elem.attr('id')] = {
                         id: elem.attr('id'),
@@ -126,6 +133,7 @@ angular.module('controllers.processes', ['resources.templates', 'resources.proce
                     }
                 })
             }
+
             $scope.$watch('stateObj.isDataOpen', function (newValue, oldValue) {
                 if (newValue && !$scope.vars) {
                     Templates.getBpmn({templateId: $scope.process.processDefinitionId}).then(function (response) {
@@ -135,7 +143,7 @@ angular.module('controllers.processes', ['resources.templates', 'resources.proce
                     loadVars();
                 }
             })
-            $scope.formatDataValue = function(key, value) {
+            $scope.formatDataValue = function (key, value) {
                 var def = $scope.formDef[key];
                 if (!def) {
                     return value;
@@ -158,4 +166,18 @@ angular.module('controllers.processes', ['resources.templates', 'resources.proce
                 });
                 random = Math.random();
             })
+
+            /*
+             for archived process, process.processDefinitionName === undefined, so need to get the name
+             from REST API
+             */
+            var template = null;
+            $scope.getProcessTemplate = function (templateId) {
+                if (template != null) {
+                    return template;
+                } else {
+                    template = Templates.get({templateId: templateId});
+                    return template;
+                }
+            }
         }]);

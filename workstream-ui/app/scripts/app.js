@@ -82,7 +82,7 @@ angular
                 controller: 'TaskListController'
             });
         $stateProvider.state('processes', {
-            url: '/processes',
+            url: '/processes/{status:active|archived}',
             templateUrl: 'views/processes.html',
             controller: 'ProcessListController'
         });

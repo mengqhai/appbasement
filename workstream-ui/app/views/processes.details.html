@@ -6,7 +6,7 @@
 
     <div class="panel panel-default">
         <div class="panel-body">
-            <img ng-src="{{getDiagramUrl(process.id)}}">
+            <img ng-src="{{getDiagramUrl(process.id)}}" err-src="/images/no_image.jpg">
         </div>
     </div>
     <accordion>
@@ -32,9 +32,20 @@
                 </a>
             </div>
         </accordion-group>
-        <accordion-group heading="Process Template">
-            <a ui-sref="templates.details({orgId: process.orgId, templateId: process.processDefinitionId})">{{process.processDefinitionName}}
+        <accordion-group heading="Process Template" is-open="stateObj.isTemplateOpen">
+            <a ng-if="!process.endTime"
+                    ui-sref="templates.details({orgId: process.orgId, templateId: process.processDefinitionId})">{{process.processDefinitionName}}
                 <span class="label label-default">v{{process.processDefinitionVersion}}</span></a>
+            <span ng-if="process.endTime && stateObj.isTemplateOpen">
+                <a ng-if="getProcessTemplate(process.processDefinitionId).id"
+                   ui-sref="templates.details({orgId: process.orgId, templateId: process.processDefinitionId})">
+                    {{getProcessTemplate(process.processDefinitionId).name}}
+                    <span class="label label-default">v{{getProcessTemplate(process.processDefinitionId).version}}</span></a>
+                </a>
+                <span ng-if="!getProcessTemplate(process.processDefinitionId).id">
+                    The process template has been undeployed.
+                </span>
+            </span>
         </accordion-group>
     </accordion>
 </div>

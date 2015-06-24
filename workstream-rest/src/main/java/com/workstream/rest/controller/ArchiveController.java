@@ -2,15 +2,21 @@ package com.workstream.rest.controller;
 
 import static com.workstream.rest.utils.RestUtils.decodeUserId;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.activiti.engine.ActivitiObjectNotFoundException;
 import org.activiti.engine.history.HistoricFormProperty;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.task.Attachment;
 import org.activiti.engine.task.Event;
 import org.activiti.engine.task.Task;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,8 +26,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.workstream.core.exception.BytesNotFoundException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Project;
 import com.workstream.core.service.CoreFacadeService;
@@ -273,6 +281,28 @@ public class ArchiveController {
 		return InnerWrapperObj.valueOf(hiList, ArchProcessResponse.class);
 	}
 
+	@ApiOperation(value = "Retrieve archived processes started by the current user", notes = "Note: The returned result is a list of <b>history process objects</b>")
+	@RequestMapping(value = "/processes/_startedByMe", method = RequestMethod.GET)
+	public List<ArchProcessResponse> getArchProcessesStartedByMe(
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
+		String userId = core.getAuthUserId();
+		List<HistoricProcessInstance> hiList = core.getProcessService()
+				.filterHiProcessByStarter(userId, true, first, max);
+		return InnerWrapperObj.valueOf(hiList, ArchProcessResponse.class);
+	}
+
+	@ApiOperation(value = "Retrieve archived processes involved the current user", notes = "Note: The returned result is a list of <b>history process objects</b>")
+	@RequestMapping(value = "/processes/_involvedMe", method = RequestMethod.GET)
+	public List<ArchProcessResponse> getArchProcessesInvolvedMe(
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
+		String userId = core.getAuthUserId();
+		List<HistoricProcessInstance> hiList = core.getProcessService()
+				.filterHiProcessByInvolved(userId, true, first, max);
+		return InnerWrapperObj.valueOf(hiList, ArchProcessResponse.class);
+	}
+
 	@ApiOperation(value = "Query the process count by user role and userId", notes = RestConstants.TEST_USER_ID_INFO)
 	@RequestMapping(value = "/processes/_count", method = RequestMethod.GET)
 	@PreAuthorize("principal == decodeUserId(#userIdBase64)")
@@ -314,6 +344,49 @@ public class ArchiveController {
 		HistoricProcessInstance hiPi = core.getProcessService()
 				.getHiProcessWithVars(processId);
 		return hiPi.getProcessVariables();
+	}
+
+	@ApiOperation(value = "Retrieve the archive entry of a running or finished process")
+	@RequestMapping(value = "/processes/{id}", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForArchProcess(#processId)")
+	public ArchProcessResponse getArchProcess(
+			@PathVariable("id") String processId) {
+		HistoricProcessInstance arch = core.getProcessService().getHiProcess(
+				processId);
+		return new ArchProcessResponse(arch);
+	}
+
+	@ApiOperation(value = "Retrieve the diagram of an archived process")
+	@RequestMapping(value = "/processes/{id}/diagram", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForArchProcess(#processId)")
+	public void getArchProcessDiagram(@PathVariable("id") String processId,
+			@ApiIgnore HttpServletResponse response) {
+
+		HistoricProcessInstance arch = core.getProcessService().getHiProcess(
+				processId);
+		if (arch == null) {
+			throw new ResourceNotFoundException("No such process");
+		}
+		String templateId = arch.getProcessDefinitionId();
+		InputStream is = null;
+		try {
+			is = core.getTemplateService()
+					.getProcessTemplateDiagram(templateId);
+
+		} catch (ActivitiObjectNotFoundException ex) {
+			throw new ResourceNotFoundException("No such process template: "
+					+ templateId);
+		}
+		if (is == null) {
+			throw new ResourceNotFoundException("No such process template: "
+					+ templateId);
+		}
+		try {
+			IOUtils.copy(is, response.getOutputStream());
+			response.setContentType(MediaType.IMAGE_PNG_VALUE);
+		} catch (IOException e) {
+			throw new BytesNotFoundException(e.getMessage(), e);
+		}
 	}
 
 	@ApiOperation(value = "Retrieve the form properties for a process", notes = "Including the start form properties and the task form properties")

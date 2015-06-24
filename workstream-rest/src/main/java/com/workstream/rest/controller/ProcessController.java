@@ -81,8 +81,8 @@ public class ProcessController {
 		return new ArchProcessResponse(arch);
 	}
 
-	@ApiOperation(value = "Retrieve the diagram of a running process", produces = MediaType.IMAGE_PNG_VALUE)
-	@RequestMapping(value = "/{id}/diagram", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+	@ApiOperation(value = "Retrieve the diagram of a running process")
+	@RequestMapping(value = "/{id}/diagram", method = RequestMethod.GET)
 	@PreAuthorize("isAuthInOrgForProcess(#processId)")
 	public void getProcessDiagram(@PathVariable("id") String processId,
 			@ApiIgnore HttpServletResponse response) {
