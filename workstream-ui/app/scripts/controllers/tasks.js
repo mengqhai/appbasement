@@ -46,10 +46,34 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
         var loader = Tasks.createLoader($scope.status);
         $scope.params = $stateParams;
         $scope.tasks = [];
-        $scope.loadByType = function () {
-            $scope.tasks = loader.getByListType({type: $stateParams.listType});
+
+        function setTaskCount() {
+            switch ($stateParams.listType) {
+                case '_my':
+                    $scope.taskCount = $scope.myTaskCount;
+                    break;
+                case '_createdByMe':
+                    $scope.taskCount = $scope.createdByMeCount;
+                    break;
+                case '_myCandidate':
+                    $scope.taskCount = $scope.candidateTaskCount;
+                    break;
+            }
+        }
+
+        var loadByType = function (onSuccess, first, max) {
+            if (first === undefined || max === undefined) {
+                first = 0;
+                max = 10;
+            }
+            return loader.getByListType({type: $stateParams.listType, first: first, max: max}, onSuccess);
         };
-        $scope.loadByType();
+        $scope.tasks = loadByType(setTaskCount);
+        $scope.loadMore = function() {
+            loadByType(function(moreTasks) {
+                $.merge($scope.tasks, moreTasks);
+            }, $scope.tasks.length, 10);
+        }
 
         var removeTask = function (task) {
             var i = $scope.tasks.indexOf(task);
@@ -65,12 +89,12 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             case '_my':
                 $scope.filterEx.assignee = $scope.getCurrentUserId();
                 $scope.$on('tasks.create', function (event, task) {
-                    if (task.assignee === $scope.getCurrentUserId() && $scope.status==='active') {
+                    if (task.assignee === $scope.getCurrentUserId() && $scope.status === 'active') {
                         $scope.tasks.splice(0, 0, task);
                     }
                 });
                 $scope.$on('tasks.delete', function (event, task) {
-                    if (task.assignee === $scope.getCurrentUserId() && $scope.status==='active') {
+                    if (task.assignee === $scope.getCurrentUserId() && $scope.status === 'active') {
                         removeTask(task);
                     }
                 });
@@ -81,7 +105,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             case '_createdByMe':
                 $scope.filterEx.creator = $scope.getCurrentUserId();
                 $scope.$on('tasks.create', function (event, task) {
-                    if (task.creator === $scope.getCurrentUserId() && $scope.status==='active') {
+                    if (task.creator === $scope.getCurrentUserId() && $scope.status === 'active') {
                         $scope.tasks.splice(0, 0, task);
                     }
                 });
