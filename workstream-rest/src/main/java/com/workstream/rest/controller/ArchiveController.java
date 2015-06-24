@@ -315,6 +315,24 @@ public class ArchiveController {
 		return new SingleValueResponse(count);
 	}
 
+	@ApiOperation(value = "Query the archived process count started by the current user")
+	@RequestMapping(value = "/processes/_startedByMe/_count", method = RequestMethod.GET)
+	public SingleValueResponse countArchProcessesStartedByMe() {
+		String userId = core.getAuthUserId();
+		long count = core.getProcessService().countHiProcessByUser(
+				UserProcessRole.STARTER, userId, true);
+		return new SingleValueResponse(count);
+	}
+
+	@ApiOperation(value = "Query the archived process count that involves the current user")
+	@RequestMapping(value = "/processes/_involvedMe/_count", method = RequestMethod.GET)
+	public SingleValueResponse countArchProcessesInvolvedMe() {
+		String userId = core.getAuthUserId();
+		long count = core.getProcessService().countHiProcessByUser(
+				UserProcessRole.INVOLVED, userId, true);
+		return new SingleValueResponse(count);
+	}
+
 	@ApiOperation(value = "Retrieves the archived tasks in a given process")
 	@RequestMapping(value = "/processes/{processId}/tasks", method = RequestMethod.GET)
 	@PreAuthorize("isAuthInOrgForArchProcess(#processId)")

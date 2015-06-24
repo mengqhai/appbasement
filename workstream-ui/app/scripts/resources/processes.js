@@ -6,40 +6,44 @@ angular.module('resources.processes', ['env'])
             api_key: envVars.getApiKey
         }, {
             getStartedByMe: {
-                method: 'GET',
                 url: envConstants.REST_BASE + '/processes/_startedByMe',
                 isArray: true
             },
+            countStartedByMe: {
+                url: envConstants.REST_BASE + '/processes/_startedByMe/_count'
+            },
             getInvolvesMe: {
-                method: 'GET',
                 url: envConstants.REST_BASE + '/processes/_involvedMe',
                 isArray: true
             },
+            countInvolvesMe: {
+                url: envConstants.REST_BASE + '/processes/_involvedMe/_count'
+            },
             getArchStartedByMe: {
-                method: 'GET',
                 url: archHomeUrl + '/_startedByMe',
                 isArray: true
             },
+            countArchStartedByMe: {
+                url: archHomeUrl + '/_startedByMe/_count'
+            },
             getArchInvolvesMe: {
-                method: 'GET',
                 url: archHomeUrl + '/_involvedMe',
                 isArray: true
             },
+            countArchInvolvesMe: {
+                url: archHomeUrl + '/_involvedMe/_count'
+            },
             getArchive: {
-                method: 'GET',
                 url: archHomeUrl + '/:processId'
             },
             getArchiveTasks: {
-                method: 'GET',
                 url: envConstants.REST_BASE + '/archives/processes/:processId/tasks',
                 isArray: true
             },
             getVars: {
-                method: 'GET',
                 url: homeUrl + '/vars'
             },
             getArchVars: {
-                method: 'GET',
                 url: archHomeUrl + '/:processId/vars'
             }
         })
@@ -55,6 +59,8 @@ angular.module('resources.processes', ['env'])
                 return {
                     getStartedByMe: Processes.getStartedByMe,
                     getInvolvesMe: Processes.getInvolvesMe,
+                    countStartedByMe: Processes.countStartedByMe,
+                    countInvolvesMe: Processes.countInvolvesMe,
                     get: Processes.get,
                     getArchive: Processes.getArchive,
                     getDiagramUrl: Processes.getDiagramUrl,
@@ -66,6 +72,8 @@ angular.module('resources.processes', ['env'])
                 return {
                     getStartedByMe: Processes.getArchStartedByMe,
                     getInvolvesMe: Processes.getArchStartedByMe,
+                    countStartedByMe: Processes.countArchStartedByMe,
+                    countInvolvesMe: Processes.countArchInvolvesMe,
                     get: Processes.getArchive,
                     getArchive: Processes.getArchive,
                     getDiagramUrl: Processes.getArchDiagramUrl,

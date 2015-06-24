@@ -133,6 +133,27 @@ public class ProcessController {
 		return InnerWrapperObj.valueOf(hiList, ArchProcessResponse.class);
 	}
 
+	@ApiOperation(value = "Query the process count started by the current user")
+	@RequestMapping(value = "/_startedByMe/_count", method = RequestMethod.GET)
+	public SingleValueResponse countProcessesStartedByMe() {
+		String userId = core.getAuthUserId();
+		long count = core.getProcessService().countHiProcessByUser(
+				UserProcessRole.STARTER, userId, false);
+		return new SingleValueResponse(count);
+	}
+
+	@ApiOperation(value = "Query the process count by user role and userId", notes = RestConstants.TEST_USER_ID_INFO)
+	@RequestMapping(value = "/_count", method = RequestMethod.GET)
+	@PreAuthorize("principal == decodeUserId(#userIdBase64)")
+	public SingleValueResponse countProcessesByUser(
+			@RequestParam(required = true) UserProcessRole role,
+			@RequestParam(required = true) String userIdBase64) {
+		String userId = RestUtils.decodeUserId(userIdBase64);
+		long count = core.getProcessService().countHiProcessByUser(role,
+				userId, false);
+		return new SingleValueResponse(count);
+	}
+
 	@ApiOperation(value = "Retrieve running processes involved the current user", notes = "Note: The returned result is a list of <b>history process objects</b>")
 	@RequestMapping(value = "/_involvedMe", method = RequestMethod.GET)
 	public List<ArchProcessResponse> getProcessesInvolvedMe(
@@ -142,6 +163,15 @@ public class ProcessController {
 		List<HistoricProcessInstance> hiList = core.getProcessService()
 				.filterHiProcessByInvolved(userId, false, first, max);
 		return InnerWrapperObj.valueOf(hiList, ArchProcessResponse.class);
+	}
+
+	@ApiOperation(value = "Query the process count that involves the current user")
+	@RequestMapping(value = "/_involvedMe/_count", method = RequestMethod.GET)
+	public SingleValueResponse countProcessesInvolvedMe() {
+		String userId = core.getAuthUserId();
+		long count = core.getProcessService().countHiProcessByUser(
+				UserProcessRole.INVOLVED, userId, false);
+		return new SingleValueResponse(count);
 	}
 
 	@ApiOperation(value = "Retrieve all the variables for the process instance", notes = "This is a security hole to be fixed.")

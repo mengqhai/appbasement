@@ -12,6 +12,9 @@ angular.module('controllers.processes', ['resources.templates', 'resources.proce
         $scope.loader = Processes.createLoader($scope.status);
         var loader = $scope.loader;
 
+        $scope.startedByMeCount = loader.countStartedByMe();
+        $scope.involvesMeCount = loader.countInvolvesMe();
+
         function loadStartedByMe() {
             $scope.startedByMe = loader.getStartedByMe();
         }
