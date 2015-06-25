@@ -267,11 +267,12 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             /**
              * For comment
              */
+            $scope.commentObj={comment:null}
             $scope.canComment = function (ngFormController) {
                 return ngFormController.$valid;
             }
             $scope.addComment = function () {
-                Tasks.addComment({taskId: task.id}, $scope.comment, function (newComment) {
+                Tasks.addComment({taskId: task.id}, $scope.commentObj.comment, function (newComment) {
                     if ($scope.events) {
                         // the response is a comment entry
                         // here we have to make it look like an event entry
@@ -280,7 +281,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                         $scope.events.unshift(newComment)
                     }
                     console.log(newComment);
-                    $scope.comment = null;
+                    $scope.commentObj.comment = null;
                 });
             }
 

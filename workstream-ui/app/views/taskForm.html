@@ -175,7 +175,8 @@
                     </div>
                     <div class="media-body">
                         <form name="commentForm" novalidate>
-                            <textarea name="commentText" rows="2" class="form-control" placeholder="Write a comment..." ng-model="comment" required></textarea>
+                            <textarea name="commentText" rows="2" class="form-control" placeholder="Write a comment..." ng-model="commentObj.comment" required></textarea>
+                            {{comment}}
                             <div>
                                 <button class="btn btn-default pull-right" ng-click="addComment()" ng-disabled="!canComment(commentForm)">Comment</button>
                             </div>
