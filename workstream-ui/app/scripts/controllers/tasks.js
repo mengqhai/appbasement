@@ -283,6 +283,22 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                     $scope.comment = null;
                 });
             }
+
+            /**
+             * For attachment
+             */
+            $scope.stateObj = {
+                isAttachmentOpen: false
+            }
+            var loadAttachments = function() {
+                $scope.attachments = Tasks.getAttachments({taskId: task.id});
+            }
+            $scope.$watch('stateObj.isAttachmentOpen', function(newValue, oldValue) {
+                if(newValue && !$scope.attachments) {
+                    loadAttachments();
+                }
+            })
+            $scope.getAttachmentThumbUrl = Tasks.getAttachmentThumbUrl;
         }])
     .controller('TaskCreateFormController', ['$scope', 'Tasks', '$modalInstance', '$rootScope', function ($scope, Tasks, $modalInstance, $rootScope) {
         var task = {};

@@ -63,6 +63,10 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
                 url: envConstants.REST_BASE + '/archives/tasks/:taskId/events',
                 isArray: true
             },
+            getAttachments: {
+                url: homeUrl + '/:taskId/attachments',
+                isArray: true
+            },
             patch: {
                 method: 'PATCH',
                 url: homeUrl + '/:taskId'
@@ -105,8 +109,11 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
             var task = Tasks.patch({taskId: taskId}, dataObj);
             return xPromise.xeditablePromise(task);
         }
+        Tasks.getAttachmentThumbUrl = function (attachmentId) {
+            return envConstants.REST_BASE + '/attachments/' + attachmentId + '/thumb?api_key=' + envVars.getApiKey();
+        }
 
-        Tasks.createLoader = function(status) {
+        Tasks.createLoader = function (status) {
             if (status !== 'archived') {
                 return {
                     countMyTasks: Tasks.countMyTasks,

@@ -146,11 +146,28 @@
             </div>
         </form>
 
+        <accordion>
+            <accordion-group heading="Attachments" is-open="stateObj.isAttachmentOpen">
+                <div class="row">
+                    <div ng-repeat="attachment in attachments" class="thumbnail col-sm-2">
+                        <img ng-if="['image/jpeg'].indexOf(attachment.type)>-1" ng-src="{{getAttachmentThumbUrl(attachment.id)}}"
+                             err-src="images/attachment.png" width="60" height="60">
+                        <img ng-if="['image/jpeg'].indexOf(attachment.type)===-1" src="images/attachment.png"
+                             width="60" height="60">
+                        <div class="caption">
+                            {{attachment.name}}
+                        </div>
+                    </div>
+                </div>
+
+            </accordion-group>
+        </accordion>
+
         <!-- Task events -->
         <div class="panel panel-default">
 
             <div class="panel-body">
-                <div class="media">
+                <div class="media" ng-if="!task.endTime">
                     <div class="media-left">
                         <a href>
                             <img class="media-object img-rounded" ng-src="{{userPicUrl}}" err-src="images/yeoman.png" width="60" height="60">
