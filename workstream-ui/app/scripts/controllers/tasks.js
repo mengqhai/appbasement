@@ -69,8 +69,8 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             return loader.getByListType({type: $stateParams.listType, first: first, max: max}, onSuccess);
         };
         $scope.tasks = loadByType(setTaskCount);
-        $scope.loadMore = function() {
-            loadByType(function(moreTasks) {
+        $scope.loadMore = function () {
+            loadByType(function (moreTasks) {
                 $.merge($scope.tasks, moreTasks);
             }, $scope.tasks.length, 10);
         }
@@ -251,7 +251,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             $scope.$on('tasks.claim', closeDialog);
 
             /** for process form **/
-            if (!task.endTime) {
+            if (task.processInstanceId && !task.endTime) {
                 $scope.formDef = Tasks.getFormDef({taskId: task.id});
                 $scope.formObj = {};
                 $scope.completeForm = function () {
@@ -261,6 +261,27 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                 }
             } else {
                 $scope.archForm = Tasks.getArchForm({taskId: task.id});
+            }
+
+
+            /**
+             * For comment
+             */
+            $scope.canComment = function (ngFormController) {
+                return ngFormController.$valid;
+            }
+            $scope.addComment = function () {
+                Tasks.addComment({taskId: task.id}, $scope.comment, function (newComment) {
+                    if ($scope.events) {
+                        // the response is a comment entry
+                        // here we have to make it look like an event entry
+                        newComment.action = 'AddComment';
+                        newComment.message = newComment['fullMessage'];
+                        $scope.events.unshift(newComment)
+                    }
+                    console.log(newComment);
+                    $scope.comment = null;
+                });
             }
         }])
     .controller('TaskCreateFormController', ['$scope', 'Tasks', '$modalInstance', '$rootScope', function ($scope, Tasks, $modalInstance, $rootScope) {
