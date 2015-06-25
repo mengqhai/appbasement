@@ -1,5 +1,5 @@
 angular.module('resources.tasks', ['env', 'resources.utils'])
-    .factory('Tasks', ['$resource', 'envConstants', 'envVars', 'XeditableResourcePromise', function ($resource, envConstants, envVars, xPromise) {
+    .factory('Tasks', ['$resource', 'envConstants', 'envVars', 'XeditableResourcePromise', '$http', function ($resource, envConstants, envVars, xPromise, $http) {
         var paramDefault = {
             api_key: envVars.getApiKey
         };
@@ -111,6 +111,19 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
         }
         Tasks.getAttachmentThumbUrl = function (attachmentId) {
             return envConstants.REST_BASE + '/attachments/' + attachmentId + '/thumb?api_key=' + envVars.getApiKey();
+        }
+
+        Tasks.uploadAttachment = function (taskId, file) {
+            // see https://uncorkedstudios.com/blog/multipartformdata-file-upload-with-angularjs
+            var fd = new FormData();
+            fd.append('file', file);
+            var url = homeUrl + '/' + taskId + '/attachments' + '?api_key=' + envVars.getApiKey();
+            return $http.post(url, fd, {
+                transformRequest: angular.identity,
+                headers: {
+                    'Content-Type': undefined
+                }
+            });
         }
 
         Tasks.createLoader = function (status) {

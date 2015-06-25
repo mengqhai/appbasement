@@ -267,11 +267,26 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             /**
              * For comment
              */
-            $scope.commentObj={comment:null}
+            $scope.commentObj = {comment: null}
             $scope.canComment = function (ngFormController) {
-                return ngFormController.$valid;
+                if ($scope.fileFields.length === 0) {
+                    return ngFormController.$valid;
+                } else {
+
+                    for (i=0;i<$scope.fileFields.length;i++) {
+                        var fileField = $scope.fileFields[i];
+                        if (fileField['file'] === undefined) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+
             }
             $scope.addComment = function () {
+                if (!$scope.commentObj.comment) {
+                    return;
+                }
                 Tasks.addComment({taskId: task.id}, $scope.commentObj.comment, function (newComment) {
                     if ($scope.events) {
                         // the response is a comment entry
@@ -291,15 +306,43 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
             $scope.stateObj = {
                 isAttachmentOpen: false
             }
-            var loadAttachments = function() {
+            var loadAttachments = function () {
                 $scope.attachments = Tasks.getAttachments({taskId: task.id});
             }
-            $scope.$watch('stateObj.isAttachmentOpen', function(newValue, oldValue) {
-                if(newValue && !$scope.attachments) {
+            $scope.$watch('stateObj.isAttachmentOpen', function (newValue, oldValue) {
+                if (newValue && !$scope.attachments) {
                     loadAttachments();
                 }
             })
             $scope.getAttachmentThumbUrl = Tasks.getAttachmentThumbUrl;
+
+            /**
+             * For adding attachment
+             */
+            $scope.fileFields = [];
+            $scope.addFileField = function () {
+                $scope.fileFields.push({});
+            }
+            $scope.removeFileField = function (fileField) {
+                var index = $scope.fileFields.indexOf(fileField);
+                $scope.fileFields.splice(index, 1);
+            }
+            $scope.addAttachments = function() {
+                for (i=0;i<$scope.fileFields.length;i++) {
+                    var fileField = $scope.fileFields[i];
+                    Tasks.uploadAttachment(task.id, fileField.file).success(function(newAttachment) {
+                        // make newAttachment look like an event
+                        newAttachment.message = newAttachment.name;
+                        newAttachment.action = 'AddAttachment';
+                        newAttachment.time = new Date().getTime();
+                        $scope.events.unshift(newAttachment);
+                        $scope.fileFields.length = 0;
+                        if ($scope.attachments) {
+                            $scope.attachments.push(newAttachment);
+                        }
+                    })
+                }
+            }
         }])
     .controller('TaskCreateFormController', ['$scope', 'Tasks', '$modalInstance', '$rootScope', function ($scope, Tasks, $modalInstance, $rootScope) {
         var task = {};
