@@ -1,11 +1,13 @@
-<div>
-    <h2>{{process.name}}<span ng-if="!process.name">{{process.id}}</span>
+<div ng-if="process.$resolved">
+    <h2><span ng-if="!process.orgId">System Process:</span>
+        {{process.name}}<span ng-if="!process.name">{{process.id}}</span>
     </h2>
     <p>
         <span class="label label-primary" ng-if="process.endTime">
             Archived
         </span>
         <span class="label label-default">{{getOrg(process.orgId).name}}</span>
+        <span class="label label-info" ng-if="!process.orgId">System</span>
     </p>
     <p><span class="glyphicon glyphicon-time"></span> Started at: {{archProcess.startTime | date: 'medium'}}
         <span class="glyphicon glyphicon-user"></span> Starter: {{archProcess.startUserId}}
@@ -40,17 +42,35 @@
             </div>
         </accordion-group>
         <accordion-group heading="Process Template" is-open="stateObj.isTemplateOpen">
-            <a ng-if="!process.endTime"
-                    ui-sref="templates.details({orgId: process.orgId, templateId: process.processDefinitionId})">{{process.processDefinitionName}}
-                <span class="label label-default">v{{process.processDefinitionVersion}}</span></a>
-            <span ng-if="process.endTime && stateObj.isTemplateOpen">
-                <a ng-if="getProcessTemplate(process.processDefinitionId).id"
-                   ui-sref="templates.details({orgId: process.orgId, templateId: process.processDefinitionId})">
-                    {{getProcessTemplate(process.processDefinitionId).name}}
-                    <span class="label label-default">v{{getProcessTemplate(process.processDefinitionId).version}}</span></a>
+            <!-- for non-system process -->
+            <span ng-if="process.orgId">
+                <a ng-if="!process.endTime"
+                   ui-sref="templates.details({orgId: process.orgId, templateId: process.processDefinitionId})">{{process.processDefinitionName}}
+                    <span class="label label-default">v{{process.processDefinitionVersion}}</span></a>
+                <span ng-if="process.endTime && stateObj.isTemplateOpen">
+                    <a ng-if="getProcessTemplate(process.processDefinitionId).id"
+                       ui-sref="templates.details({orgId: process.orgId, templateId: process.processDefinitionId})">
+                        {{getProcessTemplate(process.processDefinitionId).name}}
+                        <span class="label label-default">v{{getProcessTemplate(process.processDefinitionId).version}}</span></a>
+                    </a>
+                    <span ng-if="!getProcessTemplate(process.processDefinitionId).id">
+                        The process template has been undeployed.
+                    </span>
+                </span>
+            </span>
+            <!-- for system process -->
+            <span ng-if="!process.orgId">
+                <a ng-if="!process.endTime">{{process.processDefinitionName}}
+                    <span class="label label-default">v{{process.processDefinitionVersion}}</span>
                 </a>
-                <span ng-if="!getProcessTemplate(process.processDefinitionId).id">
-                    The process template has been undeployed.
+                <span ng-if="process.endTime && stateObj.isTemplateOpen">
+                    <a ng-if="getProcessTemplate(process.processDefinitionId).id">
+                        {{getProcessTemplate(process.processDefinitionId).name}}
+                        <span class="label label-default">v{{getProcessTemplate(process.processDefinitionId).version}}</span>
+                    </a>
+                    <span ng-if="!getProcessTemplate(process.processDefinitionId).id">
+                        The process template has been undeployed.
+                    </span>
                 </span>
             </span>
         </accordion-group>

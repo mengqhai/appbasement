@@ -15,30 +15,42 @@ angular.module('controllers.processes', ['resources.templates', 'resources.proce
         $scope.startedByMeCount = loader.countStartedByMe();
         $scope.involvesMeCount = loader.countInvolvesMe();
 
-        function loadStartedByMe() {
-            $scope.startedByMe = loader.getStartedByMe();
+        function loadStartedByMe(onSuccess, first, max) {
+            if (first === undefined || max === undefined) {
+                first = 0;
+                max = 10;
+            }
+            return loader.getStartedByMe({first: first, max: max}, onSuccess);
         }
 
-        function loadInvolvesMe() {
-            $scope.involvesMe = loader.getInvolvesMe();
+        function loadInvolvesMe(onSuccess, first, max) {
+            if (first === undefined || max === undefined) {
+                first = 0;
+                max = 10;
+            }
+            return loader.getInvolvesMe({first: first, max: max}, onSuccess);
+        }
+        function loadMore(loaderFun, theArray) {
+            loaderFun(function(moreArray) {
+                $.merge(theArray, moreArray);
+            }, theArray.length, 10);
+        }
+
+        $scope.loadMoreStartedByMe = function () {
+            loadMore(loadStartedByMe, $scope.startedByMe);
+        }
+        $scope.loadMoreInvolvesMe = function() {
+            loadMore(loadInvolvesMe, $scope.involvesMe);
         }
 
         $scope.$watch('stateObj.isStartedByMeOpen', function (newValue, oldValue) {
             if (newValue && !$scope.startedByMe) {
-                loadStartedByMe();
+                $scope.startedByMe = loadStartedByMe();
             }
         })
         $scope.$watch('stateObj.isInvolvesMeOpen', function (newValue, oldValue) {
             if (newValue && !$scope.involvesMe) {
-                loadInvolvesMe();
-            }
-        })
-        $scope.$on('state.reload', function () {
-            if ($scope.startedByMe) {
-                loadStartedByMe();
-            }
-            if ($scope.involvesMe) {
-                loadInvolvesMe();
+                $scope.involvesMe =  loadInvolvesMe();
             }
         })
     }])

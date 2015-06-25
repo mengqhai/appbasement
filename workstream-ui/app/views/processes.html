@@ -19,14 +19,24 @@
                     Started by me <span class="badge pull-right">{{startedByMeCount.v}}</span>
                 </accordion-heading>
                 <a class="list-group-item" ng-repeat="process in startedByMe" ui-sref="processes.details({processId: process.id})"
-                   ui-sref-active="active">{{process.name}}<span  ng-if="!process.name">{{process.id}}</span></a>
+                   ui-sref-active="active">{{process.name}}<span  ng-if="!process.name">{{process.id}}</span>
+                </a>
+                <a ng-if="startedByMe.length<startedByMeCount.v" href class="list-group-item list-group-item-info" ng-click="loadMoreStartedByMe()">
+                    <b>Show more</b>
+                </a>
             </accordion-group>
             <accordion-group is-open='stateObj.isInvolvesMeOpen' class="list-group">
                 <accordion-heading>
                     Involves me <span class="badge pull-right">{{involvesMeCount.v}}</span>
                 </accordion-heading>
                 <a class="list-group-item" ng-repeat="process in involvesMe"  ui-sref="processes.details({processId: process.id})"
-                   ui-sref-active="active">{{process.name}}<span ng-if="!process.name">{{process.id}}</span></a>
+                   ui-sref-active="active">
+                    <span ng-if="!process.orgId">System Process:</span>
+                    {{process.name}}<span ng-if="!process.name">{{process.id}}</span>
+                </a>
+                <a ng-if="involvesMe.length<involvesMeCount.v" href class="list-group-item list-group-item-info" ng-click="loadMoreInvolvesMe()">
+                    <b>Show more</b>
+                </a>
             </accordion-group>
         </accordion>
     </aside>

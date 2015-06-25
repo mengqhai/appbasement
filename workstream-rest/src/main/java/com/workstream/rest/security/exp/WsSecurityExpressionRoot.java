@@ -162,7 +162,7 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 
 	public boolean isAuthInOrgForArchProcess(String processId) {
 		String orgId = getOrgIdFromArchProcess(processId);
-		if (orgId == null) {
+		if (orgId == null || "".equals(orgId)) {
 			return true; // system task
 		}
 		return isAuthInOrg(orgId);
