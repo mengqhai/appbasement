@@ -170,7 +170,7 @@ public class ProjectService extends TaskCapable {
 		Long orgId = pro.getOrg().getId();
 		Long proId = pro.getId();
 		q.taskTenantId(String.valueOf(orgId)).taskCategory(
-				String.valueOf(proId));
+				String.valueOf(proId)).orderByTaskCreateTime().desc();
 		return q;
 	}
 
