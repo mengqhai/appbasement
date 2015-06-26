@@ -1,0 +1,11 @@
+<div>
+    <span class="dropdown" dropdown>
+        <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
+            <span class="glyphicon" ng-class="{'glyphicon-play': status==='active', 'glyphicon-stop':status==='archived'}"></span> {{status | uppercase}} <span class="caret"></span>
+        </button>
+        <span class="dropdown-menu" role="menu">
+            <li><a ui-sref="{{srefName}}({status:'active'})"><span class="glyphicon glyphicon-play"></span> Active</a></li>
+            <li><a ui-sref="{{srefName}}({status:'archived'})"><span class="glyphicon glyphicon-stop"></span> Archived</a></li>
+        </span>
+    </span>
+</div>

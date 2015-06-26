@@ -1,17 +1,10 @@
 <header>
-    <h1>Process</h1>
+    <h1><span class="glyphicon glyphicon-retweet"></span> Process</h1>
 </header>
 <div  class="row">
     <aside class="col-md-3">
-        <div>
-            <span class="dropdown" dropdown>
-                <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle><span class="glyphicon glyphicon-check"></span> {{status | uppercase}} <span class="caret"></span></button>
-                <span class="dropdown-menu" role="menu">
-                    <li><a ui-sref="processes({status:'active'})">Active</a></li>
-                    <li><a ui-sref="processes({status:'archived'})">Archived</a></li>
-                </span>
-            </span>
-        </div>
+        <status-toggle status="status" sref-name="processes">
+        </status-toggle>
 
         <accordion>
             <accordion-group is-open='stateObj.isStartedByMeOpen' class="list-group">

@@ -25,6 +25,7 @@ angular
         'directives.datepicker',
         'directives.filemodel',
         'directives.showmore',
+        'directives.statusToggle',
         'resources.users',
         'resources.orgs',
         'resources.groups',
