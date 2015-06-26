@@ -151,7 +151,8 @@
             <accordion-group heading="Attachments" is-open="stateObj.isAttachmentOpen">
                 <div class="row">
                     <a ng-repeat="attachment in attachments" class="thumbnail col-md-2" href
-                            style="width: 80px; height: 100px; overflow: hidden;">
+                            style="width: 80px; height: 100px; overflow: hidden;" ng-click="downloadAttachment(attachment)"
+                            tooltip="Uploaded by {{attachment.userId}}, {{attachment.description.split('|')[1] | filesize}}">
                         <img ng-if="['image/jpeg'].indexOf(attachment.type)>-1" ng-src="{{getAttachmentThumbUrl(attachment.id)}}"
                              err-src="images/attachment.png" width="60" height="60">
                         <img ng-if="['image/jpeg'].indexOf(attachment.type)===-1" src="images/attachment.png"
@@ -159,6 +160,7 @@
                         <div class="caption">
                             {{attachment.name}}
                         </div>
+
                     </a>
                 </div>
                 <div ng-if="attachments.length === 0">No attachment.</div>

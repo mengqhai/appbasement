@@ -1,4 +1,4 @@
-angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable', 'ui.select', 'directives.errorsrc', 'directives.processForm'])
+angular.module('controllers.tasks', ['resources.tasks','resources.attachments', 'ui.router', 'xeditable', 'ui.select', 'directives.errorsrc', 'directives.processForm', 'filters.filesize'])
     .controller('TasksController', ['$scope', 'Tasks', '$stateParams', function ($scope, Tasks, $stateParams) {
         $scope.myTaskCount = 0;
         $scope.createdByMeCount = 0;
@@ -140,8 +140,8 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
         };
 
     }])
-    .controller('TaskFormController', ['$scope', 'Tasks', 'Orgs', 'Users', '$q', '$modalInstance', 'task',
-        function ($scope, Tasks, Orgs, Users, $q, $modalInstance, task) {
+    .controller('TaskFormController', ['$scope', 'Tasks', 'Orgs', 'Users', '$q', '$modalInstance', 'task', 'Attachments',
+        function ($scope, Tasks, Orgs, Users, $q, $modalInstance, task, Attachments) {
             $scope.task = task;
             $scope.org = Orgs.getWithCache({orgId: task.orgId});
             //$scope.myOrgs = Orgs.getMyOrgsWithCache();
@@ -342,6 +342,10 @@ angular.module('controllers.tasks', ['resources.tasks', 'ui.router', 'xeditable'
                         }
                     })
                 }
+            }
+            $scope.downloadAttachment = function(attachment) {
+                var url = Attachments.getDownloadUrl(attachment.id);
+                window.open(url);
             }
         }])
     .controller('TaskCreateFormController', ['$scope', 'Tasks', '$modalInstance', '$rootScope', function ($scope, Tasks, $modalInstance, $rootScope) {
