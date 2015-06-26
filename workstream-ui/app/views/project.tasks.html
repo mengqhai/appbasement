@@ -7,5 +7,6 @@
                 {{task.assignee || 'Unassigned'}}
             </span>
         </a>
+        <showmore ng-if="tasks.length<taskCount.v" ng-click="loadMore()"/>
     </div>
 </div>

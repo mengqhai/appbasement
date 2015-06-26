@@ -34,9 +34,7 @@
                     <span ng-if="!process.orgId">System Process:</span>
                     {{process.name}}<span ng-if="!process.name">{{process.id}}</span>
                 </a>
-                <a ng-if="involvesMe.length<involvesMeCount.v" href class="list-group-item list-group-item-info" ng-click="loadMoreInvolvesMe()">
-                    <b>Show more</b>
-                </a>
+                <showmore ng-if="involvesMe.length<involvesMeCount.v" ng-click="loadMoreInvolvesMe()" />
             </accordion-group>
         </accordion>
     </aside>

@@ -14,6 +14,9 @@ angular.module('resources.projects', [])
                 url: homeUrl + '/:projectId/tasks',
                 isArray: true
             },
+            countTasks: {
+                url: homeUrl + '/:projectId/tasks/_count'
+            },
             patch: {
                 method: 'PATCH',
                 url: homeUrl + '/:projectId'

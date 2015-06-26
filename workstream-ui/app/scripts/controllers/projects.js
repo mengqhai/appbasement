@@ -4,7 +4,6 @@ angular.module('controllers.projects', ['resources.projects'])
         if (!$scope.project) {
             $scope.project = Projects.get({projectId: $stateParams.projectId});
         }
-        ;
 
         $scope.showTasks = function () {
             $state.go('.tasks', $stateParams);
@@ -31,8 +30,17 @@ angular.module('controllers.projects', ['resources.projects'])
                 });
             };
         }])
-    .controller('ProjectTaskListController', ['$scope', 'Projects', '$stateParams', '$modal', function($scope, Projects, $stateParams, $modal) {
+    .controller('ProjectTaskListController', ['$scope', 'Projects', '$stateParams', '$modal', function ($scope, Projects, $stateParams, $modal) {
+        $scope.taskCount = Projects.countTasks({projectId: $stateParams.projectId});
         $scope.tasks = Projects.getTasks({projectId: $stateParams.projectId});
+        $scope.loadMore = function () {
+            Projects.getTasks(
+                {projectId: $stateParams.projectId,
+                    first: $scope.tasks.length,
+                    max: 10}, function (moreTasks) {
+                    $.merge($scope.tasks, moreTasks);
+                })
+        }
 
         var dialog = null;
         $scope.openDialog = function (task) {

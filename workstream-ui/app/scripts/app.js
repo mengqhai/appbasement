@@ -24,6 +24,7 @@ angular
         'directives.sidebar',
         'directives.datepicker',
         'directives.filemodel',
+        'directives.showmore',
         'resources.users',
         'resources.orgs',
         'resources.groups',
