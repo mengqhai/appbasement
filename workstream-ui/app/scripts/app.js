@@ -98,7 +98,7 @@ angular
             controller: 'ProjectController'
         });
         $stateProvider.state('project.tasks', {
-            url: '/tasks',
+            url: '/tasks/{status:active|archived}',
             templateUrl: 'views/project.tasks.html',
             controller: 'ProjectTaskListController'
         });

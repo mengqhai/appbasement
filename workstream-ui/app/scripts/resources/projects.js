@@ -4,15 +4,22 @@ angular.module('resources.projects', [])
             api_key: envVars.getApiKey
         };
         var homeUrl = envConstants.REST_BASE + '/projects';
+        var archHomeUrl = envConstants.REST_BASE +'/archives/projects';
         var Projects = $resource(homeUrl + '/:projectId', paramDefault, {
             save: {
                 method: 'POST',
                 url: envConstants.REST_BASE + '/orgs/:orgId/projects'
             },
             getTasks: {
-                method: 'GET',
                 url: homeUrl + '/:projectId/tasks',
                 isArray: true
+            },
+            getArchTasks: {
+                url: archHomeUrl + '/:projectId/tasks',
+                isArray: true
+            },
+            countArchTasks: {
+                url: archHomeUrl + '/:projectId/tasks/_count'
             },
             countTasks: {
                 url: homeUrl + '/:projectId/tasks/_count'
@@ -33,6 +40,20 @@ angular.module('resources.projects', [])
             var pro = Projects.patch({projectId: projectId}, dataObj);
             return xPromise.xeditablePromise(pro);
         };
+
+        Projects.createLoader = function(status) {
+            if (status !== 'archived') {
+                return {
+                    getTasks: Projects.getTasks,
+                    countTasks: Projects.countTasks
+                }
+            } else {
+                return {
+                    getTasks: Projects.getArchTasks,
+                    countTasks: Projects.countArchTasks
+                }
+            }
+        }
 
         return Projects;
     }]);

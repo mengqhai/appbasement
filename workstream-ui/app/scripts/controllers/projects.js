@@ -31,10 +31,15 @@ angular.module('controllers.projects', ['resources.projects'])
             };
         }])
     .controller('ProjectTaskListController', ['$scope', 'Projects', '$stateParams', '$modal', function ($scope, Projects, $stateParams, $modal) {
-        $scope.taskCount = Projects.countTasks({projectId: $stateParams.projectId});
-        $scope.tasks = Projects.getTasks({projectId: $stateParams.projectId});
+        $scope.status = $stateParams.status ? $stateParams.status : 'active';
+        var loader = Projects.createLoader($scope.status);
+
+
+        $scope.taskCount = loader.countTasks({projectId: $stateParams.projectId});
+        $scope.tasks = loader.getTasks({projectId: $stateParams.projectId});
+
         $scope.loadMore = function () {
-            Projects.getTasks(
+            loader.getTasks(
                 {projectId: $stateParams.projectId,
                     first: $scope.tasks.length,
                     max: 10}, function (moreTasks) {
