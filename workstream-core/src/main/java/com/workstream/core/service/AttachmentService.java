@@ -57,7 +57,7 @@ public class AttachmentService {
 
 			// have to read the original image
 			InputStream originalImage = binaryDao.getContentStream(binary);
-			InputStream thumb = thumbCreator.createThumbnail(originalImage);
+			InputStream thumb = thumbCreator.createSquareThumbnail(originalImage);// thumbCreator.createThumbnail(originalImage);
 			binaryDao.persistInputStreamToContent(thumb, thumbnail);
 		}
 		return attachment;

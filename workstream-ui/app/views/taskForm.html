@@ -146,10 +146,12 @@
             </div>
         </form>
 
+        <!-- Task attachments -->
         <accordion>
             <accordion-group heading="Attachments" is-open="stateObj.isAttachmentOpen">
                 <div class="row">
-                    <div ng-repeat="attachment in attachments" class="thumbnail col-sm-2">
+                    <a ng-repeat="attachment in attachments" class="thumbnail col-md-2" href
+                            style="width: 80px; height: 100px; overflow: hidden;">
                         <img ng-if="['image/jpeg'].indexOf(attachment.type)>-1" ng-src="{{getAttachmentThumbUrl(attachment.id)}}"
                              err-src="images/attachment.png" width="60" height="60">
                         <img ng-if="['image/jpeg'].indexOf(attachment.type)===-1" src="images/attachment.png"
@@ -157,9 +159,9 @@
                         <div class="caption">
                             {{attachment.name}}
                         </div>
-                    </div>
-                    <div ng-if="attachments.length === 0">No attachment.</div>
+                    </a>
                 </div>
+                <div ng-if="attachments.length === 0">No attachment.</div>
 
             </accordion-group>
         </accordion>
