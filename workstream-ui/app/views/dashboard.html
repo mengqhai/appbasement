@@ -3,8 +3,10 @@
     <div  class="row">
         <aside class="col-md-3">
             <div class="list-group">
-                <div class="list-group-item" ng-repeat="notification in notifications"
-                     ng-class="{'list-group-item-warning':!notification.read}">
+                <a class="list-group-item" ng-repeat="notification in notifications"
+                     ng-class="{'list-group-item-warning':!notification.read}"
+                     ui-sref="{{getStateName(notification)}}"
+                     ui-sref-active="active">
                     <div>
                         <span class="glyphicon"
                               ng-class="{'glyphicon-comment':notification.targetType==='COMMENT',
@@ -39,9 +41,13 @@
                             </sub>
                         </div>
                     </div>
-                </div>
+                </a>
 
             </div>
         </aside>
+
+        <div class="col-md-9">
+            <div ui-view></div>
+        </div>
     </div>
 </div>

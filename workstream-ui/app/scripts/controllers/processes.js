@@ -56,35 +56,46 @@ angular.module('controllers.processes', ['resources.templates', 'resources.proce
     }])
     .controller('ProcessDetailsController', ['$scope', '$stateParams', '$state', 'Processes', '$modal', 'Templates', '$filter',
         function ($scope, $stateParams, $state, Processes, $modal, Templates, $filter) {
-            function getArchProcess(processId, archProcesses) {
-                for (var i = 0; i < archProcesses.length; i++) {
-                    var archProcess = archProcesses[i];
-                    if (archProcess.id === processId) {
-                        return archProcess;
-                    }
-                }
-            }
-
             $scope.stateObj = {
                 isTasksOpen: false,
                 isDataOpen: false
             }
+
             var loader = $scope.loader; // from $parent
+            function createLoader(archProcess) {
+                if (archProcess.endTime && !loader) {
+                    loader = Processes.createLoader('archived');
+                } else {
+                    loader = Processes.createLoader('active');
+                };
+            }
+            $scope.archProcess = Processes.getArchive({processId: $stateParams.processId}, function(archProcess) {
+                createLoader(archProcess);
+                reloadProcess();
+            });
+
+
             function reloadProcess(onSuccess) {
                 if (!onSuccess) {
                     onSuccess = function () {
                     };
                 }
-                $scope.archProcess = loader.getArchive({processId: $stateParams.processId});
-                $scope.process = loader.get({processId: $stateParams.processId}, onSuccess, function (error) {
-                    $state.go('processes.details', {
-                        status: 'archived',
-                        processId: $stateParams.processId
-                    })
-                });
-            }
 
-            reloadProcess();
+//                if (!$scope.archProcess) {
+//                    $scope.archProcess = loader.getArchive({processId: $stateParams.processId});
+//                }
+
+                if ($scope.archProcess.endTime) {
+                    $scope.process = $scope.archProcess;
+                } else {
+                    $scope.process = loader.get({processId: $stateParams.processId}, onSuccess, function (error) {
+                        $state.go('processes.details', {
+                            status: 'archived',
+                            processId: $stateParams.processId
+                        })
+                    });
+                }
+            }
 
             var random = null;
             $scope.getDiagramUrl = function (processId) {

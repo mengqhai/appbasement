@@ -181,6 +181,21 @@ angular
             url: '/dashboard',
             templateUrl: '/views/dashboard.html',
             controller: 'DashboardController'
+        });
+        $stateProvider.state('dashboard.notification', {
+            url:'/{notificationId}',
+            abstract: true,
+            // Note: abstract still needs a ui-view for its children to populate.
+            // You can simply add it inline here.
+            template: '<ui-view/>'
+        })
+        $stateProvider.state('dashboard.notification.process', {
+            url: '/process/{processId}',
+            templateUrl: '/views/dashboard.notifications.process.html'
+        });
+        $stateProvider.state('dashboard.notification.task', {
+            url: '/task/{taskId}',
+            templateUrl: '/views/dashboard.notifications.task.html'
         })
 
         $urlRouterProvider.otherwise('/');
