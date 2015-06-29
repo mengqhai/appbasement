@@ -42,6 +42,7 @@ angular
         'controllers.orgSettings',
         'controllers.orgs',
         'controllers.groups',
+        'controllers.dashboard',
         'http-auth-interceptor',
         'xeditable'
     ])
@@ -175,6 +176,11 @@ angular
             url: '/orgSettings/{orgId}/members',
             templateUrl: 'views/orgSettings.members.html',
             controller: 'OrgSettingsMembersController'
+        });
+        $stateProvider.state('dashboard', {
+            url: '/dashboard',
+            templateUrl: '/views/dashboard.html',
+            controller: 'DashboardController'
         })
 
         $urlRouterProvider.otherwise('/');
