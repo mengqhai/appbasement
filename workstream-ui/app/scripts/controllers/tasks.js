@@ -1,4 +1,4 @@
-angular.module('controllers.tasks', ['resources.tasks','resources.attachments', 'ui.router', 'xeditable', 'ui.select', 'directives.errorsrc', 'directives.processForm', 'filters.filesize'])
+angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments', 'ui.router', 'xeditable', 'ui.select', 'directives.errorsrc', 'directives.processForm', 'filters.filesize'])
     .controller('TasksController', ['$scope', 'Tasks', '$stateParams', function ($scope, Tasks, $stateParams) {
         $scope.myTaskCount = 0;
         $scope.createdByMeCount = 0;
@@ -143,8 +143,22 @@ angular.module('controllers.tasks', ['resources.tasks','resources.attachments', 
     .controller('TaskFormController', ['$scope', 'Tasks', 'Orgs', 'Users', '$q', '$modalInstance', 'task', 'Attachments',
         function ($scope, Tasks, Orgs, Users, $q, $modalInstance, task, Attachments) {
             $scope.task = task;
+
+            function closeDialog() {
+                if ($modalInstance) {
+                    $modalInstance.close();
+                }
+            }
+            $scope.closeDialog = closeDialog;
+
+            $scope.$on('tasks.complete', closeDialog);
+            $scope.$on('tasks.claim', closeDialog);
+            $scope.$on('task.delete', closeDialog);
+        }])
+    .controller('TaskDetailsController', ['$scope', 'Tasks', 'Orgs', 'Users', '$q', 'Attachments',
+        function ($scope, Tasks, Orgs, Users, $q, Attachments) {
+            var task = $scope.task; // from parent scope
             $scope.org = Orgs.getWithCache({orgId: task.orgId});
-            //$scope.myOrgs = Orgs.getMyOrgsWithCache();
 
             // for events/comments
             var eventsGetter = task.endTime ? Tasks.getArchEvents : Tasks.getEvents
@@ -176,7 +190,7 @@ angular.module('controllers.tasks', ['resources.tasks','resources.attachments', 
             }
 
             $scope.project = $scope.getProject(task.projectId);
-            //$scope.myProjects = $scope.getMyProjects();
+
             $scope.onSelectProject = function (project) {
                 $scope.updateTask('projectId', project.id).then(function (success) {
                     $scope.task.projectId = project.id;
@@ -186,44 +200,14 @@ angular.module('controllers.tasks', ['resources.tasks','resources.attachments', 
                 })
             }
 
-
-            // for due date
-            /*
-             $scope.open = function ($event) {
-             $event.preventDefault();
-             $event.stopPropagation();
-             $scope.opened = true;
-             };
-             $scope.dueDateForPicker = task.dueDate;
-             $scope.dueDateError = null;
-             $scope.$watch('dueDateForPicker', function (newValue, oldValue) {
-             if (newValue == oldValue) {
-             return;
-             }
-             $scope.updateTask('dueDate', newValue).then(function (sucess) {
-             $scope.task.dueDate = $scope.dueDateForPicker;
-             }, function (error) {
-             $scope.dueDateError = error;
-             })
-             });
-             */
             $scope.onDueDateSelect = function (newValue, oldValue) {
                 return $scope.updateTask('dueDate', newValue);
             };
-
-
-            var closeDialog = function () {
-                if ($modalInstance) {
-                    $modalInstance.close();
-                }
-            }
-            $scope.closeDialog = closeDialog;
 
             // for delete
             $scope.delete = function () {
                 Tasks.delete({taskId: task.id}, function (response) {
                     $scope.$emit('tasks.delete', task);
-                    closeDialog();
                 }, function (error) {
                     $scope.deleteError = error.data.message;
                 });
@@ -234,7 +218,6 @@ angular.module('controllers.tasks', ['resources.tasks','resources.attachments', 
                 Tasks.claim({taskId: task.id}, null, function () {
                     console.log('Claimed task ' + task.id);
                     $scope.$emit('tasks.claim', task);
-                    closeDialog();
                 })
             }
 
@@ -242,13 +225,8 @@ angular.module('controllers.tasks', ['resources.tasks','resources.attachments', 
                 Tasks.complete({taskId: task.id}, null, function () {
                     console.log('Completed task ' + task.id);
                     $scope.$emit('tasks.complete', task);
-                    closeDialog();
                 })
             }
-
-
-            $scope.$on('tasks.complete', closeDialog);
-            $scope.$on('tasks.claim', closeDialog);
 
             /** for process form **/
             if (task.processInstanceId && !task.endTime) {
@@ -273,7 +251,7 @@ angular.module('controllers.tasks', ['resources.tasks','resources.attachments', 
                     return ngFormController.$valid;
                 } else {
 
-                    for (i=0;i<$scope.fileFields.length;i++) {
+                    for (i = 0; i < $scope.fileFields.length; i++) {
                         var fileField = $scope.fileFields[i];
                         if (fileField['file'] === undefined) {
                             return false;
@@ -327,10 +305,10 @@ angular.module('controllers.tasks', ['resources.tasks','resources.attachments', 
                 var index = $scope.fileFields.indexOf(fileField);
                 $scope.fileFields.splice(index, 1);
             }
-            $scope.addAttachments = function() {
-                for (i=0;i<$scope.fileFields.length;i++) {
+            $scope.addAttachments = function () {
+                for (i = 0; i < $scope.fileFields.length; i++) {
                     var fileField = $scope.fileFields[i];
-                    Tasks.uploadAttachment(task.id, fileField.file).success(function(newAttachment) {
+                    Tasks.uploadAttachment(task.id, fileField.file).success(function (newAttachment) {
                         // make newAttachment look like an event
                         newAttachment.message = newAttachment.name;
                         newAttachment.action = 'AddAttachment';
@@ -343,7 +321,7 @@ angular.module('controllers.tasks', ['resources.tasks','resources.attachments', 
                     })
                 }
             }
-            $scope.downloadAttachment = function(attachment) {
+            $scope.downloadAttachment = function (attachment) {
                 var url = Attachments.getDownloadUrl(attachment.id);
                 window.open(url);
             }

@@ -1,0 +1,207 @@
+<div>
+<div class="modal-header">
+    <h4>
+            <span ng-switch="task.endTime===undefined">
+                <span ng-switch-when="true" editable-text="task.name" onbeforesave = "updateTask('name', $data)" blur="submit" e-maxlength="30" e-minlength="1">{{task.name || 'empty'}}</span>
+                <span ng-switch-default>
+                    {{task.name}} <span class="label label-primary">Archived({{task.deleteReason}})</span>
+                </span>
+            </span>
+
+        <button type="button" ng-click="closeDialog()" class="close" aria-label="Close" style="float: right;" e-maxlength="500"><span aria-hidden="true">&times;</span></button>
+    </h4>
+</div>
+
+<div class="modal-body">
+    <div>
+        <span ng-switch="task.endTime===undefined">
+            <span ng-switch-when="true" editable-textarea="task.description" onbeforesave = "updateTask('description', $data)" e-rows="3" e-cols="70" blur="submit">{{task.description || 'click to add description'}}</span>
+            <span ng-switch-default>{{task.description}}</span>
+        </span>
+
+    </div>
+<div>
+    Created by {{task.creator}} on {{task.createTime|date}}
+</div>
+<div ng-if="!task.processInstanceId">
+
+            <span ng-switch="task.endTime === undefined">
+                <ws-datepicker  ng-switch-when="true" null-label="No due date" date-value="task.dueDate" on-selected="onDueDateSelect(newValue,oldValue)">
+                </ws-datepicker>
+                <span ng-switch-when="false">
+                    {{task.dueDate | date: 'medium'}}
+                </span>
+            </span>
+
+</div>
+<div>
+    Org: {{org.name}}
+    Creator: {{task.creator}}
+    <!--https://github.com/angular-ui/ui-select/wiki/ui-select-choices-->
+    <!--
+    <ui-select ng-model="org" theme="select2" style="min-width: 180px">
+        <ui-select-match placeholder="Select org...">
+            <span class="glyphicon glyphicon-home"></span>
+            {{$select.selected.name}}
+        </ui-select-match>
+        <ui-select-choices repeat="myOrg in myOrgs | filter: $select.search">
+            <div ng-bind-html="myOrg.name | highlight: $select.search"></div>
+            <small>
+                identifier: {{myOrg.identifier}}
+            </small>
+        </ui-select-choices>
+    </ui-select>
+    -->
+
+</div>
+<div ng-if="!task.processInstanceId">
+    <span class="glyphicon glyphicon-user"></span>Assignee
+            <span ng-switch="task.endTime === undefined">
+                <span ng-switch-when="true">
+                    <ui-select
+                            ng-model="assignee" theme="select2" style="min-width: 180px"
+                            on-select="changeAssignee($item, $model)">
+                        <ui-select-match placeholder="Select assignee...">
+                            <span class="glyphicon glyphicon-user"></span>
+                            <!--{{$select.selected.id || 'Unassigned'}} -->
+                            {{task.assignee || 'Unassigned'}}
+                        </ui-select-match>
+                        <ui-select-choices repeat="aUser in userList | filter: $select.search">
+                            <div ng-bind-html="aUser.id | highlight: $select.search"></div>
+                            <small>
+                                Name: <span ng-bind-html="aUser.firstName | highlight: $select.search"></span>
+                            </small>
+                        </ui-select-choices>
+                    </ui-select>
+                </span>
+
+                <span ng-switch-when="false">
+                    {{task.assignee || 'Unassigned'}}
+                </span>
+            </span>
+
+
+    Project
+            <span ng-switch="task.endTime === undefined">
+                <span ng-switch-when="true">
+                    <ui-select ng-model="project" theme="select2" style="min-width: 180px"
+                               on-select="onSelectProject($item, $model)" required>
+                        <ui-select-match placeholder="Select project...">
+                            <span class="glyphicon glyphicon-briefcase"></span>
+                            <!--{{$select.selected.id || 'Unassigned'}} -->
+                            {{project.name}}
+                        </ui-select-match>
+                        <ui-select-choices repeat="pro in getMyProjects() | filter: $select.search">
+                            <div ng-bind-html="pro.name | highlight: $select.search"></div>
+                            <small>
+                                Org: <span ng-bind-html="getOrg(pro.orgId).name | highlight: $select.search"></span>
+                            </small>
+                        </ui-select-choices>
+                    </ui-select>
+                    <span>{{projectError}}</span>
+                </span>
+                <span ng-switch-when="false">{{project.name}}</span>
+            </span>
+
+</div>
+<div ng-if="task.processInstanceId">
+    <span class="glyphicon glyphicon-user"></span>Assignee {{task.assignee || 'Unassigned'}}
+</div>
+
+<!-- Task form for process tasks -->
+<form name="taskCompleteForm">
+    <div  ng-if="task.processInstanceId && !task.endTime">
+
+        <process-form form-def="formDef" form-obj="formObj">
+        </process-form>
+
+
+        <pre>{{formObj | json}}</pre>
+    </div>
+    <!-- Archived form data -->
+    <div ng-if="task.processInstanceId && task.endTime" class="list-group">
+        <span class="list-group-item" ng-repeat="formEntry in archForm">{{formEntry.propertyId}}:{{formEntry.propertyValue}}</span>
+    </div>
+
+    <!-- Task buttons -->
+    <div>
+        <button class="btn btn-danger" ng-click="delete()">Delete</button><span>{{deleteError}}</span>
+        <button class="btn btn-warning" ng-if="task.processInstanceId && !task.assignee" ng-click="claim()">Claim</button>
+                <span ng-if="task.assignee=== getCurrentUserId() && !task.endTime" ng-switch="!task.processInstanceId">
+                    <button class="btn btn-success" ng-switch-when="true" ng-click="complete()">Complete</button>
+                    <button class="btn btn-warning" ng-switch-when="false" ng-click="completeForm()" ng-disabled="taskCompleteForm.$invalid">Complete</button>
+                </span>
+    </div>
+</form>
+
+<!-- Task attachments -->
+<accordion>
+    <accordion-group heading="Attachments" is-open="stateObj.isAttachmentOpen">
+        <div class="row">
+            <a ng-repeat="attachment in attachments" class="thumbnail col-md-2" href
+               style="width: 80px; height: 100px; overflow: hidden;" ng-click="downloadAttachment(attachment)"
+               tooltip="Uploaded by {{attachment.userId}}, {{attachment.description.split('|')[1] | filesize}}">
+                <img ng-if="['image/jpeg'].indexOf(attachment.type)>-1" ng-src="{{getAttachmentThumbUrl(attachment.id)}}"
+                     err-src="images/attachment.png" width="60" height="60">
+                <img ng-if="['image/jpeg'].indexOf(attachment.type)===-1" src="images/attachment.png"
+                     width="60" height="60">
+                <div class="caption">
+                    {{attachment.name}}
+                </div>
+
+            </a>
+        </div>
+        <div ng-if="attachments.length === 0">No attachment.</div>
+
+    </accordion-group>
+</accordion>
+
+<!-- Task events -->
+<div class="panel panel-default">
+
+    <div class="panel-body">
+        <div class="media" ng-if="!task.endTime">
+            <div class="media-left">
+                <a href>
+                    <img class="media-object img-rounded" ng-src="{{userPicUrl}}" err-src="images/yeoman.png" width="60" height="60">
+                </a>
+            </div>
+            <div class="media-body">
+                <form name="commentForm" novalidate>
+                    <textarea name="commentText" rows="2" class="form-control" placeholder="Write a comment..." ng-model="commentObj.comment" required></textarea>
+                    <div>
+                        <!-- attachment list -->
+                        <ul class="list-group">
+                            <li class="list-group-item" ng-repeat="fileField in fileFields">
+                                <input type="file" style="display: inline;max-width: 400px;overflow: hidden;" maxlength="10" name="fileField{{$index}}" file-model="fileField['file']" required>
+                                <button type="button" class="close" aria-label="Close" style="float: right;"
+                                        ng-click="removeFileField(fileField)"><span aria-hidden="true">&times;</span></button>
+                            </li>
+                            <div class="well well-sm">
+                                <button class="btn btn-default pull-left" ng-click="addFileField()">Add attachment</button>
+                                <button class="btn btn-default pull-right" ng-click="addAttachments(); addComment()" ng-disabled="!canComment(commentForm)">Comment</button>
+                                <div style="clear: both;"></div>
+                            </div>
+
+                        </ul>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+        <div class="media" ng-repeat="event in events">
+            <div class="media-left">
+                <a href>
+                    <img class="media-object img-rounded" ng-src="{{getUserPicUrl(event.userId)}}" err-src="images/yeoman.png" width="60" height="60">
+                </a>
+            </div>
+            <div class="media-body">
+                <p>{{event.message}}</p>
+                <div class="media-heading">{{event.userId}} at {{event.time | date: 'medium'}}</div>
+            </div>
+            <hr ng-if="!$last"/>
+        </div>
+    </div>
+</div>
+</div>
+</div>
