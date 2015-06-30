@@ -1,5 +1,6 @@
 package com.workstream.core.service;
 
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,12 +13,14 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.activiti.engine.form.FormProperty;
 import org.activiti.engine.form.StartFormData;
 import org.activiti.engine.form.TaskFormData;
+import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Attachment;
 import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -499,6 +502,35 @@ public class CoreFacadeService {
 
 	public AttachmentService getAttachmentService() {
 		return attSer;
+	}
+
+	/**
+	 * It doesn't matter if the task is archived or not.
+	 * 
+	 * @return
+	 */
+	public Attachment addAttachmentToTask(String taskId, long fileSize,
+			String contentType, String fileName, InputStream contentInputStream) {
+		Task task = getProcessService().getTask(taskId);
+		StringBuilder desc = new StringBuilder();
+		if (task != null && task.getTenantId() != null) {
+			desc.append(task.getTenantId());
+		} else if (task == null) {
+			HistoricTaskInstance hTask = getProcessService()
+					.getArchTask(taskId);
+			if (hTask != null) {
+				desc.append(hTask.getTenantId());
+			} else {
+				throw new ResourceNotFoundException("No such task.");
+			}
+		}
+		desc.append("|");
+		desc.append(fileSize);
+
+		Attachment attachment = getAttachmentService().createTaskAttachment(
+				taskId, contentType, fileName, desc.toString(),
+				contentInputStream, fileSize);
+		return attachment;
 	}
 
 	public Object getTargetObj(CoreEvent e) {

@@ -18,6 +18,8 @@ import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Event;
 import org.activiti.engine.task.Task;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,12 +29,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.BytesNotFoundException;
+import com.workstream.core.exception.DataPersistException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Project;
 import com.workstream.core.service.CoreFacadeService;
@@ -54,6 +59,9 @@ import com.workstream.rest.utils.RestUtils;
 @RestController
 @RequestMapping(value = "/archives", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ArchiveController {
+
+	private final static Logger log = LoggerFactory
+			.getLogger(ArchiveController.class);
 
 	@Autowired
 	private CoreFacadeService core;
@@ -185,6 +193,39 @@ public class ArchiveController {
 		Comment comment = core.getProjectService().addTaskComment(taskId,
 				message);
 		return new CommentResponse(comment);
+	}
+
+	@ApiOperation(value = "Create an attachment for an archived task")
+	@RequestMapping(value = "/tasks/{id:\\d+}/attachments", method = RequestMethod.POST)
+	@PreAuthorize("isAuthInOrgForArchTask(#taskId)")
+	public AttachmentResponse createTaskAttachment(
+			@PathVariable("id") String taskId,
+			@ApiParam(required = true) @RequestBody MultipartFile file) {
+		if (!file.isEmpty()) {
+			String contentType = file.getContentType();
+			try {
+
+				String decoded = RestUtils.decodeIsoToUtf8(file
+						.getOriginalFilename());
+				log.info("File recieved name={} size={} content-type={}",
+						decoded, file.getSize(), contentType);
+				// here is OK for large file, as commons-fileupload temporarily
+				// saves the file on disk
+
+				// problem occurs here for large file, because Activiti reads
+				// the stream into an byte[] in memory!
+				// I'll replace the attachment with my own implementation in the
+				// future.
+				Attachment attachment = core.addAttachmentToTask(taskId,
+						file.getSize(), file.getContentType(),
+						file.getOriginalFilename(), file.getInputStream());
+				return new AttachmentResponse(attachment);
+			} catch (IOException e) {
+				throw new DataPersistException(e);
+			}
+		} else {
+			throw new BadArgumentException("Empty file");
+		}
 	}
 
 	@ApiOperation(value = "Recover an achived standalone task")

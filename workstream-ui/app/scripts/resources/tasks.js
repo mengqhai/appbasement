@@ -77,6 +77,10 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
                 url: homeUrl + '/:taskId/attachments',
                 isArray: true
             },
+            getArchAttachments: {
+                url: archHomeUrl + '/:taskId/attachments',
+                isArray: true
+            },
             patch: {
                 method: 'PATCH',
                 url: homeUrl + '/:taskId'
@@ -123,17 +127,25 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
             return envConstants.REST_BASE + '/attachments/' + attachmentId + '/thumb?api_key=' + envVars.getApiKey();
         }
 
-        Tasks.uploadAttachment = function (taskId, file) {
+
+        function uploadAttachment(taskId, file, urlBase) {
             // see https://uncorkedstudios.com/blog/multipartformdata-file-upload-with-angularjs
             var fd = new FormData();
             fd.append('file', file);
-            var url = homeUrl + '/' + taskId + '/attachments' + '?api_key=' + envVars.getApiKey();
+            var url = urlBase + '/' + taskId + '/attachments' + '?api_key=' + envVars.getApiKey();
             return $http.post(url, fd, {
                 transformRequest: angular.identity,
                 headers: {
                     'Content-Type': undefined
                 }
             });
+        }
+
+        Tasks.uploadAttachment = function (taskId, file) {
+            return uploadAttachment(taskId, file, homeUrl);
+        }
+        Tasks.uploadArchAttachment = function(taskId, file) {
+            return uploadAttachment(taskId, file, archHomeUrl);
         }
 
         Tasks.createLoader = function (status) {

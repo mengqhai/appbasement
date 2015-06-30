@@ -316,8 +316,17 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
             $scope.stateObj = {
                 isAttachmentOpen: false
             }
+
+            var attachmentInvoker = task.endTime ? {
+                getAttachments: Tasks.getArchAttachments,
+                uploadAttachment: Tasks.uploadArchAttachment
+            } : {
+                getAttachments: Tasks.getAttachments,
+                uploadAttachment: Tasks.uploadAttachment
+            }
+
             var loadAttachments = function () {
-                $scope.attachments = Tasks.getAttachments({taskId: task.id});
+                $scope.attachments = attachmentInvoker.getAttachments({taskId: task.id});
             }
             $scope.$watch('stateObj.isAttachmentOpen', function (newValue, oldValue) {
                 if (newValue && !$scope.attachments) {
@@ -340,7 +349,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
             $scope.addAttachments = function () {
                 for (i = 0; i < $scope.fileFields.length; i++) {
                     var fileField = $scope.fileFields[i];
-                    Tasks.uploadAttachment(task.id, fileField.file).success(function (newAttachment) {
+                    attachmentInvoker.uploadAttachment(task.id, fileField.file).success(function (newAttachment) {
                         // make newAttachment look like an event
                         newAttachment.message = newAttachment.name;
                         newAttachment.action = 'AddAttachment';

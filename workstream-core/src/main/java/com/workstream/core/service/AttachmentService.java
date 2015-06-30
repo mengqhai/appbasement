@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.activiti.engine.ManagementService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.task.Attachment;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import com.workstream.core.model.BinaryObj;
 import com.workstream.core.model.BinaryObj.BinaryObjType;
 import com.workstream.core.model.BinaryObj.BinaryReposType;
 import com.workstream.core.persistence.IBinaryObjDAO;
+import com.workstream.core.service.cmd.WsCreateAttachmentCmd;
 import com.workstream.core.utils.ThumbnailCreator;
 
 @Service
@@ -36,6 +38,9 @@ public class AttachmentService {
 
 	private ThumbnailCreator thumbCreator = new ThumbnailCreator();
 
+	@Autowired
+	protected ManagementService mgmtService;
+
 	private Attachment createAttachment(String taskId,
 			String processInstanceId, String type, String attachmentName,
 			String attachmentDescription, InputStream content, long size) {
@@ -43,9 +48,16 @@ public class AttachmentService {
 				BinaryObjType.ATTACHMENT_CONTENT, null,
 				BinaryReposType.FILE_SYSTEM_REPOSITORY, type, attachmentName);
 		binaryDao.persistInputStreamToContent(content, binary);
-		Attachment attachment = taskSer.createAttachment(type, taskId,
-				processInstanceId, attachmentName, attachmentDescription,
-				(String) null);
+		// Activiti implementation doesn't allow to add attachment to archived
+		// entities
+		// Attachment attachment = taskSer.createAttachment(type, taskId,
+		// processInstanceId, attachmentName, attachmentDescription,
+		// (String) null);
+		// So here we provide our own.
+		Attachment attachment = mgmtService
+				.executeCommand(new WsCreateAttachmentCmd(type, taskId,
+						processInstanceId, attachmentName,
+						attachmentDescription, null, null));
 		binary.setTargetId(attachment.getId());
 
 		if (type.startsWith("image")) {
@@ -57,7 +69,8 @@ public class AttachmentService {
 
 			// have to read the original image
 			InputStream originalImage = binaryDao.getContentStream(binary);
-			InputStream thumb = thumbCreator.createSquareThumbnail(originalImage);// thumbCreator.createThumbnail(originalImage);
+			InputStream thumb = thumbCreator
+					.createSquareThumbnail(originalImage);// thumbCreator.createThumbnail(originalImage);
 			binaryDao.persistInputStreamToContent(thumb, thumbnail);
 		}
 		return attachment;

@@ -363,7 +363,6 @@ public class TaskController {
 			@ApiParam(required = true) @RequestBody MultipartFile file) {
 		if (!file.isEmpty()) {
 			String contentType = file.getContentType();
-
 			try {
 
 				String decoded = RestUtils.decodeIsoToUtf8(file
@@ -377,19 +376,9 @@ public class TaskController {
 				// the stream into an byte[] in memory!
 				// I'll replace the attachment with my own implementation in the
 				// future.
-
-				Task task = core.getProcessService().getTask(taskId);
-				StringBuilder desc = new StringBuilder();
-				if (task != null && task.getTenantId() != null) {
-					desc.append(task.getTenantId());
-				}
-				desc.append("|");
-				desc.append(file.getSize());
-
-				Attachment attachment = core.getAttachmentService()
-						.createTaskAttachment(taskId, file.getContentType(),
-								decoded, desc.toString(),
-								file.getInputStream(), file.getSize());
+				Attachment attachment = core.addAttachmentToTask(taskId,
+						file.getSize(), file.getContentType(),
+						file.getOriginalFilename(), file.getInputStream());
 				return new AttachmentResponse(attachment);
 			} catch (IOException e) {
 				throw new DataPersistException(e);
