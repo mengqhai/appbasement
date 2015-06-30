@@ -14,6 +14,7 @@ import org.activiti.engine.history.HistoricFormProperty;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.task.Attachment;
+import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Event;
 import org.activiti.engine.task.Task;
 import org.apache.commons.io.IOUtils;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.BytesNotFoundException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Project;
@@ -40,6 +43,7 @@ import com.workstream.rest.model.ArchFormPropertyResponse;
 import com.workstream.rest.model.ArchProcessResponse;
 import com.workstream.rest.model.ArchTaskResponse;
 import com.workstream.rest.model.AttachmentResponse;
+import com.workstream.rest.model.CommentResponse;
 import com.workstream.rest.model.EventResponse;
 import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.SingleValueResponse;
@@ -163,6 +167,24 @@ public class ArchiveController {
 
 		ArchTaskResponse resp = new ArchTaskResponse(hiTask);
 		return resp;
+	}
+
+	@ApiOperation(value = "Post a comment for an archived task")
+	@RequestMapping(value = "/tasks/{id:\\d+}/comments", method = RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE)
+	@PreAuthorize("isAuthInOrgForArchTask(#taskId)")
+	public CommentResponse addTaskComment(@PathVariable("id") String taskId,
+			@RequestBody(required = true) String message) {
+		if (message == null || message.isEmpty()) {
+			throw new BadArgumentException("Message can be empty");
+		}
+		if (message.length() > RestConstants.VALID_COMMENT_MAX_SIZE) {
+			throw new BadArgumentException(
+					"Message length must smaller then 4000");
+		}
+
+		Comment comment = core.getProjectService().addTaskComment(taskId,
+				message);
+		return new CommentResponse(comment);
 	}
 
 	@ApiOperation(value = "Recover an achived standalone task")

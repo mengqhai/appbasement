@@ -140,7 +140,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
         };
 
     }])
-    .controller('TaskFormController', ['$scope', 'Tasks', 'Orgs', 'Users',  '$modalInstance', 'task', 'Attachments',
+    .controller('TaskFormController', ['$scope', 'Tasks', 'Orgs', 'Users', '$modalInstance', 'task', 'Attachments',
         function ($scope, Tasks, Orgs, Users, $modalInstance, task, Attachments) {
             $scope.task = task;
             $scope.closeable = true;
@@ -150,6 +150,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
                     $modalInstance.close();
                 }
             }
+
             $scope.closeDialog = closeDialog;
 
             $scope.$on('tasks.complete', closeDialog);
@@ -168,10 +169,10 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
                 loadProcessForm(task);
             }
 
-            if (task.id!==undefined) {
+            if (task.id !== undefined) {
                 loadEverything(task);
             } else {
-                $scope.$on('task.loaded', function(event, task) {
+                $scope.$on('task.loaded', function (event, task) {
                     loadEverything(task);
                 })
             }
@@ -180,6 +181,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
             function loadOrg(task) {
                 $scope.org = Orgs.getWithCache({orgId: task.orgId});
             }
+
             // for events/comments
             function loadEvents(task) {
                 var eventsGetter = task.endTime ? Tasks.getArchEvents : Tasks.getEvents
@@ -196,6 +198,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
                 id: null,
                 firstName: 'Unassigned'
             }
+
             function loadAssignee(task) {
                 $scope.assignee = task.assignee ? Users.getWithCache({userIdBase64: btoa(task.assignee)}) : unassigned;
                 if (task.orgId && !task.endTime) {
@@ -271,7 +274,6 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
             }
 
 
-
             /**
              * For comment
              */
@@ -290,11 +292,13 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
                     return true;
                 }
             }
+
+            var commandAdder = task.endTime ? Tasks.addArchComment : Tasks.addComment;
             $scope.addComment = function () {
                 if (!$scope.commentObj.comment) {
                     return;
                 }
-                Tasks.addComment({taskId: task.id}, $scope.commentObj.comment, function (newComment) {
+                commandAdder({taskId: task.id}, $scope.commentObj.comment, function (newComment) {
                     if ($scope.events) {
                         // the response is a comment entry
                         // here we have to make it look like an event entry

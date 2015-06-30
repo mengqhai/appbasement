@@ -12,6 +12,7 @@ import org.activiti.engine.ActivitiException;
 import org.activiti.engine.ActivitiObjectNotFoundException;
 import org.activiti.engine.FormService;
 import org.activiti.engine.HistoryService;
+import org.activiti.engine.ManagementService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricDetail;
 import org.activiti.engine.history.HistoricFormProperty;
@@ -36,6 +37,7 @@ import com.workstream.core.exception.AuthenticationNotSetException;
 import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.BeanPropertyException;
 import com.workstream.core.exception.ResourceNotFoundException;
+import com.workstream.core.service.cmd.WsAddCommentCmd;
 
 public class TaskCapable {
 
@@ -55,6 +57,8 @@ public class TaskCapable {
 
 	@Autowired
 	protected FormService formService;
+	@Autowired
+	protected ManagementService mgmtService;
 
 	/**
 	 * A generic querying method by userId
@@ -399,7 +403,12 @@ public class TaskCapable {
 		}
 
 		try {
-			Comment com = taskSer.addComment(taskId, null, message);
+			// Activiti implementation doesn't support commenting archived
+			// entities
+			// Comment com = taskSer.addComment(taskId, null, message);
+			// so here we use our own implementation
+			Comment com = mgmtService.executeCommand(new WsAddCommentCmd(
+					taskId, null, message));
 			return com;
 		} catch (ActivitiObjectNotFoundException e) {
 			throw new ResourceNotFoundException("No such task.", e);

@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.activiti.engine.ManagementService;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.history.HistoricTaskInstanceQuery;
 import org.activiti.engine.history.NativeHistoricTaskInstanceQuery;
@@ -45,9 +44,6 @@ public class ProjectService extends TaskCapable {
 
 	@Autowired
 	private IProjectDAO proDao;
-
-	@Autowired
-	protected ManagementService mgmtService;
 
 	public Project createProject(Organization org, String name) {
 		return createProject(org, name, null, null, null);

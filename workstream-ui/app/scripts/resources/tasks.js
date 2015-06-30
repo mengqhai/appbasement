@@ -62,6 +62,13 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
                     'Content-Type': 'text/plain'
                 }
             },
+            addArchComment: {
+                method: 'POST',
+                url: archHomeUrl + '/:taskId/comments',
+                headers: {
+                    'Content-Type': 'text/plain'
+                }
+            },
             getArchEvents: {
                 url: envConstants.REST_BASE + '/archives/tasks/:taskId/events',
                 isArray: true
