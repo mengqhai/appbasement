@@ -365,10 +365,10 @@ public class TaskController {
 			String contentType = file.getContentType();
 			try {
 
-				String decoded = RestUtils.decodeIsoToUtf8(file
+				String decodedFileName = RestUtils.decodeIsoToUtf8(file
 						.getOriginalFilename());
 				log.info("File recieved name={} size={} content-type={}",
-						decoded, file.getSize(), contentType);
+						decodedFileName, file.getSize(), contentType);
 				// here is OK for large file, as commons-fileupload temporarily
 				// saves the file on disk
 
@@ -378,7 +378,7 @@ public class TaskController {
 				// future.
 				Attachment attachment = core.addAttachmentToTask(taskId,
 						file.getSize(), file.getContentType(),
-						file.getOriginalFilename(), file.getInputStream());
+						decodedFileName, file.getInputStream());
 				return new AttachmentResponse(attachment);
 			} catch (IOException e) {
 				throw new DataPersistException(e);

@@ -161,19 +161,24 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
         function ($scope, Tasks, Orgs, Users, Attachments) {
             var task = $scope.task; // from parent scope
 
+            var attachmentInvoker = null;
+            var commentInvoker = null;
             function loadEverything(task) {
                 loadOrg(task);
                 loadEvents(task);
                 loadAssignee(task);
                 loadProject(task);
                 loadProcessForm(task);
+                prepareAttachmentInvoker(task);
+                prepareCommentInvoker(task);
             }
 
             if (task.id !== undefined) {
                 loadEverything(task);
             } else {
-                $scope.$on('task.loaded', function (event, task) {
-                    loadEverything(task);
+                $scope.$on('task.loaded', function (event, archTask) {
+                    $scope.task = archTask;
+                    loadEverything(archTask);
                 })
             }
 
@@ -246,15 +251,15 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
 
             // for process tasks, claim the task
             $scope.claim = function () {
-                Tasks.claim({taskId: task.id}, null, function () {
-                    console.log('Claimed task ' + task.id);
-                    $scope.$emit('tasks.claim', task);
+                Tasks.claim({taskId: $scope.task.id}, null, function () {
+                    console.log('Claimed task ' + $scope.task.id);
+                    $scope.$emit('tasks.claim', $scope.task);
                 })
             }
 
             $scope.complete = function () {
-                Tasks.complete({taskId: task.id}, null, function () {
-                    $scope.$emit('tasks.complete', task);
+                Tasks.complete({taskId: $scope.task.id}, null, function () {
+                    $scope.$emit('tasks.complete', $scope.task);
                 })
             }
 
@@ -293,12 +298,15 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
                 }
             }
 
-            var commandAdder = task.endTime ? Tasks.addArchComment : Tasks.addComment;
+
+            function prepareCommentInvoker(task) {
+                commentInvoker = task.endTime ? Tasks.addArchComment : Tasks.addComment;
+            }
             $scope.addComment = function () {
                 if (!$scope.commentObj.comment) {
                     return;
                 }
-                commandAdder({taskId: task.id}, $scope.commentObj.comment, function (newComment) {
+                commentInvoker({taskId: $scope.task.id}, $scope.commentObj.comment, function (newComment) {
                     if ($scope.events) {
                         // the response is a comment entry
                         // here we have to make it look like an event entry
@@ -317,16 +325,19 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
                 isAttachmentOpen: false
             }
 
-            var attachmentInvoker = task.endTime ? {
-                getAttachments: Tasks.getArchAttachments,
-                uploadAttachment: Tasks.uploadArchAttachment
-            } : {
-                getAttachments: Tasks.getAttachments,
-                uploadAttachment: Tasks.uploadAttachment
+
+            function prepareAttachmentInvoker(task) {
+                attachmentInvoker = task.endTime ? {
+                    getAttachments: Tasks.getArchAttachments,
+                    uploadAttachment: Tasks.uploadArchAttachment
+                } : {
+                    getAttachments: Tasks.getAttachments,
+                    uploadAttachment: Tasks.uploadAttachment
+                }
             }
 
             var loadAttachments = function () {
-                $scope.attachments = attachmentInvoker.getAttachments({taskId: task.id});
+                $scope.attachments = attachmentInvoker.getAttachments({taskId: $scope.task.id});
             }
             $scope.$watch('stateObj.isAttachmentOpen', function (newValue, oldValue) {
                 if (newValue && !$scope.attachments) {
@@ -349,7 +360,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
             $scope.addAttachments = function () {
                 for (i = 0; i < $scope.fileFields.length; i++) {
                     var fileField = $scope.fileFields[i];
-                    attachmentInvoker.uploadAttachment(task.id, fileField.file).success(function (newAttachment) {
+                    attachmentInvoker.uploadAttachment($scope.task.id, fileField.file).success(function (newAttachment) {
                         // make newAttachment look like an event
                         newAttachment.message = newAttachment.name;
                         newAttachment.action = 'AddAttachment';
