@@ -16,6 +16,9 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
             countArchMyTasks: {
                 url: archHomeUrl + '/_my/_count'
             },
+            getArchTask: {
+                url: archHomeUrl + '/:taskId'
+            },
             getCreatedByMe: {
                 url: homeUrl + '/_createdByMe',
                 isArray: true

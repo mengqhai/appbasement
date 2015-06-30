@@ -195,7 +195,8 @@ angular
         });
         $stateProvider.state('dashboard.notification.task', {
             url: '/task/{taskId}',
-            templateUrl: '/views/dashboard.notifications.task.html'
+            templateUrl: '/views/dashboard.notifications.task.html',
+            controller: 'DashboardTaskController'
         })
 
         $urlRouterProvider.otherwise('/');

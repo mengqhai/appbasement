@@ -140,9 +140,10 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
         };
 
     }])
-    .controller('TaskFormController', ['$scope', 'Tasks', 'Orgs', 'Users', '$q', '$modalInstance', 'task', 'Attachments',
-        function ($scope, Tasks, Orgs, Users, $q, $modalInstance, task, Attachments) {
+    .controller('TaskFormController', ['$scope', 'Tasks', 'Orgs', 'Users',  '$modalInstance', 'task', 'Attachments',
+        function ($scope, Tasks, Orgs, Users, $modalInstance, task, Attachments) {
             $scope.task = task;
+            $scope.closeable = true;
 
             function closeDialog() {
                 if ($modalInstance) {
@@ -155,17 +156,39 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
             $scope.$on('tasks.claim', closeDialog);
             $scope.$on('task.delete', closeDialog);
         }])
-    .controller('TaskDetailsController', ['$scope', 'Tasks', 'Orgs', 'Users', '$q', 'Attachments',
-        function ($scope, Tasks, Orgs, Users, $q, Attachments) {
+    .controller('TaskDetailsController', ['$scope', 'Tasks', 'Orgs', 'Users', 'Attachments',
+        function ($scope, Tasks, Orgs, Users, Attachments) {
             var task = $scope.task; // from parent scope
-            $scope.org = Orgs.getWithCache({orgId: task.orgId});
 
+            function loadEverything(task) {
+                loadOrg(task);
+                loadEvents(task);
+                loadAssignee(task);
+                loadProject(task);
+                loadProcessForm(task);
+            }
+
+            if (task.id!==undefined) {
+                loadEverything(task);
+            } else {
+                $scope.$on('task.loaded', function(event, task) {
+                    loadEverything(task);
+                })
+            }
+
+
+            function loadOrg(task) {
+                $scope.org = Orgs.getWithCache({orgId: task.orgId});
+            }
             // for events/comments
-            var eventsGetter = task.endTime ? Tasks.getArchEvents : Tasks.getEvents
-            $scope.events = eventsGetter({taskId: task.id});
+            function loadEvents(task) {
+                var eventsGetter = task.endTime ? Tasks.getArchEvents : Tasks.getEvents
+                $scope.events = eventsGetter({taskId: task.id});
+            }
+
             $scope.getUserPicUrl = Users.getUserPicUrl;
             $scope.updateTask = function (key, value) {
-                return Tasks.xedit($scope.task.id, key, value);
+                return Tasks.xedit(task.id, key, value);
             };
 
             // for assignee field
@@ -173,28 +196,33 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
                 id: null,
                 firstName: 'Unassigned'
             }
-            $scope.assignee = task.assignee ? Users.getWithCache({userIdBase64: btoa(task.assignee)}) : unassigned;
-            if (task.orgId && !task.endTime) {
-                $scope.userList = $scope.getOrgUsers(task.orgId).slice();
-                $scope.userList.push(unassigned);
+            function loadAssignee(task) {
+                $scope.assignee = task.assignee ? Users.getWithCache({userIdBase64: btoa(task.assignee)}) : unassigned;
+                if (task.orgId && !task.endTime) {
+                    $scope.userList = $scope.getOrgUsers(task.orgId).slice();
+                    $scope.userList.push(unassigned);
+                }
             }
+
 
             $scope.assigneeError = null;
             $scope.changeAssignee = function (newAssignee) {
                 $scope.updateTask('assignee', newAssignee.id).then(function (success) {
-                    $scope.task.assignee = newAssignee.id;
+                    task.assignee = newAssignee.id;
                     $scope.$emit('tasks.update.assignee', newAssignee);
                 }, function (error) {
                     $scope.assigneeError = error;
                 });
             }
+            function loadProject(task) {
+                $scope.project = $scope.getProject(task.projectId);
+            }
 
-            $scope.project = $scope.getProject(task.projectId);
 
             $scope.onSelectProject = function (project) {
                 $scope.updateTask('projectId', project.id).then(function (success) {
-                    $scope.task.projectId = project.id;
-                    $scope.task.orgId = project.orgId;
+                    task.projectId = project.id;
+                    task.orgId = project.orgId;
                 }, function (error) {
                     $scope.projectError = error;
                 })
@@ -223,23 +251,25 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
 
             $scope.complete = function () {
                 Tasks.complete({taskId: task.id}, null, function () {
-                    console.log('Completed task ' + task.id);
                     $scope.$emit('tasks.complete', task);
                 })
             }
 
             /** for process form **/
-            if (task.processInstanceId && !task.endTime) {
-                $scope.formDef = Tasks.getFormDef({taskId: task.id});
-                $scope.formObj = {};
-                $scope.completeForm = function () {
-                    Tasks.completeForm({taskId: task.id}, $scope.formObj).$promise.then(function () {
-                        $scope.$emit('tasks.complete', task);
-                    });
+            function loadProcessForm(task) {
+                if (task.processInstanceId && !task.endTime) {
+                    $scope.formDef = Tasks.getFormDef({taskId: task.id});
+                    $scope.formObj = {};
+                    $scope.completeForm = function () {
+                        Tasks.completeForm({taskId: task.id}, $scope.formObj).$promise.then(function () {
+                            $scope.$emit('tasks.complete', task);
+                        });
+                    }
+                } else {
+                    $scope.archForm = Tasks.getArchForm({taskId: task.id});
                 }
-            } else {
-                $scope.archForm = Tasks.getArchForm({taskId: task.id});
             }
+
 
 
             /**
@@ -259,7 +289,6 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
                     }
                     return true;
                 }
-
             }
             $scope.addComment = function () {
                 if (!$scope.commentObj.comment) {
@@ -273,7 +302,6 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
                         newComment.message = newComment['fullMessage'];
                         $scope.events.unshift(newComment)
                     }
-                    console.log(newComment);
                     $scope.commentObj.comment = null;
                 });
             }
