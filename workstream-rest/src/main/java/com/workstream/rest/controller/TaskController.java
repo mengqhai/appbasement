@@ -420,6 +420,13 @@ public class TaskController {
 		return new SubscriptionResponse(sub);
 	}
 
+	@ApiOperation(value = "Unsubscribe a task for the current user")
+	@RequestMapping(value = "/{id}/subscriptions", method = RequestMethod.DELETE)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
+	public void unsubscribeForCurrentUser(@PathVariable("id") String taskId) {
+		core.unsubscribeCurrentUser(TargetType.TASK, taskId);
+	}
+
 	@ApiOperation(value = "Retrieve the local variables of a task")
 	@RequestMapping(value = "/{id}/vars", method = RequestMethod.GET)
 	@PreAuthorize("isAuthInOrgForTask(#taskId)")

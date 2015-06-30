@@ -94,6 +94,17 @@ public class CoreEventService {
 		return sub;
 	}
 
+	public void unsubscribe(TargetType targetType, String targetId,
+			String userId) {
+		Collection<Subscription> subs = subDao.filterSubscription(userId,
+				targetType, targetId);
+		for (Subscription sub : subs) {
+			// can't delete this entity as notification still has foreign key
+			// that refers to it
+			sub.setArchived(true);
+		}
+	}
+
 	/**
 	 * Do this in a background thread. If the event is an end event, this method
 	 * will also mark the Subscription(the one matches the target type and id,

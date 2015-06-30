@@ -109,6 +109,10 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
             complete: {
                 method: 'PUT',
                 url: homeUrl + '/:taskId/_complete'
+            },
+            getSubscriptions: {
+                url: homeUrl + '/:taskId/subscriptions',
+                isArray: true
             }
         });
 
@@ -144,7 +148,7 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
         Tasks.uploadAttachment = function (taskId, file) {
             return uploadAttachment(taskId, file, homeUrl);
         }
-        Tasks.uploadArchAttachment = function(taskId, file) {
+        Tasks.uploadArchAttachment = function (taskId, file) {
             return uploadAttachment(taskId, file, archHomeUrl);
         }
 

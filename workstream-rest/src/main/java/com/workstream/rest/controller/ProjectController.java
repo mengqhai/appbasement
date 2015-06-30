@@ -154,9 +154,9 @@ public class ProjectController {
 	@RequestMapping(value = "/{id}/subscriptions", method = RequestMethod.GET)
 	@PreAuthorize("isAuthInOrgForProject(#projectId)")
 	public Collection<SubscriptionResponse> getProjectSubscriptions(
-			@PathVariable("id") String project) {
+			@PathVariable("id") String projectId) {
 		Collection<Subscription> subs = core.getEventService()
-				.filterSubscription(TargetType.PROJECT, project);
+				.filterSubscription(TargetType.PROJECT, projectId);
 		return InnerWrapperObj.valueOf(subs, SubscriptionResponse.class);
 	}
 

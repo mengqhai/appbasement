@@ -613,6 +613,11 @@ public class CoreFacadeService {
 		return eventSer.subscribe(userId, targetType, targetId);
 	}
 
+	public void unsubscribeCurrentUser(TargetType targetType, String targetId) {
+		String userId = getAuthUserId();
+		eventSer.unsubscribe(targetType, targetId, userId);
+	}
+
 	public Set<String> getOrgIdsFromUser(String userId) {
 		UserX userX = getUserService().getUserX(userId);
 		if (userX == null) {
