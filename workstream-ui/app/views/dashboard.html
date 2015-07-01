@@ -4,9 +4,9 @@
         <aside class="col-md-3">
             <div class="list-group">
                 <a class="list-group-item" ng-repeat="notification in notifications"
-                     ng-class="{'list-group-item-warning':!notification.read}"
-                     ui-sref="{{getStateName(notification)}}"
-                     ui-sref-active="active">
+                     ng-class="{'list-group-item-warning':!notification.read,
+                     active: isNotificationActive(notification)}"
+                     ng-click="markAndGo(notification)">
                     <div>
                         <span class="glyphicon"
                               ng-class="{'glyphicon-comment':notification.targetType==='COMMENT',
@@ -42,7 +42,7 @@
                         </div>
                     </div>
                 </a>
-
+                <showmore ng-if="notifications.length<count.v" ng-click="loadMore()"></showmore>
             </div>
         </aside>
 

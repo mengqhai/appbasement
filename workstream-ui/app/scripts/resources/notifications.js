@@ -7,6 +7,13 @@ angular.module('resources.notifications', ['env'])
             getNotifications: {
                 url: homeUrl,
                 isArray: true
+            },
+            countNotifications: {
+                url: homeUrl+'/_count'
+            },
+            markRead: {
+                method: 'PUT',
+                url: homeUrl+'/:notificationId'
             }
         })
         return Notifications;
