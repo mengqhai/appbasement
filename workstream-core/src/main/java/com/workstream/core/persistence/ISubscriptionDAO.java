@@ -12,7 +12,7 @@ public interface ISubscriptionDAO extends IGenericDAO<Subscription, Long> {
 	public abstract Collection<Subscription> filterSubscriptionByUser(String userId);
 
 	public abstract Collection<Subscription> filterSubscription(String userId, TargetType targetType,
-			String targetId);
+			String targetId, boolean onlyNonarchived);
 
 	public abstract Long countSubscriptionByUser(String userId);
 

@@ -70,13 +70,15 @@ public class SubscriptionJpaDAO extends GenericJpaDAO<Subscription, Long>
 
 	@Override
 	public Collection<Subscription> filterSubscription(String userId,
-			TargetType targetType, String targetId) {
+			TargetType targetType, String targetId, boolean onlyNonarchived) {
 		Map<String, Serializable> attributes = new HashMap<String, Serializable>();
 		attributes.put("targetId", targetId);
 		attributes.put("targetType", targetType);
 		attributes.put("userId", userId);
-		attributes.put("archived", false); // only interested in non-archived
-		// data
+		if (onlyNonarchived) {
+			attributes.put("archived", false); // only interested in non-archived
+			// data
+		}
 		return this.filterFor(attributes, 0, Integer.MAX_VALUE);
 	}
 }

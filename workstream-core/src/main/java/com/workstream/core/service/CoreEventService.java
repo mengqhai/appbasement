@@ -79,9 +79,12 @@ public class CoreEventService {
 	public Subscription subscribe(String subscriber, TargetType targetType,
 			String targetId) throws AttempBadStateException {
 		Collection<Subscription> existings = subDao.filterSubscription(
-				subscriber, targetType, targetId);
+				subscriber, targetType, targetId, false);
 		if (!existings.isEmpty()) {
 			Subscription sub = existings.iterator().next();
+			if (sub.isArchived()) {
+				sub.setArchived(false);
+			}
 			logger.debug("User already subscribed it {}", sub);
 			return sub;
 		}
@@ -97,7 +100,7 @@ public class CoreEventService {
 	public void unsubscribe(TargetType targetType, String targetId,
 			String userId) {
 		Collection<Subscription> subs = subDao.filterSubscription(userId,
-				targetType, targetId);
+				targetType, targetId, true);
 		for (Subscription sub : subs) {
 			// can't delete this entity as notification still has foreign key
 			// that refers to it
