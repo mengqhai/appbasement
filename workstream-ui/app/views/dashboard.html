@@ -6,7 +6,7 @@
                 <a class="list-group-item" ng-repeat="notification in notifications"
                      ng-class="{'list-group-item-warning':!notification.read,
                      active: isNotificationActive(notification)}"
-                     ng-click="markAndGo(notification)">
+                     ng-click="markAndGo(notification)" href>
                     <div>
                         <span class="glyphicon"
                               ng-class="{'glyphicon-comment':notification.targetType==='COMMENT',
