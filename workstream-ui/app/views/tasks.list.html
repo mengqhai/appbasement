@@ -3,7 +3,7 @@
     <a href class="list-group-item" ng-repeat="task in tasks | filter:filterEx" ng-click="openDialog(task)">
         {{task.name}} <sup><span class="label label-default">{{getOrg(task.orgId).name}}</span></sup>
         <span class="pull-right">
-            <span class="btn btn-default btn-xs" ng-if="task.dueDate">{{task.dueDate | date}}</span>
+            <span class="btn btn-danger btn-xs" ng-if="task.dueDate">{{task.dueDate | date}}</span>
             {{task.assignee || 'Unassigned'}}
         </span>
     </a>
