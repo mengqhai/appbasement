@@ -1,0 +1,50 @@
+<div  class="row">
+    <aside class="col-md-3">
+        <div class="list-group">
+            <a class="list-group-item" ng-repeat="notification in notifications"
+               ng-class="{'list-group-item-warning':!notification.read,
+                     active: isNotificationActive(notification)}"
+               ng-click="markAndGo(notification)" href>
+                <div>
+                        <span class="glyphicon"
+                              ng-class="{'glyphicon-comment':notification.targetType==='COMMENT',
+                        'glyphicon-check': notification.targetType==='TASK',
+                        'glyphicon-retweet': notification.targetType==='PROCESS'}"></span>
+                        <span ng-switch="notification.targetType">
+                            <span ng-switch-when="COMMENT">{{notification.target.message}}</span>
+                            <span ng-switch-when="TASK">{{notification.target.name}}
+                                <span ng-switch="notification.eventType">
+                                    <span ng-switch-when="ASSIGNED">> {{notification.additionalInfo}}</span>
+                                    <span ng-switch-when="CREATED"> Created</span>
+                                    <span ng-switch-when="COMPLETED"> Completed</span>
+                                </span>
+                            </span>
+                            <span ng-switch-when="PROCESS">
+                                {{notification.target.name}}
+                                <span ng-switch="notification.eventType">
+                                    <span ng-switch-when="CREATED"> Created</span>
+                                    <span ng-switch-when="COMPLETED"> Completed</span>
+                                </span>
+                            </span>
+                        </span>
+
+                </div>
+                <div>
+                    <sub>
+                        <span class="glyphicon glyphicon-user"></span> {{notification.actionUserId}}
+                    </sub>
+                    <div>
+                        <sub>
+                            at {{notification.createdAt | date: 'medium'}}
+                        </sub>
+                    </div>
+                </div>
+            </a>
+            <showmore ng-if="notifications.length<count.v" ng-click="loadMore()"></showmore>
+        </div>
+    </aside>
+
+    <div class="col-md-9">
+        <div ui-view></div>
+    </div>
+</div>
