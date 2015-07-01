@@ -1,0 +1,11 @@
+<div ng-controller="TaskSubscriptionsController">
+    <div class="list-group">
+        <a class="list-group-item" ng-repeat="sub in subs">
+            {{sub.userId}}
+            <button class="close" ng-show="sub.userId === currentUser" ng-click="unsubscribe()"><span aria-hidden="true">&times;</span></button>
+        </a>
+    </div>
+    <div>
+        <button class="btn btn-success" ng-if="canSubscribe()" ng-click="subscribe()">Subscribe</button>
+    </div>
+</div>

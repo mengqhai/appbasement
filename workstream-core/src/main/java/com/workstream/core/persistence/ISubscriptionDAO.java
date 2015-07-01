@@ -19,4 +19,6 @@ public interface ISubscriptionDAO extends IGenericDAO<Subscription, Long> {
 	public abstract Collection<Subscription> filterSubscriptionByUserTarget(String userId,
 			TargetType targetType, String targetId);
 
+	public abstract Long countSubscription(TargetType targetType, String targetId);
+
 }

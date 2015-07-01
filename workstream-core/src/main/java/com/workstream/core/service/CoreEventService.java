@@ -167,6 +167,10 @@ public class CoreEventService {
 		return subDao.filterSubscription(targetType, targetId);
 	}
 
+	public Long countSubscription(TargetType targetType, String targetId) {
+		return subDao.countSubscription(targetType, targetId);
+	}
+
 	public Collection<Subscription> filterSubscriptionByUser(String userId) {
 		return subDao.filterSubscriptionByUser(userId);
 	}

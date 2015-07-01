@@ -6,9 +6,17 @@
                 <span ng-switch-default>
                     {{task.name}} <span class="label label-primary">Archived({{task.deleteReason}})</span>
                 </span>
+                <button type="button" class="btn btn-default" ng-if="!task.endTime"
+                        popover-template="'views/subscriptions.html'"
+                        popover-title="Subscriptions"
+                        popover-placement="bottom">
+                    <span class="glyphicon glyphicon-volume-up"></span>
+                    {{subCount.v}}
+                    <span class="caret"></span>
+                </button>
             </span>
 
-        <button ng-if="closeable" type="button" ng-click="closeDialog()" class="close" aria-label="Close" style="float: right;" e-maxlength="500"><span aria-hidden="true">&times;</span></button>
+        <button ng-if="closeable" type="button" ng-click="closeDialog()" class="close pull-right" aria-label="Close"  e-maxlength="500"><span aria-hidden="true">&times;</span></button>
     </h4>
 </div>
 

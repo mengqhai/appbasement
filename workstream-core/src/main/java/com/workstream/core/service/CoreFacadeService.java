@@ -618,6 +618,10 @@ public class CoreFacadeService {
 		eventSer.unsubscribe(targetType, targetId, userId);
 	}
 
+	public Long countSubscription(TargetType targetType, String targetId) {
+		return eventSer.countSubscription(targetType, targetId);
+	}
+
 	public Set<String> getOrgIdsFromUser(String userId) {
 		UserX userX = getUserService().getUserX(userId);
 		if (userX == null) {

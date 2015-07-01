@@ -113,6 +113,17 @@ angular.module('resources.tasks', ['env', 'resources.utils'])
             getSubscriptions: {
                 url: homeUrl + '/:taskId/subscriptions',
                 isArray: true
+            },
+            countSubscriptions: {
+                url: homeUrl + '/:taskId/subscriptions/_count'
+            },
+            unsubscribe: {
+                url: homeUrl + '/:taskId/subscriptions',
+                method: 'DELETE'
+            },
+            subscribe: {
+                url: homeUrl + '/:taskId/subscriptions',
+                method: 'POST'
             }
         });
 

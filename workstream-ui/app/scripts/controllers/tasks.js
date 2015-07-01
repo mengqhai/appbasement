@@ -1,4 +1,4 @@
-angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments', 'ui.router', 'xeditable', 'ui.select', 'directives.errorsrc', 'directives.processForm', 'filters.filesize'])
+angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments', 'ui.router', 'xeditable', 'ui.select', 'ui.bootstrap.popover', 'directives.errorsrc', 'directives.processForm', 'filters.filesize'])
     .controller('TasksController', ['$scope', 'Tasks', '$stateParams', function ($scope, Tasks, $stateParams) {
         $scope.myTaskCount = 0;
         $scope.createdByMeCount = 0;
@@ -163,6 +163,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
 
             var attachmentInvoker = null;
             var commentInvoker = null;
+
             function loadEverything(task) {
                 loadOrg(task);
                 loadEvents(task);
@@ -171,6 +172,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
                 loadProcessForm(task);
                 prepareAttachmentInvoker(task);
                 prepareCommentInvoker(task);
+                countSubscription(task);
             }
 
             if (task.id !== undefined) {
@@ -302,6 +304,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
             function prepareCommentInvoker(task) {
                 commentInvoker = task.endTime ? Tasks.addArchComment : Tasks.addComment;
             }
+
             $scope.addComment = function () {
                 if (!$scope.commentObj.comment) {
                     return;
@@ -377,7 +380,58 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
                 var url = Attachments.getDownloadUrl(attachment.id);
                 window.open(url);
             }
+
+            /**
+             * For subscription
+             */
+            function countSubscription(task) {
+                if (task.endTime) {
+                    return;
+                }
+                $scope.subCount = Tasks.countSubscriptions({taskId: task.id});
+            }
+
+            $scope.$on('subscription.remove', function () {
+                $scope.subCount.v--;
+            })
+            $scope.$on('subscription.create', function () {
+                $scope.subCount.v++;
+            })
         }])
+    .controller('TaskSubscriptionsController', ['$scope', 'Tasks', function ($scope, Tasks) {
+        $scope.subs = Tasks.getSubscriptions({taskId: $scope.task.id});
+        $scope.currentUser = $scope.getCurrentUserId();
+        $scope.canSubscribe = function () {
+            var mine = $scope.subs.filter(function (sub) {
+                if (sub.userId === $scope.currentUser) {
+                    return true;
+                }
+            });
+            return $scope.subs.$resolved && mine.length < 1;
+        }
+        $scope.unsubscribe = function () {
+            Tasks.unsubscribe({taskId: $scope.task.id}, function () {
+                var idx = -1;
+                for (i = 0; i < $scope.subs.length; i++) {
+                    if ($scope.subs[i].userId === $scope.currentUser) {
+                        idx = i;
+                        break;
+                    }
+                }
+                if (idx > -1) {
+                    $scope.subs.splice(idx, 1);
+                    $scope.$emit('subscription.remove');
+                }
+            })
+        }
+
+        $scope.subscribe = function () {
+            Tasks.subscribe({taskId: $scope.task.id, userIdBase64: btoa($scope.currentUser)}, null, function(newSub) {
+                $scope.subs.unshift(newSub);
+                $scope.$emit('subscription.create');
+            })
+        }
+    }])
     .controller('TaskCreateFormController', ['$scope', 'Tasks', '$modalInstance', '$rootScope', function ($scope, Tasks, $modalInstance, $rootScope) {
         var task = {};
         $scope.task = task;

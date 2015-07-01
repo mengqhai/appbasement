@@ -58,6 +58,15 @@ public class SubscriptionJpaDAO extends GenericJpaDAO<Subscription, Long>
 		// data
 		return this.countFor(attributes);
 	}
+	
+	@Override
+	public Long countSubscription(TargetType targetType, String targetId) {
+		Map<String, Serializable> attributes = new HashMap<String, Serializable>();
+		attributes.put("targetId", targetId);
+		attributes.put("targetType", targetType);
+		attributes.put("archived", false);
+		return this.countFor(attributes);
+	}
 
 	@Override
 	public Collection<Subscription> filterSubscription(String userId,

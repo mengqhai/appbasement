@@ -377,8 +377,8 @@ public class TaskController {
 				// I'll replace the attachment with my own implementation in the
 				// future.
 				Attachment attachment = core.addAttachmentToTask(taskId,
-						file.getSize(), file.getContentType(),
-						decodedFileName, file.getInputStream());
+						file.getSize(), file.getContentType(), decodedFileName,
+						file.getInputStream());
 				return new AttachmentResponse(attachment);
 			} catch (IOException e) {
 				throw new DataPersistException(e);
@@ -425,6 +425,15 @@ public class TaskController {
 	@PreAuthorize("isAuthInOrgForTask(#taskId)")
 	public void unsubscribeForCurrentUser(@PathVariable("id") String taskId) {
 		core.unsubscribeCurrentUser(TargetType.TASK, taskId);
+	}
+
+	@ApiOperation(value = "Count the subscription for a task")
+	@RequestMapping(value = "/{id}/subscriptions/_count", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForTask(#taskId)")
+	public SingleValueResponse countSubscription(
+			@PathVariable("id") String taskId) {
+		return new SingleValueResponse(core.countSubscription(TargetType.TASK,
+				taskId));
 	}
 
 	@ApiOperation(value = "Retrieve the local variables of a task")
