@@ -203,9 +203,9 @@ public class CoreFacadeService {
 	public Project createProjectInOrg(Long orgId, String name, Date startTime,
 			Date dueTime, String description) {
 		Organization org = getOrg(orgId);
-		;
-		return projSer
-				.createProject(org, name, startTime, dueTime, description);
+		String creator = this.getAuthUserId();
+		return projSer.createProject(org, name, creator, startTime, dueTime,
+				description);
 	}
 
 	public void checkTaskAssigneeOrg(String assigneeId, Organization org)

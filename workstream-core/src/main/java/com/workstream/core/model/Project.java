@@ -1,11 +1,14 @@
 package com.workstream.core.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -24,7 +27,25 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @Entity
 @Table(name = "WS_PROJECT")
 @Access(AccessType.FIELD)
-public class Project {
+public class Project implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8121462675178174005L;
+
+	/**
+	 * <b>Open</b>: Members of your organization will be able to see and work
+	 * with this project. So the ProjectMembership is ignored in this case.<br>
+	 * <b>Invite</b>: (default)invite-only, only invited users will see this
+	 * project
+	 * 
+	 * @author qinghai
+	 * 
+	 */
+	public enum ProjectVisibility {
+		OPEN, INVITE
+	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -50,6 +71,10 @@ public class Project {
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ORG_ID", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_PROJECT_ORG"))
 	private Organization org;
+
+	@Enumerated(EnumType.ORDINAL)
+	@Column(nullable = false)
+	private ProjectVisibility visibility = ProjectVisibility.INVITE;
 
 	public Long getId() {
 		return id;
@@ -180,6 +205,14 @@ public class Project {
 
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
+	}
+
+	public ProjectVisibility getVisibility() {
+		return visibility;
+	}
+
+	public void setVisibility(ProjectVisibility visibility) {
+		this.visibility = visibility;
 	}
 
 	@PrePersist

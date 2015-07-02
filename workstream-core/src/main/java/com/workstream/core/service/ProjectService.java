@@ -24,12 +24,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.workstream.core.CoreConstants;
 import com.workstream.core.exception.AttempBadStateException;
+import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.BeanPropertyException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.Project;
+import com.workstream.core.model.ProjectMembership;
+import com.workstream.core.model.ProjectMembership.ProjectMembershipType;
 import com.workstream.core.persistence.IOrganizationDAO;
 import com.workstream.core.persistence.IProjectDAO;
+import com.workstream.core.persistence.IProjectMembershipDAO;
 import com.workstream.core.service.cmd.CreateRecoveryTaskCmd;
 import com.workstream.core.service.cmd.DeleteHistoricTaskNoCascadeCmd;
 
@@ -45,12 +49,19 @@ public class ProjectService extends TaskCapable {
 	@Autowired
 	private IProjectDAO proDao;
 
-	public Project createProject(Organization org, String name) {
-		return createProject(org, name, null, null, null);
+	@Autowired
+	private IProjectMembershipDAO memDao;
+
+	public Project createProject(Organization org, String name, String creatorId) {
+		return createProject(org, name, creatorId, null, null, null);
 	}
 
-	public Project createProject(Organization org, String name, Date startTime,
-			Date dueTime, String description) {
+	public Project createProject(Organization org, String name,
+			String creatorId, Date startTime, Date dueTime, String description) {
+		if (creatorId == null) {
+			throw new BadArgumentException("Null creator id");
+		}
+
 		org = orgDao.reattachIfNeeded(org, org.getId());
 		Project pro = new Project();
 		if (startTime != null) {
@@ -65,6 +76,14 @@ public class ProjectService extends TaskCapable {
 		pro.setName(name);
 		pro.setOrg(org);
 		proDao.persist(pro);
+
+		ProjectMembership membership = new ProjectMembership();
+		membership.setOrg(org);
+		membership.setProject(pro);
+		membership.setType(ProjectMembershipType.ADMIN);
+		membership.setUserId(creatorId);
+		memDao.persist(membership);
+
 		log.debug("Created project {}.", pro);
 		return pro;
 	}
@@ -91,6 +110,17 @@ public class ProjectService extends TaskCapable {
 	public Collection<Project> filterProject(Organization org, int first,
 			int max) {
 		return proDao.filterFor(org, first, max);
+	}
+
+	public Collection<ProjectMembership> filterProjectMemberships(
+			Long projectId, int first, int max) {
+		Project project = proDao.getReference(projectId);
+		return memDao.filterFor(project, first, max);
+	}
+
+	public Collection<ProjectMembership> filterProjectMembershipsByUser(
+			String userId, int first, int max) {
+		return memDao.filterForUser(userId, first, max);
 	}
 
 	public Long countProject(Organization org) {
@@ -165,8 +195,9 @@ public class ProjectService extends TaskCapable {
 
 		Long orgId = pro.getOrg().getId();
 		Long proId = pro.getId();
-		q.taskTenantId(String.valueOf(orgId)).taskCategory(
-				String.valueOf(proId)).orderByTaskCreateTime().desc();
+		q.taskTenantId(String.valueOf(orgId))
+				.taskCategory(String.valueOf(proId)).orderByTaskCreateTime()
+				.desc();
 		return q;
 	}
 
@@ -300,6 +331,12 @@ public class ProjectService extends TaskCapable {
 		for (Task task : tasks) {
 			deleteTask(task);
 		}
+		Collection<ProjectMembership> memberships = memDao.filterFor(pro, 0,
+				Integer.MAX_VALUE);
+		for (ProjectMembership mem : memberships) {
+			memDao.remove(mem);
+		}
+
 		pro = proDao.reattachIfNeeded(pro, pro.getId());
 		proDao.remove(pro);
 		log.info("Deleted project {}", pro);

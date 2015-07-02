@@ -28,11 +28,13 @@ import com.workstream.core.exception.BadArgumentException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.CoreEvent.TargetType;
 import com.workstream.core.model.Project;
+import com.workstream.core.model.ProjectMembership;
 import com.workstream.core.model.Subscription;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.RestConstants;
 import com.workstream.rest.exception.BeanValidationException;
 import com.workstream.rest.model.InnerWrapperObj;
+import com.workstream.rest.model.ProjectMembershipResponse;
 import com.workstream.rest.model.ProjectRequest;
 import com.workstream.rest.model.ProjectResponse;
 import com.workstream.rest.model.SingleValueResponse;
@@ -62,6 +64,19 @@ public class ProjectController {
 			throw new ResourceNotFoundException("No such project");
 		}
 		return new ProjectResponse(proj);
+	}
+
+	@RequestMapping(value = "/{id}/memberships", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForProject(#projectId)")
+	public List<ProjectMembershipResponse> getProjectMemberships(
+			@PathVariable("id") Long projectId,
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
+		Collection<ProjectMembership> mems = core.getProjectService()
+				.filterProjectMemberships(projectId, first, max);
+		List<ProjectMembershipResponse> resp = InnerWrapperObj.valueOf(mems,
+				ProjectMembershipResponse.class);
+		return resp;
 	}
 
 	@ApiOperation(value = "Partially update a project")
@@ -172,7 +187,8 @@ public class ProjectController {
 	@PreAuthorize("isAuthInOrgForProject(#projectId)")
 	public SubscriptionResponse subscribeProject(
 			@PathVariable("id") String projectId,
-			@RequestParam(required = false) String userIdBase64) throws AttempBadStateException {
+			@RequestParam(required = false) String userIdBase64)
+			throws AttempBadStateException {
 		String userId = core.getAuthUserId();
 		if (userIdBase64 != null && !userIdBase64.isEmpty()) {
 			userId = RestUtils.decodeUserId(userIdBase64);

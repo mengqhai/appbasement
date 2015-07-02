@@ -74,7 +74,7 @@ public class ProjectServiceTest {
 	public void testCreateProject() {
 		Assert.assertNotNull(CoreFacadeService.getInstance());
 
-		Project pro = proSer.createProject(org, "Project #1");
+		Project pro = proSer.createProject(org, "Project #1", userId);
 		Project proCreated = proSer.getProject(pro.getId());
 		Assert.assertEquals(pro.getId(), proCreated.getId());
 		Assert.assertEquals("Project #1", proCreated.getName());
@@ -98,7 +98,7 @@ public class ProjectServiceTest {
 
 	@Test
 	public void testCreateSubTask() {
-		Project pro = proSer.createProject(org, "Project test subtask");
+		Project pro = proSer.createProject(org, "Project test subtask", userId);
 		Task parent = proSer.createTask(pro.getId(), userId, "Task #1", null,
 				null, null, null);
 		Task sub = proSer.createTask(pro, userId, "Task #1", null, null, null,
@@ -116,7 +116,7 @@ public class ProjectServiceTest {
 	@Transactional(value = CoreConstants.TX_MANAGER, propagation = Propagation.REQUIRES_NEW)
 	@Test
 	public void testCreateTask() {
-		Project pro = proSer.createProject(org, "Project #2");
+		Project pro = proSer.createProject(org, "Project #2", userId);
 		Assert.assertEquals(0, proSer.filterTask(pro, 0, 10).size());
 
 		Task task = proSer.createTask(pro.getId(), userId, "Task #1", null,
@@ -159,8 +159,8 @@ public class ProjectServiceTest {
 
 	@Test
 	public void testAssignTask() {
-		Project pro = proSer.createProject(org, "Project #3");
-		Project pro1 = proSer.createProject(org, "Project #4");
+		Project pro = proSer.createProject(org, "Project #3", userId);
+		Project pro1 = proSer.createProject(org, "Project #4", userId);
 		Task task = proSer.createTask(pro.getId(), userId, "Task #3.1", null,
 				null, null, null);
 		Task task1 = proSer.createTask(pro1.getId(), userId, "Task #4.1", null,
@@ -224,7 +224,7 @@ public class ProjectServiceTest {
 
 	@Test
 	public void testCommentTask() throws Exception {
-		Project pro = proSer.createProject(org, "Project comment task");
+		Project pro = proSer.createProject(org, "Project comment task", userId);
 		Task task = proSer.createTask(pro.getId(), userId,
 				"Task with comments", null, null, null, null);
 		// AddCommentCmd uses Authentication.getAuthenticatedUserId(); to decide
@@ -260,7 +260,8 @@ public class ProjectServiceTest {
 	@Test
 	public void testUpdateTaskWithEvent() {
 		idService.setAuthenticatedUserId(userId);
-		Project pro = proSer.createProject(org, "Project test task with event");
+		Project pro = proSer.createProject(org, "Project test task with event",
+				userId);
 		Task task = proSer.createTask(pro.getId(), userId,
 				"Task with update events", null, null, null, null);
 		Map<String, Object> props = new HashMap<String, Object>();

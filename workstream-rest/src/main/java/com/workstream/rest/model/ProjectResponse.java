@@ -5,6 +5,7 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.workstream.core.model.Project;
+import com.workstream.core.model.Project.ProjectVisibility;
 
 @JsonInclude(Include.NON_NULL)
 public class ProjectResponse extends InnerWrapperObj<Project> {
@@ -42,6 +43,10 @@ public class ProjectResponse extends InnerWrapperObj<Project> {
 
 	public Date getCreatedAt() {
 		return project.getCreatedAt();
+	}
+
+	public ProjectVisibility getVisibility() {
+		return project.getVisibility();
 	}
 
 }
