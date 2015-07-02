@@ -38,4 +38,17 @@ public class ProjectMembershipJpaDAO extends
 		return countFor(attributes);
 	}
 
+	@Override
+	public ProjectMembership getProjectMemebership(String userId, Project pro) {
+		Map<String, Serializable> attributes = new HashMap<String, Serializable>();
+		attributes.put("userId", userId);
+		attributes.put("project", pro);
+		Collection<ProjectMembership> mems = filterFor(attributes, 0, 1);
+		if (mems.size() == 0) {
+			return null;
+		} else {
+			return mems.iterator().next();
+		}
+	}
+
 }

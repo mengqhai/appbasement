@@ -193,7 +193,9 @@ public class ProjectService extends TaskCapable {
 	public boolean checkUserProjectMembership(String userId, Long projectId) {
 		Project project = getProject(projectId);
 		if (ProjectVisibility.OPEN != project.getVisibility()) {
-			return memDao.countForUserAndProject(userId, project) > 0;
+			ProjectMembership mem = memDao.getProjectMemebership(userId,
+					project);
+			return (mem != null && mem.getType() != ProjectMembershipType.GUEST);
 		} else {
 			return true;
 		}

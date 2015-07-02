@@ -15,4 +15,6 @@ public interface IProjectMembershipDAO extends
 
 	public abstract Long countForUserAndProject(String userId, Project pro);
 
+	public abstract ProjectMembership getProjectMemebership(String userId, Project pro);
+
 }
