@@ -13,4 +13,6 @@ public interface IProjectMembershipDAO extends
 
 	public abstract Collection<ProjectMembership> filterForUser(String userId, int first, int max);
 
+	public abstract Long countForUserAndProject(String userId, Project pro);
+
 }

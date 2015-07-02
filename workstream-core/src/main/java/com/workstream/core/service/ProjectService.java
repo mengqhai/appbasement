@@ -31,6 +31,7 @@ import com.workstream.core.model.Organization;
 import com.workstream.core.model.Project;
 import com.workstream.core.model.ProjectMembership;
 import com.workstream.core.model.ProjectMembership.ProjectMembershipType;
+import com.workstream.core.model.UserX;
 import com.workstream.core.persistence.IOrganizationDAO;
 import com.workstream.core.persistence.IProjectDAO;
 import com.workstream.core.persistence.IProjectMembershipDAO;
@@ -90,6 +91,31 @@ public class ProjectService extends TaskCapable {
 
 		log.debug("Created project {}.", pro);
 		return pro;
+	}
+
+	public ProjectMembership checkCreateMembership(Long projectId,
+			String userId, ProjectMembershipType type) {
+		Project project = getProject(projectId);
+		Long count = memDao.countForUserAndProject(userId, project);
+		if (count > 0) {
+			throw new AttempBadStateException(
+					"User is already a member of the project.");
+		}
+
+		Organization org = project.getOrg();
+		UserX user = userDao.findByUserId(userId);
+		if (!org.getUsers().contains(user)) {
+			throw new AttempBadStateException(
+					"User is not a member of the organization of the project.");
+		}
+
+		ProjectMembership membership = new ProjectMembership();
+		membership.setOrg(org);
+		membership.setProject(project);
+		membership.setType(type);
+		membership.setUserId(userId);
+		memDao.persist(membership);
+		return membership;
 	}
 
 	public Project getProject(Long id) {

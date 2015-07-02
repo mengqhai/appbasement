@@ -29,11 +29,13 @@ import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.CoreEvent.TargetType;
 import com.workstream.core.model.Project;
 import com.workstream.core.model.ProjectMembership;
+import com.workstream.core.model.ProjectMembership.ProjectMembershipType;
 import com.workstream.core.model.Subscription;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.RestConstants;
 import com.workstream.rest.exception.BeanValidationException;
 import com.workstream.rest.model.InnerWrapperObj;
+import com.workstream.rest.model.ProjectMembershipRequest;
 import com.workstream.rest.model.ProjectMembershipResponse;
 import com.workstream.rest.model.ProjectRequest;
 import com.workstream.rest.model.ProjectResponse;
@@ -77,6 +79,18 @@ public class ProjectController {
 		List<ProjectMembershipResponse> resp = InnerWrapperObj.valueOf(mems,
 				ProjectMembershipResponse.class);
 		return resp;
+	}
+
+	@RequestMapping(value = "/{id}/memberships", method = RequestMethod.POST)
+	@PreAuthorize("isAuthInOrgForProject(#projectId)")
+	public ProjectMembershipResponse createProjectMembership(
+			@PathVariable("id") Long projectId,
+			@RequestBody(required = true) ProjectMembershipRequest membership) {
+		String userId = membership.getUserId();
+		ProjectMembershipType type = membership.getType();
+		ProjectMembership membershipResult = core.getProjectService()
+				.checkCreateMembership(projectId, userId, type);
+		return new ProjectMembershipResponse(membershipResult);
 	}
 
 	@ApiOperation(value = "Partially update a project")

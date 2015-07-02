@@ -1,6 +1,9 @@
 package com.workstream.core.persistence;
 
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -25,6 +28,14 @@ public class ProjectMembershipJpaDAO extends
 	public Collection<ProjectMembership> filterForUser(String userId,
 			int first, int max) {
 		return filterFor("userId", userId, first, max);
+	}
+
+	@Override
+	public Long countForUserAndProject(String userId, Project pro) {
+		Map<String, Serializable> attributes = new HashMap<String, Serializable>();
+		attributes.put("userId", userId);
+		attributes.put("project", pro);
+		return countFor(attributes);
 	}
 
 }
