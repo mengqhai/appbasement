@@ -34,6 +34,7 @@ import com.workstream.core.model.ProjectMembership.ProjectMembershipType;
 import com.workstream.core.persistence.IOrganizationDAO;
 import com.workstream.core.persistence.IProjectDAO;
 import com.workstream.core.persistence.IProjectMembershipDAO;
+import com.workstream.core.persistence.IUserXDAO;
 import com.workstream.core.service.cmd.CreateRecoveryTaskCmd;
 import com.workstream.core.service.cmd.DeleteHistoricTaskNoCascadeCmd;
 
@@ -51,6 +52,9 @@ public class ProjectService extends TaskCapable {
 
 	@Autowired
 	private IProjectMembershipDAO memDao;
+
+	@Autowired
+	private IUserXDAO userDao;
 
 	public Project createProject(Organization org, String name, String creatorId) {
 		return createProject(org, name, creatorId, null, null, null);
@@ -110,6 +114,19 @@ public class ProjectService extends TaskCapable {
 	public Collection<Project> filterProject(Organization org, int first,
 			int max) {
 		return proDao.filterFor(org, first, max);
+	}
+
+	/**
+	 * Get the projects in an org that are visible to the given user
+	 * 
+	 * 
+	 * @param first
+	 * @param max
+	 * @return
+	 */
+	public Collection<Project> filterProjectByOrgAndUser(Organization org,
+			String userId) {
+		return proDao.filterForUserVisiableInOrg(org, userId);
 	}
 
 	public Collection<ProjectMembership> filterProjectMemberships(

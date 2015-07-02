@@ -267,11 +267,8 @@ public class OrgController {
 	@RequestMapping(method = RequestMethod.GET, value = "/{orgId:\\d+}/projects")
 	@PreAuthorize("isAuthInOrg(#orgId)")
 	public List<ProjectResponse> getProjectsInOrg(
-			@PathVariable("orgId") Long orgId,
-			@RequestParam(defaultValue = "0") int first,
-			@RequestParam(defaultValue = "10") int max) {
-		Collection<Project> projects = core.filterProjectByOrgId(orgId, first,
-				max);
+			@PathVariable("orgId") Long orgId) {
+		Collection<Project> projects = core.filterProjectByOrgId(orgId);
 		List<ProjectResponse> respList = InnerWrapperObj.valueOf(projects,
 				ProjectResponse.class);
 		return respList;

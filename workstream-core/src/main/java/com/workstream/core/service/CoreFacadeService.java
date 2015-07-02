@@ -361,10 +361,11 @@ public class CoreFacadeService {
 		return uSer.countUserX(org);
 	}
 
-	public Collection<Project> filterProjectByOrgId(Long orgId, int first,
-			int max) {
+	public Collection<Project> filterProjectByOrgId(Long orgId) {
 		Organization org = getOrg(orgId);
-		return projSer.filterProject(org, first, max);
+		// return projSer.filterProject(org, first, max);
+		String userId = getAuthUserId();
+		return projSer.filterProjectByOrgAndUser(org, userId);
 	}
 
 	public Long countProjectByOrgId(Long orgId) {
