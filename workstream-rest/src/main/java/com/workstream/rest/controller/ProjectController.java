@@ -93,6 +93,20 @@ public class ProjectController {
 		return new ProjectMembershipResponse(membershipResult);
 	}
 
+	@RequestMapping(value = "/{id}/memberships/{memId}", method = RequestMethod.PATCH)
+	@PreAuthorize("isAuthInOrgForProject(#projectId)")
+	public void updateProjectMembership(@PathVariable("id") Long projectId,
+			@PathVariable("memId") Long memId,
+			@RequestBody(required = true) ProjectMembershipRequest membership) {
+		if (membership.getUserId() != null) {
+			throw new BadArgumentException(
+					"UserId in membership is not updatable.");
+		}
+		core.getProjectService().updateProjectMembership(memId,
+				membership.getType());
+
+	}
+
 	@RequestMapping(value = "/{id}/memberships/{memId}", method = RequestMethod.DELETE)
 	@PreAuthorize("isAuthInOrgForProject(#projectId)")
 	public void deleteProjectMembership(@PathVariable("id") Long projectId,

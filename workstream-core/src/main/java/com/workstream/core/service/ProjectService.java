@@ -126,6 +126,21 @@ public class ProjectService extends TaskCapable {
 		memDao.remove(mem);
 	}
 
+	public ProjectMembership getProjectMembership(Long projectMembershipId) {
+		ProjectMembership mem = memDao.findById(projectMembershipId);
+		return mem;
+	}
+
+	public ProjectMembership updateProjectMembership(Long projectMembershipId,
+			ProjectMembershipType type) {
+		ProjectMembership mem = getProjectMembership(projectMembershipId);
+		if (mem == null) {
+			throw new ResourceNotFoundException("No such membership.");
+		}
+		mem.setType(type);
+		return mem;
+	}
+
 	public Project getProject(Long id) {
 		return proDao.findById(id);
 	}

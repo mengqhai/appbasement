@@ -1,5 +1,8 @@
 package com.workstream.rest.model;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import com.workstream.core.model.ProjectMembership.ProjectMembershipType;
 
 public class ProjectMembershipRequest extends MapPropObj {
@@ -12,6 +15,8 @@ public class ProjectMembershipRequest extends MapPropObj {
 		return getProp("userId");
 	}
 
+	@NotNull
+	@Size(min = 1)
 	public ProjectMembershipType getType() {
 		return getProp("type");
 	}
