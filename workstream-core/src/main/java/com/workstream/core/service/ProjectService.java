@@ -118,6 +118,14 @@ public class ProjectService extends TaskCapable {
 		return membership;
 	}
 
+	public void deleteMembership(Long projectMembershipId) {
+		ProjectMembership mem = memDao.findById(projectMembershipId);
+		if (mem == null) {
+			return;
+		}
+		memDao.remove(mem);
+	}
+
 	public Project getProject(Long id) {
 		return proDao.findById(id);
 	}

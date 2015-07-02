@@ -93,6 +93,13 @@ public class ProjectController {
 		return new ProjectMembershipResponse(membershipResult);
 	}
 
+	@RequestMapping(value = "/{id}/memberships/{memId}", method = RequestMethod.DELETE)
+	@PreAuthorize("isAuthInOrgForProject(#projectId)")
+	public void deleteProjectMembership(@PathVariable("id") Long projectId,
+			@PathVariable("memId") Long memId) {
+		core.getProjectService().deleteMembership(memId);
+	}
+
 	@ApiOperation(value = "Partially update a project")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
 	@PreAuthorize("isAuthInOrgForProject(#projectId)")
