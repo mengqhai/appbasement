@@ -30,6 +30,7 @@ import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.Project;
 import com.workstream.core.model.ProjectMembership;
+import com.workstream.core.model.Project.ProjectVisibility;
 import com.workstream.core.model.ProjectMembership.ProjectMembershipType;
 import com.workstream.core.model.UserX;
 import com.workstream.core.persistence.IOrganizationDAO;
@@ -187,6 +188,15 @@ public class ProjectService extends TaskCapable {
 	public Collection<ProjectMembership> filterProjectMembershipsByUser(
 			String userId, int first, int max) {
 		return memDao.filterForUser(userId, first, max);
+	}
+
+	public boolean checkUserProjectMembership(String userId, Long projectId) {
+		Project project = getProject(projectId);
+		if (ProjectVisibility.OPEN != project.getVisibility()) {
+			return memDao.countForUserAndProject(userId, project) > 0;
+		} else {
+			return true;
+		}
 	}
 
 	public Long countProject(Organization org) {

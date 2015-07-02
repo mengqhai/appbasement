@@ -347,6 +347,16 @@ public class CoreFacadeService {
 			Long orgId = Long.valueOf(task.getTenantId());
 			Organization org = getOrg(orgId);
 			checkTaskAssigneeOrg(assigneeId, org);
+
+			// check project membership
+			String projectIdStr = task.getCategory();
+			if (projectIdStr != null) {
+				Long projectId = Long.valueOf(projectIdStr);
+				if (!projSer.checkUserProjectMembership(assigneeId, projectId)) {
+					throw new BadArgumentException(
+							"User is not allowed to work with the project.");
+				}
+			}
 		}
 		projSer.updateTask(task, props);
 	}
