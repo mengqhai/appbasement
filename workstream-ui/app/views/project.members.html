@@ -5,7 +5,7 @@
 </button>
 <ul class="nav nav-pills">
     <li role="presentation" ng-repeat="mem in mems" class="dropdown" dropdown>
-        <a href ng-switch="getUser(mem.userId).isPictureSet===true" dropdown-toggle>
+        <a href ng-switch="getUser(mem.userId).pictureSet===true" dropdown-toggle>
             <img ng-src="{{getUserPicUrl(mem.userId)}}" class="img-rounded" style="float: left;" width="50" height="50"
                  err-src="images/yeoman.png"
                  ng-switch-when="true"/>
