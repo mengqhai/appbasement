@@ -86,6 +86,25 @@ angular.module('controllers.projects', ['resources.projects'])
             $scope.mems.unshift(membership);
             loadUserForMem(membership);
         });
+        $scope.typeLabel = {
+            ADMIN: 'Administrator',
+            PARTICIPANT: 'Participant',
+            GUEST: 'Guest'
+        }
+        var types = Object.keys($scope.typeLabel);
+        $scope.getChangeTypes = function (mem) {
+            return types.filter(function (type) {
+                return type !== mem.type;
+            })
+        }
+
+        $scope.deleteMembership = function (mem) {
+            Projects.deleteMembership({projectId: mem.projectId, memId: mem.id}, function () {
+                var idx = $scope.mems.indexOf(mem);
+                $scope.mems.splice(idx, 1);
+                delete usersMap[mem.userId];
+            });
+        }
     }])
     .controller('ProjectMemberAddController', ['$scope', 'Projects', 'Orgs', function ($scope, Projects, Orgs) {
         function minusMems(userList) {
@@ -106,12 +125,7 @@ angular.module('controllers.projects', ['resources.projects'])
         }
 
         $scope.addSelection = {
-            type: 'GUEST',
-            typeLabel: {
-                ADMIN: 'Administrator',
-                PARTICIPANT: 'Participant',
-                GUEST: 'Guest'
-            }
+            type: 'GUEST'
         };
         $scope.add = function () {
             Projects.addMembership({

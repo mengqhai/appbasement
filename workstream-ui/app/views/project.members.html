@@ -4,18 +4,29 @@
     Add
 </button>
 <ul class="nav nav-pills">
-    <li role="presentation" ng-repeat="mem in mems">
-        <a href ng-switch="getUser(mem.userId).isPictureSet===true">
+    <li role="presentation" ng-repeat="mem in mems" class="dropdown" dropdown>
+        <a href ng-switch="getUser(mem.userId).isPictureSet===true" dropdown-toggle>
             <img ng-src="{{getUserPicUrl(mem.userId)}}" class="img-rounded" style="float: left;" width="50" height="50"
                  err-src="images/yeoman.png"
-                 ng-switch-when="true" />
-            <img src="images/yeoman.png" class="" class="img-rounded" style="float: left;" ng-switch-when="false" width="50" height="50" />
+                 ng-switch-when="true"/>
+            <img src="images/yeoman.png" class="" class="img-rounded" style="float: left;" ng-switch-when="false"
+                 width="50" height="50"/>
             <span style="display: inline-block">
                     <div>{{getUser(mem.userId).firstName}}</div>
                     <div>
-                        <sub>{{mem.type}}</sub>
+                        <sub>{{typeLabel[mem.type]}}</sub>
                     </div>
             </span>
         </a>
+        <ul class="dropdown-menu">
+            <li ng-repeat="type in getChangeTypes(mem)">
+                <a href>Make {{typeLabel[type]}}</a>
+            </li>
+            <li role="separator" class="divider"></li>
+            <li>
+                <a href ng-click="deleteMembership(mem)">Remove</a>
+            </li>
+        </ul>
+
     </li>
 </ul>
