@@ -65,4 +65,62 @@ angular.module('controllers.projects', ['resources.projects'])
                 dialog.dismiss('cancelTask');
             }
         };
+    }])
+    .controller('ProjectMemberController', ['$scope', 'Projects', '$stateParams', 'Users', 'Orgs', function ($scope, Projects, $stateParams, Users, Orgs) {
+        var usersMap = {};
+
+        function loadUserForMem(mem) {
+            usersMap[mem.userId] = Users.getWithCache({userIdBase64: btoa(mem.userId)});
+        }
+
+        $scope.usersMap = usersMap;
+        $scope.mems = Projects.getMemberships({projectId: $stateParams.projectId}, function (mems) {
+            mems.forEach(function (mem) {
+                loadUserForMem(mem);
+            });
+        });
+        $scope.getUser = function (userId) {
+            return usersMap[userId];
+        }
+        $scope.$on('membership.add', function (event, membership) {
+            $scope.mems.unshift(membership);
+            loadUserForMem(membership);
+        });
+    }])
+    .controller('ProjectMemberAddController', ['$scope', 'Projects', 'Orgs', function ($scope, Projects, Orgs) {
+        function minusMems(userList) {
+            var memIds = Object.keys($scope.usersMap);
+            for (var i = userList.length - 1; i >= 0; i--) {
+                if (memIds.indexOf(userList[i].id) !== -1) {
+                    userList.splice(i, 1)
+                }
+            }
+        }
+
+        if ($scope.project && $scope.project.orgId) {
+            $scope.userList = Orgs.getUsersInOrg({orgId: $scope.project.orgId}, minusMems);
+        } else {
+            $scope.project = Projects.get({projectId: $stateParams.projectId}, function (project) {
+                $scope.userList = Orgs.getUsersInOrg({orgId: project.orgId}, minusMems);
+            })
+        }
+
+        $scope.addSelection = {
+            type: 'GUEST',
+            typeLabel: {
+                ADMIN: 'Administrator',
+                PARTICIPANT: 'Participant',
+                GUEST: 'Guest'
+            }
+        };
+        $scope.add = function () {
+            Projects.addMembership({
+                projectId: $scope.project.id
+            }, {
+                userId: $scope.addSelection.user.id,
+                type: $scope.addSelection.type
+            }, function (membership) {
+                $scope.$emit("membership.add", membership);
+            })
+        }
     }]);

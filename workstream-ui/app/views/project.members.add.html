@@ -1,0 +1,32 @@
+<div ng-controller="ProjectMemberAddController">
+    <div>
+        <ui-select
+                ng-model="addSelection.user" theme="select2" style="min-width: 200px; max-width: 200px">
+            <ui-select-match placeholder="Select user...">
+                <span class="glyphicon glyphicon-user"></span>
+                {{$select.selected.firstName}}
+            </ui-select-match>
+            <ui-select-choices repeat="aUser in userList | filter: $select.search">
+                <div ng-bind-html="aUser.id | highlight: $select.search"></div>
+                <small>
+                    Name: <span ng-bind-html="aUser.firstName | highlight: $select.search"></span>
+                </small>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+
+    <span class="btn-group" dropdown>
+        <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
+            {{addSelection.typeLabel[addSelection.type]}} <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li><a href ng-click="addSelection.type='ADMIN'">Administrator</a></li>
+            <li><a href ng-click="addSelection.type='PARTICIPANT'">Participant</a></li>
+            <li><a href ng-click="addSelection.type='GUEST'">Guest</a></li>
+        </ul>
+    </span>
+    <span>
+        <button class="btn btn-success" ng-click="add();popoverCtrl.toggle()" ng-disabled="!addSelection.user">Add</button>
+    </span>
+
+</div>

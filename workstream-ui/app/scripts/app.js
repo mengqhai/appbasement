@@ -26,6 +26,7 @@ angular
         'directives.filemodel',
         'directives.showmore',
         'directives.statusToggle',
+        'directives.popoverToggle',
         'resources.users',
         'resources.orgs',
         'resources.groups',
@@ -104,6 +105,11 @@ angular
             templateUrl: 'views/project.tasks.html',
             controller: 'ProjectTaskListController'
         });
+        $stateProvider.state('project.members', {
+            url: '/members',
+            templateUrl: 'views/project.members.html',
+            controller: 'ProjectMemberController'
+        })
         $stateProvider.state('models', {
             url: '/orgs/{orgId}/models',
             templateUrl: 'views/models.html',
@@ -206,6 +212,9 @@ angular
         $urlRouterProvider.otherwise('/');
 
     }])
+    .config(function ($tooltipProvider) {
+        $tooltipProvider.setTriggers({'open': 'close'});
+    })
     .run(['editableOptions', function(editableOptions) {
         editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
     }]);

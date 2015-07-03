@@ -1,0 +1,21 @@
+<button class="btn btn-default" popover-template="'views/project.members.add.html'" popover-placement="bottom"
+        popover-toggle
+        popover-trigger="open">
+    Add
+</button>
+<ul class="nav nav-pills">
+    <li role="presentation" ng-repeat="mem in mems">
+        <a href ng-switch="getUser(mem.userId).isPictureSet===true">
+            <img ng-src="{{getUserPicUrl(mem.userId)}}" class="img-rounded" style="float: left;" width="50" height="50"
+                 err-src="images/yeoman.png"
+                 ng-switch-when="true" />
+            <img src="images/yeoman.png" class="" class="img-rounded" style="float: left;" ng-switch-when="false" width="50" height="50" />
+            <span style="display: inline-block">
+                    <div>{{getUser(mem.userId).firstName}}</div>
+                    <div>
+                        <sub>{{mem.type}}</sub>
+                    </div>
+            </span>
+        </a>
+    </li>
+</ul>
