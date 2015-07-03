@@ -105,6 +105,13 @@ angular.module('controllers.projects', ['resources.projects'])
                 delete usersMap[mem.userId];
             });
         }
+        $scope.changeMembershipType = function (mem, newType) {
+            Projects.updateMembership({projectId: mem.projectId, memId: mem.id}, {
+                type: newType
+            }, function () {
+                mem.type = newType;
+            });
+        }
     }])
     .controller('ProjectMemberAddController', ['$scope', 'Projects', 'Orgs', function ($scope, Projects, Orgs) {
         function minusMems(userList) {

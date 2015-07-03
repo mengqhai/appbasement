@@ -20,7 +20,7 @@
         </a>
         <ul class="dropdown-menu">
             <li ng-repeat="type in getChangeTypes(mem)">
-                <a href>Make {{typeLabel[type]}}</a>
+                <a href ng-click="changeMembershipType(mem, type)">Make {{typeLabel[type]}}</a>
             </li>
             <li role="separator" class="divider"></li>
             <li>
