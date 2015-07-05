@@ -352,7 +352,7 @@ public class CoreFacadeService {
 			String projectIdStr = task.getCategory();
 			if (projectIdStr != null) {
 				Long projectId = Long.valueOf(projectIdStr);
-				if (!projSer.checkUserProjectMembership(assigneeId, projectId)) {
+				if (!projSer.checkMembershipForTaskUpdate(assigneeId, projectId)) {
 					throw new BadArgumentException(
 							"User is not allowed to work with the project.");
 				}

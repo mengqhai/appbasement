@@ -173,6 +173,18 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 		return isAuthInOrg(orgId);
 	}
 
+	public boolean isAuthMemberCapableForProjectUpdate(Long projectId) {
+		Project pro = CoreFacadeService.getInstance().getProjectService()
+				.getProject(projectId);
+		if (pro == null) {
+			throw new ResourceNotFoundException("No such project");
+		}
+		// check member ship
+		String userId = CoreFacadeService.getInstance().getAuthUserId();
+		return CoreFacadeService.getInstance().getProjectService()
+				.checkMembershipForTaskUpdate(userId, projectId);
+	}
+
 	public boolean isAuthInOrgForAttachment(String attachmentId) {
 		String orgId = getOrgIdFromAttachment(attachmentId);
 		if (orgId != null) {

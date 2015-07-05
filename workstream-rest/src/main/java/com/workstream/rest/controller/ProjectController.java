@@ -94,7 +94,7 @@ public class ProjectController {
 	}
 
 	@RequestMapping(value = "/{id}/memberships/{memId}", method = RequestMethod.PATCH)
-	@PreAuthorize("isAuthInOrgForProject(#projectId)")
+	@PreAuthorize("isAuthInOrgForProject(#projectId) && isAuthMemberCapableForProjectUpdate(#projectId)")
 	public void updateProjectMembership(@PathVariable("id") Long projectId,
 			@PathVariable("memId") Long memId,
 			@RequestBody(required = true) ProjectMembershipRequest membership) {
@@ -116,7 +116,7 @@ public class ProjectController {
 
 	@ApiOperation(value = "Partially update a project")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
-	@PreAuthorize("isAuthInOrgForProject(#projectId)")
+	@PreAuthorize("isAuthInOrgForProject(#projectId) && isAuthMemberCapableForProjectUpdate(#projectId)")
 	public void updateProject(
 			@PathVariable("id") Long projectId,
 			@RequestBody @Validated({ Default.class, ValidateOnUpdate.class }) ProjectRequest projectReq,

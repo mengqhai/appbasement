@@ -1,8 +1,12 @@
 package com.workstream.core.service;
 
+import static com.workstream.core.model.ProjectMembership.ProjectMembershipType.ADMIN;
+import static com.workstream.core.model.ProjectMembership.ProjectMembershipType.PARTICIPANT;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
@@ -29,8 +33,8 @@ import com.workstream.core.exception.BeanPropertyException;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Organization;
 import com.workstream.core.model.Project;
-import com.workstream.core.model.ProjectMembership;
 import com.workstream.core.model.Project.ProjectVisibility;
+import com.workstream.core.model.ProjectMembership;
 import com.workstream.core.model.ProjectMembership.ProjectMembershipType;
 import com.workstream.core.model.UserX;
 import com.workstream.core.persistence.IOrganizationDAO;
@@ -57,6 +61,12 @@ public class ProjectService extends TaskCapable {
 
 	@Autowired
 	private IUserXDAO userDao;
+
+	public static final EnumSet<ProjectMembershipType> CAPABLE_FOR_TASK_UPDATE = EnumSet
+			.of(ADMIN, PARTICIPANT);
+
+	public static final EnumSet<ProjectMembershipType> CAPABLE_FOR_PROJECT_UPDATE = EnumSet
+			.of(ADMIN);
 
 	public Project createProject(Organization org, String name, String creatorId) {
 		return createProject(org, name, creatorId, null, null, null);
@@ -190,15 +200,26 @@ public class ProjectService extends TaskCapable {
 		return memDao.filterForUser(userId, first, max);
 	}
 
-	public boolean checkUserProjectMembership(String userId, Long projectId) {
+	public boolean checkMembershipCapability(String userId, Long projectId,
+			EnumSet<ProjectMembershipType> capableMembershipSet) {
 		Project project = getProject(projectId);
 		if (ProjectVisibility.OPEN != project.getVisibility()) {
 			ProjectMembership mem = memDao.getProjectMemebership(userId,
 					project);
-			return (mem != null && mem.getType() != ProjectMembershipType.GUEST);
+			return (mem != null && capableMembershipSet.contains(mem.getType()));
 		} else {
 			return true;
 		}
+	}
+
+	public boolean checkMembershipForProjectUpdate(String userId, Long projectId) {
+		return checkMembershipCapability(userId, projectId,
+				CAPABLE_FOR_PROJECT_UPDATE);
+	}
+
+	public boolean checkMembershipForTaskUpdate(String userId, Long projectId) {
+		return checkMembershipCapability(userId, projectId,
+				CAPABLE_FOR_TASK_UPDATE);
 	}
 
 	public Long countProject(Organization org) {
