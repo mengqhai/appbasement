@@ -16,6 +16,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import com.workstream.core.model.Organization;
+import com.workstream.core.model.UserX;
+import com.workstream.core.service.OrganizationService;
 import com.workstream.core.service.UserService;
 
 public class BasicAuthenticationProvider implements AuthenticationProvider {
@@ -26,6 +29,9 @@ public class BasicAuthenticationProvider implements AuthenticationProvider {
 	@Autowired
 	private UserService uSer;
 
+	@Autowired
+	private OrganizationService orgSer;
+
 	public Authentication authenticate(Authentication authentication)
 			throws AuthenticationException {
 		String userId = authentication.getName();
@@ -33,12 +39,23 @@ public class BasicAuthenticationProvider implements AuthenticationProvider {
 
 		boolean passed = uSer.checkPassword(userId, password);
 		if (passed) {
-			List<Group> groups = uSer.filterGroupByUser(userId);
 			Collection<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+
+			// for better performance of WsSecurityExpressionRoot.isAuthInOrg()
+			UserX userX = uSer.getUserX(userId);
+			Collection<Organization> myOrgs = orgSer.filterOrg(userX);
+			for (Organization org : myOrgs) {
+				grantedAuthorities.add(new SimpleGrantedAuthority(String
+						.valueOf(org.getId())));
+			}
+
+			List<Group> groups = uSer.filterGroupByUser(userId);
+
 			for (Group group : groups) {
 				grantedAuthorities
 						.add(new SimpleGrantedAuthority(group.getId()));
 			}
+
 			uSer.login(userId);
 			log.info("User logged in: {}", userId);
 			if (log.isTraceEnabled()) {

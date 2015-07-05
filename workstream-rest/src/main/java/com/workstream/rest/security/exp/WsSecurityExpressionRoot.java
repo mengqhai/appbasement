@@ -2,6 +2,7 @@ package com.workstream.rest.security.exp;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
@@ -52,7 +53,8 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 				.getAuthorities();
 		for (GrantedAuthority a : authorities) {
 			String role = a.getAuthority();
-			if (role != null && role.startsWith(orgId + "|")) {
+			if (role != null
+					&& (role.equals(orgId) || role.startsWith(orgId + "|"))) {
 				return true;
 			}
 		}
@@ -65,7 +67,13 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 		// return true;
 		// }
 		// }
-		return false;
+
+		// if the user is not assigned a group in the org, we need to check
+		// the user's all orgs
+		String userId = CoreFacadeService.getInstance().getAuthUserId();
+		Set<String> orgIds = CoreFacadeService.getInstance().getOrgIdsFromUser(
+				userId);
+		return orgIds.contains(orgId);
 	}
 
 	public boolean isAuthInGroup(String groupId) {
