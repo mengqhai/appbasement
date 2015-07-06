@@ -276,7 +276,7 @@ public class TaskController {
 
 	@ApiOperation(value = "Delete(cancel) the task for id")
 	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.DELETE)
-	@PreAuthorize("isAuthInOrgForTask(#taskId)")
+	@PreAuthorize("isAuthInOrgForTask(#taskId) && isAuthMemberCapableForTaskUpdate(#taskId)")
 	public void deleteTask(@PathVariable("id") String taskId) {
 		// TODO if it's a task of a running process, trying to delete it will
 		// cause activiti exception, so an exception mapping is required

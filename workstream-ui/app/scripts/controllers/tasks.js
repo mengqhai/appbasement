@@ -155,7 +155,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
 
             $scope.$on('tasks.complete', closeDialog);
             $scope.$on('tasks.claim', closeDialog);
-            $scope.$on('task.delete', closeDialog);
+            $scope.$on('tasks.delete', closeDialog);
         }])
     .controller('TaskDetailsController', ['$scope', 'Tasks', 'Orgs', 'Users', 'Attachments',
         function ($scope, Tasks, Orgs, Users, Attachments) {

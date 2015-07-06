@@ -65,6 +65,15 @@ angular.module('controllers.projects', ['resources.projects'])
                 dialog.dismiss('cancelTask');
             }
         };
+
+        $scope.$on('tasks.delete', function (event, task) {
+            // remove task
+            for (var i = $scope.tasks.length - 1; i >= 0; i--) {
+                if ($scope.tasks[i].id === task.id) {
+                    $scope.tasks.splice(i, 1);
+                }
+            }
+        });
     }])
     .controller('ProjectMemberController', ['$scope', 'Projects', '$stateParams', 'Users', 'Orgs', function ($scope, Projects, $stateParams, Users, Orgs) {
         var usersMap = {};

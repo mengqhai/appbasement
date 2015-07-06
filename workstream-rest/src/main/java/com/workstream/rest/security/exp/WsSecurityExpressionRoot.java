@@ -212,6 +212,21 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 				.checkMembershipForTaskUpdate(userId, projectId);
 	}
 
+	public boolean isAuthMemberCapableForTaskUpdate(String taskId) {
+		Task task = CoreFacadeService.getInstance().getProjectService()
+				.getTask(taskId);
+		if (task == null) {
+			throw new ResourceNotFoundException("No such task");
+		}
+
+		if (task.getCategory() == null || task.getCategory().isEmpty()) {
+			return true; // process task
+		}
+
+		Long projectId = Long.valueOf(task.getCategory());
+		return isAuthMemberCapableForTaskUpdate(projectId);
+	}
+
 	public boolean isAuthInOrgForAttachment(String attachmentId) {
 		String orgId = getOrgIdFromAttachment(attachmentId);
 		if (orgId != null) {
