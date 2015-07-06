@@ -54,7 +54,7 @@ public class ProjectJpaDAO extends GenericJpaDAO<Project, Long> implements
 			String userId) {
 		Query q = getEm()
 				.createQuery(
-						"select p from Project as p, ProjectMembership m where p.org=:org and (p.visibility=:visibility or m.userId=:userId)");
+						"select p from Project as p, ProjectMembership m where m.project=p and p.org=:org and (p.visibility=:visibility or m.userId=:userId)");
 		q.setParameter("org", org);
 		q.setParameter("visibility", ProjectVisibility.OPEN);
 		q.setParameter("userId", userId);
