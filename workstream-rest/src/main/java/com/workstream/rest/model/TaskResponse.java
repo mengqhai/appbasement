@@ -53,7 +53,7 @@ public class TaskResponse extends InnerWrapperObj<Task> {
 		return task.getDueDate();
 	}
 
-	public String getParentTaskId() {
+	public String getParentId() {
 		return task.getParentTaskId();
 	}
 
