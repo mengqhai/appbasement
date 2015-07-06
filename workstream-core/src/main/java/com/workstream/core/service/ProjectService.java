@@ -2,6 +2,7 @@ package com.workstream.core.service;
 
 import static com.workstream.core.model.ProjectMembership.ProjectMembershipType.ADMIN;
 import static com.workstream.core.model.ProjectMembership.ProjectMembershipType.PARTICIPANT;
+import static com.workstream.core.model.ProjectMembership.ProjectMembershipType.GUEST;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -62,11 +63,20 @@ public class ProjectService extends TaskCapable {
 	@Autowired
 	private IUserXDAO userDao;
 
+	public static final EnumSet<ProjectMembershipType> CAPABLE_FOR_TASK_RETRIEVE = EnumSet
+			.of(ADMIN, PARTICIPANT, GUEST);
+
 	public static final EnumSet<ProjectMembershipType> CAPABLE_FOR_TASK_UPDATE = EnumSet
 			.of(ADMIN, PARTICIPANT);
 
 	public static final EnumSet<ProjectMembershipType> CAPABLE_FOR_PROJECT_UPDATE = EnumSet
 			.of(ADMIN);
+
+	public static final EnumSet<ProjectMembershipType> CAPABLE_FOR_PROJECT_MEM_UPDATE = EnumSet
+			.of(ADMIN);
+
+	public static final EnumSet<ProjectMembershipType> CAPABLE_FOR_PROJECT_MEM_RETRIEVE = EnumSet
+			.of(ADMIN, PARTICIPANT);
 
 	public Project createProject(Organization org, String name, String creatorId) {
 		return createProject(org, name, creatorId, null, null, null);
@@ -203,6 +213,9 @@ public class ProjectService extends TaskCapable {
 	public boolean checkMembershipCapability(String userId, Long projectId,
 			EnumSet<ProjectMembershipType> capableMembershipSet) {
 		Project project = getProject(projectId);
+		if (project == null) {
+			throw new ResourceNotFoundException("No such project");
+		}
 		if (ProjectVisibility.OPEN != project.getVisibility()) {
 			ProjectMembership mem = memDao.getProjectMemebership(userId,
 					project);
@@ -217,9 +230,26 @@ public class ProjectService extends TaskCapable {
 				CAPABLE_FOR_PROJECT_UPDATE);
 	}
 
+	public boolean checkMembershipForProjectMemUpdate(String userId,
+			Long projectId) {
+		return checkMembershipCapability(userId, projectId,
+				CAPABLE_FOR_PROJECT_MEM_UPDATE);
+	}
+
+	public boolean checkMembershipForProjectMemRetrieve(String userId,
+			Long projectId) {
+		return checkMembershipCapability(userId, projectId,
+				CAPABLE_FOR_PROJECT_MEM_RETRIEVE);
+	}
+
 	public boolean checkMembershipForTaskUpdate(String userId, Long projectId) {
 		return checkMembershipCapability(userId, projectId,
 				CAPABLE_FOR_TASK_UPDATE);
+	}
+
+	public boolean checkMembershipForTaskRetrieve(String userId, Long projectId) {
+		return checkMembershipCapability(userId, projectId,
+				CAPABLE_FOR_TASK_RETRIEVE);
 	}
 
 	public Long countProject(Organization org) {

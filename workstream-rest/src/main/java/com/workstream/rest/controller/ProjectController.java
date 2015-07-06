@@ -69,7 +69,7 @@ public class ProjectController {
 	}
 
 	@RequestMapping(value = "/{id}/memberships", method = RequestMethod.GET)
-	@PreAuthorize("isAuthInOrgForProject(#projectId)")
+	@PreAuthorize("isAuthInOrgForProject(#projectId) && isAuthMemberCapableForProjectMemRetrieve(#projectId)")
 	public List<ProjectMembershipResponse> getProjectMemberships(
 			@PathVariable("id") Long projectId,
 			@RequestParam(defaultValue = "0") int first,
@@ -82,7 +82,7 @@ public class ProjectController {
 	}
 
 	@RequestMapping(value = "/{id}/memberships", method = RequestMethod.POST)
-	@PreAuthorize("isAuthInOrgForProject(#projectId)")
+	@PreAuthorize("isAuthInOrgForProject(#projectId) && isAuthMemberCapableForProjectMemUpdate(#projectId)")
 	public ProjectMembershipResponse createProjectMembership(
 			@PathVariable("id") Long projectId,
 			@RequestBody(required = true) ProjectMembershipRequest membership) {
@@ -94,7 +94,7 @@ public class ProjectController {
 	}
 
 	@RequestMapping(value = "/{id}/memberships/{memId}", method = RequestMethod.PATCH)
-	@PreAuthorize("isAuthInOrgForProject(#projectId) && isAuthMemberCapableForProjectUpdate(#projectId)")
+	@PreAuthorize("isAuthInOrgForProject(#projectId) && isAuthMemberCapableForProjectMemUpdate(#projectId)")
 	public void updateProjectMembership(@PathVariable("id") Long projectId,
 			@PathVariable("memId") Long memId,
 			@RequestBody(required = true) ProjectMembershipRequest membership) {
@@ -108,7 +108,7 @@ public class ProjectController {
 	}
 
 	@RequestMapping(value = "/{id}/memberships/{memId}", method = RequestMethod.DELETE)
-	@PreAuthorize("isAuthInOrgForProject(#projectId)")
+	@PreAuthorize("isAuthInOrgForProject(#projectId) && isAuthMemberCapableForProjectMemUpdate(#projectId)")
 	public void deleteProjectMembership(@PathVariable("id") Long projectId,
 			@PathVariable("memId") Long memId) {
 		core.getProjectService().deleteMembership(memId);
@@ -144,7 +144,7 @@ public class ProjectController {
 
 	@ApiOperation(value = "Create a task in the project")
 	@RequestMapping(value = "/{id}/tasks", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	@PreAuthorize("isAuthInOrgForProject(#projectId)")
+	@PreAuthorize("isAuthInOrgForProject(#projectId) && isAuthMemberCapableForTaskUpdate(#projectId)")
 	public TaskResponse createTaskInProject(
 			@PathVariable("id") Long projectId,
 			@ApiParam(required = true) @RequestBody(required = true) @Validated({
@@ -162,7 +162,7 @@ public class ProjectController {
 
 	@ApiOperation(value = "Retrieves the tasks in the project", notes = "If no assigneeId is provided, all the tasks in the project will be retrieved.")
 	@RequestMapping(value = "/{id}/tasks", method = RequestMethod.GET)
-	@PreAuthorize("isAuthInOrgForProject(#projectId)")
+	@PreAuthorize("isAuthInOrgForProject(#projectId) && isAuthMemberCapableForTaskRetrieve(#projectId)")
 	public List<TaskResponse> getTasksInProject(
 			@PathVariable("id") Long projectId,
 			@RequestParam(required = false) String assigneeId,
@@ -185,7 +185,7 @@ public class ProjectController {
 
 	@ApiOperation(value = "Count the tasks in the project", notes = "If no assigneeId is provided, all the tasks in the project will be counted.")
 	@RequestMapping(value = "/{id}/tasks/_count", method = RequestMethod.GET)
-	@PreAuthorize("isAuthInOrgForProject(#projectId)")
+	@PreAuthorize("isAuthInOrgForProject(#projectId)  && isAuthMemberCapableForTaskRetrieve(#projectId)")
 	public SingleValueResponse countTasksInProject(
 			@PathVariable("id") Long projectId,
 			@RequestParam(required = false) String assigneeId)

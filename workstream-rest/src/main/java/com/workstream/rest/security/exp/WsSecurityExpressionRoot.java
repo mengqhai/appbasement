@@ -182,12 +182,31 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 	}
 
 	public boolean isAuthMemberCapableForProjectUpdate(Long projectId) {
-		Project pro = CoreFacadeService.getInstance().getProjectService()
-				.getProject(projectId);
-		if (pro == null) {
-			throw new ResourceNotFoundException("No such project");
-		}
 		// check member ship
+		String userId = CoreFacadeService.getInstance().getAuthUserId();
+		return CoreFacadeService.getInstance().getProjectService()
+				.checkMembershipForProjectUpdate(userId, projectId);
+	}
+
+	public boolean isAuthMemberCapableForProjectMemUpdate(Long projectId) {
+		String userId = CoreFacadeService.getInstance().getAuthUserId();
+		return CoreFacadeService.getInstance().getProjectService()
+				.checkMembershipForProjectMemUpdate(userId, projectId);
+	}
+
+	public boolean isAuthMemberCapableForProjectMemRetrieve(Long projectId) {
+		String userId = CoreFacadeService.getInstance().getAuthUserId();
+		return CoreFacadeService.getInstance().getProjectService()
+				.checkMembershipForProjectMemRetrieve(userId, projectId);
+	}
+
+	public boolean isAuthMemberCapableForTaskRetrieve(Long projectId) {
+		String userId = CoreFacadeService.getInstance().getAuthUserId();
+		return CoreFacadeService.getInstance().getProjectService()
+				.checkMembershipForTaskRetrieve(userId, projectId);
+	}
+
+	public boolean isAuthMemberCapableForTaskUpdate(Long projectId) {
 		String userId = CoreFacadeService.getInstance().getAuthUserId();
 		return CoreFacadeService.getInstance().getProjectService()
 				.checkMembershipForTaskUpdate(userId, projectId);
