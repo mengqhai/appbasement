@@ -1,4 +1,15 @@
 angular.module('controllers.dashboard', ['resources.notifications', 'resources.processes'])
+    .controller('DashboardOverviewController', ['$scope', 'Orgs', 'Projects', function ($scope, Orgs, Projects) {
+        $scope.myOrgs = $scope.getMyOrgs();
+
+        $scope.projectTaskCounts = {};
+        $scope.getProjectTaskCount = function (projectId) {
+            if (!$scope.projectTaskCounts[projectId]) {
+                $scope.projectTaskCounts[projectId] = Projects.countTasks({projectId: projectId});
+            }
+            return $scope.projectTaskCounts[projectId];
+        }
+    }])
     .controller('DashboardController', ['$scope', 'Notifications', '$state', function ($scope, Notifications, $state) {
         $scope.count = Notifications.countNotifications();
         $scope.notifications = Notifications.getNotifications();
@@ -6,7 +17,7 @@ angular.module('controllers.dashboard', ['resources.notifications', 'resources.p
             var stateName = 'dashboard';
             var params = {};
             if (notification.targetType === 'COMMENT') {
-                stateName= 'dashboard.notification.task';
+                stateName = 'dashboard.notification.task';
                 params.taskId = notification.parentId;
                 params.notificationId = notification.id;
             } else if (notification.targetType === 'TASK') {
@@ -25,13 +36,13 @@ angular.module('controllers.dashboard', ['resources.notifications', 'resources.p
                 $.merge($scope.notifications, moreNotifications);
             });
         }
-        $scope.markAndGo = function(notification) {
+        $scope.markAndGo = function (notification) {
             $scope.goToState(notification);
-            Notifications.markRead({notificationId: notification.id}, null, function(newNotification) {
+            Notifications.markRead({notificationId: notification.id}, null, function (newNotification) {
                 notification.read = true;
             });
         }
-        $scope.isNotificationActive = function(notification) {
+        $scope.isNotificationActive = function (notification) {
             return $state.includes('dashboard.notification', {notificationId: notification.id});
         }
     }])

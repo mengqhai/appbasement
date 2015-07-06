@@ -115,9 +115,9 @@ angular
             templateUrl: 'views/models.html',
             controller: 'ModelListController',
             resolve: {
-                models: ['Orgs', '$stateParams', function(Orgs, $stateParams) {
+                models: ['Orgs', '$stateParams', function (Orgs, $stateParams) {
                     return Orgs.getModelsInOrg({orgId: $stateParams.orgId});
-            }]}
+                }]}
         })
         $stateProvider.state('models.details', {
             url: '/{modelId}',
@@ -129,7 +129,7 @@ angular
             templateUrl: 'views/templates.html',
             controller: 'TemplateListController',
             resolve: {
-                templates: ['Orgs', '$stateParams', function(Orgs, $stateParams) {
+                templates: ['Orgs', '$stateParams', function (Orgs, $stateParams) {
                     return Orgs.getTemplatesInOrg({orgId: $stateParams.orgId});
                 }]
             }
@@ -188,12 +188,13 @@ angular
             templateUrl: '/views/dashboard.html',
             controller: 'DashboardController'
         });
-        $stateProvider.state('dashboard.overview', {
-            url: '/overview',
-            templateUrl: '/views/dashboard.overview.html'
-        })
+//        $stateProvider.state('dashboard.overview', {
+//            url: '/overview',
+//            templateUrl: '/views/dashboard.overview.html',
+//            controller: 'DashboardOverviewController'
+//        })
         $stateProvider.state('dashboard.notification', {
-            url:'/notifications/{notificationId}',
+            url: '/notifications/{notificationId}',
             // abstract: true,
             // Note: abstract still needs a ui-view for its children to populate.
             // You can simply add it inline here.
@@ -215,6 +216,6 @@ angular
     .config(function ($tooltipProvider) {
         $tooltipProvider.setTriggers({'open': 'close'});
     })
-    .run(['editableOptions', function(editableOptions) {
+    .run(['editableOptions', function (editableOptions) {
         editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
     }]);

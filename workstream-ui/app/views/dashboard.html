@@ -1,9 +1,12 @@
 <h2><span class="glyphicon glyphicon-dashboard"></span> Dashboard</h2>
 
 <ul class="nav nav-tabs">
-    <li role="presentation" ui-sref-active="active"><a ui-sref="dashboard.overview">Overview</a></li>
+    <li role="presentation" ui-sref-active-eq="active"><a ui-sref="dashboard">Overview</a></li>
     <li role="presentation" ui-sref-active="active"><a ui-sref="dashboard.notification">Notifications</a></li>
 </ul>
 <div>
-    <div ui-view></div>
+    <div ui-view>
+        <div ng-include="'views/dashboard.overview.html'" ng-controller="DashboardOverviewController"></div>
+
+    </div>
 </div>
