@@ -33,6 +33,9 @@ angular.module('resources.projects', [])
                 url: memHomeUrl,
                 isArray: true
             },
+            getMyMembership: {
+                url: memHomeUrl + "/_my"
+            },
             addMembership: {
                 method: 'POST',
                 url: memHomeUrl

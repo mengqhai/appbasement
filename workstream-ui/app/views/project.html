@@ -4,7 +4,7 @@
               blur="submit" e-maxlength="30" e-minlength="1">
             {{project.name}}
         </span>
-        <button class="btn btn-default btn-xs" ng-click="projectNameForm.$show()" ng-hide="projectNameForm.$visible">
+        <button class="btn btn-default btn-xs" ng-click="projectNameForm.$show()" ng-hide="projectNameForm.$visible" ng-if="canUpdateProject()">
             <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
         </button>
     </h2>
@@ -19,12 +19,16 @@
     <ul class="nav nav-tabs">
         <li role="presentation" ui-sref-active-eq="active"><a ui-sref="project">About</a></li>
         <li role="presentation" ui-sref-active="active"><a ui-sref="project.tasks">Tasks</a></li>
-        <li role="presentation" ui-sref-active="active"><a ui-sref="project.members">Members</a></li>
+        <li role="presentation" ui-sref-active="active" ng-if="showMembershipTab()"><a ui-sref="project.members">Members</a></li>
     </ul>
     <div ui-view>
         <p>
-            <span editable-text="project.description" onbeforesave="updateProject('description', $data)"
+            <span ng-if="canUpdateProject()" editable-text="project.description" onbeforesave="updateProject('description', $data)"
                   blur="submit" >{{project.description || 'Add some description for the project'}}
-            </span></p>
+            </span>
+            <span ng-if="!canUpdateProject()">
+                {{project.description}}
+            </span>
+        </p>
     </div>
 </div>

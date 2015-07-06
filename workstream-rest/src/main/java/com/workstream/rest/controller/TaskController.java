@@ -244,7 +244,7 @@ public class TaskController {
 			+ "instance variables by submitting the vars object.")
 	@RequestMapping(value = "/{id:\\d+}/_complete", method = RequestMethod.PUT)
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	@PreAuthorize("isAuthInOrgForTask(#taskId)")
+	@PreAuthorize("isAuthInOrgForTask(#taskId) && isAuthMemberCapableForTaskUpdate(#taskId)")
 	public void completeTask(@PathVariable("id") String taskId,
 			@RequestBody(required = false) Map<String, Object> vars) {
 		core.getProcessService().completeTask(taskId, vars);
@@ -261,7 +261,7 @@ public class TaskController {
 
 	@ApiOperation(value = "Partially update the task for id")
 	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
-	@PreAuthorize("isAuthInOrgForTask(#taskId)")
+	@PreAuthorize("isAuthInOrgForTask(#taskId) && isAuthMemberCapableForTaskUpdate(#taskId)")
 	public void updateTask(@PathVariable("id") String taskId,
 			@ApiParam(required = true) @RequestBody @Validated({ Default.class,
 					ValidateOnUpdate.class }) TaskRequest taskReq,

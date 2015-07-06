@@ -4,6 +4,7 @@ angular.module('controllers.projects', ['resources.projects'])
         if (!$scope.project) {
             $scope.project = Projects.get({projectId: $stateParams.projectId});
         }
+        $scope.myMembership = Projects.getMyMembership({projectId: $stateParams.projectId});
 
         $scope.showTasks = function () {
             $state.go('.tasks', $stateParams);
@@ -12,6 +13,13 @@ angular.module('controllers.projects', ['resources.projects'])
         $scope.updateProject = function (key, value) {
             return Projects.xedit($scope.project.id, key, value);
         };
+
+        $scope.showMembershipTab = function() {
+            return $scope.myMembership && ['ADMIN','PARTICIPANT'].indexOf($scope.myMembership.type)>-1;
+        }
+        $scope.canUpdateProject = function() {
+            return $scope.myMembership && ['ADMIN'].indexOf($scope.myMembership.type)>-1;
+        }
     }])
     .controller('ProjectCreateFormController', ['$scope', 'Projects', '$modalInstance', '$rootScope',
         function ($scope, Projects, $modalInstance, $rootScope) {

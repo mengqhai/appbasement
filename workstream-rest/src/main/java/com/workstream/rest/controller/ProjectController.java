@@ -81,6 +81,20 @@ public class ProjectController {
 		return resp;
 	}
 
+	@RequestMapping(value = "/{id}/memberships/_my", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForProject(#projectId)")
+	public ProjectMembershipResponse getMyMembershipForProject(
+			@PathVariable("id") Long projectId) {
+		String userId = core.getAuthUserId();
+		ProjectMembership mem = core.getProjectService().getProjectMembership(
+				userId, projectId);
+		if (mem == null) {
+			return null;
+		} else {
+			return new ProjectMembershipResponse(mem);
+		}
+	}
+
 	@RequestMapping(value = "/{id}/memberships", method = RequestMethod.POST)
 	@PreAuthorize("isAuthInOrgForProject(#projectId) && isAuthMemberCapableForProjectMemUpdate(#projectId)")
 	public ProjectMembershipResponse createProjectMembership(
@@ -152,6 +166,14 @@ public class ProjectController {
 			BindingResult bResult) {
 		if (bResult.hasErrors()) {
 			throw new BeanValidationException(bResult);
+		}
+
+		if (taskReq.getAssignee() != null) {
+			if (!core.getProjectService().checkMembershipForTaskUpdate(
+					taskReq.getAssignee(), projectId)) {
+				throw new AttempBadStateException(
+						"User is not allowed to work with the project.");
+			}
 		}
 
 		Task task = core.createTaskInProject(projectId, taskReq.getName(),

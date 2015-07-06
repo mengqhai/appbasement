@@ -152,6 +152,12 @@ public class ProjectService extends TaskCapable {
 		return mem;
 	}
 
+	public ProjectMembership getProjectMembership(String userId, Long projectId) {
+		Project pro = proDao.getReference(projectId);
+		ProjectMembership mem = memDao.getProjectMemebership(userId, pro);
+		return mem;
+	}
+
 	public ProjectMembership updateProjectMembership(Long projectMembershipId,
 			ProjectMembershipType type) {
 		ProjectMembership mem = getProjectMembership(projectMembershipId);
