@@ -470,8 +470,19 @@ public class ProjectService extends TaskCapable {
 		if (task == null) {
 			throw new ResourceNotFoundException("No such task");
 		}
+		
+		if (String.valueOf(taskListId).equals(task.getParentTaskId())) {
+			return;
+		}
 		if (task.getParentTaskId() != null) {
-			throw new AttempBadStateException("Task already has a parent");
+			if (task.getParentTaskId().startsWith("list|")) {
+				Long oldTaskListId = Long.valueOf(task.getParentTaskId().substring(5));
+				// remove it from the old task list
+				this.removeTaskFromList(oldTaskListId, taskId);
+				task = getTask(taskId);
+			} else {
+				throw new AttempBadStateException("Task already has a non-task-list parent");
+			}
 		}
 		taskList.getTaskIds().add(task.getId());
 		task.setParentTaskId("list|" + taskList.getId());
