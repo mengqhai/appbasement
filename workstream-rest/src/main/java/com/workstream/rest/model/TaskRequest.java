@@ -78,9 +78,5 @@ public class TaskRequest extends MapPropObj {
 	public void setProjectId(Long projectId) {
 		props.put("category", projectId);
 	}
-	
-	public void setParentId(String parentId) {
-		props.put("parentTaskId", parentId);
-	}
 
 }
