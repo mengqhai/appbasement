@@ -1,5 +1,8 @@
 package com.workstream.rest.controller;
 
+import java.util.List;
+
+import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,8 +16,10 @@ import com.wordnik.swagger.annotations.Api;
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.TaskList;
 import com.workstream.core.service.ProjectService;
+import com.workstream.rest.model.InnerWrapperObj;
 import com.workstream.rest.model.TaskListRequest;
 import com.workstream.rest.model.TaskListResponse;
+import com.workstream.rest.model.TaskResponse;
 
 @Api(value = "tasklists", description = "Task list related operations")
 @RestController
@@ -46,6 +51,20 @@ public class TaskListController {
 	public void addTaskToList(@PathVariable("id") Long taskListId,
 			@PathVariable("taskId") String taskId) {
 		proSer.addTaskToList(taskListId, taskId);
+	}
+
+	@RequestMapping(value = "/{id:\\d+}/tasks", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForTaskList(#taskListId) && isAuthMemberCapableForTaskListRetrieve(#taskListId)")
+	public List<TaskResponse> getTasksInList(@PathVariable("id") Long taskListId) {
+		List<Task> tasks = proSer.filterTaskForTaskList(taskListId);
+		return InnerWrapperObj.valueOf(tasks, TaskResponse.class);
+	}
+
+	@RequestMapping(value = "/{id:\\d+}/tasks/{taskId:\\d+}", method = RequestMethod.DELETE)
+	@PreAuthorize("isAuthInOrgForTaskList(#taskListId) && isAuthMemberCapableForTaskListUpdate(#taskListId)")
+	public void removeTaskFromList(@PathVariable("id") Long taskListId,
+			@PathVariable("taskId") String taskId) {
+		proSer.removeTaskFromList(taskListId, taskId);
 	}
 
 	public void deleteTaskList(Long taskListId) {

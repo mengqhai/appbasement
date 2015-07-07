@@ -428,6 +428,10 @@ public class ProjectService extends TaskCapable {
 		return taskListDao.filterFor(pro, 0, Integer.MAX_VALUE);
 	}
 
+	public List<Task> filterTaskForTaskList(Long taskListId) {
+		return taskSer.getSubTasks("list|" + taskListId);
+	}
+
 	public Collection<TaskList> filterTaskList(Long projectId) {
 		Project pro = proDao.findById(projectId);
 		if (pro == null) {
@@ -471,6 +475,25 @@ public class ProjectService extends TaskCapable {
 		}
 		taskList.getTaskIds().add(task.getId());
 		task.setParentTaskId("list|" + taskList.getId());
+		taskSer.saveTask(task);
+	}
+
+	public void removeTaskFromList(Long taskListId, String taskId) {
+		TaskList taskList = taskListDao.findById(taskListId);
+		if (taskList == null) {
+			throw new ResourceNotFoundException("No such task list");
+		}
+		Task task = this.getTask(taskId);
+		if (task == null) {
+			throw new ResourceNotFoundException("No such task");
+		}
+		taskList.getTaskIds().remove(task.getId());
+		String oldTaskListIdStr = task.getParentTaskId();
+		if (oldTaskListIdStr != null
+				&& !oldTaskListIdStr.equals("list|" + taskListId)) {
+			throw new AttempBadStateException("Task is not in the task list");
+		}
+		task.setParentTaskId(null);
 		taskSer.saveTask(task);
 	}
 
