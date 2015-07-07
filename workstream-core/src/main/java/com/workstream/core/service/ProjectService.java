@@ -379,6 +379,18 @@ public class ProjectService extends TaskCapable {
 		}
 	}
 
+	public List<Task> filterTaskWithNoParent(Long projectId, int first, int max) {
+		Project proj = getProject(projectId);
+		if (proj == null) {
+			throw new ResourceNotFoundException("No such project");
+		}
+		TaskQuery q = taskSer.createTaskQuery();
+		q.taskTenantId(String.valueOf(proj.getOrg().getId()));
+		q.taskCategory(String.valueOf(projectId));
+		q.excludeSubtasks().orderByTaskCreateTime().desc();
+		return q.listPage(first, max);
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<Task> filterTask(Project pro, int first, int max) {
 		TaskQuery q = (TaskQuery) prepairTaskInfoQuery(pro,
@@ -470,18 +482,20 @@ public class ProjectService extends TaskCapable {
 		if (task == null) {
 			throw new ResourceNotFoundException("No such task");
 		}
-		
+
 		if (String.valueOf(taskListId).equals(task.getParentTaskId())) {
 			return;
 		}
 		if (task.getParentTaskId() != null) {
 			if (task.getParentTaskId().startsWith("list|")) {
-				Long oldTaskListId = Long.valueOf(task.getParentTaskId().substring(5));
+				Long oldTaskListId = Long.valueOf(task.getParentTaskId()
+						.substring(5));
 				// remove it from the old task list
 				this.removeTaskFromList(oldTaskListId, taskId);
 				task = getTask(taskId);
 			} else {
-				throw new AttempBadStateException("Task already has a non-task-list parent");
+				throw new AttempBadStateException(
+						"Task already has a non-task-list parent");
 			}
 		}
 		taskList.getTaskIds().add(task.getId());

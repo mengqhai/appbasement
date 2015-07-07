@@ -235,6 +235,19 @@ public class ProjectController {
 		return respList;
 	}
 
+	@RequestMapping(value = "/{id}/tasks/_noParent", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForProject(#projectId) && isAuthMemberCapableForTaskRetrieve(#projectId)")
+	public List<TaskResponse> getTasksInProjectNoParent(
+			@PathVariable("id") Long projectId,
+			@RequestParam(defaultValue = "0") int first,
+			@RequestParam(defaultValue = "10") int max) {
+		List<Task> tasks = core.getProjectService().filterTaskWithNoParent(
+				projectId, first, max);
+		List<TaskResponse> respList = InnerWrapperObj.valueOf(tasks,
+				TaskResponse.class);
+		return respList;
+	}
+
 	@ApiOperation(value = "Count the tasks in the project", notes = "If no assigneeId is provided, all the tasks in the project will be counted.")
 	@RequestMapping(value = "/{id}/tasks/_count", method = RequestMethod.GET)
 	@PreAuthorize("isAuthInOrgForProject(#projectId)  && isAuthMemberCapableForTaskRetrieve(#projectId)")
