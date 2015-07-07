@@ -21,6 +21,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import com.workstream.core.exception.ResourceNotFoundException;
 import com.workstream.core.model.Project;
+import com.workstream.core.model.TaskList;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.core.service.UserService.GroupType;
 import com.workstream.rest.utils.RestUtils;
@@ -99,6 +100,16 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 			return true; // system task
 		}
 		return isAuthInOrg(orgId);
+	}
+
+	public boolean isAuthInOrgForTaskList(Long taskListId) {
+		TaskList taskList = CoreFacadeService.getInstance().getProjectService()
+				.getTaskList(taskListId);
+		if (taskList == null) {
+			throw new ResourceNotFoundException("No such task list");
+		}
+		Long orgId = taskList.getOrg().getId();
+		return isAuthInOrg(String.valueOf(orgId));
 	}
 
 	public boolean isAuthInOrgForProcess(String processId) {
@@ -212,6 +223,21 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 				.checkMembershipForTaskUpdate(userId, projectId);
 	}
 
+	public boolean isAuthMemberCapableForTaskRetrieve(String taskId) {
+		Task task = CoreFacadeService.getInstance().getProjectService()
+				.getTask(taskId);
+		if (task == null) {
+			throw new ResourceNotFoundException("No such task");
+		}
+
+		if (task.getCategory() == null || task.getCategory().isEmpty()) {
+			return true; // process task
+		}
+
+		Long projectId = Long.valueOf(task.getCategory());
+		return isAuthMemberCapableForTaskRetrieve(projectId);
+	}
+
 	public boolean isAuthMemberCapableForTaskUpdate(String taskId) {
 		Task task = CoreFacadeService.getInstance().getProjectService()
 				.getTask(taskId);
@@ -224,6 +250,26 @@ public class WsSecurityExpressionRoot extends SecurityExpressionRoot implements
 		}
 
 		Long projectId = Long.valueOf(task.getCategory());
+		return isAuthMemberCapableForTaskUpdate(projectId);
+	}
+
+	public boolean isAuthMemberCapableForTaskListRetrieve(Long taskListId) {
+		TaskList taskList = CoreFacadeService.getInstance().getProjectService()
+				.getTaskList(taskListId);
+		if (taskList == null) {
+			throw new ResourceNotFoundException("No such task list");
+		}
+		Long projectId = taskList.getProject().getId();
+		return isAuthMemberCapableForTaskRetrieve(projectId);
+	}
+
+	public boolean isAuthMemberCapableForTaskListUpdate(Long taskListId) {
+		TaskList taskList = CoreFacadeService.getInstance().getProjectService()
+				.getTaskList(taskListId);
+		if (taskList == null) {
+			throw new ResourceNotFoundException("No such task list");
+		}
+		Long projectId = taskList.getProject().getId();
 		return isAuthMemberCapableForTaskUpdate(projectId);
 	}
 

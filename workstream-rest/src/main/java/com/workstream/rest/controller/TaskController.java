@@ -197,7 +197,7 @@ public class TaskController {
 
 	@ApiOperation(value = "Get the task for id")
 	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.GET)
-	@PreAuthorize("isAuthInOrgForTask(#taskId)")
+	@PreAuthorize("isAuthInOrgForTask(#taskId) && isAuthMemberCapableForTaskRetrieve(#taskId)")
 	public TaskResponse getTask(@PathVariable("id") String taskId) {
 		Task task = core.getProjectService().getTask(taskId);
 		if (task == null) {

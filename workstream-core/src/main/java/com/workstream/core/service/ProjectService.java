@@ -436,6 +436,44 @@ public class ProjectService extends TaskCapable {
 		return this.filterTaskList(pro);
 	}
 
+	public TaskList getTaskList(Long taskListId) {
+		TaskList taskList = taskListDao.findById(taskListId);
+		return taskList;
+	}
+
+	public void updateTaskList(Long taskListId, Map<String, Object> patch) {
+		TaskList taskList = taskListDao.findById(taskListId);
+		if (taskList == null) {
+			throw new ResourceNotFoundException("No such task list");
+		}
+		try {
+			BeanUtils.copyProperties(taskList, patch);
+			// BeanUtils.populate() got exception No value specified for 'Date'
+			// when dueDate == null
+			// http://www.blogjava.net/javagrass/archive/2011/10/10/352856.html
+		} catch (Exception e) {
+			log.error("Failed to populate the props to taskList: {}", patch, e);
+			throw new BeanPropertyException(e);
+		}
+	}
+
+	public void addTaskToList(Long taskListId, String taskId) {
+		TaskList taskList = taskListDao.findById(taskListId);
+		if (taskList == null) {
+			throw new ResourceNotFoundException("No such task list");
+		}
+		Task task = this.getTask(taskId);
+		if (task == null) {
+			throw new ResourceNotFoundException("No such task");
+		}
+		if (task.getParentTaskId() != null) {
+			throw new AttempBadStateException("Task already has a parent");
+		}
+		taskList.getTaskIds().add(task.getId());
+		task.setParentTaskId("list|" + taskList.getId());
+		taskSer.saveTask(task);
+	}
+
 	public TaskList createTaskList(Long projectId, TaskList taskList) {
 		Project pro = proDao.findById(projectId);
 		if (pro == null) {
