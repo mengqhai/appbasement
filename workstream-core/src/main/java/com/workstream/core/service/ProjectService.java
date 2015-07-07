@@ -1,8 +1,8 @@
 package com.workstream.core.service;
 
 import static com.workstream.core.model.ProjectMembership.ProjectMembershipType.ADMIN;
-import static com.workstream.core.model.ProjectMembership.ProjectMembershipType.PARTICIPANT;
 import static com.workstream.core.model.ProjectMembership.ProjectMembershipType.GUEST;
+import static com.workstream.core.model.ProjectMembership.ProjectMembershipType.PARTICIPANT;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -37,10 +37,12 @@ import com.workstream.core.model.Project;
 import com.workstream.core.model.Project.ProjectVisibility;
 import com.workstream.core.model.ProjectMembership;
 import com.workstream.core.model.ProjectMembership.ProjectMembershipType;
+import com.workstream.core.model.TaskList;
 import com.workstream.core.model.UserX;
 import com.workstream.core.persistence.IOrganizationDAO;
 import com.workstream.core.persistence.IProjectDAO;
 import com.workstream.core.persistence.IProjectMembershipDAO;
+import com.workstream.core.persistence.ITaskListDAO;
 import com.workstream.core.persistence.IUserXDAO;
 import com.workstream.core.service.cmd.CreateRecoveryTaskCmd;
 import com.workstream.core.service.cmd.DeleteHistoricTaskNoCascadeCmd;
@@ -62,6 +64,9 @@ public class ProjectService extends TaskCapable {
 
 	@Autowired
 	private IUserXDAO userDao;
+
+	@Autowired
+	private ITaskListDAO taskListDao;
 
 	public static final EnumSet<ProjectMembershipType> CAPABLE_FOR_TASK_RETRIEVE = EnumSet
 			.of(ADMIN, PARTICIPANT, GUEST);
@@ -417,6 +422,42 @@ public class ProjectService extends TaskCapable {
 		} else {
 			return (List<Task>) q.listPage(first, max);
 		}
+	}
+
+	public Collection<TaskList> filterTaskList(Project pro) {
+		return taskListDao.filterFor(pro, 0, Integer.MAX_VALUE);
+	}
+
+	public Collection<TaskList> filterTaskList(Long projectId) {
+		Project pro = proDao.findById(projectId);
+		if (pro == null) {
+			throw new ResourceNotFoundException("No such project.");
+		}
+		return this.filterTaskList(pro);
+	}
+
+	public TaskList createTaskList(Long projectId, TaskList taskList) {
+		Project pro = proDao.findById(projectId);
+		if (pro == null) {
+			throw new ResourceNotFoundException("No such project");
+		}
+		taskList.setOrg(pro.getOrg());
+		taskList.setProject(pro);
+		taskListDao.persist(taskList);
+		return taskList;
+	}
+
+	public TaskList createTaskList(Long projectId,
+			Map<String, Object> taskListProps) {
+		TaskList taskList = new TaskList();
+		try {
+			BeanUtils.populate(taskList, taskListProps);
+		} catch (Exception e) {
+			log.error("Failed to populate the props to taskList: {}",
+					taskListProps, e);
+			throw new BeanPropertyException(e);
+		}
+		return this.createTaskList(projectId, taskList);
 	}
 
 	/**

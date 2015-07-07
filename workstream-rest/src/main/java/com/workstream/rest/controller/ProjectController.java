@@ -31,6 +31,7 @@ import com.workstream.core.model.Project;
 import com.workstream.core.model.ProjectMembership;
 import com.workstream.core.model.ProjectMembership.ProjectMembershipType;
 import com.workstream.core.model.Subscription;
+import com.workstream.core.model.TaskList;
 import com.workstream.core.service.CoreFacadeService;
 import com.workstream.rest.RestConstants;
 import com.workstream.rest.exception.BeanValidationException;
@@ -41,6 +42,8 @@ import com.workstream.rest.model.ProjectRequest;
 import com.workstream.rest.model.ProjectResponse;
 import com.workstream.rest.model.SingleValueResponse;
 import com.workstream.rest.model.SubscriptionResponse;
+import com.workstream.rest.model.TaskListRequest;
+import com.workstream.rest.model.TaskListResponse;
 import com.workstream.rest.model.TaskRequest;
 import com.workstream.rest.model.TaskResponse;
 import com.workstream.rest.utils.RestUtils;
@@ -180,6 +183,33 @@ public class ProjectController {
 				taskReq.getDescription(), taskReq.getDueDate(),
 				taskReq.getAssignee(), taskReq.getPriority());
 		return new TaskResponse(task);
+	}
+
+	@ApiOperation(value = "Create a task list in the project")
+	@RequestMapping(value = "/{id}/tasklists", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("isAuthInOrgForProject(#projectId) && isAuthMemberCapableForTaskUpdate(#projectId)")
+	public TaskListResponse createTaskListInProject(
+			@PathVariable("id") Long projectId,
+			@ApiParam(required = true) @RequestBody(required = true) @Validated({
+					Default.class, ValidateOnCreate.class }) TaskListRequest taskListReq,
+			BindingResult bResult) {
+		if (bResult.hasErrors()) {
+			throw new BeanValidationException(bResult);
+		}
+
+		TaskList taskList = core.getProjectService().createTaskList(projectId,
+				taskListReq.getPropMap());
+		return new TaskListResponse(taskList);
+	}
+
+	@ApiOperation(value = "Retrieve all the task lists in the project")
+	@RequestMapping(value = "/{id}/tasklists", method = RequestMethod.GET)
+	@PreAuthorize("isAuthInOrgForProject(#projectId) && isAuthMemberCapableForTaskRetrieve(#projectId)")
+	public List<TaskListResponse> getTaskListsInProject(
+			@PathVariable("id") Long projectId) {
+		Collection<TaskList> taskLists = core.getProjectService()
+				.filterTaskList(projectId);
+		return InnerWrapperObj.valueOf(taskLists, TaskListResponse.class);
 	}
 
 	@ApiOperation(value = "Retrieves the tasks in the project", notes = "If no assigneeId is provided, all the tasks in the project will be retrieved.")
