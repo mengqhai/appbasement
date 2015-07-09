@@ -78,6 +78,18 @@ angular.module('controllers.projects', ['resources.projects', 'resources.tasklis
             $scope.$on('tasklists.create', function (event, taskList) {
                 $scope.taskLists.push(taskList);
             })
+            $scope.openTaskListDialog = function(taskList) {
+                $modal.open({
+                    templateUrl: 'views/taskListForm.html',
+                    controller: 'TaskListDialogController',
+                    resolve: {
+                        taskList: function () {
+                            return taskList;
+                        }
+                    },
+                    scope: $scope
+                })
+            }
 
 
             $scope.taskCount = loader.countTasks({projectId: $stateParams.projectId});

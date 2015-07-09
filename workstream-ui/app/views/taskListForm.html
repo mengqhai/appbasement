@@ -1,0 +1,31 @@
+<div>
+    <div class="modal-header">
+        <h4 editable-text="taskList.name" onbeforesave = "updateTaskList('name', $data)" blur="submit" e-maxlength="30" e-minlength="1">{{taskList.name}}</h4>
+    </div>
+    <div class="modal-body">
+        <div>
+            <div>
+                Start date: <ws-datepicker null-label="No Start Date" date-value="taskList.startTime"></ws-datepicker>
+                End date: <ws-datepicker null-label="No End Date" date-value="taskList.dueTime"></ws-datepicker>
+            </div>
+            <div>
+                <span editable-textarea="taskList.description" onbeforesave = "updateTaskList('description', $data)" e-rows="3" e-cols="70" blur="submit">
+                    {{taskList.description || 'click to add description'}}
+                </span>
+            </div>
+        </div>
+    </div>
+    <div>
+        <hr/>
+        {{taskList | json}}
+    </div>
+    <div>
+        <div class="modal-footer">
+            <div ng-if="createError">
+                {{createError}}
+            </div>
+            <button class="btn btn-primary login" ng-click="createTaskList()"   ng-disabled="taskListCreateForm.$invalid">Save</button>
+            <button class="btn btn-warning cancel" ng-click="closeDialog()">Cancel</button>
+        </div>
+    </div>
+</div>

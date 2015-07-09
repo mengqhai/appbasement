@@ -15,7 +15,17 @@
     </div>
 
     <div ng-repeat="taskList in taskLists">
-        <h4>{{taskList.name}}</h4>
+        <h4>{{taskList.name}}
+            <span class="dropdown">
+                <button class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li role="presentation"><a role="menuitem" href ng-click="openTaskListDialog(taskList)">Edit</a></li>
+                    <li role="presentation"><a role="menuitem" href>Archive</a></li>
+                </ul>
+            </span>
+        </h4>
 
         <div class="list-group">
             <a href class="list-group-item" ng-repeat="task in getTasksInList(taskList.id)" ng-click="openDialog(task)">
