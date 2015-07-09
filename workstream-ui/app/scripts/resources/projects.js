@@ -47,6 +47,10 @@ angular.module('resources.projects', [])
             updateMembership: {
                 method: 'PATCH',
                 url: memHomeUrl + '/:memId'
+            },
+            getTaskLists: {
+                url: homeUrl + '/:projectId/tasklists',
+                isArray: true
             }
         });
         Projects.create = function (project) {

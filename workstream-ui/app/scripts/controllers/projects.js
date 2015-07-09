@@ -1,4 +1,4 @@
-angular.module('controllers.projects', ['resources.projects'])
+angular.module('controllers.projects', ['resources.projects', 'resources.tasklists'])
     .controller('ProjectController', ['$scope', '$stateParams', '$state', 'Projects', function ($scope, $stateParams, $state, Projects) {
         $scope.project = $scope.getProject($stateParams.projectId);
         if (!$scope.project) {
@@ -14,11 +14,11 @@ angular.module('controllers.projects', ['resources.projects'])
             return Projects.xedit($scope.project.id, key, value);
         };
 
-        $scope.showMembershipTab = function() {
-            return $scope.myMembership && ['ADMIN','PARTICIPANT'].indexOf($scope.myMembership.type)>-1;
+        $scope.showMembershipTab = function () {
+            return $scope.myMembership && ['ADMIN', 'PARTICIPANT'].indexOf($scope.myMembership.type) > -1;
         }
-        $scope.canUpdateProject = function() {
-            return $scope.myMembership && ['ADMIN'].indexOf($scope.myMembership.type)>-1;
+        $scope.canUpdateProject = function () {
+            return $scope.myMembership && ['ADMIN'].indexOf($scope.myMembership.type) > -1;
         }
     }])
     .controller('ProjectCreateFormController', ['$scope', 'Projects', '$modalInstance', '$rootScope',
@@ -38,51 +38,67 @@ angular.module('controllers.projects', ['resources.projects'])
                 });
             };
         }])
-    .controller('ProjectTaskListController', ['$scope', 'Projects', '$stateParams', '$modal', function ($scope, Projects, $stateParams, $modal) {
-        $scope.status = $stateParams.status ? $stateParams.status : 'active';
-        var loader = Projects.createLoader($scope.status);
+    .controller('ProjectTaskListController', ['$scope', 'Projects', 'TaskLists', '$stateParams', '$modal',
+        function ($scope, Projects, TaskLists, $stateParams, $modal) {
+            $scope.status = $stateParams.status ? $stateParams.status : 'active';
+            var loader = Projects.createLoader($scope.status);
 
 
-        $scope.taskCount = loader.countTasks({projectId: $stateParams.projectId});
-        $scope.tasks = loader.getTasks({projectId: $stateParams.projectId});
+            $scope.taskCount = loader.countTasks({projectId: $stateParams.projectId});
+            $scope.tasks = loader.getTasks({projectId: $stateParams.projectId});
 
-        $scope.loadMore = function () {
-            loader.getTasks(
-                {projectId: $stateParams.projectId,
-                    first: $scope.tasks.length,
-                    max: 10}, function (moreTasks) {
-                    $.merge($scope.tasks, moreTasks);
+
+            /**
+             * For task lists
+             */
+            var taskListsMap = {};
+            $scope.taskLists = Projects.getTaskLists({projectId: $stateParams.projectId}, function (taskLists) {
+                taskLists.forEach(function (taskList) {
+                    taskListsMap[taskList.id] = TaskLists.getTasks({taskListId: taskList.id});
                 })
-        }
-
-        var dialog = null;
-        $scope.openDialog = function (task) {
-            dialog = $modal.open({
-                templateUrl: 'views/taskForm.html',
-                controller: 'TaskFormController',
-                resolve: {
-                    task: function () {
-                        return task;
-                    }
-                },
-                scope: $scope
-            })
-        };
-        $scope.closeDialog = function () {
-            if (dialog) {
-                dialog.dismiss('cancelTask');
+            });
+            $scope.getTasksInList = function (taskListId) {
+                return taskListsMap[taskListId];
             }
-        };
 
-        $scope.$on('tasks.delete', function (event, task) {
-            // remove task
-            for (var i = $scope.tasks.length - 1; i >= 0; i--) {
-                if ($scope.tasks[i].id === task.id) {
-                    $scope.tasks.splice(i, 1);
+
+            $scope.loadMore = function () {
+                loader.getTasks(
+                    {projectId: $stateParams.projectId,
+                        first: $scope.tasks.length,
+                        max: 10}, function (moreTasks) {
+                        $.merge($scope.tasks, moreTasks);
+                    })
+            }
+
+            var dialog = null;
+            $scope.openDialog = function (task) {
+                dialog = $modal.open({
+                    templateUrl: 'views/taskForm.html',
+                    controller: 'TaskFormController',
+                    resolve: {
+                        task: function () {
+                            return task;
+                        }
+                    },
+                    scope: $scope
+                })
+            };
+            $scope.closeDialog = function () {
+                if (dialog) {
+                    dialog.dismiss('cancelTask');
                 }
-            }
-        });
-    }])
+            };
+
+            $scope.$on('tasks.delete', function (event, task) {
+                // remove task
+                for (var i = $scope.tasks.length - 1; i >= 0; i--) {
+                    if ($scope.tasks[i].id === task.id) {
+                        $scope.tasks.splice(i, 1);
+                    }
+                }
+            });
+        }])
     .controller('ProjectMemberController', ['$scope', 'Projects', '$stateParams', 'Users', 'Orgs', function ($scope, Projects, $stateParams, Users, Orgs) {
         var usersMap = {};
 
