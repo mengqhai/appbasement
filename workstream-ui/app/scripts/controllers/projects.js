@@ -43,23 +43,47 @@ angular.module('controllers.projects', ['resources.projects', 'resources.tasklis
             $scope.status = $stateParams.status ? $stateParams.status : 'active';
             var loader = Projects.createLoader($scope.status);
 
-
-            $scope.taskCount = loader.countTasks({projectId: $stateParams.projectId});
-            $scope.tasks = loader.getTasks({projectId: $stateParams.projectId});
-
-
             /**
              * For task lists
              */
             var taskListsMap = {};
+
+            function mapTaskToList(task) {
+                if (task['parentId'] && task['parentId'].indexOf('list|') === 0) {
+                    var taskListId = task['parentId'].substring(5);
+                    if (!taskListsMap[taskListId]) {
+                        taskListsMap[taskListId] = [];
+                    }
+                    taskListsMap[taskListId].push(task);
+                } else {
+                    if (!taskListsMap['non-listed']) {
+                        taskListsMap['non-listed'] = [];
+                    }
+                    taskListsMap['non-listed'].push(task);
+                }
+            }
+
+            function classifyTasksByList(tasks) {
+                tasks.forEach(mapTaskToList);
+            }
+
             $scope.taskLists = Projects.getTaskLists({projectId: $stateParams.projectId}, function (taskLists) {
-                taskLists.forEach(function (taskList) {
-                    taskListsMap[taskList.id] = TaskLists.getTasks({taskListId: taskList.id});
-                })
+//                taskLists.forEach(function (taskList) {
+//                    taskListsMap[taskList.id] = TaskLists.getTasks({taskListId: taskList.id});
+//                })
             });
             $scope.getTasksInList = function (taskListId) {
                 return taskListsMap[taskListId];
             }
+            $scope.$on('tasklists.create', function (event, taskList) {
+                $scope.taskLists.push(taskList);
+            })
+
+
+            $scope.taskCount = loader.countTasks({projectId: $stateParams.projectId});
+            $scope.tasks = loader.getTasks({projectId: $stateParams.projectId, first: 0, max: 999}, function(tasks) {
+                classifyTasksByList(tasks);
+            });
 
 
             $scope.loadMore = function () {

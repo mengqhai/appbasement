@@ -51,6 +51,10 @@ angular.module('resources.projects', [])
             getTaskLists: {
                 url: homeUrl + '/:projectId/tasklists',
                 isArray: true
+            },
+            createTaskList: {
+                method: 'POST',
+                url: homeUrl + '/:projectId/tasklists'
             }
         });
         Projects.create = function (project) {

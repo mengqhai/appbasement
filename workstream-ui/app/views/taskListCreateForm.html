@@ -1,0 +1,48 @@
+<div>
+    <div class="modal-header">
+        <h4>New Task List</h4>
+    </div>
+    <div class="modal-body">
+        <form name="taskListCreateForm" novalidate>
+            <input type="text" ng-model="taskList.name" required autofocus class="form-control" placeholder="Task list name...">
+            <div>
+                <ui-select ng-model="projectSelection.selected" theme="select2" style="min-width: 180px" required>
+                    <ui-select-match placeholder="Select project...">
+                        <span class="glyphicon glyphicon-briefcase"></span>
+                        <!--{{$select.selected.id || 'Unassigned'}} -->
+                        {{$select.selected.name}}
+                    </ui-select-match>
+                    <ui-select-choices repeat="pro in myProjects | filter: $select.search">
+                        <div ng-bind-html="pro.name | highlight: $select.search"></div>
+                        <small>
+                            Org: <span ng-bind-html="getOrg(pro.orgId).name | highlight: $select.search"></span>
+                        </small>
+                    </ui-select-choices>
+                </ui-select>
+
+                <div>
+                    Start date: <ws-datepicker null-label="No Start Date" date-value="taskList.startTime"></ws-datepicker>
+                    End date: <ws-datepicker null-label="No End Date" date-value="taskList.dueTime"></ws-datepicker>
+                </div>
+                <div>
+                    <textarea ng-model="taskList.description" class="form-control" placeholder="write a project description...">
+
+                    </textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div>
+        <hr/>
+        {{taskList | json}}
+    </div>
+    <div>
+        <div class="modal-footer">
+            <div ng-if="createError">
+                {{createError}}
+            </div>
+            <button class="btn btn-primary login" ng-click="createTaskList()"   ng-disabled="taskListCreateForm.$invalid">Save</button>
+            <button class="btn btn-warning cancel" ng-click="closeDialog()">Cancel</button>
+        </div>
+    </div>
+</div>
