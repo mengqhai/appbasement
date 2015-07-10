@@ -91,9 +91,10 @@
             </span>
 
 
-    Project
+
             <span ng-switch="task.endTime === undefined">
                 <span ng-switch-when="true">
+                    Project
                     <ui-select ng-model="project" theme="select2" style="min-width: 180px"
                                on-select="onSelectProject($item, $model)" required>
                         <ui-select-match placeholder="Select project...">
@@ -109,6 +110,21 @@
                         </ui-select-choices>
                     </ui-select>
                     <span>{{projectError}}</span>
+                    <div ng-if="project">
+                        Task list
+                        <ui-select ng-model="taskList" theme="select2" style="min-width: 180px"
+                                   on-select="onSelectTaskList($item, $model)">
+                            <ui-select-match placeholder="Select task list...">
+                                <span class="glyphicon glyphicon-tasks"></span>
+                                <!--{{$select.selected.id || 'Unassigned'}} -->
+                                {{taskList.name}}
+                            </ui-select-match>
+                            <ui-select-choices repeat="tl in taskLists | filter: $select.search">
+                                <div ng-bind-html="tl.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+
                 </span>
                 <span ng-switch-when="false">{{project.name}}</span>
             </span>

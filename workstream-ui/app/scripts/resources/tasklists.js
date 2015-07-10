@@ -13,6 +13,14 @@ angular.module('resources.tasklists', [])
                 patch: {
                     method: 'PATCH',
                     url: homeUrl + '/:taskListId'
+                },
+                addTask: {
+                    method: 'PUT',
+                    url: homeUrl + '/:taskListId/tasks/:taskId'
+                },
+                removeTask: {
+                    method: 'DELETE',
+                    url: homeUrl + '/:taskListId/tasks/:taskId'
                 }
             });
 

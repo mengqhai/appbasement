@@ -78,7 +78,17 @@ angular.module('controllers.projects', ['resources.projects', 'resources.tasklis
             $scope.$on('tasklists.create', function (event, taskList) {
                 $scope.taskLists.push(taskList);
             })
-            $scope.openTaskListDialog = function(taskList) {
+            $scope.$on('tasks.taskListChange', function (event, task, oldTaskListId) {
+                mapTaskToList(task);
+                if (!oldTaskListId) {
+                    oldTaskListId = 'non-listed';
+                }
+                var oldIdx = taskListsMap[oldTaskListId].indexOf(task);
+                taskListsMap[oldTaskListId].splice(oldIdx, 1);
+            })
+
+
+            $scope.openTaskListDialog = function (taskList) {
                 $modal.open({
                     templateUrl: 'views/taskListForm.html',
                     controller: 'TaskListDialogController',
@@ -93,7 +103,7 @@ angular.module('controllers.projects', ['resources.projects', 'resources.tasklis
 
 
             $scope.taskCount = loader.countTasks({projectId: $stateParams.projectId});
-            $scope.tasks = loader.getTasks({projectId: $stateParams.projectId, first: 0, max: 999}, function(tasks) {
+            $scope.tasks = loader.getTasks({projectId: $stateParams.projectId, first: 0, max: 999}, function (tasks) {
                 classifyTasksByList(tasks);
             });
 

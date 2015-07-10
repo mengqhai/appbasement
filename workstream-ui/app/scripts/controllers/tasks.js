@@ -1,4 +1,4 @@
-angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments', 'ui.router', 'xeditable', 'ui.select', 'ui.bootstrap.popover', 'directives.errorsrc', 'directives.processForm', 'filters.filesize'])
+angular.module('controllers.tasks', ['resources.tasks', 'resources.tasklists', 'resources.attachments', 'ui.router', 'xeditable', 'ui.select', 'ui.bootstrap.popover', 'directives.errorsrc', 'directives.processForm', 'filters.filesize'])
     .controller('TasksController', ['$scope', 'Tasks', '$stateParams', function ($scope, Tasks, $stateParams) {
         $scope.myTaskCount = 0;
         $scope.createdByMeCount = 0;
@@ -157,12 +157,17 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
             $scope.$on('tasks.claim', closeDialog);
             $scope.$on('tasks.delete', closeDialog);
         }])
-    .controller('TaskDetailsController', ['$scope', 'Tasks', 'Orgs', 'Users', 'Attachments',
-        function ($scope, Tasks, Orgs, Users, Attachments) {
+    .controller('TaskDetailsController', ['$scope', 'Tasks', 'Orgs', 'Users', 'Attachments', 'Projects', 'TaskLists',
+        function ($scope, Tasks, Orgs, Users, Attachments, Projects, TaskLists) {
             var task = $scope.task; // from parent scope
 
             var attachmentInvoker = null;
             var commentInvoker = null;
+            // for assignee field
+            var unassigned = {
+                id: null,
+                firstName: 'Unassigned'
+            }
 
             function loadEverything(task) {
                 loadOrg(task);
@@ -200,12 +205,6 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
                 return Tasks.xedit(task.id, key, value);
             };
 
-            // for assignee field
-            var unassigned = {
-                id: null,
-                firstName: 'Unassigned'
-            }
-
             function loadAssignee(task) {
                 $scope.assignee = task.assignee ? Users.getWithCache({userIdBase64: btoa(task.assignee)}) : unassigned;
                 if (task.orgId && !task.endTime) {
@@ -225,7 +224,32 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
                 });
             }
             function loadProject(task) {
+                if (!task.projectId) {
+                    return;
+                }
                 $scope.project = $scope.getProject(task.projectId);
+                loadTaskList(task.projectId);
+            }
+
+            function loadTaskList(projectId) {
+                $scope.taskLists = Projects.getTaskLists({projectId: projectId}, function (taskLists) {
+                    taskLists.forEach(function (taskList) {
+                        if ('list|' + taskList.id === $scope.task['parentId']) {
+                            $scope.taskList = taskList;
+                        }
+                    });
+                });
+            }
+
+            $scope.onSelectTaskList = function (taskList) {
+                var oldTaskListId = null;
+                if ($scope.task.parentId && $scope.task.parentId.indexOf('list|') === 0) {
+                    oldTaskListId = $scope.task.parentId.substring(5);
+                }
+                TaskLists.addTask({taskListId: taskList.id, taskId: $scope.task.id}, null, function () {
+                    $scope.task.parentId = 'list|' + taskList.id;
+                    $scope.$emit('tasks.taskListChange', $scope.task, oldTaskListId)
+                });
             }
 
 
@@ -426,7 +450,7 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.attachments',
         }
 
         $scope.subscribe = function () {
-            Tasks.subscribe({taskId: $scope.task.id, userIdBase64: btoa($scope.currentUser)}, null, function(newSub) {
+            Tasks.subscribe({taskId: $scope.task.id, userIdBase64: btoa($scope.currentUser)}, null, function (newSub) {
                 $scope.subs.unshift(newSub);
                 $scope.$emit('subscription.create');
             })
