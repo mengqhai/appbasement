@@ -34,7 +34,7 @@ public class TaskListResponse extends InnerWrapperObj<TaskList> {
 		return inner.getStartTime();
 	}
 
-	public Date getEndTime() {
+	public Date getDueTime() {
 		return inner.getDueTime();
 	}
 

@@ -23,4 +23,10 @@ angular.module('controllers.tasklists', ['resources.tasklists', 'resources.proje
             $scope.updateTaskList = function(key, value) {
                 return TaskLists.xedit(taskList.id, key, value);
             }
+            $scope.onStartDateSelect = function(newValue, oldValue) {
+                return $scope.updateTaskList('startTime', newValue);
+            }
+            $scope.onEndDateSelect = function(newValue, oldValue) {
+                return $scope.updateTaskList('dueTime', newValue);
+            }
         }])

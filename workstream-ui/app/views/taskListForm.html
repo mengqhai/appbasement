@@ -5,8 +5,8 @@
     <div class="modal-body">
         <div>
             <div>
-                Start date: <ws-datepicker null-label="No Start Date" date-value="taskList.startTime"></ws-datepicker>
-                End date: <ws-datepicker null-label="No End Date" date-value="taskList.dueTime"></ws-datepicker>
+                Start date: <ws-datepicker null-label="No Start Date" date-value="taskList.startTime" on-selected="onStartDateSelect(newValue,oldValue)"></ws-datepicker>
+                End date: <ws-datepicker null-label="No End Date" date-value="taskList.dueTime" on-selected="onEndDateSelect(newValue,oldValue)"></ws-datepicker>
             </div>
             <div>
                 <span editable-textarea="taskList.description" onbeforesave = "updateTaskList('description', $data)" e-rows="3" e-cols="70" blur="submit">
@@ -14,10 +14,6 @@
                 </span>
             </div>
         </div>
-    </div>
-    <div>
-        <hr/>
-        {{taskList | json}}
     </div>
     <div>
         <div class="modal-footer">
