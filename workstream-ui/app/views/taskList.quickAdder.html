@@ -1,9 +1,8 @@
-<div class="input-group input-group">
-    <span class="input-group-addon">
-        <span class="glyphicon glyphicon-plus"></span>
-    </span>
-
-    <form name="taskListQuickAdderForm" ng-submit="addTaskList()">
+<form name="taskListQuickAdderForm" ng-submit="addTaskList()">
+    <div class="input-group">
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-plus"></span>
+        </span>
         <input type="text" placeholder="Add a task list..." class="form-control" ng-model="taskList.name">
-    </form>
-</div>
+    </div>
+</form>
