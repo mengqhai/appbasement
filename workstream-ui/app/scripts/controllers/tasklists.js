@@ -20,13 +20,30 @@ angular.module('controllers.tasklists', ['resources.tasklists', 'resources.proje
                 $modalInstance.close();
             }
 
-            $scope.updateTaskList = function(key, value) {
+            $scope.updateTaskList = function (key, value) {
                 return TaskLists.xedit(taskList.id, key, value);
             }
-            $scope.onStartDateSelect = function(newValue, oldValue) {
+            $scope.onStartDateSelect = function (newValue, oldValue) {
                 return $scope.updateTaskList('startTime', newValue);
             }
-            $scope.onEndDateSelect = function(newValue, oldValue) {
+            $scope.onEndDateSelect = function (newValue, oldValue) {
                 return $scope.updateTaskList('dueTime', newValue);
+            }
+        }])
+    .controller('TaskListQuickAdderController', ['$scope', 'Projects', 'TaskLists', '$rootScope',
+        function ($scope, Projects, TaskLists, $rootScope) {
+            var projectId = $scope.project.id; // project id from the parent scope
+            function initTaskList() {
+                $scope.taskList = {};
+            }
+
+            initTaskList();
+            $scope.addTaskList = function () {
+                console.log($scope.taskList);
+                console.log($scope.project);
+                Projects.createTaskList({projectId: projectId}, $scope.taskList, function (taskList) {
+                    $rootScope.$broadcast('tasklists.create', taskList);
+                    initTaskList();
+                })
             }
         }])
