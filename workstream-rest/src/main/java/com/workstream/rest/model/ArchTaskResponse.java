@@ -84,7 +84,7 @@ public class ArchTaskResponse extends InnerWrapperObj<HistoricTaskInstance> {
 		return task.getCategory();
 	}
 
-	public String getParentTaskId() {
+	public String getParentId() {
 		return task.getParentTaskId();
 	}
 
