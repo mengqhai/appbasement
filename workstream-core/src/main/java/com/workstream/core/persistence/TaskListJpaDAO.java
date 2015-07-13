@@ -17,7 +17,7 @@ public class TaskListJpaDAO extends GenericJpaDAO<TaskList, Long> implements
 
 	@Override
 	public Collection<TaskList> filterFor(Project project, int first, int max) {
-		return filterFor("project", project, first, max);
+		return filterFor("project", project, first, max, null);
 	}
 
 }

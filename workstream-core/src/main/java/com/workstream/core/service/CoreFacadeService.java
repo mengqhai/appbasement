@@ -226,7 +226,7 @@ public class CoreFacadeService {
 
 	public Task createTaskInProject(Long projectId, String name,
 			String description, Date dueDate, String assigneeId,
-			Integer priority) {
+			Integer priority, Long taskListId) {
 		String creator = this.getAuthUserId();
 
 		Project proj = projSer.getProject(projectId);
@@ -239,6 +239,9 @@ public class CoreFacadeService {
 
 		Task task = projSer.createTask(proj, creator, name, description,
 				dueDate, assigneeId, priority);
+		if (taskListId != null) {
+			task = projSer.addTaskToList(taskListId, task.getId());
+		}
 		return task;
 	}
 
@@ -352,7 +355,8 @@ public class CoreFacadeService {
 			String projectIdStr = task.getCategory();
 			if (projectIdStr != null) {
 				Long projectId = Long.valueOf(projectIdStr);
-				if (!projSer.checkMembershipForTaskUpdate(assigneeId, projectId)) {
+				if (!projSer
+						.checkMembershipForTaskUpdate(assigneeId, projectId)) {
 					throw new BadArgumentException(
 							"User is not allowed to work with the project.");
 				}

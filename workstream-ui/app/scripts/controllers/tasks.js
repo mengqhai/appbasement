@@ -513,4 +513,22 @@ angular.module('controllers.tasks', ['resources.tasks', 'resources.tasklists', '
                 $scope.createError = error.data.message;
             });
         }
+    }])
+    .controller('TaskQuickAdderController', ['$scope', 'Tasks', function ($scope, Tasks) {
+        function initTask() {
+            $scope.task = {
+                projectId: $scope.project.id
+            };
+            if ($scope.taskList) {
+                $scope.task.parentId = 'list|' + $scope.taskList.id
+            }
+        }
+
+        initTask();
+        $scope.addTask = function () {
+            Tasks.create($scope.task).$promise.then(function (task) {
+                $scope.$emit('tasks.create', task);
+                initTask();
+            });
+        }
     }]);

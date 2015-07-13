@@ -37,8 +37,9 @@
 
 
         <div class="list-group">
-            <a href class="list-group-item" ng-repeat="task in getTasksInList(taskList.id)" ng-click="openDialog(task)">
-                {{task.name}}
+            <div ng-include="'views/task.quickAdder.html'" ng-controller="TaskQuickAdderController"></div>
+            <a href class="list-group-item" ng-repeat="task in getTasksInList(taskList.id) | orderBy:'position':true" ng-click="openDialog(task)">
+                {{task.name}}   {{task.position}}
                 <span class="pull-right">
                 <span class="danger-default btn-xs" ng-if="task.dueDate">{{task.dueDate | date}}</span>
                 {{task.assignee || 'Unassigned'}}

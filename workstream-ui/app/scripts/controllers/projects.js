@@ -61,6 +61,7 @@ angular.module('controllers.projects', ['resources.projects', 'resources.tasklis
                     }
                     taskListsMap['non-listed'].push(task);
                 }
+                task.position=task.priority + task.createTime/1000;
             }
 
             function classifyTasksByList(tasks) {
@@ -85,6 +86,9 @@ angular.module('controllers.projects', ['resources.projects', 'resources.tasklis
                 }
                 var oldIdx = taskListsMap[oldTaskListId].indexOf(task);
                 taskListsMap[oldTaskListId].splice(oldIdx, 1);
+            })
+            $scope.$on('tasks.create', function(event, task) {
+                mapTaskToList(task);
             })
 
 

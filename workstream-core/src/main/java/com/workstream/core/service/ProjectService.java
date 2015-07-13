@@ -473,7 +473,7 @@ public class ProjectService extends TaskCapable {
 		}
 	}
 
-	public void addTaskToList(Long taskListId, String taskId) {
+	public Task addTaskToList(Long taskListId, String taskId) {
 		TaskList taskList = taskListDao.findById(taskListId);
 		if (taskList == null) {
 			throw new ResourceNotFoundException("No such task list");
@@ -484,7 +484,7 @@ public class ProjectService extends TaskCapable {
 		}
 
 		if (String.valueOf(taskListId).equals(task.getParentTaskId())) {
-			return;
+			return task;
 		}
 		if (task.getParentTaskId() != null) {
 			if (task.getParentTaskId().startsWith("list|")) {
@@ -501,6 +501,7 @@ public class ProjectService extends TaskCapable {
 		taskList.getTaskIds().add(task.getId());
 		task.setParentTaskId("list|" + taskList.getId());
 		taskSer.saveTask(task);
+		return task;
 	}
 
 	public void removeTaskFromList(Long taskListId, String taskId) {

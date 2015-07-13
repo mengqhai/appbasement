@@ -178,10 +178,15 @@ public class ProjectController {
 						"User is not allowed to work with the project.");
 			}
 		}
+		Long taskListId = null;
+		if (taskReq.getParentId() != null
+				&& taskReq.getParentId().startsWith("list|")) {
+			taskListId = Long.valueOf(taskReq.getParentId().substring(5));
+		}
 
 		Task task = core.createTaskInProject(projectId, taskReq.getName(),
 				taskReq.getDescription(), taskReq.getDueDate(),
-				taskReq.getAssignee(), taskReq.getPriority());
+				taskReq.getAssignee(), taskReq.getPriority(), taskListId);
 		return new TaskResponse(task);
 	}
 
