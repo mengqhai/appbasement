@@ -38,8 +38,8 @@ angular.module('controllers.projects', ['resources.projects', 'resources.tasklis
                 });
             };
         }])
-    .controller('ProjectTaskListController', ['$scope', 'Projects', 'TaskLists', '$stateParams', '$modal',
-        function ($scope, Projects, TaskLists, $stateParams, $modal) {
+    .controller('ProjectTaskListController', ['$scope', 'Projects', 'TaskLists', '$stateParams', '$modal', '$filter', 'Tasks',
+        function ($scope, Projects, TaskLists, $stateParams, $modal, $filter, Tasks) {
             $scope.status = $stateParams.status ? $stateParams.status : 'active';
             var loader = Projects.createLoader($scope.status);
 
@@ -47,25 +47,42 @@ angular.module('controllers.projects', ['resources.projects', 'resources.tasklis
              * For task lists
              */
             var taskListsMap = {};
-
-            function mapTaskToList(task) {
-                if (task['parentId'] && task['parentId'].indexOf('list|') === 0) {
-                    var taskListId = task['parentId'].substring(5);
-                    if (!taskListsMap[taskListId]) {
-                        taskListsMap[taskListId] = [];
-                    }
-                    taskListsMap[taskListId].push(task);
+            $scope.taskListsMap = taskListsMap;
+            function getTaskListId(parentId) {
+                if (parentId && parentId.indexOf('list|') === 0) {
+                    return parentId.substring(5);
                 } else {
-                    if (!taskListsMap['non-listed']) {
-                        taskListsMap['non-listed'] = [];
-                    }
-                    taskListsMap['non-listed'].push(task);
+                    return 'non-listed';
                 }
-                task.position=task.priority + task.createTime/1000;
+            }
+
+            function setTaskPosition(task) {
+                task.position = task.priority + task.createTime / 1000;
+            }
+            function mapTaskToList(task) {
+                var taskListId = getTaskListId(task['parentId']);
+                if (!taskListsMap[taskListId]) {
+                    taskListsMap[taskListId] = [];
+                }
+                taskListsMap[taskListId].push(task);
+                setTaskPosition(task);
+                return taskListId;
+            }
+
+            function sortTaskPosition(taskListId) {
+                var tasks = taskListsMap[taskListId];
+                taskListsMap[taskListId] = $filter('orderBy')(tasks, 'position', true);
+            }
+
+            function sortAllTaskPosition() {
+                Object.keys(taskListsMap).forEach(function (taskListId) {
+                    sortTaskPosition(taskListId);
+                })
             }
 
             function classifyTasksByList(tasks) {
                 tasks.forEach(mapTaskToList);
+                sortAllTaskPosition();
             }
 
             $scope.taskLists = Projects.getTaskLists({projectId: $stateParams.projectId}, function (taskLists) {
@@ -80,15 +97,17 @@ angular.module('controllers.projects', ['resources.projects', 'resources.tasklis
                 $scope.taskLists.push(taskList);
             })
             $scope.$on('tasks.taskListChange', function (event, task, oldTaskListId) {
-                mapTaskToList(task);
+                var newTaskListId = mapTaskToList(task);
+                sortTaskPosition(newTaskListId);
                 if (!oldTaskListId) {
                     oldTaskListId = 'non-listed';
                 }
                 var oldIdx = taskListsMap[oldTaskListId].indexOf(task);
                 taskListsMap[oldTaskListId].splice(oldIdx, 1);
             })
-            $scope.$on('tasks.create', function(event, task) {
-                mapTaskToList(task);
+            $scope.$on('tasks.create', function (event, task) {
+                var newTaskListId = mapTaskToList(task);
+                sortTaskPosition(newTaskListId);
             })
 
 
@@ -148,6 +167,55 @@ angular.module('controllers.projects', ['resources.projects', 'resources.tasklis
                     }
                 }
             });
+
+
+            // For ui-sortable
+            // http://api.jqueryui.com/sortable/
+            var originalTasks;
+
+            function calculatePriority(tasks, task) {
+                var idx = tasks.indexOf(task);
+                var beforeTask = idx !== 0 ? tasks[idx - 1] : null;
+                var afterTask = (idx !== tasks.length - 1) ? tasks[idx + 1] : null;
+                var newPosition;
+                if (!beforeTask) {
+                    newPosition = afterTask.position + 2;
+                } else if (!afterTask) {
+                    newPosition = beforeTask.position - 2;
+                } else {
+                    // in the middle between beforeTask.position and afterTask.position.
+                    newPosition = (beforeTask.position + afterTask.position) / 2;
+                }
+                return  Math.round(newPosition - task.createTime / 1000);
+            }
+
+            $scope.sortableOptions = {
+                handle: '> .draggableHandle',
+                axis: 'y',
+                // http://codepen.io/thgreasi/pen/MwQqdg
+                start: function (event, ui) {
+                    var task = ui.item.sortable.model;
+                    // back up the original list for revert
+                    originalTasks = taskListsMap[getTaskListId(task.parentId)].slice();
+                },
+                stop: function (event, ui) {
+                    var task = ui.item.sortable.model;
+                    var afterSort = taskListsMap[getTaskListId(task.parentId)];
+                    if (afterSort.length <= 1) {
+                        return;
+                    }
+                    console.log("dropped at " + afterSort.indexOf(task));
+                    var newPriority = calculatePriority(afterSort, task);
+
+                    Tasks.patch({taskId: task.id}, {priority: newPriority}, function() {
+                        task.priority = newPriority;
+                        setTaskPosition(task);
+                    }, function() {
+                        // on error
+                        taskListsMap[getTaskListId(task.parentId)] = originalTasks;
+                    })
+                }
+            }
         }])
     .controller('ProjectMemberController', ['$scope', 'Projects', '$stateParams', 'Users', 'Orgs', function ($scope, Projects, $stateParams, Users, Orgs) {
         var usersMap = {};

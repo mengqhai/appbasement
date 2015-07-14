@@ -3,8 +3,6 @@ package com.workstream.rest.model;
 import java.util.Date;
 
 import javax.validation.constraints.Future;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -63,8 +61,8 @@ public class TaskRequest extends MapPropObj {
 		props.put("priority", priority);
 	}
 
-	@Max(100)
-	@Min(1)
+	// @Max(100)
+	// @Min(1)
 	public Integer getPriority() {
 		return getProp("priority");
 	}
@@ -74,16 +72,15 @@ public class TaskRequest extends MapPropObj {
 		// do nothing
 	}
 
-	//@JsonIgnore
+	// @JsonIgnore
 	public void setProjectId(Long projectId) {
 		props.put("category", projectId);
 	}
-	
-	
+
 	public void setParentId(String parentId) {
 		props.put("parentTaskId", parentId);
 	}
-	
+
 	public String getParentId() {
 		return getProp("parentTaskId");
 	}

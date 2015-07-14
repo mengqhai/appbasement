@@ -94,3 +94,19 @@ body {
     border-bottom: 0;
   }
 }
+
+
+.draggableHandle {
+    display: inline-block;
+    height: 20px;
+    width: 0.6em;
+    margin-right: 5px;
+    font-size: 1.2em;
+    vertical-align: middle;
+    color: #d3d3d3;
+    cursor: move;
+    overflow: hidden;
+}
+.draggableHandle:hover{
+    color: #000000;
+}
