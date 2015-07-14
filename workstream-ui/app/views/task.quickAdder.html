@@ -1,8 +1,12 @@
 <form name="taskQuickAdderForm" ng-submit="addTask()">
-    <div class="input-group input-group-sm">
+    <div ng-show="!showInput">
+        <span class="glyphicon glyphicon-plus"></span>
+        <a href ng-click="showInput=true">Add a task</a>
+    </div>
+    <div class="input-group input-group-sm" ng-show="showInput">
         <span class="input-group-addon">
             <span class="glyphicon glyphicon-plus"></span>
         </span>
-        <input type="text" placeholder="Add a task..." class="form-control" ng-model="task.name">
+        <input type="text" placeholder="Add a task..." class="form-control" ng-model="task.name" ng-blur="showInput=false">
     </div>
 </form>

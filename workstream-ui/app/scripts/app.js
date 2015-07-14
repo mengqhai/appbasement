@@ -76,7 +76,7 @@ angular
             controller: 'AboutCtrl'
         });
         $stateProvider.state('tasks', {
-            url: '/tasks/{status:active|archived}',
+            url: '/tasks?{status:active|archived}',
             templateUrl: 'views/tasks.html',
             controller: 'TasksController'
         })
@@ -86,7 +86,7 @@ angular
                 controller: 'TaskListController'
             });
         $stateProvider.state('processes', {
-            url: '/processes/{status:active|archived}',
+            url: '/processes?{status:active|archived}',
             templateUrl: 'views/processes.html',
             controller: 'ProcessListController'
         });
@@ -101,7 +101,7 @@ angular
             controller: 'ProjectController'
         });
         $stateProvider.state('project.tasks', {
-            url: '/tasks/{status:active|archived}',
+            url: '/tasks?{status:active|archived}',
             templateUrl: 'views/project.tasks.html',
             controller: 'ProjectTaskListController'
         });
