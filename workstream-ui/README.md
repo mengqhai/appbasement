@@ -1,6 +1,8 @@
-# workstream-ui
+#Workstream UI
 
 The UI project of Workstream (the task oriented collaboration platform).  Still I'm too busy to get a document done.  I captured some screenshots to give you a better understanding of what Workstream is trying to do.  
+
+The UI doesn't look very nice currently... :P  as I'm currently focusing on the functional/interaction aspect of the UI, so I'm mainly reusing bootstrap components here.  I'll create dedicated css for Workstream UI to make it nice-looking once all the functionalities and page elements are ready.
 
 Workstream UI: task dialog  
 ![](https://raw.githubusercontent.com/mengqhai/appbasement/master/workstream-ui/demo-images/workstream-UI-Task%20dialog.png)
