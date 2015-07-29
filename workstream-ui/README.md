@@ -1,6 +1,6 @@
 # workstream-ui
 
-The UI project of Workstream (the task oriented collaboration platform).  Still I'm too busy to get a document done.  I captured some screenshots to give you a better understand of what Workstream is trying to do.  
+The UI project of Workstream (the task oriented collaboration platform).  Still I'm too busy to get a document done.  I captured some screenshots to give you a better understanding of what Workstream is trying to do.  
 
 Workstream UI: task dialog  
 ![](https://raw.githubusercontent.com/mengqhai/appbasement/master/workstream-ui/demo-images/workstream-UI-Task%20dialog.png)
