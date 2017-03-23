@@ -26,7 +26,7 @@ Operations:
   * DELETE /lun/{id} -- Deletes a LUN with the given id
 For the detailed information of each operation(input/output model schema, return code, etc.), please run the application and see the API document in Swagger UI(http://localhost:8080/swagger-ui.html)
 
-
+![Lun Simulator Swagger UI](https://raw.githubusercontent.com/mengqhai/appbasement/master/lunsimulator/swagger-ui-screenshot.png)
 
 ## How to run the application
 Please make sure you've Java 1.8 installed.
