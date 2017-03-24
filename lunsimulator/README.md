@@ -36,6 +36,7 @@ Please make sure you've Java 1.8 installed.
 mvn package && java -jar target/lunsimulator-0.0.1-SNAPSHOT.jar
 ```
    If you don't Maven installed, use the 'mvnw' script in project root to replace the mvn command above.  It will automatically download Maven for you.
+   
 3. After the application is fully started, open the Swagger UI in the your web browser: http://localhost:8080/swagger-ui.html
 4. Try it out by invoking the REST API from Swagger UI.
 
